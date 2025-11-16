@@ -1,11 +1,28 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import Hero from "../../components/hero.jsx";
 
 const Home = () => {
   const { t } = useTranslation();
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">{t("welcome")}</h1>
+      <Hero />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   );
 };
