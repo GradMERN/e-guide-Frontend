@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./routes/ProtectedRoute";
-
+import PopularDestinations from "./components/PopularDestinations";
 import AdminPage from "./pages/AdminPage";
 import GuidePage from "./pages/GuidePage";
 import TouristPage from "./pages/TouristPage";
@@ -25,7 +25,8 @@ export default function App() {
       ? "/tourist"
       : "/login";
 
-  return (
+  return (<>
+  <PopularDestinations></PopularDestinations>
     <Router>
       <Routes>
         <Route
@@ -37,9 +38,9 @@ export default function App() {
               <Navigate to={redirectPath} replace />
             )
           }
-        />
+          />
 
-        <Route path="/unauthorized" element={<h2>Unauthorized Access 🚫</h2>} />
+        <Route path="/unauthorized" element={<h2 className="text-red-500">Unauthorized Access 🚫</h2>} />
 
         {/* Admin routes */}
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
@@ -57,5 +58,6 @@ export default function App() {
         </Route>
       </Routes>
     </Router>
+          </>
   );
 }
