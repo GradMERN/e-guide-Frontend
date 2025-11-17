@@ -1,7 +1,7 @@
-import React from "react";
+import NotFoundLayout from "../layout/NotFoundLayout.jsx";
 
 const NotFound = () => {
-  return <div>not found</div>;
+  return <NotFoundLayout></NotFoundLayout>
 };
 
 export default NotFound;
