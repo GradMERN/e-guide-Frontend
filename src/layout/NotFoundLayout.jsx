@@ -49,12 +49,12 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6">
             <button
               onClick={() => navigate(-1)}
-              className="group relative w-full sm:w-auto px-6 sm:px-8 py-3 bg-linear-to-r from-[#B97A57] to-[#C7A15C] text-white font-bold rounded-full shadow-2xl hover:shadow-[#C7A15C]/50 transform hover:scale-105 transition-all duration-300 overflow-hidden">
+              className="group relative w-full sm:w-auto px-6 sm:px-8 py-3 bg-linear-to-r from-[#C7A15C] to-[#E2C784] hover:from-[#B8924F] hover:to-[#DCC07C]  text-black font-bold rounded-full shadow-2xl hover:shadow-[#C7A15C]/50 transform hover:scale-105 transition-all duration-300 overflow-hidden">
               Go Back
             </button>
             <button
               onClick={() => navigate("/")}
-              className="group relative w-full sm:w-auto px-6 sm:px-8 py-3 bg-linear-to-r from-[#C7A15C] to-[#FFD27F] text-white font-bold rounded-full shadow-2xl hover:shadow-[#FFD27F]/50 transform hover:scale-105 transition-all duration-300 overflow-hidden">
+              className="group relative w-full sm:w-auto px-6 sm:px-8 py-3  bg-linear-to-r from-[#C7A15C] to-[#E2C784] hover:from-[#B8924F] hover:to-[#DCC07C]  text-black font-bold rounded-full shadow-2xl hover:shadow-[#FFD27F]/50 transform hover:scale-105 transition-all duration-300 overflow-hidden">
               Go Home
             </button>
           </div>
