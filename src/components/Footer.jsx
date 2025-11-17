@@ -126,7 +126,7 @@ const Footer = () => {
 
         <div className="border-t border-white/10 mt-14 pt-6 text-center text-sm text-[#E5E5E5]/70">
           <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-6">
-            <p>© 2024 Mystic Egypt Tours. All rights reserved.</p>
+            <p>© 2025 Mystic Egypt Tours. All rights reserved.</p>
 
             <div className="flex gap-6 mt-4 md:mt-0">
               <a className="hover:text-[#D5B36A] transition">Privacy Policy</a>
