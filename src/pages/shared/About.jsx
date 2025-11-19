@@ -37,11 +37,7 @@ export default function About() {
     { icon: Globe, title: "Authenticity", description: "Real experiences." },
     { icon: Users, title: "Community", description: "Supporting locals." },
     { icon: Award, title: "Excellence", description: "High standards." },
-    {
-      icon: Clock,
-      title: "Flexibility",
-      description: "Trips designed around your pace.",
-    },
+    {icon: Clock, title: "Flexibility", description: "Trips designed around your pace.",},
     { icon: CheckCircle, title: "Trust", description: "Transparent pricing." },
   ];
 
