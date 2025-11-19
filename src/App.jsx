@@ -9,6 +9,7 @@ import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Guide/Dashboard";
 import Cart from "./pages/tourist/Cart";
 import MyTours from "./pages/tourist/MyTours";
+import About from "./pages/shared/About";
 import NotFound from "./pages/NotFound";
 
 const router = createBrowserRouter([
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/profile", element: <Profile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/my-tours", element: <MyTours /> },
+      { path: "/about", element: <About /> },
     ],
   },
   {

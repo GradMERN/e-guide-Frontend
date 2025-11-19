@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { PixelatedCanvasDemo } from "../components/PixelatedCanvasDemo.jsx";
+import { PixelatedCanvasDemo } from "../components/PixelatedCanvas.jsx";
 
 export default function NotFound() {
   const navigate = useNavigate();
