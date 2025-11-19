@@ -1,7 +1,6 @@
 "use client";
 import { PixelatedCanvas } from "@/components/ui/pixelated-canvas";
-import heroImage from "../assets/images/hero.png"; 
-
+import heroImage from "../../assets/images/hero.png";
 export function PixelatedCanvasDemo() {
   return (
     <div className="mx-auto mt-8 flex w-full items-center justify-center">
