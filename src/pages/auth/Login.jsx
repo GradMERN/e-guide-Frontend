@@ -2,6 +2,7 @@ import { MdEmail } from "react-icons/md";
 import { FaLock, FaEye, FaGoogle, FaSignInAlt, FaScroll } from "react-icons/fa";
 import { GiEgyptianProfile, GiEgyptianTemple } from "react-icons/gi";
 import { FaShip } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 
 export default function Login() {
@@ -163,8 +164,11 @@ export default function Login() {
 
 
                         <p className="mt-4 sm:mt-6 text-center text-xs sm:text-lg text-gray-500">Don't have an account?
-                            <a href="#" className="font-bold text-[#ce9817] hover:text-[#a77407]">Create Account </a>
+                            <Link to="/register" className="font-bold text-[#ce9817] hover:text-[#a77407]" >
+                                Create Account
+                            </Link>
                         </p>
+
                     </div>
                 </div>
             </div>
