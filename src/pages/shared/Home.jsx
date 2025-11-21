@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Hero from "../../components/hero.jsx";
+import Hero from "../../components/shared/Hero.jsx";
 
 const Home = () => {
   const { t } = useTranslation();
