@@ -1,5 +1,6 @@
+"use client";
 import { CheckCircle } from "lucide-react";
-import photo30 from "../../assets/images/photo-30.webp";
+import { DirectionAwareHoverImage } from "./DirectionAwareHoverImage";
 
 export default function StorySection() {
   const features = [
@@ -10,37 +11,51 @@ export default function StorySection() {
   ];
 
   return (
-    <section className="py-20 bg-linear-to-b from-slate-900 to-slate-800">
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="relative">
-          <div className="rounded-2xl overflow-hidden shadow-2xl">
-            <img src={photo30} className="w-full h-96 object-cover" />
+    <section className="py-16 lg:py-20 relative">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-stretch">
+          <div className="fade-left relative rounded-2xl overflow-hidden h-full">
+            <DirectionAwareHoverImage className="w-full h-full rounded-2xl" />
           </div>
-          <div className="absolute -bottom-4 -right-4 w-40 h-40 bg-linear-to-br from-[#C7A15C] to-[#E2C784] rounded-2xl -z-10"></div>
-        </div>
 
-        <div>
-          <h2 className="text-5xl font-black text-white mb-6">Our Story</h2>
+          <div className="fade-right flex flex-col justify-center">
+            <span className="inline-block text-xs md:text-sm tracking-[0.2em] text-[#FFD97F] uppercase font-medium mb-4 smooth-text">
+              Our Story
+            </span>
 
-          <p className="text-gray-300 mb-6">
-            Founded in 2025, we've been sharing Egypt's heritage with travelers
-            worldwide.
-          </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-6 leading-snug smooth-text">
+              Preserving Egypt’s Past,
+              <br />
+              <span className="font-semibold bg-linear-to-r from-[#FFD97F] to-[#FFE6A0] bg-clip-text text-transparent">
+                Crafting Unforgettable Journeys
+              </span>
+            </h2>
 
-          <p className="text-gray-300 mb-8">
-            Expert Egyptologists, local guides, and sustainable tourism
-            practices ensure an unforgettable journey.
-          </p>
+            <div className="text-gray-300 text-base md:text-lg leading-relaxed smooth-text mb-8">
+              <p className="mb-3">
+                Since 2025, we’ve dedicated ourselves to showcasing Egypt’s
+                timeless history through immersive and responsible travel
+                experiences.
+              </p>
+              <p>
+                Our certified Egyptologists, passionate local guides, and
+                commitment to sustainability ensure every journey feels
+                authentic and memorable.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {features.map((text, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 bg-linear-to-br from-[#C7A15C] to-[#E2C784] rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 text-black" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-auto">
+              {features.map((text, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-linear-to-br from-[#FFD97F] to-[#FFE6A0] rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-3.5 h-3.5 text-black" />
+                  </div>
+                  <span className="text-white font-medium text-sm smooth-text">
+                    {text}
+                  </span>
                 </div>
-                <span className="text-white font-semibold">{text}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

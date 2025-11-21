@@ -1,17 +1,20 @@
-export default function StatCard({ stat }) {
+export default function StatCard({ stat, index }) {
   const Icon = stat.icon;
 
   return (
-    <div
-      className="rounded-2xl p-2px bg-slate-800/50 border border-slate-700/50 "
-    >
-      <div className="bg-slate-900/80 rounded-2xl p-6 text-center">
-        <div className="w-16 h-16 mx-auto bg-linear-to-br from-[#C7A15C] to-[#E2C784] rounded-xl flex items-center justify-center mb-4">
-          <Icon className="w-8 h-8 text-white" />
+    <div className="fade-up text-center group" style={{ transitionDelay: `${index * 0.1}s` }}>
+      <div className="mb-6 inline-block">
+        <div className="w-14 h-14 rounded-xl bg-linear-to-br from-[#FFD97F] to-[#FFE6A0] flex items-center justify-center shadow-lg shadow-[#FFD97F]/30">
+          <Icon className="w-7 h-7 text-black" strokeWidth={1.5} />
         </div>
+      </div>
 
-        <div className="text-4xl font-black text-white">{stat.value}</div>
-        <div className="text-gray-400 mt-2">{stat.label}</div>
+      <div className="text-6xl lg:text-7xl font-bold mb-4 smooth-text text-[#FFD97F] transition-all duration-500">
+        {stat.value}
+      </div>
+
+      <div className="text-base lg:text-lg text-gray-400 smooth-text font-medium">
+        {stat.label}
       </div>
     </div>
   );
