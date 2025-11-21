@@ -25,7 +25,7 @@ export default function Navbar() {
   const topStyles = "top-0 bg-transparent px-6 py-4 w-full scale-95";
 
   const scrolledStyles =
-    "top-4 bg-[#1B1A17]/85 backdrop-blur-md shadow-xl px-10 py-2.5 rounded-full max-w-5xl w-[90%] transition-all duration-500";
+    "top-2 bg-[#1B1A17]/85 backdrop-blur-md shadow-xl px-10 py-2.5 rounded-2xl max-w-6xl w-[90%] transition-all duration-500";
 
   return (
     <nav className={`${baseStyles} ${scrolled ? scrolledStyles : topStyles}`}>
