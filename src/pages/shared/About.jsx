@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import CircularGallerySection from "../../components/about/CircularGallerySection.jsx";
 import CTASection from "../../components/about/CTASection.jsx";
@@ -6,6 +6,8 @@ import HeroSection from "../../components/about/HeroSection.jsx";
 import StatsSection from "../../components/about/StatsSection.jsx";
 import StorySection from "../../components/about/StorySection.jsx";
 import ValuesSection from "../../components/about/ValuesSection.jsx";
+
+import "../../styles/custom.css";
 
 import {
   Users,
@@ -19,14 +21,6 @@ import {
 } from "lucide-react";
 
 export default function About() {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   useEffect(() => {
     const observerOptions = {
       threshold: [0, 0.1, 0.2, 0.3],
@@ -43,11 +37,7 @@ export default function About() {
       });
     }, observerOptions);
 
-    document
-      .querySelectorAll(".fade-up, .fade-left, .fade-right")
-      .forEach((el) => {
-        observer.observe(el);
-      });
+    document.querySelectorAll(".fade-up, .fade-left, .fade-right").forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, []);
@@ -129,68 +119,21 @@ export default function About() {
       className="relative text-white overflow-hidden"
       style={{
         background: `
-    linear-gradient(
-      to bottom,
-      #0B192C 0%,    /* top dark navy */
-      #0E1A33 15%,   /* slightly lighter navy */
-      #091626 30%,   /* deep blue */
-      #121217 45%,   /* dark purple/blue */
-      #0F0B08 60%,   /* brownish black */
-      #050404 75%,   /* near black */
-      #000000 90%,   /* solid black */
-      #000000 100%   /* bottom */
-    )
-  `,
+          linear-gradient(
+            to bottom,
+            #0B192C 0%,
+            #0E1A33 15%,
+            #091626 30%,
+            #121217 45%,
+            #0F0B08 60%,
+            #050404 75%,
+            #000000 90%,
+            #000000 100%
+          )
+        `,
       }}
     >
-      <style>{`
-        .fade-up, .fade-left, .fade-right {
-          opacity: 0;
-          transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                      transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .fade-up { transform: translateY(50px); }
-        .fade-left { transform: translateX(-50px); }
-        .fade-right { transform: translateX(50px); }
-        .fade-up.in-view, .fade-left.in-view, .fade-right.in-view {
-          opacity: 1;
-          transform: translate(0, 0);
-        }
-        .smooth-text {
-          font-feature-settings: 'liga' 1, 'calt' 1;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          text-rendering: optimizeLegibility;
-        }
-        .glass-effect {
-          background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .hover-lift {
-          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
-        }
-        .hover-lift:hover {
-          transform: translateY(-12px);
-          box-shadow: 0 20px 60px rgba(199, 161, 92, 0.3);
-        }
-        .linear-border { position: relative; }
-        .linear-border::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          padding: 1px;
-          background: linear-linear(135deg, #E2C784, #C7A15C, #FFD27F);
-          -webkit-mask: linear-linear(#fff 0 0) content-box, linear-linear(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          opacity: 0;
-          transition: opacity 0.6s ease;
-        }
-        .linear-border:hover::before { opacity: 1; }
-      `}</style>
-
-      <HeroSection  />
+      <HeroSection />
       <StorySection />
       <ValuesSection values={values} />
       <CircularGallerySection />
