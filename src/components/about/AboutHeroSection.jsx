@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 import Particles from "../ui/Particles.jsx";
 import TextType from "../ui/TextType.jsx";
 
-export default function HeroSection() {
+export default function AboutHeroSection() {
   const scrollToNextSection = () => {
     const next = document.querySelector("#next-section");
     if (next) next.scrollIntoView({ behavior: "smooth" });
@@ -24,8 +24,8 @@ export default function HeroSection() {
         />
       </div>
 
-      <div className="relative z-10 text-center max-w-4xl mx-auto mt-28">
-        <h1 className=" text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 drop-shadow-lg bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F] bg-clip-text text-transparent transition-all duration-300 hover:scale-105">
+      <div className="relative z-10 text-center max-w-4xl mx-auto mt-16">
+        <h1 className=" text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 drop-shadow-lg bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F] bg-clip-text text-transparent transition-all duration-300 ">
           About Us
         </h1>
 
