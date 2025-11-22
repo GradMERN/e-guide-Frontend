@@ -18,9 +18,11 @@ export default function CTASection() {
             Egypt through our expertly curated journeys
           </p>
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-            <button className="group inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3 sm:py-5 bg-linear-to-r from-[#C7A15C] to-[#E2C784] text-[#0f0b08] font-bold rounded-full hover:from-[#E2C784] hover:to-[#FFD27F] transition-all duration-500 shadow-2xl hover:shadow-[#E2C784]/50 transform hover:scale-105 text-sm sm:text-base">
+            <button className="group inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3 sm:py-5 bg-linear-to-r from-[#C7A15C] to-[#E2C784] text-[#0f0b08] font-bold rounded-full text-sm sm:text-base transition-all duration-500 hover:from-[#E2C784] hover:to-[#FFD27F] hover:shadow-[#E2C784]/50 hover:scale-105">
               <span>Book Your Expedition</span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300" />
+              <span className="inline-block transition-transform duration-300 transform group-hover:translate-x-2">
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              </span>
             </button>
             <button className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3 sm:py-5 border-2 border-[#C7A15C]/30 text-[#E2C784] font-semibold rounded-full hover:border-[#E2C784] hover:bg-[#C7A15C]/10 transition-all duration-500 backdrop-blur-sm text-sm sm:text-base">
               <span>View Tours</span>
