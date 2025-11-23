@@ -11,6 +11,12 @@ import Cart from "./pages/tourist/Cart";
 import MyTours from "./pages/tourist/MyTours";
 import About from "./pages/shared/About";
 import NotFound from "./pages/NotFound";
+import ProfileLayout from "./pages/profile/profileLayout";
+import Address from "./pages/profile/Address";
+import Info from "./pages/profile/Info";
+import Overview from "./pages/profile/Overview";
+import Preferences from "./pages/profile/Preferences";
+import Security from "./pages/profile/Security";
 
 const router = createBrowserRouter([
   {
@@ -18,10 +24,18 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/tours/:id", element: <TourDesc /> },
-      { path: "/profile", element: <Profile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/my-tours", element: <MyTours /> },
       { path: "/about", element: <About /> },
+    ],
+  },
+  {
+    element: <ProfileLayout />,
+    children: [
+      { path: "/profile/overview", element: <Overview /> },
+      { path: "/profile/info", element: <Info /> },
+      { path: "/profile/preferences", element: <Preferences /> },
+      { path: "/profile/security", element: <Security /> },
     ],
   },
   {
