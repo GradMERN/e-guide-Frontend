@@ -409,7 +409,7 @@ const FAQSection = () => {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        const response = await fetch("/api/faqs");
+        const response = await fetch("");
         if (!response.ok) throw new Error();
         const data = await response.json();
         setFaqCategories(data);
