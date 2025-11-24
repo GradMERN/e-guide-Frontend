@@ -14,7 +14,7 @@ export default function Login() {
 
 
             {/* Left Section  */}
-            <div className="hidden lg:flex w-1/2 flex-col justify-center items-center bg-[#844c0e] px-10 py-15">
+            <div className="hidden lg:flex w-1/2 flex-col justify-center items-center bg-[#0c192d] px-10 py-15">
 
 
                 <div className="flex flex-col items-center mb-10">
@@ -30,7 +30,7 @@ export default function Login() {
                 <div className="flex flex-col items-center space-y-8 w-full">
 
 
-                    <div className="bg-[#8f5927] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
+                    <div className="bg-[#0c192d] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
 
                         <GiEgyptianTemple size={35} className="text-[#f7b825]" />
                         <div>
@@ -41,7 +41,7 @@ export default function Login() {
                     </div>
 
 
-                    <div className="bg-[#8f5927] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
+                    <div className="bg-[#0c192d] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
 
                         <FaScroll size={35} className="text-[#f7b825]" />
                         <div>
@@ -52,7 +52,7 @@ export default function Login() {
                     </div>
 
 
-                    <div className="bg-[#8f5927] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
+                    <div className="bg-[#0c192d] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
 
                         <FaShip size={35} className="text-[#f7b825]" />
                         <div>
@@ -143,7 +143,7 @@ export default function Login() {
 
 
                             <button type="submit" className="w-full flex justify-center items-center gap-1 sm:gap-2 cursor-pointer
-                             bg-linear-to-r from-[#d4af37] to-[#ca8a04] hover:bg-linear-to-r hover:from-[#ca8a04] hover:to-[#d4af37] text-white text-xs sm:text-lg px-2 sm:px-4 py-2 sm:py-4 
+                             bg-linear-to-r from-[#c9a45f] to-[#dfc380] hover:bg-linear-to-r hover:from-[#dfc380] hover:to-[#c9a45f] text-white text-xs sm:text-lg px-2 sm:px-4 py-2 sm:py-4 
                              rounded-md font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-600">
                                 <FaSignInAlt /> Sign In
                             </button>
@@ -155,7 +155,7 @@ export default function Login() {
                                     <span className="px-2 text-sm ">Or</span>
                                     <div className="flex-1 h-px bg-gray-300"></div>
                                 </div>
-                                <button className=" continue-btn w-full flex items-center justify-center gap-2 border border-[#ce9817] hover:bg-[#ecb53f74]  hover:text-white cursor-pointer transition-all duration-75 text-gray-500 font-bold px-2  sm:px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm">
+                                <button className=" continue-btn w-full flex items-center justify-center gap-2 border border-[#c9a45f] hover:bg-[#c9a45f]  hover:text-white cursor-pointer transition-all duration-75 text-gray-500 font-bold px-2  sm:px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm">
                                     Continue with Google <FaGoogle className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                             </div>
@@ -164,7 +164,7 @@ export default function Login() {
 
 
                         <p className="mt-4 sm:mt-6 text-center text-xs sm:text-lg text-gray-500">Don't have an account?
-                            <Link to="/register" className="font-bold text-[#ce9817] hover:text-[#a77407]" >
+                            <Link to="/register" className="font-bold text-[#c9a45f] hover:text-[#ac8e56]" >
                                 Create Account
                             </Link>
                         </p>
