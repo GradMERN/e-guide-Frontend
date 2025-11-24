@@ -115,24 +115,7 @@ export default function About() {
   ];
 
   return (
-    <div
-      className="relative text-white overflow-hidden"
-      style={{
-        background: `
-          linear-gradient(
-            to bottom,
-            #0B192C 0%,
-            #0E1A33 15%,
-            #091626 30%,
-            #07111D 45%,
-            #050B13 50%,
-            #02060A 54%,
-            #000000 90%,
-            #000000 100%
-          )
-        `,
-      }}
-    >
+    <div className="text-white bg-[#020406]">
       <AboutHeroSection />
       <StorySection />
       <ValuesSection values={values} />
