@@ -29,7 +29,7 @@ export default function TourGuidesSection() {
 
 
     return (
-        <section className="bg-[#0c192d] py-20 px-5 font-bold text-white text-center ">
+        <section className=" py-20 px-5 font-bold text-white text-center ">
 
             <div className="title ">
 
