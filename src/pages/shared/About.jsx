@@ -115,7 +115,7 @@ export default function About() {
   ];
 
   return (
-    <div className="text-white bg-[#020406]">
+    <div className="text-white bg-[#181310]">
       <AboutHeroSection />
       <StorySection />
       <ValuesSection values={values} />
