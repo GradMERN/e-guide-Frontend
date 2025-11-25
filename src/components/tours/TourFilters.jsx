@@ -15,15 +15,17 @@ const TourFilters = ({
   totalCount,
 }) => {
   return (
-    <div className="sticky top-24 backdrop-blur-xl bg-white/5 rounded-2xl p-6 border border-white/10 shadow-2xl">
+    <div className="sticky top-24 backdrop-blur-xl bg-white/80 dark:bg-white/5 rounded-2xl p-6 border border-gray-200/50 dark:border-white/10 shadow-2xl">
       <div className="flex items-center gap-3 mb-6">
         <FaFilter style={{ color: "#FFE6A0" }} className="text-xl" />
-        <h2 className="text-2xl font-bold text-white">Filters</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Filters
+        </h2>
       </div>
 
       {/* Search */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Search Tours
         </label>
         <div className="relative group">
@@ -37,7 +39,7 @@ const TourFilters = ({
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-black/40 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none transition-all"
+            className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-black/40 rounded-xl text-gray-900 dark:text-white text-sm placeholder-gray-500 dark:placeholder-gray-500 focus:outline-none transition-all"
             style={{
               borderColor: "rgba(255, 230, 160, 0.2)",
               borderWidth: "1px",
@@ -56,13 +58,13 @@ const TourFilters = ({
 
       {/* City Filter */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Destination
         </label>
         <select
           value={selectedCity}
           onChange={(e) => setSelectedCity(e.target.value)}
-          className="w-full px-4 py-3 bg-black/40 rounded-xl text-white text-sm focus:outline-none appearance-none cursor-pointer transition-all"
+          className="w-full px-4 py-3 bg-white/50 dark:bg-black/40 rounded-xl text-gray-900 dark:text-white text-sm focus:outline-none appearance-none cursor-pointer transition-all"
           style={{
             backgroundImage: "none",
             borderColor: "rgba(255, 230, 160, 0.2)",
@@ -87,7 +89,7 @@ const TourFilters = ({
 
       {/* Price Range */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Price Range
         </label>
         <div className="space-y-2">
@@ -112,7 +114,7 @@ const TourFilters = ({
                   accentColor: "#FFE6A0",
                 }}
               />
-              <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+              <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                 {option.label}
               </span>
             </label>
@@ -122,13 +124,13 @@ const TourFilters = ({
 
       {/* Sort By */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Sort By
         </label>
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="w-full px-4 py-3 bg-black/40 rounded-xl text-white text-sm focus:outline-none appearance-none cursor-pointer transition-all"
+          className="w-full px-4 py-3 bg-white/50 dark:bg-black/40 rounded-xl text-gray-900 dark:text-white text-sm focus:outline-none appearance-none cursor-pointer transition-all"
           style={{
             backgroundImage: "none",
             borderColor: "rgba(255, 230, 160, 0.2)",
@@ -151,8 +153,8 @@ const TourFilters = ({
       </div>
 
       {/* Results Count */}
-      <div className="pt-6 border-t border-white/10">
-        <p className="text-sm text-gray-400">
+      <div className="pt-6 border-t border-gray-200/50 dark:border-white/10">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Showing{" "}
           <span style={{ color: "#FFE6A0" }} className="font-semibold">
             {filteredCount}
