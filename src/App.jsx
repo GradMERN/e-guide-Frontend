@@ -5,7 +5,7 @@ import Home from "./pages/shared/Home";
 import Profile from "./pages/shared/Profile";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Dashboard from "./pages/Guide/Dashboard";
+import Dashboard from "./pages/Guide/GuideDashboard";
 import Cart from "./pages/tourist/Cart";
 import MyTours from "./pages/tourist/MyTours";
 import About from "./pages/shared/About";

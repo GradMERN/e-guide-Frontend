@@ -1,0 +1,10 @@
+@media (max-width: 299px) {
+    .title h2 {
+        font-size: 1.4rem;
+    }
+     .title p {
+        font-size: 0.5rem;
+    }
+
+   
+}
