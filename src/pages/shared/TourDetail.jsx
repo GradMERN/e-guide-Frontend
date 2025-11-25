@@ -114,8 +114,7 @@ const TourDetail = () => {
       <div
         className="min-h-screen flex items-center justify-center"
         style={{
-          background:
-            "linear-gradient(to bottom, #0B192C 0%, #091626 50%, #000000 100%)",
+          background: "#000000",
         }}
       >
         <div className="relative">
@@ -132,8 +131,7 @@ const TourDetail = () => {
     <div
       className="relative text-white overflow-hidden min-h-screen"
       style={{
-        background:
-          "linear-gradient(to bottom, #0B192C 0%, #0E1A33 15%, #091626 30%, #121217 45%, #0F0B08 60%, #050404 75%, #000000 90%, #000000 100%)",
+        background: "linear-gradient(#000000 100%)",
       }}
     >
       {/* Decorative Background Elements */}

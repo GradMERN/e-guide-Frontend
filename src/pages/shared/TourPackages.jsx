@@ -111,13 +111,7 @@ const TourPackages = () => {
 
   if (loading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{
-          background:
-            "linear-gradient(to bottom, #0B192C 0%, #091626 50%, #000000 100%)",
-        }}
-      >
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
         <div className="relative">
           <div
             className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2"
@@ -129,29 +123,7 @@ const TourPackages = () => {
   }
 
   return (
-    <div
-      className="relative text-white overflow-hidden"
-      style={{
-        background:
-          "linear-gradient(to bottom, #0B192C 0%, #0E1A33 15%, #091626 30%, #121217 45%, #0F0B08 60%, #050404 75%, #000000 90%, #000000 100%)",
-      }}
-    >
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div
-          className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl"
-          style={{ backgroundColor: "rgba(255, 230, 160, 0.1)" }}
-        ></div>
-        <div
-          className="absolute top-40 right-20 w-96 h-96 rounded-full blur-3xl"
-          style={{ backgroundColor: "rgba(255, 214, 112, 0.1)" }}
-        ></div>
-        <div
-          className="absolute bottom-20 left-1/3 w-80 h-80 rounded-full blur-3xl"
-          style={{ backgroundColor: "rgba(255, 201, 64, 0.1)" }}
-        ></div>
-      </div>
-
+    <div className="relative text-gray-900 dark:text-white overflow-hidden bg-white dark:bg-black">
       <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20">
         {/* Hero Section */}
         <TourHero />
