@@ -8,7 +8,7 @@ const TourPackages = () => {
   const [tours] = useState([
     {
       _id: "1",
-      name: "Pyramids of Giza Experience",
+      name: "Pyramids of Giza",
       price: 2500,
       currency: "EGP",
       city: "Cairo",
@@ -123,7 +123,7 @@ const TourPackages = () => {
   }
 
   return (
-    <div className="relative text-gray-900 dark:text-white overflow-hidden bg-white dark:bg-black">
+    <div className="relative text-[#5E3719] dark:text-white overflow-hidden bg-white dark:bg-black">
       <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20">
         {/* Hero Section */}
         <TourHero />
@@ -153,13 +153,6 @@ const TourPackages = () => {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        select option {
-          background: #1a1a1a;
-          color: white;
-        }
-      `}</style>
     </div>
   );
 };
