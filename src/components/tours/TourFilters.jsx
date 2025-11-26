@@ -15,22 +15,20 @@ const TourFilters = ({
   totalCount,
 }) => {
   return (
-    <div className="sticky top-24 bg-white dark:bg-white/5 rounded-2xl p-6 border border-[#B2A496] dark:border-white/10 shadow-2xl">
+    <div className="sticky top-24 bg-surface rounded-2xl p-6 border border-border shadow-2xl">
       <div className="flex items-center gap-3 mb-6">
-        <FaFilter className="text-xl text-[#5E3719] dark:text-[#FFE6A0]" />
-        <h2 className="text-2xl font-bold text-[#5E3719] dark:text-white">
-          Filters
-        </h2>
+        <FaFilter className="text-xl text-primary" />
+        <h2 className="text-2xl font-bold text-text">Filters</h2>
       </div>
 
       {/* Search */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-[#735238] dark:text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-text-secondary mb-3">
           Search Tours
         </label>
         <div className="relative group">
           <FaSearch
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 transition-transform group-hover:scale-110 text-[#5E3719] dark:text-[#FFE6A0]"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 transition-transform group-hover:scale-110 text-primary"
             size={14}
           />
           <input
@@ -38,20 +36,20 @@ const TourFilters = ({
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-black/40 rounded-xl text-[#5E3719] dark:text-white text-sm placeholder-[#9D8977] dark:placeholder-gray-500 focus:outline-none transition-all border border-[#B2A496] dark:border-white/10 focus:border-[#5E3719] dark:focus:border-[#FFE6A0] focus:ring-2 focus:ring-[#5E3719]/20 dark:focus:ring-[#FFE6A0]/20"
+            className="w-full pl-10 pr-4 py-3 bg-surface rounded-xl text-text text-sm placeholder-text-muted focus:outline-none transition-all border border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
 
       {/* City Filter */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-[#735238] dark:text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-text-secondary mb-3">
           Destination
         </label>
         <select
           value={selectedCity}
           onChange={(e) => setSelectedCity(e.target.value)}
-          className="w-full px-4 py-3 bg-white dark:bg-black/40 rounded-xl text-[#5E3719] dark:text-white text-sm focus:outline-none appearance-none cursor-pointer transition-all border border-[#B2A496] dark:border-white/10 focus:border-[#5E3719] dark:focus:border-[#FFE6A0] focus:ring-2 focus:ring-[#5E3719]/20 dark:focus:ring-[#FFE6A0]/20"
+          className="w-full px-4 py-3 bg-surface rounded-xl text-text text-sm focus:outline-none appearance-none cursor-pointer transition-all border border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
         >
           {cities.map((city) => (
             <option key={city} value={city}>
@@ -63,7 +61,7 @@ const TourFilters = ({
 
       {/* Price Range */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-[#735238] dark:text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-text-secondary mb-3">
           Price Range
         </label>
         <div className="space-y-2">
@@ -83,9 +81,9 @@ const TourFilters = ({
                 value={option.value}
                 checked={priceRange === option.value}
                 onChange={(e) => setPriceRange(e.target.value)}
-                className="w-4 h-4 text-[#5E3719] dark:text-[#FFE6A0] focus:ring-2 focus:ring-[#5E3719] dark:focus:ring-[#FFE6A0]"
+                className="w-4 h-4 text-primary focus:ring-2 focus:ring-primary"
               />
-              <span className="text-sm text-[#735238] dark:text-gray-300 group-hover:text-[#5E3719] dark:group-hover:text-white transition-colors">
+              <span className="text-sm text-text-secondary group-hover:text-text transition-colors">
                 {option.label}
               </span>
             </label>
@@ -95,13 +93,13 @@ const TourFilters = ({
 
       {/* Sort By */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-[#735238] dark:text-gray-300 mb-3">
+        <label className="block text-sm font-semibold text-text-secondary mb-3">
           Sort By
         </label>
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="w-full px-4 py-3 bg-white dark:bg-black/40 rounded-xl text-[#5E3719] dark:text-white text-sm focus:outline-none appearance-none cursor-pointer transition-all border border-[#B2A496] dark:border-white/10 focus:border-[#5E3719] dark:focus:border-[#FFE6A0] focus:ring-2 focus:ring-[#5E3719]/20 dark:focus:ring-[#FFE6A0]/20"
+          className="w-full px-4 py-3 bg-surface rounded-xl text-text text-sm focus:outline-none appearance-none cursor-pointer transition-all border border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
         >
           <option value="popular">Most Popular</option>
           <option value="price-low">Price: Low to High</option>
@@ -111,17 +109,11 @@ const TourFilters = ({
       </div>
 
       {/* Results Count */}
-      <div className="pt-6 border-t border-[#B2A496] dark:border-white/10">
-        <p className="text-sm text-[#886E58] dark:text-gray-400">
+      <div className="pt-6 border-t border-border">
+        <p className="text-sm text-text-muted">
           Showing{" "}
-          <span className="font-semibold text-[#5E3719] dark:text-[#FFE6A0]">
-            {filteredCount}
-          </span>{" "}
-          of{" "}
-          <span className="font-semibold text-[#5E3719] dark:text-[#FFE6A0]">
-            {totalCount}
-          </span>{" "}
-          tours
+          <span className="font-semibold text-primary">{filteredCount}</span> of{" "}
+          <span className="font-semibold text-primary">{totalCount}</span> tours
         </p>
       </div>
     </div>
