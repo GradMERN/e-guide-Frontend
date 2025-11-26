@@ -1,7 +1,7 @@
 "use client";
 
 import { DirectionAwareHover } from "../ui/direction-aware-hover";
-import photo30 from "../../assets/images/photo-30.webp";
+import photo30 from "../../assets/images/views/photo-30.webp";
 
 export function DirectionAwareHoverImage({ className }) {
   const imageUrl = photo30;
