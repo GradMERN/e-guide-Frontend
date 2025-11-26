@@ -8,7 +8,7 @@ const TourPackages = () => {
   const [tours] = useState([
     {
       _id: "1",
-      name: "Pyramids of Giza Experience",
+      name: "Pyramids of Giza",
       price: 2500,
       currency: "EGP",
       city: "Cairo",
@@ -123,14 +123,10 @@ const TourPackages = () => {
   }
 
   return (
-    <div className="relative text-gray-900 dark:text-white overflow-hidden bg-white dark:bg-black">
+    <div className="relative text-text overflow-hidden bg-background">
       <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20">
-        {/* Hero Section */}
         <TourHero />
-
-        {/* Main Content with Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Filters */}
           <div className="lg:col-span-1">
             <TourFilters
               searchTerm={searchTerm}
@@ -146,20 +142,11 @@ const TourPackages = () => {
               totalCount={tours.length}
             />
           </div>
-
-          {/* Tours Grid */}
           <div className="lg:col-span-3">
             <TourGrid tours={filteredTours} />
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        select option {
-          background: #1a1a1a;
-          color: white;
-        }
-      `}</style>
     </div>
   );
 };
