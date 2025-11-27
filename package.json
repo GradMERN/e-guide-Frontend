@@ -12,6 +12,7 @@
   "dependencies": {
     "@tabler/icons-react": "^3.35.0",
     "@tailwindcss/vite": "^4.1.17",
+    "@theme-toggles/react": "^4.1.0",
     "animate.css": "^4.1.1",
     "aos": "^2.3.4",
     "class-variance-authority": "^0.7.1",
