@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import ThemeToggle from "../components/ThemeToggle";
+import Switch from "./ui/SwitchLanguages";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -31,7 +32,7 @@ export default function Navbar() {
   return (
     <nav className={`${baseStyles} ${scrolled ? scrolledStyles : topStyles}`}>
       <div className="flex items-center space-x-2">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-md">
+        <div className="w-10 h-10 rounded-full bg-linear-to-r from-primary to-secondary flex items-center justify-center shadow-md">
           <FaEye className="text-black text-2xl" />
         </div>
         <h1 className="text-xl font-semibold text-text tracking-wide whitespace-nowrap">
@@ -58,11 +59,12 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center space-x-4">
+        <Switch />
         <ThemeToggle />
         <NavLink
           to="/login"
           className="px-6 py-2 rounded-full shadow-md text-black font-medium 
-                     bg-gradient-to-r from-primary to-secondary 
+                     bg-linear-to-r from-primary to-secondary 
                      hover:from-secondary hover:to-tertiary transition-all"
         >
           Login
