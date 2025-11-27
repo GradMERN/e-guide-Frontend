@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ImagesSlider } from "../ui/images-slider.js";
-import { MapPin, Calendar, Users } from "lucide-react";
+import { MapPin, Calendar, Users, ChevronDown } from "lucide-react";
 
 import hero1 from "../../assets/images/hero/hero1.avif";
 import hero2 from "../../assets/images/hero/hero2.avif";
@@ -19,10 +19,20 @@ export default function ImagesSliderDemo() {
     { src: hero5, alt: "Photo 5" },
   ];
 
+  const icons = [
+    { icon: MapPin, label: "50+ Destinations" },
+    { icon: Calendar, label: "Flexible Booking" },
+    { icon: Users, label: "Expert Guides" },
+  ];
+
+  const scrollToNextSection = () => {
+    const next = document.querySelector("#home");
+    if (next) next.scrollIntoView({ behavior: "smooth" });
+  };
+
 return (
     <ImagesSlider images={images} className="h-screen md:h-[75vh] lg:h-[90vh] xl:h-screen w-full">
       <div className="z-50 flex flex-col justify-center items-center px-4 py-8 sm:py-12">
-
         <motion.div initial={{ opacity: 0, y: -80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-6 md:mb-10">
           <motion.h1
             className="
@@ -32,62 +42,48 @@ return (
             Discover Egypt
           </motion.h1>
 
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }} 
-          className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide">
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide">
             Where history comes alive and adventures begin
           </motion.p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }} 
-        className="flex flex-wrap gap-2 sm:gap-4 justify-center mb-6 md:mb-12 max-w-4xl">
-          
-          <div className="flex items-center gap-1.5 px-3 py-1 md:px-4 md:py-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full">
-            <MapPin className="w-4 h-4 md:w-5 md:h-5 text-[#FFD97F]" />
-            <span className="text-white text-xs md:text-sm">50+ Destinations</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 px-3 py-1 md:px-4 md:py-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full">
-            <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#FFD97F]" />
-            <span className="text-white text-xs md:text-sm">Flexible Booking</span>
-          </div>
-          
-          <div className="flex items-center gap-1.5 px-3 py-1 md:px-4 md:py-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full">
-            <Users className="w-4 h-4 md:w-5 md:h-5 text-[#FFD97F]" />
-            <span className="text-white text-xs md:text-sm">Expert Guides</span>
-          </div>
-
+        <motion.div
+          initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}
+          className="flex flex-wrap gap-2 sm:gap-4 justify-center mb-6 md:mb-12 max-w-4xl">
+          {icons.map((item, i) => (
+            <div key={i}
+              className="flex items-center gap-1.5 px-3 py-1 md:px-4 md:py-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full">
+              <item.icon className="w-4 h-4 md:w-5 md:h-5 text-[#FFD97F]" />
+              <span className="text-white text-xs md:text-sm">{item.label}</span>
+            </div>
+          ))}
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-col sm:flex-row gap-3 md:gap-6">
-          <button
-            className="
-              group px-6 py-3 sm:px-8 sm:py-4 backdrop-blur-sm border-2 text-white 
-              text-center rounded-full relative overflow-hidden
-              transition-all duration-300 hover:scale-105
-              bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#D4A574] border-[#FFD97F]">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-col sm:flex-row gap-3 md:gap-6">
+          <button className="group px-6 py-3 sm:px-8 sm:py-4 backdrop-blur-sm border-2 text-white text-center rounded-full relative overflow-hidden transition-all duration-300 hover:scale-105 bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#D4A574] border-[#FFD97F]">
             <span className="relative z-10 font-semibold text-base md:text-lg text-black">
               Explore Tours
             </span>
-            <div className=" absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
           </button>
 
-          <button
-            className="
-              px-6 py-3 sm:px-8 sm:py-4 backdrop-blur-md bg-white/10 border-2 
-              border-white/30 text-white text-center rounded-full 
-              relative transition-all duration-300 hover:bg-white/20 hover:scale-105">
+          <button className="px-6 py-3 sm:px-8 sm:py-4 backdrop-blur-md bg-white/10 border-2 border-white/30 text-white text-center rounded-full relative transition-all duration-300 hover:bg-white/20 hover:scale-105">
             <span className="font-semibold text-base md:text-lg">Watch Video</span>
-            <div className="absolute inset-x-0 h-px -bottom-px w-3/4 mx-auto bg-linear-to-r from-transparent via-[#FFD97F] to-transparent"/>
+            <div className="absolute inset-x-0 h-px -bottom-px w-3/4 mx-auto bg-linear-to-r from-transparent via-[#FFD97F] to-transparent" />
           </button>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.8 }} className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2">
-          <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="flex flex-col items-center gap-2" >
-            <span className="text-white/70 text-xs sm:text-sm">Scroll to explore</span>
-            <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full p-0.5 sm:p-1">
-              <div className="w-1.5 h-2.5 sm:w-1.5 sm:h-3 bg-white/70 rounded-full mx-auto"></div>
-            </div>
-          </motion.div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.8 }}
+          className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2">
+          <motion.button onClick={scrollToNextSection}
+            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 1.7 }}
+            className="p-3 md:p-4 lg:p-5 rounded-full bg-[#C7A15C]/20 hover:bg-[#E2C784]/30 transition backdrop-blur-sm z-10 animate-bounce">
+            <ChevronDown size={28} className="text-white drop-shadow-[0_0_8px_rgba(231,205,141,0.8)] md:w-8 md:h-8 lg:w-8 lg:h-8"/>
+          </motion.button>
         </motion.div>
       </div>
     </ImagesSlider>

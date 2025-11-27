@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {Pyramid,ChevronDown,Info,Landmark,Smartphone,User,MapPin,Globe} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 const FAQSection = () => {
   const [openCategory, setOpenCategory] = useState(0);
   const [openItems, setOpenItems] = useState({});
   const [faqCategories, setFaqCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemRefs = useRef({});
 
   const iconMap = {
     info: Info,
@@ -228,11 +228,6 @@ const FAQSection = () => {
     setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const getMaxHeight = (key) => {
-    const el = itemRefs.current[key];
-    return el ? `${el.scrollHeight}px` : "0px";
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl text-white">
@@ -273,49 +268,59 @@ const FAQSection = () => {
           const isCategoryOpen = openCategory === catIndex;
 
           return (
-            <div key={catIndex} className=" rounded-2xl shadow-2xl">
-              <div
-                className="px-4 py-3 sm:px-6 sm:py-4 border-4 rounded-2xl bg-linear-to-r from-[#B9934C] via-[#e8bd72] to-[#b58a3f] rounded-t-2xl border-amber-950 flex items-center justify-between cursor-pointer transition-colors duration-300 hover:bg-linear-to-r hover:from-[#d1a85b] hover:via-[#e0c083] hover:to-[#c4984f]"
+            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, delay: catIndex * 0.2 }} className="rounded-2xl shadow-2xl">
+              <div className="px-4 py-3 sm:px-6 sm:py-4 border-4 rounded-2xl bg-linear-to-r from-[#B9934C] via-[#e8bd72] to-[#b58a3f] rounded-t-2xl 
+              border-amber-950 flex items-center justify-between cursor-pointer transition-colors duration-300 hover:bg-linear-to-r hover:from-[#d1a85b] hover:via-[#e0c083] hover:to-[#c4984f]"
                 onClick={() => toggleCategory(catIndex)}>
                 <div className="flex items-center gap-3 sm:gap-4">
                   <Icon size={24} className="text-amber-950 shrink-0" />
                   <div>
                     <h3 className="text-base sm:text-lg md:text-xl font-bold text-amber-950 leading-tight">{category.title}</h3>
-                    <span className="text-xs sm:text-sm text-white/90"> {isCategoryOpen ? "Click to collapse" : "Click to expand"}</span>
+                    <span className="text-xs sm:text-sm text-white/90">{isCategoryOpen ? "Click to collapse" : "Click to expand"}</span>
                   </div>
                 </div>
                 <ChevronDown className={`text-amber-950 transition-transform duration-400 shrink-0 ${isCategoryOpen ? "rotate-180" : ""}`}size={24}/>
               </div>
 
-              <div
-                ref={(el) => (itemRefs.current[`cat-${catIndex}`] = el)}
-                className={`overflow-hidden transition-all ease-in-out duration-700 ${isCategoryOpen ? "opacity-100" : "opacity-0"}`}
-                style={{maxHeight: isCategoryOpen ? "5000px" : "0px",transitionDuration: "800ms",}}>
-                {category.questions.map((item, qIndex) => {
-                  const key = `${catIndex}-${qIndex}`;
-                  const isOpen = openItems[key];
+              <AnimatePresence initial={false}>
+                {isCategoryOpen && (
+                  <motion.div
+                    key={`cat-${catIndex}`} initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }} className="overflow-hidden">
+                    {category.questions.map((item, qIndex) => {
+                      const key = `${catIndex}-${qIndex}`;
+                      const isOpen = openItems[key];
 
-                  return (
-                    <div key={key} className="overflow-hidden border-b last:border-b-0">
-                      <button onClick={() => toggleItem(catIndex, qIndex)}
-                        className="w-full text-left px-4 py-4 sm:px-6 sm:py-5 flex justify-between items-center transition-colors duration-300 text-white hover:bg-amber-900/30">
-                        <span className="text-sm sm:text-lg font-medium leading-relaxed pr-4">{item.question}</span>
-                        <ChevronDown className={` shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}size={22}/>
-                      </button>
+                      return (
+                        <motion.div
+                          key={key} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.3 }} className="overflow-hidden border-b last:border-b-0">
+                          <button onClick={() => toggleItem(catIndex, qIndex)}
+                            className="w-full text-left px-4 py-4 sm:px-6 sm:py-5 flex justify-between items-center transition-colors duration-300 text-white hover:bg-amber-900/30">
+                            <span className="text-sm sm:text-lg font-medium leading-relaxed pr-4">{item.question}</span>
+                            <ChevronDown className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}size={22}/>
+                          </button>
 
-                      <div
-                        ref={(el) => (itemRefs.current[key] = el)}
-                        style={{maxHeight: openItems[key] ? getMaxHeight(key) : "0px",opacity: openItems[key] ? 1 : 0,}}
-                        className="overflow-hidden transition-all duration-300 ease-in-out">
-                        <div className="px-4 pb-4 sm:px-6 sm:pb-6 mt-2">
-                          <p className="text-sm sm:text-base text-white/90 border-l-4 pl-3 sm:pl-4 border-amber-950">{item.answer}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+                          <AnimatePresence initial={false}>
+                            {isOpen && (
+                              <motion.div
+                                key={`answer-${key}`} initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                                transition={{duration: 0.4,ease: "easeInOut",}}className="overflow-hidden">
+                                <div className="px-4 pb-4 sm:px-6 sm:pb-6 mt-2">
+                                  <p className="text-sm sm:text-base text-white/90 border-l-4 pl-3 sm:pl-4 border-amber-950">{item.answer}</p>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           );
         })}
       </div>

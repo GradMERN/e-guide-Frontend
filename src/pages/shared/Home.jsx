@@ -9,7 +9,7 @@ const Home = () => {
   const { t } = useTranslation();
   return (
     <>
-      <div className=" text-white bg-[#020406]">
+      <div className=" text-white ">
         <ImageSliderDemo />
         {/* <Hero/> */}
         <TourGuidesSection></TourGuidesSection>
