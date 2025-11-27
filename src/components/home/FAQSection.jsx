@@ -263,9 +263,7 @@ const FAQSection = () => {
 
         <p className="text-sm sm:text-lg text-white max-w-3xl mx-auto px-2">
           Everything you need to know about your journey to the land of
-          <span className="font-semibold bg-linear-to-r from-[#C7A15C] via-[#E2C784] to-[#C7A15C] bg-clip-text text-transparent">
-            PEACE.
-          </span>
+          <span className="font-semibold bg-linear-to-r from-[#C7A15C] via-[#E2C784] to-[#C7A15C] bg-clip-text text-transparent"> PEACE.</span>
         </p>
       </div>
 
@@ -277,12 +275,12 @@ const FAQSection = () => {
           return (
             <div key={catIndex} className=" rounded-2xl shadow-2xl">
               <div
-                className="p-4 sm:p-6 border-4 rounded-2xl bg-linear-to-r from-[#B9934C] via-[#e8bd72] to-[#b58a3f] rounded-t-2xl border-amber-950 flex items-center justify-between cursor-pointer transition-colors duration-300 hover:bg-linear-to-r hover:from-[#d1a85b] hover:via-[#e0c083] hover:to-[#c4984f]"
+                className="px-4 py-3 sm:px-6 sm:py-4 border-4 rounded-2xl bg-linear-to-r from-[#B9934C] via-[#e8bd72] to-[#b58a3f] rounded-t-2xl border-amber-950 flex items-center justify-between cursor-pointer transition-colors duration-300 hover:bg-linear-to-r hover:from-[#d1a85b] hover:via-[#e0c083] hover:to-[#c4984f]"
                 onClick={() => toggleCategory(catIndex)}>
                 <div className="flex items-center gap-3 sm:gap-4">
                   <Icon size={24} className="text-amber-950 shrink-0" />
                   <div>
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-950 leading-tight">{category.title}</h3>
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-amber-950 leading-tight">{category.title}</h3>
                     <span className="text-xs sm:text-sm text-white/90"> {isCategoryOpen ? "Click to collapse" : "Click to expand"}</span>
                   </div>
                 </div>
