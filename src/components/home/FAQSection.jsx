@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import {Pyramid,ChevronDown,Info,Landmark,Smartphone,User,MapPin,Globe} from "lucide-react";
+import { BsQuestionSquare } from "react-icons/bs";
+import { IoChevronDown } from "react-icons/io5";
+import {FaInfoCircle,FaLandmark,FaMobileAlt,FaUser,FaMapMarkerAlt,FaGlobe,} from "react-icons/fa";
+
 import { motion, AnimatePresence } from "motion/react";
 
 const FAQSection = () => {
@@ -9,13 +12,13 @@ const FAQSection = () => {
   const [loading, setLoading] = useState(true);
 
   const iconMap = {
-    info: Info,
-    pyramid: Pyramid,
-    landmark: Landmark,
-    smartphone: Smartphone,
-    user: User,
-    mapPin: MapPin,
-    globe: Globe,
+    info: FaInfoCircle,
+    pyramid: BsQuestionSquare,
+    landmark: FaLandmark,
+    smartphone: FaMobileAlt,
+    user: FaUser,
+    mapPin: FaMapMarkerAlt,
+    globe: FaGlobe,
   };
 
   const getSampleData = () => [
@@ -241,21 +244,17 @@ const FAQSection = () => {
       <div className="text-center mb-10 sm:mb-12 lg:mb-16">
         <div className="flex items-center justify-center mb-6">
           <div className="h-1 w-10 sm:w-20 md:w-24 bg-[linear-gradient(to_right,#C7A15C,#FFE6A0,#FFD27F,transparent)]"></div>
-
           <div className="relative mx-4">
             <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[linear-gradient(to_bottom_right,#FFD97F,#FFE6A0)] flex items-center justify-center shadow-lg shadow-[#FFD97F]/30 rounded-lg">
-              <Pyramid className="w-6 h-6 sm:w-7 sm:h-7 text-black" strokeWidth={1.5}/>
+              <BsQuestionSquare className="w-6 h-6 sm:w-7 sm:h-7 text-black"/>
             </div>
-            <Pyramid className="absolute top-0 left-0 w-12 h-12 sm:w-14 sm:h-14 opacity-30 blur-sm rounded-lg" strokeWidth={1.5}/>
+            <BsQuestionSquare className="absolute top-0 left-0 w-12 h-12 sm:w-14 sm:h-14 opacity-30 blur-sm text-[#FFD97F]"/>
           </div>
-
           <div className="h-1 w-10 sm:w-20 md:w-24 bg-[linear-gradient(to_left,#C7A15C,#FFE6A0,#FFD27F,transparent)] rotate-180"></div>
         </div>
-
-        <h2 className=" text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F] bg-clip-text text-transparent transition-all duration-300 ">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F] bg-clip-text text-transparent transition-all duration-300">
           Frequently Asked Questions
         </h2>
-
         <p className="text-sm sm:text-lg text-white max-w-3xl mx-auto px-2">
           Everything you need to know about your journey to the land of
           <span className="font-semibold bg-linear-to-r from-[#C7A15C] via-[#E2C784] to-[#C7A15C] bg-clip-text text-transparent"> PEACE.</span>
@@ -264,7 +263,7 @@ const FAQSection = () => {
 
       <div className="max-w-4xl lg:max-w-6xl mx-auto space-y-6 sm:space-y-8">
         {faqCategories.map((category, catIndex) => {
-          const Icon = iconMap[category.icon] || Info;
+          const Icon = iconMap[category.icon] || FaInfoCircle;
           const isCategoryOpen = openCategory === catIndex;
 
           return (
@@ -279,13 +278,12 @@ const FAQSection = () => {
                     <span className="text-xs sm:text-sm text-white/90">{isCategoryOpen ? "Click to collapse" : "Click to expand"}</span>
                   </div>
                 </div>
-                <ChevronDown className={`text-amber-950 transition-transform duration-400 shrink-0 ${isCategoryOpen ? "rotate-180" : ""}`}size={24}/>
+                <IoChevronDown className={`text-amber-950 transition-transform duration-400 shrink-0 ${isCategoryOpen ? "rotate-180" : ""}`}size={24}/>
               </div>
 
               <AnimatePresence initial={false}>
                 {isCategoryOpen && (
-                  <motion.div
-                    key={`cat-${catIndex}`} initial={{ height: 0, opacity: 0 }}
+                  <motion.div key={`cat-${catIndex}`} initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.5, ease: "easeInOut" }} className="overflow-hidden">
                     {category.questions.map((item, qIndex) => {
@@ -299,7 +297,7 @@ const FAQSection = () => {
                           <button onClick={() => toggleItem(catIndex, qIndex)}
                             className="w-full text-left px-4 py-4 sm:px-6 sm:py-5 flex justify-between items-center transition-colors duration-300 text-white hover:bg-amber-900/30">
                             <span className="text-sm sm:text-lg font-medium leading-relaxed pr-4">{item.question}</span>
-                            <ChevronDown className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}size={22}/>
+                            <IoChevronDown className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}size={22}/>
                           </button>
 
                           <AnimatePresence initial={false}>
