@@ -3,7 +3,7 @@ import { GiEgypt } from "react-icons/gi";
 export default function PopularDestination() {
   return (
     <section id="home">
-      <div className="min-h-screen py-16 px-4 sm:px-6 md:px-8 lg:px-12">
+      <div className="min-h-screen py-6 sm:py-6 px-4 md:px-8 lg:px-12">
         <div className="text-center mb-10 sm:mb-12 lg:mb-16">
           <div className="flex items-center justify-center mb-6">
             <div className="h-1 w-10 sm:w-20 md:w-24 bg-[linear-gradient(to_right,#C7A15C,#FFE6A0,#FFD27F,transparent)]"></div>
