@@ -7,7 +7,7 @@
     --primary: #e2c784;
     --secondary: #bda164;
     --tertiary: #967b48;
-    --background: #f9f7ea;
+    --background: #faf7df;
     --surface: #fcf7e3;
     --border: #f0e0b1;
     --text: #4a381f;
@@ -37,7 +37,7 @@
   }
 }
 
-@theme {
+/* @theme {
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-tertiary: var(--tertiary);
@@ -47,4 +47,4 @@
   --color-text: var(--text);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
-}
+} */
