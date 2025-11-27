@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import CircularGallerySection from "../../components/about/CircularGallerySection.jsx";
 import CTASection from "../../components/about/CTASection.jsx";
 import AboutHeroSection from "../../components/about/AboutHeroSection.jsx";
@@ -7,40 +5,10 @@ import StatsSection from "../../components/about/StatsSection.jsx";
 import StorySection from "../../components/about/StorySection.jsx";
 import ValuesSection from "../../components/about/ValuesSection.jsx";
 
-import "../../styles/custom.css";
-
-import {
-  Users,
-  Award,
-  MapPin,
-  Star,
-  Heart,
-  Globe,
-  Clock,
-  CheckCircle,
-} from "lucide-react";
+import {Users,Award,MapPin,Star,Heart,Globe,Clock,CheckCircle,} from "lucide-react";
 
 export default function About() {
-  useEffect(() => {
-    const observerOptions = {
-      threshold: [0, 0.1, 0.2, 0.3],
-      rootMargin: "0px 0px -50px 0px",
-    };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.2) {
-          entry.target.classList.add("in-view");
-        } else if (!entry.isIntersecting) {
-          entry.target.classList.remove("in-view");
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll(".fade-up, .fade-left, .fade-right").forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
 
   const stats = [
     {
