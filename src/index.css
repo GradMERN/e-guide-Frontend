@@ -48,3 +48,8 @@
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
 }
+
+::view-transition-old(root), ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
