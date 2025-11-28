@@ -1,178 +1,255 @@
-import { MdEmail } from "react-icons/md";
-import { FaLock, FaEye, FaGoogle, FaSignInAlt, FaScroll } from "react-icons/fa";
-import { GiEgyptianProfile, GiEgyptianTemple } from "react-icons/gi";
+import { GiEgyptianTemple, GiEgyptianProfile } from "react-icons/gi";
 import { FaShip } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { MdEmail } from "react-icons/md";
+import { FaScroll, FaLock, FaEye, FaEyeSlash, FaSignInAlt, FaGoogle, } from "react-icons/fa";
+import Navbar from "../../components/Navbar";
 
 
-export default function Login() {
+export default function LoginPage() {
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [animate, setAnimate] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [focusedInput, setFocusedInput] = useState(null);
+
+    useEffect(() => setAnimate(true), []);
+
+    const togglePassword = () => setShowPassword((s) => !s);
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setTimeout(() => setIsLoading(false), 2000);
+    };
+
+    const LeftCards = [{
+        icon: GiEgyptianTemple,
+        title: "Ancient Wonders",
+        text: "Explore the magnificent pyramids, temples, and tombs that have stood for thousands of years.",
+    },
+    {
+        icon: FaScroll,
+        title: "Expert Guides",
+        text: "Learn from Egyptologists who bring ancient history to life with captivating stories.",
+    },
+    {
+        icon: FaShip,
+        title: "Nile Cruises",
+        text: "Sail the legendary Nile River in luxury while visiting historical sites along the way.",
+    },]
+
+
+    const Stats = [{ num: "5k+", label: "Travelers" },
+    { num: "150+", label: "Packages" },
+    { num: "25+", label: "Years Exp" },
+
+    ]
 
     return (
-
-        <section className="login-page flex min-h-screen bg-[#fffaec]">
-
+        <>
 
 
-            {/* Left Section  */}
-            <div className="hidden lg:flex w-1/2 flex-col justify-center items-center bg-[#0c192d] px-10 py-15">
+            <Navbar />
+
+            <section className="flex flex-row  bg-[#050505] text-slate-200 overflow-hidden">
 
 
-                <div className="flex flex-col items-center mb-10">
 
-                    <GiEgyptianProfile size={100} className="text-[#f7b825]" />
-                    <h1 className="text-5xl xl:text-6xl text-white font-bold text-center pb-4">Mystic Egypt Tours</h1>
-                    <div className="h-[3px] w-56 my-3 bg-linear-to-r from-[#d4af3707] via-[#f7b825] to-[#d4af3700]"></div>
-                    <p className="text-xl text-[#efddaf] font-medium italic">Journey Through Millennia</p>
+                {/* LEFT SECTION */}
 
-                </div>
+                <div className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out 
+                          ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}>
 
 
-                <div className="flex flex-col items-center space-y-8 w-full">
 
 
-                    <div className="bg-[#0c192d] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
+                    <div className="flex items-center gap-5">
 
-                        <GiEgyptianTemple size={35} className="text-[#f7b825]" />
-                        <div>
-                            <h3 className="text-3xl text-white font-bold">Ancient Wonders</h3>
-                            <p className="text-lg text-[#efddaf]">Explore the magnificent pyramids, temples, and tombs that have stood for thousands of years.</p>
+                        <GiEgyptianProfile className="max-[1212px]:w-20 max-[1212px]:h-20 w-24 h-24 text-[#f7c95f] drop-shadow-[0_0_15px_rgba(247,201,95,0.5)]" />
+
+                        <div className="flex flex-col text-center">
+                            <h1 className="bg-linear-to-r from-[#f7c95f] via-[#e9dcc0] to-[#f7c95f] bg-clip-text text-transparent max-[1212px]:text-3xl text-5xl font-extrabold tracking-tighter">MYSTIC EGYPT</h1>
+                            <p className="mt-2 pt-1 border-t border-[#f7c95f]/30 max-[1212px]:text-xs text-md uppercase tracking-widest text-[#bfb191]">Journey Through Millennia</p>
                         </div>
-
-                    </div>
-
-
-                    <div className="bg-[#0c192d] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
-
-                        <FaScroll size={35} className="text-[#f7b825]" />
-                        <div>
-                            <h3 className="text-3xl text-white font-bold">Expert Guides</h3>
-                            <p className="text-lg text-[#efddaf]">Learn from Egyptologists who bring ancient history to life with captivating stories.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div className="bg-[#0c192d] border border-[#f7b825] rounded-xl p-6 flex gap-4 w-[80%] ">
-
-                        <FaShip size={35} className="text-[#f7b825]" />
-                        <div>
-                            <h3 className="text-3xl text-white font-bold">Nile Cruises</h3>
-                            <p className="text-lg text-[#efddaf] ">Sail the legendary Nile River in luxury while visiting historical sites along the way.</p>
-                        </div>
-
                     </div>
 
 
 
-                </div>
 
+                    <div className="flex flex-col w-full max-w-lg space-y-8">
 
-                <div className="flex items-center space-x-10 mt-10">
+                        {LeftCards.map((item, idx) => (
+                            <div key={idx}
+                                className="flex w-full gap-5 rounded-xl border border-[#f7c95f]/20 bg-[#171616]/60 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#f7c95f] hover:bg-[#1f1e1e] hover:shadow-[0_4px_20px_rgba(247,201,95,0.1)] hover:cursor-pointer">
 
-                    <div className="text-center font-bold">
-                        <h4 className="text-[#f7b825] text-4xl">5000+</h4>
-                        <p className="text-[#efddaf] text-sm">Happy Travelers</p>
-                    </div>
-
-                    <div className="w-px h-10 bg-[#f7b825]/40"></div>
-
-                    <div className="text-center font-bold">
-                        <h4 className="text-[#f7b825] text-4xl">150+</h4>
-                        <p className="text-[#efddaf] text-sm">Tour Packages</p>
-                    </div>
-
-                    <div className="w-px h-10 bg-[#f7b825]/40"></div>
-
-                    <div className="text-center font-bold">
-                        <h4 className="text-[#f7b825] text-4xl">25+</h4>
-                        <p className="text-[#efddaf] text-sm">Years Experience</p>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-
-
-
-            {/* Right Section */}
-            <div className="w-full lg:w-1/2 flex justify-center items-center px-4 sm:px-6 md:px-10 py-8 sm:py-12">
-                <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
-
-
-                    <div className="flex flex-col items-center pb-6">
-
-                        <div className="bg-[#ce9817] p-4 sm:p-5 rounded-full shadow-2xl animate-bounce">
-                            <GiEgyptianProfile className="w-8 h-8 sm:w-12 sm:h-12 text-white" />
-                        </div>
-                        <h2 className="text-2xl sm:text-4xl lg:text-6xl text-center font-bold mt-4"> WELCOME BACK</h2>
-                        <p className="text-xs sm:text-sm md:text-base text-gray-500 italic text-center">Continue Your Journey</p>
-                    </div>
-
-
-                    {/* Form Container */}
-
-                    <div className="bg-white p-4 sm:p-8 md:p-12 rounded-lg shadow-xl border-t-4 border-[#ce9817]">
-
-
-                        <form className="space-y-4 sm:space-y-5">
-
-
-                            <div>
-                                <label className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium">
-                                    <MdEmail className="text-[#ce9817] w-4 h-4 sm:w-5 sm:h-5" />
-                                    Email address
-                                </label>
-                                <input className="mt-2 w-full border border-gray-300 rounded-md px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm placeholder-gray-400 focus:ring-1 focus:ring-[#ce9817] focus:outline-[#ce9817] " placeholder="your.email@example.com" />
-                            </div>
-
-
-
-                            <div>
-                                <label className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium">
-                                    <FaLock className="text-[#ce9817] w-4 h-4 sm:w-5 sm:h-5" />Password</label>
-                                <div className="relative mt-2">
-                                    <input type="password" className="w-full border border-gray-300 rounded-md px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm placeholder-gray-400 focus:ring-1 focus:ring-[#ce9817] focus:outline-[#ce9817]" placeholder="Enter your password" />
-                                    <FaEye className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#ce9817] w-4 h-4 sm:w-5 sm:h-5 cursor-pointer" />
+                                <div className="rounded-lg bg-[#f7c95f]/10 p-3">
+                                    <item.icon size={28} className="text-[#f7c95f]" />
                                 </div>
-                                <p className="text-[#ce9817] hover:text-[#a77407] cursor-pointer font-bold mt-1 text-end text-xs sm:text-sm">Forgot Password?</p>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-white">
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-sm text-[#bfb191]">{item.text}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+
+
+                    <div className="flex space-x-12">
+                        {Stats.map((stat, idx) => (
+                            <div key={idx} className="text-center">
+                                <h4 className="text-3xl font-bold text-[#f7c95f]">{stat.num}</h4>
+                                <p className="text-xs uppercase tracking-wider text-[#bfb191]">
+                                    {stat.label}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                {/* RIGHT SECTION */}
+                <div className={` w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50  px-3 lg:px-10 transition-all duration-1000 ease-out delay-100
+                                 
+          ${animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}>
+
+
+
+
+                    <div className="absolute inset-0">
+
+                        <img src="src/assets/images/loginBg.webp" className="h-full w-full object-cover opacity-30" alt="bg-login" />
+                        <div className="absolute inset-0 bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505]" />
+
+                    </div>
+
+
+
+
+                    <div className="relative w-full max-w-sm sm:max-w-lg px-6 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 md:py-15 rounded-2xl border border-[#f7c95f]/20 bg-[#0c0c0c]/80 backdrop-blur-xl shadow-[0_0_50px_-10px_rgba(247,201,95,0.2)] overflow-hidden">
+
+                        <div className="absolute top-0 h-1 w-full bg-linear-to-r from-transparent via-[#f7c95f] to-transparent opacity-50" />
+
+
+
+
+                        <div className="mb-15 flex flex-col items-center">
+
+                            <div className="mb-4 rounded-full border border-[#f7c95f]/40 bg-linear-to-br from-[#1a1a1a] to-[#0a0a0a] p-4 shadow-[0_0_20px_rgba(247,201,95,0.15)]">
+                                <GiEgyptianProfile className="h-8 w-8 sm:h-15 sm:w-15 text-[#f7c95f]" />
+                            </div>
+
+                            <h2 className="bg-linear-to-r from-[#f7c95f] via-[#e9dcc0] to-[#f7c95f] bg-clip-text text-transparent text-2xl sm:text-3xl md:text-4xl xl:text-5xl text-center font-extrabold tracking-wide"> Welcome Back </h2>
+
+                        </div>
+
+
+
+
+
+
+
+
+
+                        <form onSubmit={handleLogin} className="flex flex-col gap-4 sm:gap-5 md:gap-6">
+
+
+
+
+                            <div className={`relative transition-all duration-300  ${focusedInput === "email" ? "scale-[1.02]" : ""}`}>
+
+                                <MdEmail className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "email" ? "text-[#f7c95f]" : "text-[#bfb191]"}`} />
+
+                                <input name="email" type="email" placeholder="Enter your email " onFocus={() => setFocusedInput("email")} onBlur={() => setFocusedInput(null)}
+                                    className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3.5 ps-12 pe-4 text-white placeholder-gray-600 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50" />
+
                             </div>
 
 
 
-                            <button type="submit" className="w-full flex justify-center items-center gap-1 sm:gap-2 cursor-pointer
-                             bg-linear-to-r from-[#c9a45f] to-[#dfc380] hover:bg-linear-to-r hover:from-[#dfc380] hover:to-[#c9a45f] text-white text-xs sm:text-lg px-2 sm:px-4 py-2 sm:py-4 
-                             rounded-md font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-600">
-                                <FaSignInAlt /> Sign In
+                            <div className={`relative transition-all duration-300 ${focusedInput === "password" ? "scale-[1.02]" : ""}`} >
+
+                                <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password" ?
+                                    "text-[#f7c95f]" : "text-[#bfb191]"}`} />
+
+                                <input name="password" type={showPassword ? "text" : "password"} placeholder="Password" onFocus={() => setFocusedInput("password")} onBlur={() => setFocusedInput(null)}
+                                    className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3.5 pl-12 pr-12 text-white placeholder-gray-600 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50" />
+
+                                <button type="button" onClick={togglePassword} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#bfb191] transition-colors hover:text-[#f7c95f]" >
+                                    {showPassword ? <FaEyeSlash className="cursor-pointer" /> : <FaEye className="cursor-pointer" />}
+                                </button>
+
+                            </div>
+
+
+
+
+                            <div className="flex justify-end -mt-3 sm:-mt-4.5 md:-mt-5">
+                                <Link to="#" className="text-xs text-[#bfb191] transition-colors hover:text-[#f7c95f]" > Forgot Password? </Link>
+                            </div>
+
+
+
+
+
+                            <button type="submit" disabled={isLoading} className="group relative flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#c9a45f] to-[#aa853c] py-3.5 mt-7  font-bold text-black shadow-lg transition-all duration-300 hover:scale-[1.02] hover:to-[#c9a45f] active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-70">
+
+                                {isLoading ? (<GiEgyptianProfile className="h-5 w-5 animate-spin text-black" />) : (<> <FaSignInAlt /> <span>Sign In</span> </>)}
                             </button>
 
 
-                            <div className="pt-4 text-center">
-                                <div className="flex items-center text-gray-400 mb-4">
-                                    <div className="flex-1 h-px bg-gray-300"></div>
-                                    <span className="px-2 text-sm ">Or</span>
-                                    <div className="flex-1 h-px bg-gray-300"></div>
-                                </div>
-                                <button className=" continue-btn w-full flex items-center justify-center gap-2 border border-[#c9a45f] hover:bg-[#c9a45f]  hover:text-white cursor-pointer transition-all duration-75 text-gray-500 font-bold px-2  sm:px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm">
-                                    Continue with Google <FaGoogle className="w-4 h-4 sm:w-5 sm:h-5" />
-                                </button>
+
+
+
+                            <div className="relative flex items-center gap-4 py-2">
+                                <div className="flex-1 h-px bg-[#2b2b2b]" />
+                                <span className="text-xs uppercase text-gray-500">Or continue with </span>
+                                <div className="flex-1 h-px bg-[#2b2b2b]" />
                             </div>
 
+
+
+
+                            <button type="button" className="group flex w-full items-center justify-center gap-3 rounded-xl border border-[#2b2b2b] bg-[#1a1a1a] py-3 text-white cursor-pointer transition-all duration-300 hover:bg-[#252525] hover:border-[#f7c95f]/50">
+                                <FaGoogle className="text-[#bfb191] transition-colors group-hover:text-white" />
+                                <span className="text-sm font-medium text-[#bfb191] group-hover:text-white"> Google Account </span>
+                            </button>
                         </form>
 
 
-                        <p className="mt-4 sm:mt-6 text-center text-xs sm:text-lg text-gray-500">Don't have an account?
-                            <Link to="/register" className="font-bold text-[#c9a45f] hover:text-[#ac8e56]" >
+
+
+
+
+                        <Link to="/register" className="font-semibold text-[#f7c95f] transition-all hover:text-[#ffe4a0] " >
+
+
+                            <p className="mt-6 text-center text-sm text-gray-500 hover:text-[#f7c95f] cursor-pointer transition-all">
+                                New to Mystic Egypt?{" "}
                                 Create Account
-                            </Link>
-                        </p>
-
+                            </p>
+                        </Link>
                     </div>
-                </div>
-            </div>
 
-        </section>
+
+
+
+                </div>
+
+
+
+
+
+            </section>
+        </>
     );
 }
