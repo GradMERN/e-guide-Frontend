@@ -231,7 +231,7 @@ const FAQSection = () => {
   }
 
   return (
-    <div className="min-h-screen py-6 sm:py-6 px-4 md:px-8 lg:px-12">
+    <section className="min-h-screen py-10 sm:py-12 md:py-16 px-4 sm:px-6 md:px-10 lg:px-14 mb-12 md:mb-20">
       <TitlesHome
         icon={BsQuestionSquare}
         title="Frequently Asked Questions"
@@ -243,7 +243,7 @@ const FAQSection = () => {
         }
       />
       <FAQGlobal categories={faqCategories} />
-    </div>
+    </section>
   );
 };
 
