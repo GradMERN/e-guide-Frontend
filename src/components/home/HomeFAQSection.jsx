@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { BsQuestionSquare } from "react-icons/bs";
-import { IoChevronDown } from "react-icons/io5";
 import {FaInfoCircle,FaLandmark,FaMobileAlt,FaUser,FaMapMarkerAlt,FaGlobe,} from "react-icons/fa";
+import FAQGlobal from "../common/FAQGlobal";
+import TitlesHome from "../common/TitlesHome";
 
-import { motion, AnimatePresence } from "motion/react";
 
 const FAQSection = () => {
-  const [openCategory, setOpenCategory] = useState(0);
-  const [openItems, setOpenItems] = useState({});
   const [faqCategories, setFaqCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -213,23 +211,16 @@ const FAQSection = () => {
       try {
         throw new Error("Simulating API failure to use sample data.");
       } catch {
-        setFaqCategories(getSampleData());
+        const dataWithIcons = getSampleData().map((cat) => ({
+          ...cat,icon: iconMap[cat.icon] || BsQuestionSquare,
+        }));
+        setFaqCategories(dataWithIcons);
       } finally {
         setLoading(false);
       }
     };
     fetchFAQs();
   }, []);
-
-  const toggleCategory = (categoryIndex) => {
-    setOpenCategory((prev) => (prev === categoryIndex ? null : categoryIndex));
-    setOpenItems({});
-  };
-
-  const toggleItem = (catIndex, qIndex) => {
-    const key = `${catIndex}-${qIndex}`;
-    setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
 
   if (loading) {
     return (
@@ -241,87 +232,17 @@ const FAQSection = () => {
 
   return (
     <div className="min-h-screen py-6 sm:py-6 px-4 md:px-8 lg:px-12">
-      <div className="text-center mb-10 sm:mb-12 lg:mb-16">
-        <div className="flex items-center justify-center mb-6">
-          <div className="h-1 w-10 sm:w-20 md:w-24 bg-[linear-gradient(to_right,#C7A15C,#FFE6A0,#FFD27F,transparent)]"></div>
-          <div className="relative mx-4">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[linear-gradient(to_bottom_right,#FFD97F,#FFE6A0)] flex items-center justify-center shadow-lg shadow-[#FFD97F]/30 rounded-lg">
-              <BsQuestionSquare className="w-6 h-6 sm:w-7 sm:h-7 text-black"/>
-            </div>
-            <BsQuestionSquare className="absolute top-0 left-0 w-12 h-12 sm:w-14 sm:h-14 opacity-30 blur-sm text-[#FFD97F]"/>
-          </div>
-          <div className="h-1 w-10 sm:w-20 md:w-24 bg-[linear-gradient(to_left,#C7A15C,#FFE6A0,#FFD27F,transparent)] rotate-180"></div>
-        </div>
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F] bg-clip-text text-transparent transition-all duration-300">
-          Frequently Asked Questions
-        </h2>
-        <p className="text-sm sm:text-lg text-white max-w-3xl mx-auto px-2">
-          Everything you need to know about your journey to the land of
-          <span className="font-semibold bg-linear-to-r from-[#C7A15C] via-[#E2C784] to-[#C7A15C] bg-clip-text text-transparent"> PEACE.</span>
-        </p>
-      </div>
-
-      <div className="max-w-4xl lg:max-w-6xl mx-auto space-y-6 sm:space-y-8">
-        {faqCategories.map((category, catIndex) => {
-          const Icon = iconMap[category.icon] || FaInfoCircle;
-          const isCategoryOpen = openCategory === catIndex;
-
-          return (
-            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, delay: catIndex * 0.2 }} className="rounded-2xl shadow-2xl">
-              <div className="px-4 py-3 sm:px-6 sm:py-4 border-4 rounded-2xl bg-linear-to-r from-[#B9934C] via-[#e8bd72] to-[#b58a3f] rounded-t-2xl 
-              border-amber-950 flex items-center justify-between cursor-pointer transition-colors duration-300 hover:bg-linear-to-r hover:from-[#d1a85b] hover:via-[#e0c083] hover:to-[#c4984f]"
-                onClick={() => toggleCategory(catIndex)}>
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <Icon size={24} className="text-amber-950 shrink-0" />
-                  <div>
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-amber-950 leading-tight">{category.title}</h3>
-                    <span className="text-xs sm:text-sm text-white/90">{isCategoryOpen ? "Click to collapse" : "Click to expand"}</span>
-                  </div>
-                </div>
-                <IoChevronDown className={`text-amber-950 transition-transform duration-400 shrink-0 ${isCategoryOpen ? "rotate-180" : ""}`}size={24}/>
-              </div>
-
-              <AnimatePresence initial={false}>
-                {isCategoryOpen && (
-                  <motion.div key={`cat-${catIndex}`} initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }} className="overflow-hidden">
-                    {category.questions.map((item, qIndex) => {
-                      const key = `${catIndex}-${qIndex}`;
-                      const isOpen = openItems[key];
-
-                      return (
-                        <motion.div
-                          key={key} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.3 }} className="overflow-hidden border-b last:border-b-0">
-                          <button onClick={() => toggleItem(catIndex, qIndex)}
-                            className="w-full text-left px-4 py-4 sm:px-6 sm:py-5 flex justify-between items-center transition-colors duration-300 text-white hover:bg-amber-900/30">
-                            <span className="text-sm sm:text-lg font-medium leading-relaxed pr-4">{item.question}</span>
-                            <IoChevronDown className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}size={22}/>
-                          </button>
-
-                          <AnimatePresence initial={false}>
-                            {isOpen && (
-                              <motion.div
-                                key={`answer-${key}`} initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                                transition={{duration: 0.4,ease: "easeInOut",}}className="overflow-hidden">
-                                <div className="px-4 pb-4 sm:px-6 sm:pb-6 mt-2">
-                                  <p className="text-sm sm:text-base text-white/90 border-l-4 pl-3 sm:pl-4 border-amber-950">{item.answer}</p>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      );
-                    })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          );
-        })}
-      </div>
+      <TitlesHome
+        icon={BsQuestionSquare}
+        title="Frequently Asked Questions"
+        paragraph={
+          <>
+            Everything you need to know about your journey to the land of
+            <span className="font-semibold bg-linear-to-r from-[#C7A15C] via-[#E2C784] to-[#C7A15C] bg-clip-text text-transparent"> PEACE.</span>
+          </>
+        }
+      />
+      <FAQGlobal categories={faqCategories} />
     </div>
   );
 };
