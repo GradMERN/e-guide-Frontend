@@ -7,25 +7,47 @@
     --primary: #e2c784;
     --secondary: #bda164;
     --tertiary: #967b48;
-    --background: #fffdf0;
+
+    --gradient-from: #bda164;
+    --gradient-via:  #967b48;
+    --gradient-to:   #4a381f;
+
+    --background: #e9e5cc;
     --surface: #fcf7e3;
-    --border: #f0e0b1;
+    --border: #e8cf81;
+
+    --border-outlined: var(--text);
+
     --text: #4a381f;
     --text-secondary: #705830;
     --text-muted: #967b48;
+    --text-button: #ffffff;
+
+    --button-bg: #4a381f;
   }
 
   .dark {
     /* Dark Theme */
-    --primary: #e2c784;
-    --secondary: #c8a952;
-    --tertiary: #a88c3a;
+    --primary: #C7A15C;
+    --secondary: #FFE6A0;
+    --tertiary: #FFD27F;
+
+    --gradient-from: #C7A15C;
+    --gradient-via:  #FFE6A0;
+    --gradient-to:   #FFD27F;
+
     --background: #050505;
     --surface: #151515;
-    --border: #2d2d2d;
-    --text: #f0f0f0;
-    --text-secondary: #c2c2c2;
+    --border: #C7A15C;
+
+    --border-outlined: var(--border);
+
+    --text: #fbfbfb;
+    --text-secondary: #dbd8d8;
     --text-muted: #7a7a7a;
+    --text-button: #050505;
+
+    --button-bg: #C7A15C;
   }
   * {
     border-color: var(--border);
@@ -37,16 +59,65 @@
   }
 }
 
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300;
+    background-color: var(--button-bg);
+    color: var(--text-button);
+    border: 1px solid var(--border);
+  }
+  .btn-primary:hover {
+    background-color: var(--secondary);
+    color: var(--text-button);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300;
+    background-color: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-outlined);
+  }
+
+
+  .btn-secondary:hover {
+    background-color: var(--secondary);
+    color: var(--text-button);
+    border-color: var(--secondary);
+  }
+
+  .btn-ghost {
+    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300;
+    background-color: transparent;
+    color: var(--text);
+    border: 1px solid transparent;
+  }
+  .btn-ghost:hover {
+    background-color: var(--surface);
+    color: var(--text-button);
+  }
+}
+
+
 @theme {
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-tertiary: var(--tertiary);
+
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-border: var(--border);
+
   --color-text: var(--text);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
+  --color-text-button: var(--text-button);
+
+  --color-gradient-from: var(--gradient-from);
+  --color-gradient-via:  var(--gradient-via);
+  --color-gradient-to:   var(--gradient-to);
+
+  --color-button-bg: var(--button-bg);
 }
 
 /* ::view-transition-old(root), ::view-transition-new(root) {
