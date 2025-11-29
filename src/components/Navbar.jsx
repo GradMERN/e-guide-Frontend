@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaPhone, FaEnvelope, FaClock } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./ui/SwitchLanguages";
@@ -22,67 +22,84 @@ export default function Navbar() {
   }, []);
 
   return (
-    <div className="relative">
-      {/* Theme Toggle positioned to the left */}
-      <div className="fixed left-8 top-4 z-50"></div>
+    <div className="absolute top-0 left-0 right-0 z-50">
+      <div className="w-full bg-background dark:bg-background">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between py-2">
+            {/* Contact Info */}
+            <div className="flex items-center gap-4 text-sm text-text-muted">
+              <div className="flex items-center gap-1">
+                <FaPhone className="text-primary text-xs" />
+                <span>+20 123 456 7890</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaEnvelope className="text-primary text-xs" />
+                <span>info@mysticegypttours.com</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaClock className="text-primary text-xs" />
+                <span>24/7 Support</span>
+              </div>
+            </div>
 
-      <nav
-        className="
-  fixed left-1/2 -translate-x-1/2 z-50 
-  flex items-center justify-between
-  top-2 w-[92%] max-w-6xl
-  px-8 py-3 rounded-2xl
-  bg-surface/60 dark:bg-surface/40 
-  backdrop-blur-xl border border-white/10 shadow-lg
-  transition-all duration-500
-"
-      >
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md">
-            <FaEye className="text-black text-2xl" />
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <Switch />
+            </div>
           </div>
-          <h1 className="text-xl font-semibold text-primary dark:text-primary tracking-wide">
-            Mystic Egypt Tours
-          </h1>
         </div>
+      </div>
 
-        {/* Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              className={({ isActive }) =>
-                `relative text-[15px] transition font-medium
-           ${isActive ? "text-primary" : "text-text hover:text-primary"}
-           after:content-[''] after:absolute after:left-0 after:-bottom-1
-           after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300
-           hover:after:w-full`
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
-        </div>
+      {/* Main Navbar*/}
+      <nav className="w-full bg-surface dark:bg-surface shadow-md">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between py-3">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-secondary flex items-center justify-center shadow-md">
+                <FaEye className="text-black text-xl" />
+              </div>
+              <h1 className="text-xl font-bold text-primary dark:text-primary tracking-wide">
+                Mystic Egypt Tours
+              </h1>
+            </div>
 
-        {/* Right Side - Only Login button now */}
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <NavLink
-            to="/login"
-            className="px-6 py-2 rounded-xl bg-gradient-to-r from-primary to-secondary 
-                 text-black font-medium shadow-md hover:brightness-110 transition"
-          >
-            Login
-          </NavLink>
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center gap-6">
+              {links.map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `relative text-[14px] transition font-medium
+                     ${
+                       isActive
+                         ? "text-primary"
+                         : "text-text hover:text-primary"
+                     }
+                     after:content-[''] after:absolute after:left-0 after:-bottom-1
+                     after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300
+                     hover:after:w-full`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+            </div>
+
+            {/* Login Button */}
+            <div className="flex items-center">
+              <NavLink
+                to="/login"
+                className="px-5 py-1.5 rounded-lg bg-linear-to-r from-primary to-secondary 
+                         text-black font-medium shadow-md hover:brightness-110 transition hover:scale-105 text-sm"
+              >
+                Login
+              </NavLink>
+            </div>
+          </div>
         </div>
       </nav>
-
-      {/* Language Switch positioned to the right */}
-      <div className="absolute right-8 top-6 z-50">
-        <Switch />
-      </div>
     </div>
   );
 }
