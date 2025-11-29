@@ -96,6 +96,53 @@
     background-color: var(--surface);
     color: var(--text-button);
   }
+
+    /* Horizontal Scroll for Gallery Location Tabs - Cross-browser compatible */
+  .gallery-tabs-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  .gallery-tabs-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .gallery-tabs-scroll::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 0 1rem;
+  }
+
+  .gallery-tabs-scroll::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+  }
+
+  .gallery-tabs-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+  }
+
+  .dark .gallery-tabs-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+  }
+
+  .dark .gallery-tabs-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary);
+  }
+
+  /* Firefox - only for browsers that support it */
+  @supports (scrollbar-width: thin) {
+    .gallery-tabs-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #d1d5db transparent;
+    }
+
+    .dark .gallery-tabs-scroll {
+      scrollbar-color: var(--border) transparent;
+    }
+  }
 }
 
 

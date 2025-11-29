@@ -23,7 +23,7 @@ export default function FAQGlobal({ categories }) {
           const isOpenCategory = openCategory === catIndex;
 
           return (
-            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, delay: catIndex * 0.2 }} className="rounded-2xl shadow-2xl">
+            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.6, delay: catIndex * 0.2 }} className="rounded-2xl shadow-2xl">
               
               <div className="px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-5 rounded-2xl bg-linear-to-r from-[#B9934C] via-[#e8bd72] to-[#b58a3f] cursor-pointer transition-colors duration-300 hover:from-[#d1a85b] hover:via-[#e0c083] hover:to-[#c4984f]"
                 onClick={() => toggleCategory(catIndex)}>
@@ -41,7 +41,7 @@ export default function FAQGlobal({ categories }) {
 
               <AnimatePresence initial={false}>
                 {isOpenCategory && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.5, ease: "easeInOut" }} className="overflow-hidden">
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="overflow-hidden">
                     {category.questions.map((question, qIndex) => {
                       const key = `${catIndex}-${qIndex}`;
                       const isOpen = openItems[key];
