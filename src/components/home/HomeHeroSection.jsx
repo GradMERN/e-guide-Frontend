@@ -37,6 +37,7 @@ return (
           <motion.h1
             className="
               font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-3 md:mb-4
+              leading-normal sm:leading-[1.15] md:leading-normal
               bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F]
               bg-clip-text text-transparent [text-shadow:0_0_40px_rgba(199,161,92,0.5)]">
             Discover Egypt
