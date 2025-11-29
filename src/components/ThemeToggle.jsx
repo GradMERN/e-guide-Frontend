@@ -29,7 +29,7 @@ export default function ThemeToggle() {
       duration={750}
       toggled={theme === "dark"}
       toggle={toggleTheme}
-      className="text-3xl text-text hover:text-primary hover:scale-110 transition-all duration-300"
+      className="text-xl text-text hover:text-primary hover:scale-110 transition-all duration-300"
     />
   );
 }
