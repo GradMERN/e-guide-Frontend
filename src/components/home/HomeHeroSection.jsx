@@ -25,28 +25,16 @@ export default function ImagesSliderDemo() {
     { icon: Users, label: "Expert Guides" },
   ];
 
-  const scrollToNextSection = () => {
-    const next = document.querySelector("#home");
-    if (next) next.scrollIntoView({ behavior: "smooth" });
-  };
-
 return (
     <ImagesSlider images={images} className="h-screen md:h-[75vh] lg:h-[90vh] xl:h-screen w-full">
       <div className="z-50 flex flex-col justify-center items-center px-4 py-8 sm:py-12">
         <motion.div initial={{ opacity: 0, y: -80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-6 md:mb-10">
           <motion.h1
-            className="
-              font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-3 md:mb-4
-              leading-normal sm:leading-[1.15] md:leading-normal
-              bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F]
-              bg-clip-text text-transparent [text-shadow:0_0_40px_rgba(199,161,92,0.5)]">
+            className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-3 md:mb-4 leading-normal sm:leading-[1.15] md:leading-normal bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F] bg-clip-text text-transparent [text-shadow:0_0_40px_rgba(199,161,92,0.5)]">
             Discover Egypt
           </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide">
             Where history comes alive and adventures begin
           </motion.p>
         </motion.div>
@@ -78,14 +66,11 @@ return (
           </button>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.8 }}
-          className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2">
-          <motion.button onClick={scrollToNextSection}
-            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 1.7 }}
-            className="p-3 md:p-4 lg:p-5 rounded-full bg-[#C7A15C]/20 hover:bg-[#E2C784]/30 transition backdrop-blur-sm z-10 animate-bounce">
-            <ChevronDown size={28} className="text-white drop-shadow-[0_0_8px_rgba(231,205,141,0.8)] md:w-8 md:h-8 lg:w-8 lg:h-8"/>
-          </motion.button>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20">
+        <motion.div animate={{ y: [0, 10, 0] }} transition={{duration: 1.5, repeat: Infinity, repeatType: "loop", ease: "easeInOut"}}className="relative flex justify-center items-center">
+          <ChevronDown size={32} className="text-white md:w-10 md:h-10 lg:w-12 lg:h-12 "/>
         </motion.div>
+    </motion.div>
       </div>
     </ImagesSlider>
   );

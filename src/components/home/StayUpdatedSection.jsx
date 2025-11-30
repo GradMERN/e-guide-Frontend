@@ -6,6 +6,7 @@ import TitlesHome from "../common/TitlesHome";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { motion, AnimatePresence } from "motion/react";
+import SectionWrapperFull from "../common/SectionWrapper";
 
 
 export default function StayUpdatedSection() {
@@ -36,7 +37,7 @@ export default function StayUpdatedSection() {
     };
 
   return (
-    <section id="home" className="min-h-screen py-10 sm:py-12 md:py-16 px-4 sm:px-6 md:px-10 lg:px-14 mb-12 md:mb-20">
+    <SectionWrapperFull>
       <TitlesHome
         icon={GrUpdate}
         title="Stay Updated"
@@ -119,6 +120,6 @@ export default function StayUpdatedSection() {
           </div>
         </div>
       </motion.div>
-    </section>
+    </SectionWrapperFull>
   );
 };

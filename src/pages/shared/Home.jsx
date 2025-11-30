@@ -9,6 +9,7 @@ import WhyChooseUsSection from "../../components/home/WhyChooseUsSection.jsx";
 import GallerySection from "../../components/home/GallerySection.jsx";
 import StayUpdatedSection from "../../components/home/StayUpdatedSection.jsx";
 import HomeFAQSection from "../../components/home/HomeFAQSection.jsx";
+import CityLoopSection from "../../components/home/CitiyLoopSection.jsx";
 
 
 const Home = () => {
@@ -17,6 +18,7 @@ const Home = () => {
     <>
       <div className=" text-white ">
         <ImageSliderDemo />
+        <CityLoopSection/>
         <PopularDestination />
         <TourPackagesSection />
         <TourGuidesSection></TourGuidesSection>
