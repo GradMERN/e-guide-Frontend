@@ -3,6 +3,7 @@ import { BsQuestionSquare } from "react-icons/bs";
 import {FaInfoCircle,FaLandmark,FaMobileAlt,FaUser,FaMapMarkerAlt,FaGlobe,} from "react-icons/fa";
 import FAQGlobal from "../common/FAQGlobal";
 import TitlesHome from "../common/TitlesHome";
+import SectionWrapperFull from "../common/SectionWrapper";
 
 
 const FAQSection = () => {
@@ -231,7 +232,7 @@ const FAQSection = () => {
   }
 
   return (
-    <section className="min-h-screen py-10 sm:py-12 md:py-16 px-4 sm:px-6 md:px-10 lg:px-14 mb-12 md:mb-20">
+    <SectionWrapperFull>
       <TitlesHome
         icon={BsQuestionSquare}
         title="Frequently Asked Questions"
@@ -243,7 +244,7 @@ const FAQSection = () => {
         }
       />
       <FAQGlobal categories={faqCategories} />
-    </section>
+    </SectionWrapperFull>
   );
 };
 
