@@ -16,7 +16,7 @@ const Home = () => {
   const { t } = useTranslation();
   return (
     <>
-      <div className=" text-white ">
+      <div>
         <ImageSliderDemo />
         <CityLoopSection/>
         <PopularDestination />

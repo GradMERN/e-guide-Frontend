@@ -53,17 +53,8 @@ return (
 
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-col sm:flex-row gap-3 md:gap-6">
-          <button className="group px-6 py-3 sm:px-8 sm:py-4 backdrop-blur-sm border-2 text-white text-center rounded-full relative overflow-hidden transition-all duration-300 hover:scale-105 bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#D4A574] border-[#FFD97F]">
-            <span className="relative z-10 font-semibold text-base md:text-lg text-black">
-              Explore Tours
-            </span>
-            <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-          </button>
-
-          <button className="px-6 py-3 sm:px-8 sm:py-4 backdrop-blur-md bg-white/10 border-2 border-white/30 text-white text-center rounded-full relative transition-all duration-300 hover:bg-white/20 hover:scale-105">
-            <span className="font-semibold text-base md:text-lg">Watch Video</span>
-            <div className="absolute inset-x-0 h-px -bottom-px w-3/4 mx-auto bg-linear-to-r from-transparent via-[#FFD97F] to-transparent" />
-          </button>
+          <button className="btn-primary-hero">Explore Egypt</button>
+          <button className="btn-primary-hero">Watch Video</button>
         </motion.div>
 
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20">

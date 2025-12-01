@@ -4,26 +4,42 @@
 @layer base {
   :root {
     /* Light Theme */
-    --primary: #e2c784;
-    --secondary: #bda164;
-    --tertiary: #967b48;
+    --primary: #d8b46c;        
+    --secondary: #c29a59;       
+    --tertiary: #8e6a3f; 
 
-    --gradient-from: #bda164;
-    --gradient-via:  #967b48;
+    --gradient-from: #967f4d;
+    --gradient-via:  #876f40;
     --gradient-to:   #4a381f;
 
-    --background: #e9e5cc;
-    --surface: #fcf7e3;
-    --border: #e8cf81;
+    --background:  #f7f4ea;
+    --surface: #fdfbf5;   
+    --border: #dcc9a1; 
 
     --border-outlined: var(--text);
 
-    --text: #4a381f;
-    --text-secondary: #705830;
-    --text-muted: #967b48;
-    --text-button: #ffffff;
+    --text: #3b2e1d; 
+    --text-secondary: #6c5538; 
+    --text-muted: #8e6a3f;  
+    --text-loop: #050505;
 
-    --button-bg: #4a381f;
+    --faq-title: #050505;
+    --faq-icon: var(--faq-title);
+    --faq-border:var(--faq-title);
+    
+    --button-primary-bg: #3b2e1d;
+    --button-primary-text: #ffffff;
+    --button-primary-border: none;
+    --button-primary-hover-bg: #5a452a; 
+    --button-primary-hover-text: #ffffff;
+
+
+    --button-secondary-bg: transparent;
+    --button-secondary-text:#050505;
+    --button-secondary-border: var(--border-outlined);
+    --button-secondary-hover-bg: var(--secondary);
+    --button-secondary-hover-text: var(--text-button);
+    --button-secondary-hover-border: var(--secondary);
   }
 
   .dark {
@@ -45,9 +61,24 @@
     --text: #fbfbfb;
     --text-secondary: #dbd8d8;
     --text-muted: #7a7a7a;
-    --text-button: #050505;
+    --text-loop: #050505;
 
-    --button-bg: #C7A15C;
+    --faq-title: #451901;
+    --faq-icon: var(--faq-title);
+    --faq-border:var(--faq-title);
+
+    --button-primary-bg: linear-gradient(to right, var(--gradient-from), var(--gradient-via), var(--gradient-to));
+    --button-primary-text: #050505;
+    --button-primary-hover-bg: linear-gradient(to right, var(--gradient-from), var(--gradient-to));
+    --button-primary-hover-text: #050505;
+
+    --button-secondary-bg: transparent;
+    --button-secondary-text: var(--text);
+    --button-secondary-border: var(--border-outlined);
+    --button-secondary-hover-bg: var(--secondary);
+    --button-secondary-hover-text: #050505;
+    --button-secondary-hover-border: var(--secondary);
+
   }
   * {
     border-color: var(--border);
@@ -60,88 +91,59 @@
 }
 
 @layer components {
-  .btn-primary {
-    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300;
-    background-color: var(--button-bg);
-    color: var(--text-button);
-    border: 1px solid var(--border);
+  .btn-primary-hero {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 relative overflow-hidden;
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+    border: var(--button-primary-border);
   }
-  .btn-primary:hover {
-    background-color: var(--secondary);
-    color: var(--text-button);
+
+  .btn-primary-hero:hover {
+    background: var(--button-primary-hover-bg);
+    color: var(--button-primary-hover-text);
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   }
 
-  .btn-secondary {
-    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300;
-    background-color: transparent;
-    color: var(--text);
-    border: 1px solid var(--border-outlined);
+  .btn-secondary-hero {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+    background: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+    border: 1px solid var(--button-secondary-border);
   }
 
-
-  .btn-secondary:hover {
-    background-color: var(--secondary);
-    color: var(--text-button);
-    border-color: var(--secondary);
+  .btn-secondary-hero:hover {
+    background: var(--button-secondary-hover-bg);
+    color: var(--button-secondary-hover-text);
+    border-color: var(--button-secondary-hover-border);
   }
 
   .btn-ghost {
-    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300;
+    @apply px-6 py-3 rounded-2xl font-semibold transition-all duration-300;
     background-color: transparent;
     color: var(--text);
     border: 1px solid transparent;
   }
+
   .btn-ghost:hover {
     background-color: var(--surface);
     color: var(--text-button);
   }
 
-    /* Horizontal Scroll for Gallery Location Tabs - Cross-browser compatible */
-  .gallery-tabs-scroll {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-behavior: smooth;
+  .text-loop {
+    color: var(--text-loop);
   }
 
-  /* Webkit browsers (Chrome, Safari, Edge) */
-  .gallery-tabs-scroll::-webkit-scrollbar {
-    height: 6px;
+  .faq-icon {
+    @apply w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7;
+    color: var(--faq-title);
   }
 
-  .gallery-tabs-scroll::-webkit-scrollbar-track {
-    background: transparent;
-    margin: 0 1rem;
+  .faq-title {
+    color: var(--faq-title);
   }
 
-  .gallery-tabs-scroll::-webkit-scrollbar-thumb {
-    background-color: #d1d5db;
-    border-radius: 3px;
-    transition: background-color 0.2s;
-  }
-
-  .gallery-tabs-scroll::-webkit-scrollbar-thumb:hover {
-    background-color: #9ca3af;
-  }
-
-  .dark .gallery-tabs-scroll::-webkit-scrollbar-thumb {
-    background-color: var(--border);
-  }
-
-  .dark .gallery-tabs-scroll::-webkit-scrollbar-thumb:hover {
-    background-color: var(--secondary);
-  }
-
-  /* Firefox - only for browsers that support it */
-  @supports (scrollbar-width: thin) {
-    .gallery-tabs-scroll {
-      scrollbar-width: thin;
-      scrollbar-color: #d1d5db transparent;
-    }
-
-    .dark .gallery-tabs-scroll {
-      scrollbar-color: var(--border) transparent;
-    }
+  .faq-border {
+    border-color: var(--faq-title);
   }
 }
 
