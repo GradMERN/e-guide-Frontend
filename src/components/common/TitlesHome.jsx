@@ -6,7 +6,7 @@ export default function TitlesHome({ icon: Icon, title, paragraph }) {
 
         <div className="relative mx-2 sm:mx-4">
           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[linear-gradient(to_bottom_right,var(--secondary),var(--primary))] shadow-[0_0_5px_var(--secondary)] flex items-center justify-center  rounded-lg">
-            <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
+            <Icon className="w-5 h-5 sm:w-6 sm:h-6 icon-card" />
           </div>
 
           <div className="absolute top-0 left-0 w-10 h-10 sm:w-12 sm:h-12 opacity-30 blur-sm text-(--secondary) flex items-center justify-center pointer-events-none">
