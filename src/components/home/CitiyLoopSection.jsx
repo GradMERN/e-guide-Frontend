@@ -73,12 +73,12 @@ export default function CityLoop() {
   }, [seqWidth]);
 
   return (
-    <div ref={containerRef} className="relative w-full overflow-hidden py-3 bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F]">
+    <div ref={containerRef} className="relative w-full overflow-hidden py-3 bg-[linear-gradient(to_right,var(--gradient-from),var(--gradient-via),var(--gradient-to))]">
       <div ref={trackRef} className="flex gap-16 will-change-transform">
         {Array.from({ length: copyCount }, (_, copyIndex) => (
           <div key={copyIndex} ref={copyIndex === 0 ? firstCopyRef : copyIndex === 1 ? secondCopyRef : null} className="flex gap-16 shrink-0">
             {cities.map((city, i) => (
-              <span key={`${copyIndex}-${i}`} className="text-black font-bold text-lg whitespace-nowrap">
+              <span key={`${copyIndex}-${i}`} className="text-loop font-bold text-lg whitespace-nowrap">
                 {city}
               </span>
             ))}
