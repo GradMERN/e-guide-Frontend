@@ -23,6 +23,8 @@
     --text-muted: #8e6a3f;  
     --text-loop: #050505;
 
+    --icon-card: #050505;
+
     --faq-title: #050505;
     --faq-icon: var(--faq-title);
     --faq-border:var(--faq-title);
@@ -144,6 +146,10 @@
 
   .faq-border {
     border-color: var(--faq-title);
+  }
+
+  .icon-card {
+    color: var(--icon-card);
   }
 }
 
