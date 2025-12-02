@@ -1,114 +1,52 @@
-"use client";
 import { cn } from "../utils/cn";
 import React, { useEffect, useState } from "react";
+import "../../styles/InfiniteMovingCards.css";
 
 export const InfiniteMovingCards = ({
   items,
   direction = "left",
-  speed = "fast",
+  speed = "normal",
   pauseOnHover = true,
   className,
 }) => {
   const containerRef = React.useRef(null);
   const scrollerRef = React.useRef(null);
-
-  useEffect(() => {
-    addAnimation();
-  }, []);
-
   const [start, setStart] = useState(false);
 
-  function addAnimation() {
-    if (containerRef.current && scrollerRef.current) {
-      const scrollerContent = Array.from(scrollerRef.current.children);
+  useEffect(() => {
+    if (!containerRef.current || !scrollerRef.current) return;
 
-      scrollerContent.forEach((item) => {
-        const duplicatedItem = item.cloneNode(true);
-        if (scrollerRef.current) {
-          scrollerRef.current.appendChild(duplicatedItem);
-        }
-      });
+    const scrollerContent = Array.from(scrollerRef.current.children);
 
-      getDirection();
-      getSpeed();
-      setStart(true);
-    }
-  }
+    scrollerContent.forEach((item) => {
+      const clone = item.cloneNode(true);
+      scrollerRef.current?.appendChild(clone);
+    });
 
-  const getDirection = () => {
-    if (containerRef.current) {
-      if (direction === "left") {
-        containerRef.current.style.setProperty(
-          "--animation-direction",
-          "forwards"
-        );
-      } else {
-        containerRef.current.style.setProperty(
-          "--animation-direction",
-          "reverse"
-        );
-      }
-    }
-  };
+    const dir = direction === "left" ? "normal" : "reverse";
+    containerRef.current.style.setProperty("--animation-direction", dir);
 
-  const getSpeed = () => {
-    if (containerRef.current) {
-      if (speed === "fast") {
-        containerRef.current.style.setProperty("--animation-duration", "20s");
-      } else if (speed === "normal") {
-        containerRef.current.style.setProperty("--animation-duration", "40s");
-      } else {
-        containerRef.current.style.setProperty("--animation-duration", "80s");
-      }
-    }
-  };
+    const totalWidth = scrollerRef.current.scrollWidth / 2; 
+
+    let speedMultiplier = speed === "fast" ? 0.6 : speed === "normal" ? 1 : 1.5;
+
+    const duration = totalWidth * 0.03 * speedMultiplier + "s";
+    containerRef.current.style.setProperty("--animation-duration", duration);
+
+    setStart(true);
+  }, [direction, speed]);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        "scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
-        className
-      )}
-    >
-      <ul
-        ref={scrollerRef}
-        className={cn(
-          "flex min-w-full shrink-0 gap-4 py-4 w-max flex-nowrap",
-          start && "animate-scroll",
-          pauseOnHover && "hover:[animation-play-state:paused]"
-        )}
-      >
+    <div ref={containerRef}
+      className={cn("scroller relative w-full overflow-hidden", pauseOnHover && "pause-on-hover")}>
+      <ul ref={scrollerRef}className={cn("flex w-max gap-4",start && "animate-scroll",className)}>
         {items.map((item, idx) => (
-          <li
-            className="w-[350px] max-w-full relative rounded-2xl border flex-shrink-0 px-8 py-6 md:w-[450px]"
-            style={{
-              background: "rgba(255, 255, 255, 0.05)",
-              backdropFilter: "blur(12px)",
-              borderColor: "rgba(255, 255, 255, 0.1)",
-            }}
-            key={item.name + idx}
-          >
-            <blockquote>
-              <div
-                aria-hidden="true"
-                className="user-select-none -z-1 pointer-events-none absolute -left-0.5 -top-0.5 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
-              ></div>
-              <span className="relative z-20 text-sm leading-[1.6] text-gray-300 font-normal">
-                {item.quote}
-              </span>
-              <div className="relative z-20 mt-6 flex flex-row items-center">
-                <span className="flex flex-col gap-1">
-                  <span className="text-sm leading-[1.6] text-white font-bold">
-                    {item.name}
-                  </span>
-                  <span
-                    className="text-sm leading-[1.6] font-normal"
-                    style={{ color: "#FFE6A0" }}
-                  >
-                    {item.title}
-                  </span>
-                </span>
+          <li key={item.name + idx}className="shrink-0 w-[350px] md:w-[450px] rounded-2xl border bg-white/5 backdrop-blur-md border-white/10 p-8">
+            <blockquote className="flex flex-col h-full">
+              <p className="text-gray-300 text-sm leading-relaxed flex-1">{item.quote}</p>
+              <div className="mt-6 pt-4 border-t border-white/10">
+                <p className="text-white font-semibold">{item.name}</p>
+                <p className="text-secondary text-sm">{item.title}</p>
               </div>
             </blockquote>
           </li>

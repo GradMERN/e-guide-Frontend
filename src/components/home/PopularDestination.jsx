@@ -5,7 +5,26 @@ import { FaArrowRight } from "react-icons/fa";
 import TitlesHome from "../common/TitlesHome";
 import SectionWrapperFull from "../common/SectionWrapper";
 
-const destinations = [
+
+export default function PopularDestination() {
+  const [activeCard, setActiveCard] = useState(null);
+  const sliderRef = useRef (null) ;
+  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
+
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (sliderRef.current) {
+        const scrollWidth = sliderRef.current.scrollWidth;
+        const offsetWidth = sliderRef.current.offsetWidth;
+        setDragConstraints({ left: -(scrollWidth - offsetWidth), right: 0 });
+      }
+    };
+    updateConstraints();
+    window.addEventListener("resize", updateConstraints);
+    return () => window.removeEventListener("resize", updateConstraints);
+  }, []);
+
+  const destinations = [
   {
     id: 1,
     name: "Cairo",
@@ -68,25 +87,6 @@ const destinations = [
   },
 ];
 
-
-export default function PopularDestination() {
-  const [activeCard, setActiveCard] = useState(null);
-  const sliderRef = useRef (null) ;
-  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
-
-useEffect(() => {
-  const updateConstraints = () => {
-    if (sliderRef.current) {
-      const scrollWidth = sliderRef.current.scrollWidth;
-      const offsetWidth = sliderRef.current.offsetWidth;
-      setDragConstraints({ left: -(scrollWidth - offsetWidth), right: 0 });
-    }
-  };
-  updateConstraints();
-  window.addEventListener("resize", updateConstraints);
-  return () => window.removeEventListener("resize", updateConstraints);
-}, []);
-
   return (
     <SectionWrapperFull>
       <div className="mt-12">
@@ -98,8 +98,8 @@ useEffect(() => {
 
         <div className="hidden lg:grid lg:grid-cols-3 gap-6 xl:gap-8 max-w-7xl mx-auto">
           {destinations.map((destination, index) => (
-            <motion.div key={destination.id} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.6, delay: index * 0.1 }} onHoverStart={() => setActiveCard(destination.id)} onHoverEnd={() => setActiveCard(null)} className="group relative h-[450px] rounded-xl overflow-hidden cursor-pointer">
-              <motion.div animate={{scale: activeCard === destination.id ? 1.1 : 1,}}transition={{ duration: 0.6 }}className="absolute inset-0">
+            <motion.div key={destination.id} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.4, delay: index * 0.1 }} onHoverStart={() => setActiveCard(destination.id)} onHoverEnd={() => setActiveCard(null)} className="group relative h-[450px] rounded-xl overflow-hidden cursor-pointer">
+              <motion.div animate={{scale: activeCard === destination.id ? 1.1 : 1,}}transition={{ duration: 0.6 }} className="absolute inset-0">
                 <img src={destination.image} alt={destination.name} className="w-full h-full object-cover"/>
                 <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
                 <div className={`absolute inset-0 bg-linear-to-br ${destination.color} mix-blend-overlay`} />
@@ -121,7 +121,7 @@ useEffect(() => {
                       
                       <div className="flex flex-wrap gap-2 mb-4">
                         {destination.highlights.map((highlight, idx) => (
-                          <span key={idx} className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white">
+                          <span key={idx} className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-xl text-xs text-white">
                             {highlight}
                           </span>
                         ))}
