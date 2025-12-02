@@ -66,9 +66,8 @@ export default function LoginPage() {
       <section className="flex flex-row bg-[#050505] text-slate-200 overflow-hidden">
         {/* LEFT SECTION */}
         <div
-          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${
-            animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-          }`}
+          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+            }`}
         >
           <div className="flex items-center gap-5">
             <GiEgyptianProfile className="max-[1212px]:w-20 max-[1212px]:h-20 w-24 h-24 text-[#f7c95f] drop-shadow-[0_0_15px_rgba(247,201,95,0.5)]" />
@@ -117,9 +116,8 @@ export default function LoginPage() {
 
         {/* RIGHT SECTION */}
         <div
-          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${
-            animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-          }`}
+          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
+            }`}
         >
           <div className="absolute inset-0">
             <img
@@ -213,27 +211,28 @@ export default function LoginPage() {
                 <Form className="flex flex-col gap-4 sm:gap-5 md:gap-6">
                   <Field name="email">
                     {({ field, meta }) => (
-                      <div className="relative">
-                        <MdEmail
-                          className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-                            focusedInput === "email"
+                      <div className="flex flex-col">
+                        <div className="relative flex items-center">
+                          <MdEmail
+                            className={`absolute left-4  transition-colors duration-300 ${focusedInput === "email"
                               ? "text-[#f7c95f]"
                               : "text-[#bfb191]"
-                          }`}
-                        />
-                        <input
-                          {...field}
-                          type="email"
-                          placeholder="Enter your email"
-                          onFocus={() => setFocusedInput("email")}
-                          onBlur={(e) => {
-                            field.onBlur(e);
-                            setFocusedInput(null);
-                          }}
-                          className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3.5 ps-12 pr-4 text-white placeholder-gray-600 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
-                        />
+                              }`}
+                          />
+                          <input
+                            {...field}
+                            type="email"
+                            placeholder="Enter your email"
+                            onFocus={() => setFocusedInput("email")}
+                            onBlur={(e) => {
+                              field.onBlur(e);
+                              setFocusedInput(null);
+                            }}
+                            className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3.5 ps-12 pr-4 text-white placeholder-gray-600 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
+                          />
+                        </div>
                         {meta.touched && meta.error && (
-                          <p className="text-red-500 text-sm mt-2">
+                          <p className="text-red-500 text-sm mt-2 ms-2">
                             {meta.error}
                           </p>
                         )}
@@ -241,36 +240,44 @@ export default function LoginPage() {
                     )}
                   </Field>
 
+
+
+
+
+
+
                   <Field name="password">
                     {({ field, meta }) => (
-                      <div className="relative">
-                        <FaLock
-                          className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-                            focusedInput === "password"
+                      <div className="flex flex-col">
+                        <div className="relative flex items-center">
+                          <FaLock
+                            className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password"
                               ? "text-[#f7c95f]"
                               : "text-[#bfb191]"
-                          }`}
-                        />
-                        <input
-                          {...field}
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Password"
-                          onFocus={() => setFocusedInput("password")}
-                          onBlur={(e) => {
-                            field.onBlur(e);
-                            setFocusedInput(null);
-                          }}
-                          className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3.5 pl-12 pr-12 text-white placeholder-gray-600 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
-                        />
-                        <button
-                          type="button"
-                          onClick={togglePassword}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#bfb191] transition-colors hover:text-[#f7c95f]"
-                        >
-                          {showPassword ? <FaEyeSlash /> : <FaEye />}
-                        </button>
+                              }`}
+                          />
+                          <input
+                            {...field}
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            onFocus={() => setFocusedInput("password")}
+                            onBlur={(e) => {
+                              field.onBlur(e);
+                              setFocusedInput(null);
+                            }}
+                            className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3.5 pl-12 pr-12 text-white placeholder-gray-600 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
+                          />
+                          <button
+                            type="button"
+                            onClick={togglePassword}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#bfb191] transition-colors hover:text-[#f7c95f]"
+                          >
+                            {showPassword ? <FaEyeSlash className="cursor-pointer" /> : <FaEye className="cursor-pointer" />}
+                          </button>
+
+                        </div>
                         {meta.touched && meta.error && (
-                          <p className="text-red-500 text-sm mt-2">
+                          <p className="text-red-500 text-sm mt-2 ms-2">
                             {meta.error}
                           </p>
                         )}
@@ -312,8 +319,8 @@ export default function LoginPage() {
 
                   <button
                     onClick={() =>
-                      (window.location.href =
-                        "http://localhost:3000/api/auth/google")
+                    (window.location.href =
+                      "http://localhost:3000/api/auth/google")
                     }
                     type="button"
                     className="group flex w-full items-center justify-center gap-3 rounded-xl border border-[#2b2b2b] bg-[#1a1a1a] py-3 text-white cursor-pointer transition-all duration-300 hover:bg-[#252525] hover:border-[#f7c95f]/50"
