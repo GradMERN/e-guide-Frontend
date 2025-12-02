@@ -27,7 +27,7 @@ const cities = [
 ];
 
 const InputField = ({ icon: Icon, placeholder, type = "text", focusedInput, setFocusedInput, extraClass = "", ...props }) => {
-  const = [field, meta] = useField(props);
+  const  [field, meta] = useField(props);
 
   return (
     <div className="flex flex-col w-full">
