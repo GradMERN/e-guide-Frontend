@@ -7,7 +7,7 @@ export default function TourPackagesSection() {
     <SectionWrapperFull>
       <TitlesHome
         icon={MdOutlineTour}
-        title="Tour Packages"
+        title="Featured Tour Packages"
         paragraph="Discover curated tour packages designed to help you explore Egypt’s iconic landmarks, hidden gems, and unforgettable cultural experiences with ease and comfort."
       />
 
