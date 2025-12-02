@@ -29,10 +29,12 @@ export const ImagesSlider: React.FC<ImagesSliderProps> = ({
   interval = 5000,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loadedImages, setLoadedImages] = useState<ImageObject[]>([]);
+  const [loadedImages, setLoadedImages] = useState<ImageObject[]>(() =>
+    images.slice(0, 1).map(item => typeof item === "string" ? { src: item } : item)
+  );
 
   useEffect(() => {
-    const promises = images.map((item) => {
+    const promises = images.slice(1).map((item) => {
       const src = typeof item === "string" ? item : item.src;
       return new Promise<ImageObject>((resolve, reject) => {
         const img = new Image();
@@ -44,9 +46,10 @@ export const ImagesSlider: React.FC<ImagesSliderProps> = ({
     });
 
     Promise.all(promises)
-      .then((imgs) => setLoadedImages(imgs))
+      .then((imgs) => setLoadedImages(prev => [...prev, ...imgs]))
       .catch((err) => console.error("Failed to load images", err));
   }, [images]);
+
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % loadedImages.length);

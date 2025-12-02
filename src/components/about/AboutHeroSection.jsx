@@ -4,10 +4,6 @@ import TextType from "../ui/TextType.jsx";
 import { motion } from "motion/react";
 
 export default function AboutHeroSection() {
-  const scrollToNextSection = () => {
-    const next = document.querySelector("#story-section");
-    if (next) next.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center text-text overflow-hidden px-6">
