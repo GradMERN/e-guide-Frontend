@@ -98,7 +98,7 @@ export default function PopularDestination() {
 
         <div className="hidden lg:grid lg:grid-cols-3 gap-6 xl:gap-8 max-w-7xl mx-auto">
           {destinations.map((destination, index) => (
-            <motion.div key={destination.id} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.4, delay: index * 0.1 }} onHoverStart={() => setActiveCard(destination.id)} onHoverEnd={() => setActiveCard(null)} className="group relative h-[450px] rounded-xl overflow-hidden cursor-pointer">
+            <motion.div key={destination.id} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.3, delay: index * 0.08 }} onHoverStart={() => setActiveCard(destination.id)} onHoverEnd={() => setActiveCard(null)} className="group relative h-[450px] card-3d rounded-xl overflow-hidden cursor-pointer">
               <motion.div animate={{scale: activeCard === destination.id ? 1.1 : 1,}}transition={{ duration: 0.6 }} className="absolute inset-0">
                 <img src={destination.image} alt={destination.name} className="w-full h-full object-cover"/>
                 <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
@@ -121,7 +121,7 @@ export default function PopularDestination() {
                       
                       <div className="flex flex-wrap gap-2 mb-4">
                         {destination.highlights.map((highlight, idx) => (
-                          <span key={idx} className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-xl text-xs text-white">
+                          <span key={idx} className="px-3 py-1 bg-white/20 rounded-xl text-xs text-white">
                             {highlight}
                           </span>
                         ))}
@@ -136,7 +136,6 @@ export default function PopularDestination() {
                 </AnimatePresence>
               </div>
 
-              <motion.div className="absolute inset-0 border-2 border-white/0 rounded-3xl pointer-events-none" animate={{borderColor: activeCard === destination.id ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0)",}} transition={{ duration: 0.3 }}/>
             </motion.div>
           ))}
         </div>
@@ -172,7 +171,7 @@ export default function PopularDestination() {
         </motion.div>
       </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.8 }} className="text-center mt-12">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.2 }} className="text-center mt-12">
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary-hero">
             <span>View All Destinations</span>
           </motion.button>

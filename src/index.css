@@ -6,14 +6,14 @@
     /* Light Theme */
     --primary: #b06419;        
     --secondary: #a55d16;       
-    --tertiary: #bc8d4f;
+    --tertiary: #ca9a5a;
 
     --gradient-from: var(--color-primary);
     --gradient-via: var(--color-secondary);
     --gradient-to:   var(--color-tertiary);
 
     --background:  #f7f4ea;
-    --surface: #fdfbf5;   
+    --surface: #f7edce;   
     --border: #dcc9a1; 
 
     --border-outlined: var(--text);
@@ -98,6 +98,7 @@
     background: var(--button-primary-bg);
     color: var(--button-primary-text);
     border: var(--button-primary-border);
+    cursor:pointer
   }
 
   .btn-primary-hero:hover {
@@ -111,6 +112,7 @@
     background: var(--button-secondary-bg);
     color: var(--button-secondary-text);
     border: 1px solid var(--button-secondary-border);
+    cursor:pointer
   }
 
   .btn-secondary-hero:hover {
@@ -124,11 +126,48 @@
     background-color: transparent;
     color: var(--text);
     border: 1px solid transparent;
+    cursor:pointer
   }
 
   .btn-ghost:hover {
     background-color: var(--surface);
     color: var(--text-button);
+  }
+
+  .text-gradient-title {
+    background-color: var(--color-secondary); 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .dark .text-gradient-title {
+    background-color: var(--color-tertiary);
+  }
+
+  .card-bg {
+    background-color: var(--color-tertiary);
+  }
+
+  .dark .card-bg {
+    background-color: var(--color-primary);
+  }
+
+  .card-text {
+    color: var(--color-text);
+  }
+
+  .dark .card-text {
+    color: var(--text);
+  }
+
+  .button-gradient {
+    background: var(--color-primary)
+  }
+
+  .dark .button-gradient {
+    background: linear-gradient(to right, var(--gradient-from), var(--gradient-via), var(--gradient-to));
   }
 
   .text-loop {
