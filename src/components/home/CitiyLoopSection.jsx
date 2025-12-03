@@ -73,7 +73,7 @@ export default function CityLoop() {
   }, [seqWidth]);
 
   return (
-    <div ref={containerRef} className="relative w-full overflow-hidden py-3 bg-[linear-gradient(to_right,var(--gradient-from),var(--gradient-via),var(--gradient-to))]">
+    <div ref={containerRef} className="relative w-full overflow-hidden py-3 bg-tertiary">
       <div ref={trackRef} className="flex gap-16 will-change-transform">
         {Array.from({ length: copyCount }, (_, copyIndex) => (
           <div key={copyIndex} ref={copyIndex === 0 ? firstCopyRef : copyIndex === 1 ? secondCopyRef : null} className="flex gap-16 shrink-0">
