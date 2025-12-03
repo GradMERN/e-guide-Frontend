@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaEye,
   FaPhone,
@@ -6,14 +6,20 @@ import {
   FaClock,
   FaBars,
   FaTimes,
+  FaUser,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./ui/SwitchLanguages";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const links = [
     { name: "Home", path: "/" },
@@ -119,14 +125,62 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center">
-                <NavLink
-                  to="/login"
-                  className="px-5 py-1.5 rounded-lg bg-linear-to-r from-primary to-secondary 
-                           text-black font-medium shadow-md hover:brightness-110 transition hover:scale-105 text-sm"
-                >
-                  Login
-                </NavLink>
+              <div className="hidden md:flex items-center gap-3">
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary 
+                               hover:bg-primary/20 transition-all"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary 
+                                    flex items-center justify-center text-black font-bold text-sm">
+                        {user?.firstName?.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="font-medium">{user?.firstName} {user?.lastName}</span>
+                    </button>
+                    
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface rounded-lg shadow-lg border border-border z-50">
+                        <div className="p-4 border-b border-border">
+                          <p className="text-sm font-medium text-text">{user?.email}</p>
+                          <p className="text-xs text-gray-500">{user?.role}</p>
+                        </div>
+                        <div className="py-2">
+                          <button
+                            onClick={() => {
+                              navigate('/profile');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-text hover:bg-gray-100 dark:hover:bg-surface/80 transition"
+                          >
+                            <FaUser size={16} />
+                            <span className="text-sm">Profile</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              logout();
+                              navigate('/');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition"
+                          >
+                            <FaSignOutAlt size={16} />
+                            <span className="text-sm">Logout</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    className="px-5 py-1.5 rounded-lg bg-linear-to-r from-primary to-secondary 
+                             text-black font-medium shadow-md hover:brightness-110 transition hover:scale-105 text-sm"
+                  >
+                    Login
+                  </NavLink>
+                )}
               </div>
 
               <button
@@ -164,14 +218,40 @@ export default function Navbar() {
                   </NavLink>
                 ))}
 
-                <NavLink
-                  to="/login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block py-2 px-4 text-lg bg-linear-to-r from-primary to-secondary 
-                           text-black font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
-                >
-                  Login
-                </NavLink>
+                {user ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        navigate('/profile');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left py-2 px-4 text-lg bg-primary/10 text-primary 
+                               font-medium shadow-md transition text-center rounded-lg"
+                    >
+                      Profile
+                    </button>
+                    <button
+                      onClick={() => {
+                        logout();
+                        navigate('/');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left py-2 px-4 text-lg bg-red-500/10 text-red-500 
+                               font-medium shadow-md transition text-center rounded-lg"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block py-2 px-4 text-lg bg-linear-to-r from-primary to-secondary 
+                             text-black font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
+                  >
+                    Login
+                  </NavLink>
+                )}
               </div>
             </div>
           )}

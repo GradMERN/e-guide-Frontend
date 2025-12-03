@@ -1,11 +1,22 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
 import DashboardLayout from "./layout/DashboardLayout";
+import AdminLayout from "./components/admin/AdminLayout";
 import Home from "./pages/shared/Home";
 import Profile from "./pages/shared/Profile";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Dashboard from "./pages/Guide/GuideDashboard";
+import GuideDashboardLayout from "./layout/GuideDashboardLayout";
+import GuideDashboard from "./pages/guide/Dashboard";
+import ManageTours from "./pages/guide/ManageTours";
+import Analytics from "./pages/guide/Analytics";
+import GuidSettings from "./pages/guide/Settings";
+import AddTourItem from "./pages/guide/AddTourItem";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminTours from "./pages/admin/AdminTours";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminGuides from "./pages/admin/AdminGuides";
+import AdminSettings from "./pages/admin/AdminSettings";
 import Cart from "./pages/tourist/Cart";
 import MyTours from "./pages/tourist/MyTours";
 import About from "./pages/shared/About";
@@ -34,9 +45,26 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
+  // Guide Dashboard Routes
   {
-    element: <DashboardLayout />,
-    children: [{ path: "/dashboard", element: <Dashboard /> }],
+    element: <GuideDashboardLayout />,
+    children: [
+      { path: "/guide/dashboard", element: <GuideDashboard /> },
+      { path: "/guide/tours", element: <ManageTours /> },
+      { path: "/guide/analytics", element: <Analytics /> },
+      { path: "/guide/settings", element: <GuidSettings /> },
+      { path: "/guide/tour/:tourId/add-item", element: <AddTourItem /> },
+    ],
+  },
+  {
+    element: <AdminLayout />,
+    children: [
+      { path: "/admin/dashboard", element: <AdminDashboard /> },
+      { path: "/admin/tours", element: <AdminTours /> },
+      { path: "/admin/users", element: <AdminUsers /> },
+      { path: "/admin/guides", element: <AdminGuides /> },
+      { path: "/admin/settings", element: <AdminSettings /> },
+    ],
   },
   {
     path: "*",

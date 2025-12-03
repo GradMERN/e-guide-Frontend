@@ -4,6 +4,7 @@ import { MdEmail } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
+import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -11,6 +12,7 @@ import { login } from "../../apis/Auth/login.api";
 import { googlelogin } from "../../apis/Auth/googleLogin.api";
 
 export default function LoginPage() {
+    const { updateUser } = useAuth();
     const [animate, setAnimate] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [focusedInput, setFocusedInput] = useState(null);
@@ -109,8 +111,29 @@ export default function LoginPage() {
                                 try {
                                     setSubmitting(true);
                                     const res = await login(values);
-                                    localStorage.setItem("token", res.data.data.token);
-                                    alert("Login successful!");
+                                    const token = res.data.data.token;
+                                    const user = res.data.data;
+                                    console.log('Login response:', res.data.data);
+                                    
+                                    localStorage.setItem("token", token);
+                                    localStorage.setItem("user", JSON.stringify(user));
+                                    
+                                    // Update auth context
+                                    updateUser(user);
+                                    
+                                    // Route based on user role
+                                    const role = user?.role?.toLowerCase();
+                                    console.log('User role:', user?.role, 'Lowercased:', role);
+                                    if (role === 'admin') {
+                                        console.log('Routing to /admin/dashboard');
+                                        window.location.href = '/admin/dashboard';
+                                    } else if (role === 'guide') {
+                                        console.log('Routing to /guide/dashboard');
+                                        window.location.href = '/guide/dashboard';
+                                    } else {
+                                        console.log('Routing to /');;
+                                        window.location.href = '/';
+                                    }
                                 } catch (err) {
                                     alert(err.response?.data?.message || "Login failed");
                                 } finally {

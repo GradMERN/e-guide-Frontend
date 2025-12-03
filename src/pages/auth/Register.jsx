@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { IoPerson } from "react-icons/io5";
 import { MdEmail, MdLocationCity } from "react-icons/md";
 import { AiOutlineGlobal } from "react-icons/ai";
-import { FaLock, FaEye, FaEyeSlash, FaPhoneAlt } from "react-icons/fa";
+import { FaLock, FaEye, FaEyeSlash, FaPhoneAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { FiUpload } from "react-icons/fi";
 import { GiEgyptianProfile } from "react-icons/gi";
 import { Link } from "react-router-dom";
+import { checkEmail } from "../../apis/Auth/checkEmail.api";
 
 const countries = ["Egypt", "USA"];
 const cities = ["Cairo", "Alexandria"];
@@ -17,7 +18,10 @@ export default function Register() {
   const [fileName, setFileName] = useState("");
   const [focusedInput, setFocusedInput] = useState(null);
   const [animate, setAnimate] = useState(false);
-
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [emailValid, setEmailValid] = useState(null);
 
   const [countryOpen, setCountryOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
@@ -49,6 +53,32 @@ export default function Register() {
   const onFileChange = (e) => {
     const file = e.target.files?.[0];
     setFileName(file ? file.name : "");
+  };
+
+  const handleEmailBlur = async () => {
+    if (!email || !email.includes("@")) {
+      setEmailError("");
+      setEmailValid(null);
+      return;
+    }
+
+    setEmailChecking(true);
+    try {
+      const response = await checkEmail(email);
+      if (response.data.exists) {
+        setEmailError(response.data.message || "Email is already registered");
+        setEmailValid(false);
+      } else {
+        setEmailError("");
+        setEmailValid(true);
+      }
+    } catch (error) {
+      console.error("Error checking email:", error);
+      setEmailError("Error checking email. Please try again.");
+      setEmailValid(false);
+    } finally {
+      setEmailChecking(false);
+    }
   };
 
   return (
@@ -93,11 +123,48 @@ export default function Register() {
 
                 <div className="relative">
                   <MdEmail className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "email" ? "text-[#f7c95f]" : "text-[#bfb191]"}`} />
-                  <input type="email" placeholder="Email Address" onFocus={() => setFocusedInput("email")} onBlur={() => setFocusedInput(null)}
-                    className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50" />
+                  <input 
+                    type="email" 
+                    placeholder="Email Address" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setFocusedInput("email")} 
+                    onBlur={() => {
+                      setFocusedInput(null);
+                      handleEmailBlur();
+                    }}
+                    className={`w-full rounded-xl border ${emailValid === false ? "border-red-500" : emailValid === true ? "border-green-500" : "border-[#2b2b2b]"} bg-[#0a0a0a]/50 py-3 pl-12 pr-12 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50`} 
+                  />
+                  {emailChecking && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-[#f7c95f]">
+                      ⟳
+                    </div>
+                  )}
+                  {emailValid === true && !emailChecking && (
+                    <FaCheckCircle className="absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-lg" />
+                  )}
+                  {emailValid === false && !emailChecking && (
+                    <FaTimesCircle className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 text-lg" />
+                  )}
+                  {emailError && (
+                    <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                  )}
                 </div>
               </div>
-              <button type="button" onClick={nextStep} className="w-full py-3 mt-2 bg-linear-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold   transition-transform duration-300 ease-out transform hover:-translate-y-1  cursor-pointer">Next</button>
+              <button 
+                type="button" 
+                onClick={() => {
+                  if (emailValid === false) {
+                    alert("Please use a valid email address that is not already registered");
+                    return;
+                  }
+                  nextStep();
+                }}
+                disabled={emailValid === false}
+                className="w-full py-3 mt-2 bg-linear-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+              >
+                Next
+              </button>
             </>
           )}
 
