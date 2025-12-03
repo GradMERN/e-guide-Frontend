@@ -18,12 +18,12 @@ const Home = () => {
     <>
       <div>
         <ImageSliderDemo />
-        <CityLoopSection/>
+        <CityLoopSection />
         <PopularDestination />
         <TourPackagesSection />
         <TourGuidesSection></TourGuidesSection>
-        <WhyChooseUsSection />
         <ReviewsSection />
+        <WhyChooseUsSection />
         <GallerySection />
         <HomeFAQSection />
         <StayUpdatedSection />

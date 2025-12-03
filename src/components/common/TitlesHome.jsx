@@ -17,7 +17,7 @@ export default function TitlesHome({ icon: Icon, title, paragraph }) {
         <div className="h-0.5 w-16 sm:w-32 md:w-48  bg-[linear-gradient(to_right,var(--gradient-from),var(--gradient-via),var(--gradient-to),transparent)]"></div>
       </div>
 
-      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 bg-tertiary bg-clip-text text-transparent leading-snug sm:leading-snug md:leading-snug">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 text-gradient-title leading-snug sm:leading-snug md:leading-snug">
         {title}
       </h2>
 

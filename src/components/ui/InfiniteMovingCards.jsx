@@ -1,57 +1,76 @@
-import { cn } from "../utils/cn";
-import React, { useEffect, useState } from "react";
-import "../../styles/InfiniteMovingCards.css";
+import { cn } from "../utils/cn"; 
+import React, { useEffect, useState } from "react"; 
+import { FaStar } from "react-icons/fa";
+import "../../styles/InfiniteMovingCards.css"; 
 
-export const InfiniteMovingCards = ({
-  items,
-  direction = "left",
-  speed = "normal",
-  pauseOnHover = true,
-  className,
-}) => {
-  const containerRef = React.useRef(null);
-  const scrollerRef = React.useRef(null);
-  const [start, setStart] = useState(false);
+export const InfiniteMovingCards = ({ 
+  items, 
+  direction = "left", 
+  speed = "normal", 
+  pauseOnHover = true, 
+  className, 
+}) => { 
+  const containerRef = React.useRef(null); 
+  const scrollerRef = React.useRef(null); 
+  const [start, setStart] = useState(false); 
 
-  useEffect(() => {
-    if (!containerRef.current || !scrollerRef.current) return;
+  useEffect(() => { 
+    if (!containerRef.current || !scrollerRef.current) return; 
 
-    const scrollerContent = Array.from(scrollerRef.current.children);
+    const scrollerContent = Array.from(scrollerRef.current.children); 
+    scrollerContent.forEach((item) => { 
+      const clone = item.cloneNode(true); 
+      scrollerRef.current?.appendChild(clone); 
+    }); 
 
-    scrollerContent.forEach((item) => {
-      const clone = item.cloneNode(true);
-      scrollerRef.current?.appendChild(clone);
-    });
-
-    const dir = direction === "left" ? "normal" : "reverse";
-    containerRef.current.style.setProperty("--animation-direction", dir);
+    const dir = direction === "left" ? "normal" : "reverse"; 
+    containerRef.current.style.setProperty("--animation-direction", dir); 
 
     const totalWidth = scrollerRef.current.scrollWidth / 2; 
+    const speedMultiplier = speed === "fast" ? 0.6 : speed === "normal" ? 1 : 1.5; 
+    const duration = totalWidth * 0.03 * speedMultiplier + "s"; 
+    containerRef.current.style.setProperty("--animation-duration", duration); 
 
-    let speedMultiplier = speed === "fast" ? 0.6 : speed === "normal" ? 1 : 1.5;
+    setStart(true); 
+  }, [direction, speed]); 
 
-    const duration = totalWidth * 0.03 * speedMultiplier + "s";
-    containerRef.current.style.setProperty("--animation-duration", duration);
+  const getDisplayName = (fullName) => {
+    if (!fullName) return "U";
 
-    setStart(true);
-  }, [direction, speed]);
+    const nameParts = fullName.trim().split(/\s+/);
+    const firstLetter = nameParts[0]?.charAt(0).toUpperCase() || "U";
+    const secondLetter = nameParts[1]?.charAt(0).toUpperCase() || "";
+
+    return firstLetter + secondLetter;
+  };
+
 
   return (
     <div ref={containerRef}
-      className={cn("scroller relative w-full overflow-hidden", pauseOnHover && "pause-on-hover")}>
-      <ul ref={scrollerRef}className={cn("flex w-max gap-4",start && "animate-scroll",className)}>
+      className={cn("scroller relative w-full overflow-hidden py-6",pauseOnHover && "pause-on-hover")}>
+      <ul ref={scrollerRef} className={cn("flex w-max gap-6", start && "animate-scroll", className)}>
         {items.map((item, idx) => (
-          <li key={item.name + idx}className="shrink-0 w-[350px] md:w-[450px] rounded-2xl border bg-white/5 backdrop-blur-md border-white/10 p-8">
-            <blockquote className="flex flex-col h-full">
-              <p className="text-gray-300 text-sm leading-relaxed flex-1">{item.quote}</p>
-              <div className="mt-6 pt-4 border-t border-white/10">
-                <p className="text-white font-semibold">{item.name}</p>
-                <p className="text-secondary text-sm">{item.title}</p>
+          <li key={item.name + idx} className="shrink-0 w-[250px] md:w-[300px] rounded-xl border border-border bg-surface backdrop-blur-md p-4 flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-300">
+            <div className="flex items-center justify-end mb-3">
+              {[...Array(5)].map((_, i) => (
+                <FaStar key={i} className={`w-3 h-3 ${ i < (item.rating || 5) ? "text-yellow-300" : "text-gray-300"}`}/>
+              ))}
+            </div>
+
+            <p className="text-text text-xs md:text-sm leading-relaxed line-clamp-3 mb-4">{item.review} </p>
+
+            <div className="flex items-center gap-3 pt-3 border-t border-border">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-base shrink-0">
+                {getDisplayName(item.name)}
               </div>
-            </blockquote>
+
+              <div className="flex-1 min-w-0">
+                <p className="text-text font-bold text-sm truncate">{item.name}</p>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
     </div>
-  );
+  ); 
 };

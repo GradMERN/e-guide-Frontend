@@ -23,9 +23,9 @@ export default function FAQGlobal({ categories }) {
           const isOpenCategory = openCategory === catIndex;
 
           return (
-            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.3, delay: catIndex * 0.1 }} className="rounded-2xl">
+            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.3, delay: catIndex * 0.2 }}>
               
-              <div className="px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-5 rounded-2xl  bg-primary cursor-pointer duration-300"
+              <div className="px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-5 rounded-xl card-bg cursor-pointer duration-300"
                 onClick={() => toggleCategory(catIndex)}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
@@ -41,7 +41,7 @@ export default function FAQGlobal({ categories }) {
 
               <AnimatePresence initial={false}>
                 {isOpenCategory && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: "easeInOut" }} className="overflow-hidden">
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.5, ease: "easeInOut" }} className="overflow-hidden">
                     {category.questions.map((question, qIndex) => {
                       const key = `${catIndex}-${qIndex}`;
                       const isOpen = openItems[key];
