@@ -14,7 +14,7 @@ import {
 import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./ui/SwitchLanguages";
-import { useAuth } from "../context/AuthContext";
+//import { useAuth } from "../context/AuthContext";
 
 import { useAuth } from "../store/hooks";
 
@@ -83,35 +83,49 @@ export default function Navbar() {
   };
 
   const getUserInitials = () => {
-    if (!user?.name) return "U";
-
-    const cleanName = user.name.trim();
-    const nameParts = cleanName.split(/\s+/);
-
-    if (nameParts.length >= 2) {
-      const firstNameInitial = nameParts[0][0].toUpperCase();
-      const lastNameInitial = nameParts[nameParts.length - 1][0].toUpperCase();
-      return firstNameInitial + lastNameInitial;
-    } else if (nameParts.length === 1) {
-      const name = nameParts[0];
-      if (name.length >= 2) {
-        return name.substring(0, 2).toUpperCase();
-      } else {
-        return name[0].toUpperCase();
+    if (!user) return "U";
+    
+    // Try firstName and lastName first
+    if (user.firstName && user.lastName) {
+      const first = user.firstName[0].toUpperCase();
+      const last = user.lastName[0].toUpperCase();
+      return first + last;
+    }
+    
+    // Fallback to name field
+    if (user.name) {
+      const cleanName = user.name.trim();
+      const nameParts = cleanName.split(/\s+/);
+      
+      if (nameParts.length >= 2) {
+        return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
+      } else if (nameParts.length === 1 && nameParts[0].length >= 2) {
+        return nameParts[0].substring(0, 2).toUpperCase();
+      } else if (nameParts[0]) {
+        return nameParts[0][0].toUpperCase();
       }
     }
-
+    
     return "U";
   };
 
   // Get display name for greeting
   const getDisplayName = () => {
-    if (!user?.name) return "User";
-
-    const cleanName = user.name.trim();
-    const nameParts = cleanName.split(/\s+/);
-
-    return nameParts[0];
+    if (!user) return "User";
+    
+    // Try firstName and lastName
+    if (user.firstName) {
+      return user.firstName;
+    }
+    
+    // Fallback to name field
+    if (user.name) {
+      const cleanName = user.name.trim();
+      const nameParts = cleanName.split(/\s+/);
+      return nameParts[0];
+    }
+    
+    return "User";
   };
 
   return (
@@ -189,7 +203,7 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-
+{/* 
               <div className="hidden md:flex items-center gap-3">
                 {user ? (
                   <div className="relative">
@@ -200,9 +214,13 @@ export default function Navbar() {
                     >
                       <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary 
                                     flex items-center justify-center text-black font-bold text-sm">
-                        {user?.firstName?.charAt(0).toUpperCase()}
+                        {getUserInitials()}
                       </div>
-                      <span className="font-medium">{user?.firstName} {user?.lastName}</span>
+                      <span className="font-medium">
+                        {user?.firstName && user?.lastName 
+                          ? `${user.firstName} ${user.lastName}` 
+                          : user?.name || "User"}
+                      </span>
                     </button>
                     
                     {showUserMenu && (
@@ -246,8 +264,7 @@ export default function Navbar() {
                     Login
                   </NavLink>
                 )}
-              </div>
-=======
+              </div> */}
               {user ? (
                 /* User Avatar Dropdown - Spotify Style */
                 <div className="hidden md:block relative" ref={dropdownRef}>
@@ -280,10 +297,12 @@ export default function Navbar() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-text truncate">
-                              {user.name}
+                              {user?.firstName && user?.lastName 
+                                ? `${user.firstName} ${user.lastName}` 
+                                : user?.name || "User"}
                             </p>
                             <p className="text-xs text-text-muted truncate">
-                              {user.email}
+                              {user?.email || ""}
                             </p>
                           </div>
                         </div>
@@ -405,7 +424,7 @@ export default function Navbar() {
                               Hello, {getDisplayName()}!
                             </p>
                             <p className="text-xs text-text-muted truncate">
-                              {user.email}
+                              {user?.email || ""}
                             </p>
                           </div>
                         </div>

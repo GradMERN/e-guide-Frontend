@@ -184,10 +184,13 @@ export default function LoginPage() {
                     throw new Error("Failed to decode authentication token");
                   }
 
+                  // Extract user data from token
                   const user = {
                     id: decodedToken.id,
                     email: decodedToken.email,
-                    name: decodedToken.name || values.email.split("@")[0],
+                    firstName: decodedToken.firstName || decodedToken.name?.split(' ')[0] || "User",
+                    lastName: decodedToken.lastName || decodedToken.name?.split(' ').slice(1).join(' ') || "",
+                    name: decodedToken.name || `${decodedToken.firstName || ""} ${decodedToken.lastName || ""}`.trim(),
                     role: decodedToken.role || "user",
                   };
 
