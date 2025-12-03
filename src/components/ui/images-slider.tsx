@@ -82,7 +82,7 @@ export const ImagesSlider: React.FC<ImagesSliderProps> = ({
   return (
     <div className={cn("relative w-full h-screen overflow-hidden perspective-[1000px]", className)}>
       {overlay && (
-        <div className={cn("absolute inset-0 z-40 pointer-events-none bg-black/65",overlayClassName)}/>
+        <div className={cn("absolute inset-0 z-40 pointer-events-none bg-black/76",overlayClassName)}/>
       )}
 
       {children && (

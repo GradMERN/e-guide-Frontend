@@ -4,13 +4,13 @@
 @layer base {
   :root {
     /* Light Theme */
-    --primary: #d8b46c;        
-    --secondary: #c29a59;       
-    --tertiary: #8e6a3f; 
+    --primary: #b06419;        
+    --secondary: #a55d16;       
+    --tertiary: #bc8d4f;
 
-    --gradient-from: #967f4d;
-    --gradient-via:  #876f40;
-    --gradient-to:   #4a381f;
+    --gradient-from: var(--color-primary);
+    --gradient-via: var(--color-secondary);
+    --gradient-to:   var(--color-tertiary);
 
     --background:  #f7f4ea;
     --surface: #fdfbf5;   
@@ -18,7 +18,7 @@
 
     --border-outlined: var(--text);
 
-    --text: #3b2e1d; 
+    --text: #5c2e06; 
     --text-secondary: #6c5538; 
     --text-muted: #8e6a3f;  
     --text-loop: #050505;
@@ -29,10 +29,10 @@
     --faq-icon: var(--faq-title);
     --faq-border:var(--faq-title);
     
-    --button-primary-bg: #3b2e1d;
+    --button-primary-bg: #82480e;
     --button-primary-text: #ffffff;
     --button-primary-border: none;
-    --button-primary-hover-bg: #5a452a; 
+    --button-primary-hover-bg: #9c7543; 
     --button-primary-hover-text: #ffffff;
 
 
@@ -46,13 +46,13 @@
 
   .dark {
     /* Dark Theme */
-    --primary: #C7A15C;
-    --secondary: #FFE6A0;
-    --tertiary: #FFD27F;
+    --primary: #cfaa65;
+    --secondary: #ffd079;
+    --tertiary: #f9de93;
 
-    --gradient-from: #C7A15C;
-    --gradient-via:  #FFE6A0;
-    --gradient-to:   #FFD27F;
+    --gradient-from: var(--color-primary);
+    --gradient-via: var(--color-secondary);
+    --gradient-to:   var(--color-tertiary);
 
     --background: #050505;
     --surface: #151515;
