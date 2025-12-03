@@ -38,7 +38,7 @@ import photo29 from "../../assets/images/views/photo-29.avif";
 
 export default function GallerySection() {
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  const [direction, setDirection] = useState(0);
 
   const galleryData = [
     { id: 1, type: "image", src: photo1, title: "Photo 1", description: "Description for photo 1" },
@@ -72,15 +72,15 @@ export default function GallerySection() {
     { id: 29, type: "image", src: photo29, title: "Photo 29", description: "Description for photo 29" },
   ];
 
+const handlePrev = () => {
+  setDirection(-1);
+  setCurrentIndex((prev) => (prev - 1 + galleryData.length) % galleryData.length);
+};
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + galleryData.length) % galleryData.length);
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % galleryData.length);
-  };
-
+const handleNext = () => {
+  setDirection(1);
+  setCurrentIndex((prev) => (prev + 1) % galleryData.length);
+};
 
   const getVisibleImages = () => {
     const visible = [];
@@ -93,57 +93,50 @@ export default function GallerySection() {
 
 
   return (
-    <SectionWrapperFull>
+    <div className="pb-10 sm:pb-10 md:pb-28 ">
       <TitlesHome
         icon={GrGallery}
         title="Gallery"
         paragraph="Explore a curated collection of stunning moments captured across Egypt — showcasing its rich heritage, vibrant culture, and unforgettable landscapes."
       />
 
-      <div className="overflow-hidden ">
-        <div className="relative h-[400px] sm:h-[500px] md:h-[600px] flex items-center justify-center [--space:180px] sm:[--space:260px] md:[--space:350px]">
-          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handlePrev} className="absolute left-0 sm:left-4 md:left-8 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[linear-gradient(to_right,#C7A15C,#FFE6A0,#FFD27F)] border-2 border-[#FFD97F] flex items-center justify-center shadow-lg hover:shadow-xl transition-all">
+      <div className="overflow-hidden">
+        <div className="relative h-[250px] sm:h-[500px] md:h-[600px] flex items-center justify-center [--space:180px] sm:[--space:260px] md:[--space:320px] ">
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handlePrev} className="absolute left-0 sm:left-4 md:left-8 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl button-gradient dark:button-gradient border-2 border-tertiary flex items-center justify-center shadow-lg hover:shadow-xl transition-all">
             <ChevronLeft size={32} className="text-black" />
           </motion.button>
 
-          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleNext} className="absolute right-0 sm:right-4 md:right-8 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[linear-gradient(to_right,#C7A15C,#FFE6A0,#FFD27F)] border-2 border-[#FFD97F] flex items-center justify-center shadow-lg hover:shadow-xl transition-all">
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleNext} className="absolute right-0 sm:right-4 md:right-8 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl button-gradient dark:button-gradient border-2 border-tertiary flex items-center justify-center shadow-lg hover:shadow-xl transition-all">
             <ChevronRight size={32} className="text-black" />
           </motion.button>
 
           <AnimatePresence mode="sync">
             {getVisibleImages().map((item) => {
               const isCenter = item.offset === 0;
-              const scale = item.offset === 0 ? 1 : 0.7;
-              const opacity = item.offset === 0 ? 1 : Math.abs(item.offset) === 1 ? 0.6 : 0.4;
-              const zIndex = 5 - Math.abs(item.offset);
+              const scale = item.offset === 0 ? 1 : 1 - Math.abs(item.offset) * 0.1;
+              const opacity = 2
+              const zIndex = 11 - Math.abs(item.offset) * 15;
               const xOffset = `calc(var(--space) * ${item.offset})`;
 
               return (
-                <motion.div key={`${item.id}-${item.offset}`} initial={{ opacity: 0, scale: 0.8 }} animate={{ scale, opacity }} exit={{ opacity: 0, scale: 0.8 }} transition={{ type: "spring" }}
-                  onClick={() => {
-                    if (item.offset > 0) handleNext();
-                    if (item.offset < 0) handlePrev();
-                  }}
-                  className="absolute w-[220px] sm:w-[320px] md:w-[420px] h-90 sm:h-[500px] md:h-[600px] rounded-2xl overflow-hidden" style={{ zIndex, x: xOffset }}>
-                  <div className="w-full h-full relative">
-                    <img src={item.src} alt={item.title} className="w-full h-full object-cover"loading="lazy"/>
-
-                    {isCenter && (
-                          <>
-                            <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
-                            <AnimatePresence mode="wait">
-                              <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-linear-to-t from-black/80 to-transparent">
-                                <h3 className="text-white text-xl sm:text-2xl font-bold mb-2">
-                                  {item.title}
-                                </h3>
-                                <p className="text-white/90 text-sm sm:text-base">
-                                  {item.description}
-                                </p>
-                              </motion.div>
-                            </AnimatePresence>
-                          </>
-                        )}
-                  </div>
+                      <motion.div key={item.id} initial={{ x: direction > 0 ? "100%" : "-100%", scale: 0.7, opacity: 0 }} animate={{ x: xOffset, scale, opacity }} exit={{ x: direction > 0 ? "-100%" : "100%", scale: 0.7, opacity: 0 }} transition={{ type: "spring", stiffness: 200, damping: 30 }} style={{ zIndex }} className="absolute w-[180px] h-[260px] sm:w-[260px] sm:h-[360px] md:w-[350px] md:h-[500px] lg:w-[400px] lg:h-[600px] rounded-xl overflow-hidden cursor-pointer ">
+                      <img src={item.src} alt={item.title} className="w-full h-full object-cover"loading="lazy"/>
+                      <div className={`absolute inset-0 ${isCenter ? "bg-linear-to-t from-black/0 to-transparent" : "bg-black/50"}`}/>
+                      {isCenter && (
+                            <>
+                              <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+                                <AnimatePresence mode="sync">
+                                  <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-linear-to-t from-black/80 to-transparent">
+                                    <h3 className="text-white text-xl sm:text-2xl font-bold mb-2">
+                                      {item.title}
+                                    </h3>
+                                    <p className="text-white/90 text-sm sm:text-base">
+                                      {item.description}
+                                    </p>
+                                  </motion.div>
+                                </AnimatePresence>
+                            </>
+                      )}
                 </motion.div>
               );
             })}
@@ -151,6 +144,6 @@ export default function GallerySection() {
 
         </div>
       </div>
-    </SectionWrapperFull>
+    </div>
   );
 }

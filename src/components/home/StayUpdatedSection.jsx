@@ -45,7 +45,7 @@ export default function StayUpdatedSection() {
       />
 
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.6 }} className="max-w-5xl mx-auto">
-        <div className="relative overflow-hidden rounded-3xl border-4 border-amber-950 bg-linear-to-br from-[#B9934C] via-[#e8bd72] to-[#b58a3f] p-6 sm:p-8 md:p-12 shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl border-4 border-amber-950 card-bg p-6 sm:p-8 md:p-12 shadow-2xl">
           <div className="relative z-10">
             {!subscribed ? (
               <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
@@ -90,8 +90,7 @@ export default function StayUpdatedSection() {
 
                       <button type="submit"
                         className={`w-full py-4 sm:py-5 rounded-xl font-bold text-lg transition-all duration-300 ${
-                          values.selectedTopics.length > 0 && values.email ? "bg-amber-950 text-[#FFD700] hover:bg-black hover:scale-105 shadow-lg" : "bg-gray-400 text-gray-600 cursor-not-allowed"
-                        }`} disabled={!(values.email && values.selectedTopics.length > 0)}>
+                          values.selectedTopics.length > 0 && values.email ? "bg-amber-950 text-[#FFD700] hover:bg-black hover:scale-105 shadow-lg" : "bg-gray-400 text-gray-600 cursor-not-allowed" }`} disabled={!(values.email && values.selectedTopics.length > 0)}>
                         Subscribe Now
                       </button>
                     </div>
