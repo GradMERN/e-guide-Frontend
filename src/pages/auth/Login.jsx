@@ -16,8 +16,11 @@ import { useAuth } from "../../context/AuthContext";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { login } from "../../apis/Auth/login.api";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../store/slices/authSlice";
 
 export default function LoginPage() {
+  const dispatcher = useDispatch();
   const navigate = useNavigate();
   const { updateUser } = useAuth();
 
@@ -66,8 +69,9 @@ export default function LoginPage() {
       <section className="flex flex-row bg-[#050505] text-slate-200 overflow-hidden">
         {/* LEFT SECTION */}
         <div
-          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-            }`}
+          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${
+            animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+          }`}
         >
           <div className="flex items-center gap-5">
             <GiEgyptianProfile className="max-[1212px]:w-20 max-[1212px]:h-20 w-24 h-24 text-[#f7c95f] drop-shadow-[0_0_15px_rgba(247,201,95,0.5)]" />
@@ -116,8 +120,9 @@ export default function LoginPage() {
 
         {/* RIGHT SECTION */}
         <div
-          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-            }`}
+          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${
+            animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
+          }`}
         >
           <div className="absolute inset-0">
             <img
@@ -155,58 +160,60 @@ export default function LoginPage() {
                     throw new Error("No token received from server");
                   }
 
-                  const decodeJWT = (token) => {
-                    try {
-                      const base64Url = token.split(".")[1];
-                      const base64 = base64Url
-                        .replace(/-/g, "+")
-                        .replace(/_/g, "/");
-                      const jsonPayload = decodeURIComponent(
-                        atob(base64)
-                          .split("")
-                          .map(
-                            (c) =>
-                              "%" +
-                              ("00" + c.charCodeAt(0).toString(16)).slice(-2)
-                          )
-                          .join("")
-                      );
-                      return JSON.parse(jsonPayload);
-                    } catch (error) {
-                      console.error("Failed to decode token:", error);
-                      return null;
-                    }
-                  };
+                  // const decodeJWT = (token) => {
+                  //   try {
+                  //     const base64Url = token.split(".")[1];
+                  //     const base64 = base64Url
+                  //       .replace(/-/g, "+")
+                  //       .replace(/_/g, "/");
+                  //     const jsonPayload = decodeURIComponent(
+                  //       atob(base64)
+                  //         .split("")
+                  //         .map(
+                  //           (c) =>
+                  //             "%" +
+                  //             ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                  //         )
+                  //         .join("")
+                  //     );
+                  //     return JSON.parse(jsonPayload);
+                  //   } catch (error) {
+                  //     console.error("Failed to decode token:", error);
+                  //     return null;
+                  //   }
+                  // };
 
-                  const decodedToken = decodeJWT(token);
+                  // const decodedToken = decodeJWT(token);
 
-                  if (!decodedToken) {
-                    throw new Error("Failed to decode authentication token");
-                  }
+                  // if (!decodedToken) {
+                  //   throw new Error("Failed to decode authentication token");
+                  // }
 
-                  // Extract user data from token
-                  const user = {
-                    id: decodedToken.id,
-                    email: decodedToken.email,
-                    firstName: decodedToken.firstName || decodedToken.name?.split(' ')[0] || "User",
-                    lastName: decodedToken.lastName || decodedToken.name?.split(' ').slice(1).join(' ') || "",
-                    name: decodedToken.name || `${decodedToken.firstName || ""} ${decodedToken.lastName || ""}`.trim(),
-                    role: decodedToken.role || "user",
-                  };
+                  // // Extract user data from token
+                  // const user = {
+                  //   id: decodedToken.id,
+                  //   email: decodedToken.email,
+                  //   firstName: decodedToken.firstName || decodedToken.name?.split(' ')[0] || "User",
+                  //   lastName: decodedToken.lastName || decodedToken.name?.split(' ').slice(1).join(' ') || "",
+                  //   // name: decodedToken.name || `${decodedToken.firstName || ""} ${decodedToken.lastName || ""}`.trim(),
+                  //   role: decodedToken.role || "user",
+                  // };
 
-                  console.log("Decoded user from token:", user);
-                  console.log("Token:", token);
+                  // console.log("Decoded user from token:", user);
+                  // console.log("Token:", token);
 
                   // Store token and user
                   localStorage.setItem("token", token);
-                  localStorage.setItem("user", JSON.stringify(user));
+                  localStorage.setItem("user", JSON.stringify(res.data.data));
 
                   // Update auth context
-                  updateUser(user);
+                  updateUser(res.data.data);
+
+                  dispatcher(loginSuccess(res.data.data));
 
                   // Route based on user role
-                  const role = user?.role?.toLowerCase();
-                  console.log("User role:", user?.role, "Lowercased:", role);
+                  const role = res.data.data?.role?.toLowerCase();
+                  console.log("User role:", res.data.data?.role, "Lowercased:", role);
                   if (role === "admin") {
                     console.log("Routing to /admin/dashboard");
                     navigate("/admin/dashboard");
@@ -232,10 +239,11 @@ export default function LoginPage() {
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <MdEmail
-                            className={`absolute left-4  transition-colors duration-300 ${focusedInput === "email"
-                              ? "text-[#f7c95f]"
-                              : "text-[#bfb191]"
-                              }`}
+                            className={`absolute left-4  transition-colors duration-300 ${
+                              focusedInput === "email"
+                                ? "text-[#f7c95f]"
+                                : "text-[#bfb191]"
+                            }`}
                           />
                           <input
                             {...field}
@@ -258,21 +266,16 @@ export default function LoginPage() {
                     )}
                   </Field>
 
-
-
-
-
-
-
                   <Field name="password">
                     {({ field, meta }) => (
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <FaLock
-                            className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password"
-                              ? "text-[#f7c95f]"
-                              : "text-[#bfb191]"
-                              }`}
+                            className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                              focusedInput === "password"
+                                ? "text-[#f7c95f]"
+                                : "text-[#bfb191]"
+                            }`}
                           />
                           <input
                             {...field}
@@ -290,9 +293,12 @@ export default function LoginPage() {
                             onClick={togglePassword}
                             className="absolute right-4 top-1/2 -translate-y-1/2 text-[#bfb191] transition-colors hover:text-[#f7c95f]"
                           >
-                            {showPassword ? <FaEyeSlash className="cursor-pointer" /> : <FaEye className="cursor-pointer" />}
+                            {showPassword ? (
+                              <FaEyeSlash className="cursor-pointer" />
+                            ) : (
+                              <FaEye className="cursor-pointer" />
+                            )}
                           </button>
-
                         </div>
                         {meta.touched && meta.error && (
                           <p className="text-red-500 text-sm mt-2 ms-2">
@@ -337,8 +343,8 @@ export default function LoginPage() {
 
                   <button
                     onClick={() =>
-                    (window.location.href =
-                      "http://localhost:3000/api/auth/google")
+                      (window.location.href =
+                        "http://localhost:3000/api/auth/google")
                     }
                     type="button"
                     className="group flex w-full items-center justify-center gap-3 rounded-xl border border-[#2b2b2b] bg-[#1a1a1a] py-3 text-white cursor-pointer transition-all duration-300 hover:bg-[#252525] hover:border-[#f7c95f]/50"

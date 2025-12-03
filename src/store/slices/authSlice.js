@@ -20,13 +20,7 @@ const loadInitialState = () => {
 
     // Validate parsed data
     if (user && typeof user === "object" && token) {
-      return {
-        user,
-        token,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      };
+      return user;
     } else {
       // Data is invalid, clear it
       localStorage.removeItem("token");
@@ -44,11 +38,17 @@ const loadInitialState = () => {
 
 // Default initial state
 const getDefaultState = () => ({
-  user: null,
+  id: null,
+  firstName: null,
+  lastName: null,
+  email: null,
+  role: null,
+  phone: null,
+  country: null,
+  city: null,
+  avatar: null,
+  lastLogin: null,
   token: null,
-  isAuthenticated: false,
-  isLoading: false,
-  error: null,
 });
 
 const authSlice = createSlice({
@@ -59,32 +59,28 @@ const authSlice = createSlice({
       state.isLoading = true;
       state.error = null;
     },
-    loginSuccess: (state, action) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = true;
-      state.isLoading = false;
-      state.error = null;
-
+    loginSuccess: (state, { payload }) => {
+      // const { user, token } = action.payload;
+      // state.user = user;
+      // state.token = token;
+      // state.isAuthenticated = true;
+      // state.isLoading = false;
+      // state.error = null;
+      return { ...payload };
       // Save to localStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      // localStorage.setItem("token", token);
+      // localStorage.setItem("user", JSON.stringify(user));
     },
     loginFailure: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
     logout: (state) => {
-      state.user = null;
-      state.token = null;
-      state.isAuthenticated = false;
-      state.isLoading = false;
-      state.error = null;
-
       // Clear localStorage
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+
+      return getDefaultState();
     },
     clearError: (state) => {
       state.error = null;

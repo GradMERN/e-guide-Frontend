@@ -17,13 +17,16 @@ import Switch from "./ui/SwitchLanguages";
 //import { useAuth } from "../context/AuthContext";
 
 import { useAuth } from "../store/hooks";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
 
   // Use Redux auth state instead of useState
-  const { user, logout } = useAuth();
-
+  // const { logout } = useAuth();
+  const user = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -77,54 +80,56 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     setIsDropdownOpen(false);
     navigate("/login");
   };
 
   const getUserInitials = () => {
     if (!user) return "U";
-    
+
     // Try firstName and lastName first
     if (user.firstName && user.lastName) {
       const first = user.firstName[0].toUpperCase();
       const last = user.lastName[0].toUpperCase();
       return first + last;
     }
-    
+
     // Fallback to name field
     if (user.name) {
       const cleanName = user.name.trim();
       const nameParts = cleanName.split(/\s+/);
-      
+
       if (nameParts.length >= 2) {
-        return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
+        return (
+          nameParts[0][0] + nameParts[nameParts.length - 1][0]
+        ).toUpperCase();
       } else if (nameParts.length === 1 && nameParts[0].length >= 2) {
         return nameParts[0].substring(0, 2).toUpperCase();
       } else if (nameParts[0]) {
         return nameParts[0][0].toUpperCase();
       }
     }
-    
+
     return "U";
   };
 
   // Get display name for greeting
   const getDisplayName = () => {
     if (!user) return "User";
-    
+
     // Try firstName and lastName
     if (user.firstName) {
       return user.firstName;
     }
-    
+
     // Fallback to name field
     if (user.name) {
       const cleanName = user.name.trim();
       const nameParts = cleanName.split(/\s+/);
       return nameParts[0];
     }
-    
+
     return "User";
   };
 
@@ -203,7 +208,7 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-{/* 
+              {/* 
               <div className="hidden md:flex items-center gap-3">
                 {user ? (
                   <div className="relative">
@@ -265,7 +270,7 @@ export default function Navbar() {
                   </NavLink>
                 )}
               </div> */}
-              {user ? (
+              {user.id ? (
                 /* User Avatar Dropdown - Spotify Style */
                 <div className="hidden md:block relative" ref={dropdownRef}>
                   <button
@@ -297,8 +302,8 @@ export default function Navbar() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-text truncate">
-                              {user?.firstName && user?.lastName 
-                                ? `${user.firstName} ${user.lastName}` 
+                              {user?.firstName && user?.lastName
+                                ? `${user.firstName} ${user.lastName}`
                                 : user?.name || "User"}
                             </p>
                             <p className="text-xs text-text-muted truncate">
@@ -389,10 +394,9 @@ export default function Navbar() {
 
                 {user ? (
                   <>
-
                     <button
                       onClick={() => {
-                        navigate('/profile');
+                        navigate("/profile");
                         setIsMobileMenuOpen(false);
                       }}
                       className="block w-full text-left py-2 px-4 text-lg bg-primary/10 text-primary 
@@ -403,7 +407,7 @@ export default function Navbar() {
                     <button
                       onClick={() => {
                         logout();
-                        navigate('/');
+                        navigate("/");
                         setIsMobileMenuOpen(false);
                       }}
                       className="block w-full text-left py-2 px-4 text-lg bg-red-500/10 text-red-500 
@@ -458,7 +462,7 @@ export default function Navbar() {
                   <NavLink
                     to="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    // className="block py-2 px-4 text-lg bg-linear-to-r from-primary to-secondary 
+                    // className="block py-2 px-4 text-lg bg-linear-to-r from-primary to-secondary
                     //          text-black font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
                     className="block py-3 px-4 text-base bg-gradient-to-r from-gradient-from via-gradient-via to-gradient-to 
                            text-background font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
