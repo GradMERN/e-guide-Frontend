@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import TitlesHome from "../common/TitlesHome";
 import { GrGallery } from "react-icons/gr";
-import { FaPlayCircle as Play } from "react-icons/fa";
 import { TbSquareRoundedChevronRight as ChevronRight } from "react-icons/tb";
 import { TbSquareRoundedChevronLeft as ChevronLeft } from "react-icons/tb";
 import SectionWrapperFull from "../common/SectionWrapper";

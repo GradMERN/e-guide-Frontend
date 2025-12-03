@@ -23,6 +23,7 @@ import About from "./pages/shared/About";
 import NotFound from "./pages/NotFound";
 import TourPackages from "./pages/shared/TourPackages";
 import TourDetail from "./pages/shared/TourDetail";
+import TourGuideProfile from "./components/tourGuides/TourGuideProfile";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       { path: "/tours", element: <TourPackages /> },
       { path: "/tours/:id", element: <TourDetail /> },
       { path: "/profile", element: <Profile /> },
+      { path: "/TourGuideProfile/:name", element: <TourGuideProfile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/my-tours", element: <MyTours /> },
       { path: "/about", element: <About /> },

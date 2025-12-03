@@ -7,19 +7,29 @@ import {
   FaBars,
   FaTimes,
   FaUser,
+  FaHeart,
+  FaMapMarkedAlt,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./ui/SwitchLanguages";
 import { useAuth } from "../context/AuthContext";
 
+import { useAuth } from "../store/hooks";
+
 export default function Navbar() {
+  const navigate = useNavigate();
+
+  // Use Redux auth state instead of useState
+  const { user, logout } = useAuth();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const links = [
     { name: "Home", path: "/" },
@@ -29,6 +39,12 @@ export default function Navbar() {
     { name: "Contact", path: "/contact" },
   ];
 
+  const dropdownItems = [
+    { name: "My Tours", path: "/my-tours", icon: FaMapMarkedAlt },
+    { name: "Profile", path: "/profile", icon: FaUser },
+    { name: "Saved", path: "/saved", icon: FaHeart },
+  ];
+
   useEffect(() => {
     let lastScrollY = window.scrollY;
 
@@ -36,10 +52,8 @@ export default function Navbar() {
       const currentScroll = window.scrollY;
 
       if (currentScroll < lastScrollY - 10) {
-        // scrolling UP (show navbar)
         setShowNavbar(true);
       } else if (currentScroll > lastScrollY + 10) {
-        // scrolling DOWN (hide navbar)
         setShowNavbar(false);
       }
 
@@ -50,6 +64,56 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", updateScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setIsDropdownOpen(false);
+    navigate("/login");
+  };
+
+  const getUserInitials = () => {
+    if (!user?.name) return "U";
+
+    const cleanName = user.name.trim();
+    const nameParts = cleanName.split(/\s+/);
+
+    if (nameParts.length >= 2) {
+      const firstNameInitial = nameParts[0][0].toUpperCase();
+      const lastNameInitial = nameParts[nameParts.length - 1][0].toUpperCase();
+      return firstNameInitial + lastNameInitial;
+    } else if (nameParts.length === 1) {
+      const name = nameParts[0];
+      if (name.length >= 2) {
+        return name.substring(0, 2).toUpperCase();
+      } else {
+        return name[0].toUpperCase();
+      }
+    }
+
+    return "U";
+  };
+
+  // Get display name for greeting
+  const getDisplayName = () => {
+    if (!user?.name) return "User";
+
+    const cleanName = user.name.trim();
+    const nameParts = cleanName.split(/\s+/);
+
+    return nameParts[0];
+  };
+
   return (
     <div
       className={`
@@ -58,10 +122,10 @@ export default function Navbar() {
       `}
     >
       {/* Top Small Navbar */}
-      <div className="w-full bg-[#fffdf0] dark:bg-background border-b border-primary/20">
+      <div className="w-full bg-surface dark:bg-surface border-b border-primary/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between py-2">
-            <div className="hidden lg:flex items-center gap-4 text-sm text-[#705830]">
+            <div className="hidden lg:flex items-center gap-4 text-sm text-text-secondary">
               <div className="flex items-center gap-1">
                 <FaPhone className="text-primary text-xs" />
                 <span>+20 123 456 7890</span>
@@ -76,7 +140,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            <div className="lg:hidden flex items-center gap-2 text-xs text-[#705830]">
+            <div className="lg:hidden flex items-center gap-2 text-xs text-text-secondary">
               <FaPhone className="text-primary" />
               <span>+20 123 456 7890</span>
             </div>
@@ -94,8 +158,8 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between py-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-secondary flex items-center justify-center shadow-md">
-                <FaEye className="text-black text-xl" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center shadow-md">
+                <FaEye className="text-background text-xl" />
               </div>
               <h1 className="text-xl font-bold text-primary dark:text-primary tracking-wide">
                 Mystic Egypt Tours
@@ -125,6 +189,7 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
+
               <div className="hidden md:flex items-center gap-3">
                 {user ? (
                   <div className="relative">
@@ -182,6 +247,90 @@ export default function Navbar() {
                   </NavLink>
                 )}
               </div>
+=======
+              {user ? (
+                /* User Avatar Dropdown - Spotify Style */
+                <div className="hidden md:block relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background hover:scale-105 transition-transform shadow-md group relative"
+                  >
+                    {/* Avatar with initials */}
+                    <span className="text-background text-sm font-bold">
+                      {getUserInitials()}
+                    </span>
+
+                    {/* Tooltip on hover */}
+                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                      <div className="bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap">
+                        Hello, {getDisplayName()}!
+                      </div>
+                      <div className="w-2 h-2 bg-gray-900 transform rotate-45 absolute -top-1 left-1/2 -translate-x-1/2"></div>
+                    </div>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-3 w-56 bg-surface dark:bg-surface border border-border rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                      {/* User Info Header */}
+                      <div className="p-4 border-b border-border bg-gradient-to-r from-gradient-from/5 via-gradient-via/5 to-gradient-to/5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
+                            {getUserInitials()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-text truncate">
+                              {user.name}
+                            </p>
+                            <p className="text-xs text-text-muted truncate">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="py-2">
+                        {dropdownItems.map((item) => (
+                          <NavLink
+                            key={item.name}
+                            to={item.path}
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-text hover:bg-primary/10 hover:text-primary transition-colors group"
+                          >
+                            <item.icon className="text-base group-hover:scale-110 transition-transform" />
+                            <span className="text-sm font-medium">
+                              {item.name}
+                            </span>
+                          </NavLink>
+                        ))}
+
+                        {/* Logout Button */}
+                        <div className="border-t border-border mt-2 pt-2">
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-500/10 transition-colors group"
+                          >
+                            <FaSignOutAlt className="text-base group-hover:scale-110 transition-transform" />
+                            <span className="text-sm font-medium">Logout</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Login Button */
+                <div className="hidden md:flex items-center">
+                  <NavLink
+                    to="/login"
+                    className="px-5 py-2 rounded-lg bg-gradient-to-r from-gradient-from via-gradient-via to-gradient-to 
+                           text-background font-medium shadow-md hover:brightness-110 transition hover:scale-105 text-sm"
+                  >
+                    Login
+                  </NavLink>
+                </div>
+              )}
 
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -197,6 +346,7 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden bg-surface dark:bg-surface border-t border-border py-4">
               <div className="flex flex-col space-y-4">
@@ -220,6 +370,7 @@ export default function Navbar() {
 
                 {user ? (
                   <>
+
                     <button
                       onClick={() => {
                         navigate('/profile');
@@ -241,13 +392,57 @@ export default function Navbar() {
                     >
                       Logout
                     </button>
+
+                    <div className="border-t border-border pt-4">
+                      {/* User Info in Mobile */}
+                      <div className="px-4 mb-4">
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-gradient-from/5 via-gradient-via/5 to-gradient-to/5 border border-border">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-base font-bold text-background">
+                            {getUserInitials()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-text truncate">
+                              Hello, {getDisplayName()}!
+                            </p>
+                            <p className="text-xs text-text-muted truncate">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {dropdownItems.map((item) => (
+                        <NavLink
+                          key={item.name}
+                          to={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center gap-3 py-3 px-4 text-base transition font-medium text-text hover:text-primary hover:bg-primary/5 rounded-lg"
+                        >
+                          <item.icon className="text-lg" />
+                          <span>{item.name}</span>
+                        </NavLink>
+                      ))}
+
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="flex items-center gap-3 py-3 px-4 text-base font-medium text-red-500 hover:bg-red-500/10 rounded-lg w-full text-left mt-2"
+                      >
+                        <FaSignOutAlt className="text-lg" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
                   </>
                 ) : (
                   <NavLink
                     to="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block py-2 px-4 text-lg bg-linear-to-r from-primary to-secondary 
-                             text-black font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
+                    // className="block py-2 px-4 text-lg bg-linear-to-r from-primary to-secondary 
+                    //          text-black font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
+                    className="block py-3 px-4 text-base bg-gradient-to-r from-gradient-from via-gradient-via to-gradient-to 
+                           text-background font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
                   >
                     Login
                   </NavLink>

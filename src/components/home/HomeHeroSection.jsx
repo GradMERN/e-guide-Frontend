@@ -30,7 +30,7 @@ return (
       <div className="z-50 flex flex-col justify-center items-center px-4 py-8 sm:py-12">
         <motion.div initial={{ opacity: 0, y: -80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-6 md:mb-10">
           <motion.h1
-            className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-3 md:mb-4 leading-normal sm:leading-[1.15] md:leading-normal bg-linear-to-r from-[#C7A15C] via-[#FFE6A0] to-[#FFD27F] bg-clip-text text-transparent [text-shadow:0_0_40px_rgba(199,161,92,0.5)]">
+            className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-3 md:mb-4 leading-normal sm:leading-[1.15] md:leading-normal bg-tertiary bg-clip-text text-transparent [text-shadow:0_0_60px_rgba(199,161,92,0.5)]">
             Discover Egypt
           </motion.h1>
 

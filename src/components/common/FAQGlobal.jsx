@@ -25,7 +25,7 @@ export default function FAQGlobal({ categories }) {
           return (
             <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.3, delay: catIndex * 0.1 }} className="rounded-2xl">
               
-              <div className="px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-5 rounded-2xl  bg-[linear-gradient(to_right,var(--gradient-from),var(--gradient-via),var(--gradient-to))] cursor-pointer duration-300"
+              <div className="px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-5 rounded-2xl  bg-primary cursor-pointer duration-300"
                 onClick={() => toggleCategory(catIndex)}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
