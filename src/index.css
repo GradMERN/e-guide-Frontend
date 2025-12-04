@@ -23,6 +23,10 @@
     --text-muted: #8e6a3f;  
     --text-loop: #050505;
 
+    --glass-bg: var(--color-surface);
+    --glass-bg-hover:#f0e6c9 ;
+    --glass-border: rgba(0, 0, 0, 0.08);
+
     --icon-card: #050505;
 
     --faq-title: #050505;
@@ -47,8 +51,8 @@
   .dark {
     /* Dark Theme */
     --primary: #cfaa65;
-    --secondary: #ffd079;
-    --tertiary: #f9de93;
+    --secondary: #FFD97F;
+    --tertiary: #FFE6A0;
 
     --gradient-from: var(--color-primary);
     --gradient-via: var(--color-secondary);
@@ -64,6 +68,11 @@
     --text-secondary: #dbd8d8;
     --text-muted: #7a7a7a;
     --text-loop: #050505;
+
+    --glass-bg: rgba(255, 255, 255, 0.03); 
+    --glass-bg-hover: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
 
     --faq-title: #451901;
     --faq-icon: var(--faq-title);

@@ -24,6 +24,8 @@ import NotFound from "./pages/NotFound";
 import TourPackages from "./pages/shared/TourPackages";
 import TourDetail from "./pages/shared/TourDetail";
 import TourGuideProfile from "./components/tourGuides/TourGuideProfile";
+import AllDestinationPage from './pages/shared/AllDestinationPage';
+import DestinationDetail from "./components/allDestinations/DestinationDetail";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +39,8 @@ const router = createBrowserRouter([
       { path: "/cart", element: <Cart /> },
       { path: "/my-tours", element: <MyTours /> },
       { path: "/about", element: <About /> },
+      { path: "/destinations", element: <AllDestinationPage /> },
+      { path: "/destinations/:id", element: <DestinationDetail /> },
     ],
   },
   {

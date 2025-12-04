@@ -23,7 +23,7 @@ export default function FAQGlobal({ categories }) {
           const isOpenCategory = openCategory === catIndex;
 
           return (
-            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.3, delay: catIndex * 0.2 }}>
+            <motion.div key={catIndex} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.3, delay: catIndex * 0.08 }}>
               
               <div className="px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-5 rounded-xl card-bg cursor-pointer duration-300"
                 onClick={() => toggleCategory(catIndex)}>

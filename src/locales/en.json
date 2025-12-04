@@ -172,5 +172,65 @@
       "accountStatus": "Status",
       "verificationStatus": "Email Verification"
     }
+  },
+  "beforeAfter": {
+    "subtitle": "Compare & Contrast",
+    "title": {
+      "normal": "The E-Tour Guide",
+      "highlight": "Difference"
+    },
+    "description": "See what changes when you travel with us",
+    "without": "Without Us",
+    "with": "With E-Tour Guide",
+    "comparisons": [
+      {
+        "before": {
+          "icon": "FaRegFrown",
+          "title": "Overwhelmed by planning",
+          "text": "Spending hours researching attractions, transportation, and best times to visit"
+        },
+        "after": {
+          "icon": "FaRegSmile",
+          "title": "Pre-planned itineraries",
+          "text": "Detailed day-by-day guides with optimal routes and timing for each destination"
+        }
+      },
+      {
+        "before": {
+          "icon": "FaCamera",
+          "title": "Missing key information",
+          "text": "Arriving at sites without context or historical background"
+        },
+        "after": {
+          "icon": "FaSun",
+          "title": "Rich audio commentary",
+          "text": "Professional narration at every stop revealing fascinating stories and secrets"
+        }
+      },
+      {
+        "before": {
+          "icon": "FaUsers",
+          "title": "Getting lost easily",
+          "text": "Struggling with confusing maps and language barriers in unfamiliar places"
+        },
+        "after": {
+          "icon": "FaUserFriends",
+          "title": "GPS navigation built-in",
+          "text": "Turn-by-turn directions that work offline, guiding you seamlessly between locations"
+        }
+      },
+      {
+        "before": {
+          "icon": "FaDollarSign",
+          "title": "Expensive tour guides",
+          "text": "Paying $100+ per day for group tours with fixed schedules"
+        },
+        "after": {
+          "icon": "FaGem",
+          "title": "Affordable freedom",
+          "text": "One-time purchase gives you a personal guide in your pocket, explore at your pace"
+        }
+      }
+    ]
   }
 }
