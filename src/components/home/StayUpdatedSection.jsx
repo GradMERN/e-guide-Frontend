@@ -45,7 +45,7 @@ export default function StayUpdatedSection() {
       />
 
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.6 }} className="max-w-5xl mx-auto">
-        <div className="relative overflow-hidden rounded-3xl border-4 border-amber-950 card-bg p-6 sm:p-8 md:p-12 shadow-2xl">
+        <div className="relative overflow-hidden rounded-xl border-4 border-amber-950 card-bg p-6 sm:p-8 md:p-12 shadow-2xl">
           <div className="relative z-10">
             {!subscribed ? (
               <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>

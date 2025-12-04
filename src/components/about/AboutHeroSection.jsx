@@ -35,7 +35,7 @@ export default function AboutHeroSection() {
           experiences and expert local guidance.
         </motion.p>
 
-        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.9 }} className="text-shadow-text-secondary md:text-lg leading-relaxed ">
+        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.9 }} className="text-secondary md:text-lg leading-relaxed ">
           Explore ancient temples, Nile adventures, desert expeditions, and
           culinary journeys with our expert guides.
         </motion.p>
