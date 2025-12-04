@@ -73,27 +73,30 @@ const StyledWrapper = styled.div`
     width: calc(50% - 4px);
     background: linear-gradient(to right, #b8941f, #d4b15b, #e2c784);
     border-radius: 4px;
-    transition: left 0.3s ease;
+    transition: transform 0.8s ease;
     z-index: 1;
   }
 
   .switch input:checked ~ .slider {
-    left: calc(50% + 2px);
-    right: calc(50% + 2px);
+    transform: translateX(105%);
+  }
+
+  .switch input:not(:checked) ~ .slider {
+    transform: translateX(0);
   }
 
   .switch input:not(:checked) ~ .label-en {
-    color: black; 
+    color: black;
   }
   .switch input:not(:checked) ~ .label-ar {
     color: white;
   }
 
   .switch input:checked ~ .label-en {
-    color: white; 
+    color: black;
   }
   .switch input:checked ~ .label-ar {
-    color: black; 
+    color: white;
   }
 `;
 
