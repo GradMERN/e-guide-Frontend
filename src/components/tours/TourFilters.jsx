@@ -4,13 +4,16 @@ import { FaFilter, FaSearch } from "react-icons/fa";
 const TourFilters = ({
   searchTerm,
   setSearchTerm,
-  selectedCity,
-  setSelectedCity,
+  selectedPlace,
+  setSelectedPlace,
+  selectedCategory,
+  setSelectedCategory,
   priceRange,
   setPriceRange,
   sortBy,
   setSortBy,
-  cities,
+  places,
+  categories,
   filteredCount,
   totalCount,
 }) => {
@@ -33,7 +36,7 @@ const TourFilters = ({
           />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search by name or description..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-3 bg-surface rounded-xl text-text text-sm placeholder-text-muted focus:outline-none transition-all border border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -41,19 +44,37 @@ const TourFilters = ({
         </div>
       </div>
 
-      {/* City Filter */}
+      {/* Place/City Filter */}
       <div className="mb-6">
         <label className="block text-sm font-semibold text-text-secondary mb-3">
-          Destination
+          Location
         </label>
         <select
-          value={selectedCity}
-          onChange={(e) => setSelectedCity(e.target.value)}
+          value={selectedPlace}
+          onChange={(e) => setSelectedPlace(e.target.value)}
           className="w-full px-4 py-3 bg-surface rounded-xl text-text text-sm focus:outline-none appearance-none cursor-pointer transition-all border border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
         >
-          {cities.map((city) => (
-            <option key={city} value={city}>
-              {city === "all" ? "All Cities" : city}
+          {places.map((place) => (
+            <option key={place} value={place}>
+              {place === "all" ? "All Locations" : place}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Category Filter */}
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-text-secondary mb-3">
+          Category
+        </label>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="w-full px-4 py-3 bg-surface rounded-xl text-text text-sm focus:outline-none appearance-none cursor-pointer transition-all border border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
+        >
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category === "all" ? "All Categories" : category}
             </option>
           ))}
         </select>
@@ -102,9 +123,9 @@ const TourFilters = ({
           className="w-full px-4 py-3 bg-surface rounded-xl text-text text-sm focus:outline-none appearance-none cursor-pointer transition-all border border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
         >
           <option value="popular">Most Popular</option>
+          <option value="rating">Highest Rated</option>
           <option value="price-low">Price: Low to High</option>
           <option value="price-high">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
         </select>
       </div>
 
