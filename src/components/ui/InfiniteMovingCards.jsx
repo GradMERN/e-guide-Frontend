@@ -47,7 +47,7 @@ export const InfiniteMovingCards = ({
 
   return (
     <div ref={containerRef}
-      className={cn("scroller relative w-full overflow-hidden py-6",pauseOnHover && "pause-on-hover")}>
+      className={cn("scroller relative w-full overflow-hidden",pauseOnHover && "pause-on-hover")}>
       <ul ref={scrollerRef} className={cn("flex w-max gap-6", start && "animate-scroll", className)}>
         {items.map((item, idx) => (
           <li key={item.name + idx} className="shrink-0 w-[250px] md:w-[300px] rounded-xl border border-border bg-surface backdrop-blur-md p-4 flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-300">

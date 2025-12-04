@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "../components/ThemeToggle";
-import Switch from "./ui/SwitchLanguages";
+import Switch from "./common/SwitchLanguages";
 //import { useAuth } from "../context/AuthContext";
 
 import { useAuth } from "../store/hooks";
