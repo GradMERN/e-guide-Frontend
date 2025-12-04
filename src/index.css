@@ -4,44 +4,45 @@
 @layer base {
   :root {
     /* Light Theme */
-    --primary: #b06419;        
-    --secondary: #a55d16;       
+    --primary: #b06419;
+    --secondary: #a55d16;
     --tertiary: #ca9a5a;
 
     --gradient-from: var(--color-primary);
     --gradient-via: var(--color-secondary);
-    --gradient-to:   var(--color-tertiary);
+    --gradient-to: var(--color-tertiary);
 
-    --background:  #f7f4ea;
-    --surface: #f7edce;   
-    --border: #dcc9a1; 
+    --background: #f7f4ea;
+    --surface: #f7edce;
+    --border: #dcc9a1;
 
     --border-outlined: var(--text);
 
-    --text: #5c2e06; 
-    --text-secondary: #6c5538; 
-    --text-muted: #8e6a3f;  
+    --text: #5c2e06;
+    --text-secondary: #6c5538;
+    --text-muted: #8e6a3f;
     --text-loop: #050505;
 
     --icon-card: #050505;
 
     --faq-title: #050505;
     --faq-icon: var(--faq-title);
-    --faq-border:var(--faq-title);
-    
+    --faq-border: var(--faq-title);
+
     --button-primary-bg: #82480e;
     --button-primary-text: #ffffff;
     --button-primary-border: none;
-    --button-primary-hover-bg: #9c7543; 
+    --button-primary-hover-bg: #9c7543;
     --button-primary-hover-text: #ffffff;
 
-
     --button-secondary-bg: transparent;
-    --button-secondary-text:#050505;
+    --button-secondary-text: #050505;
     --button-secondary-border: var(--border-outlined);
     --button-secondary-hover-bg: var(--secondary);
     --button-secondary-hover-text: var(--text-button);
     --button-secondary-hover-border: var(--secondary);
+    --button-bg: var(--button-primary-bg);
+    --text-button: var(--button-primary-text);
   }
 
   .dark {
@@ -52,11 +53,11 @@
 
     --gradient-from: var(--color-primary);
     --gradient-via: var(--color-secondary);
-    --gradient-to:   var(--color-tertiary);
+    --gradient-to: var(--color-tertiary);
 
     --background: #050505;
     --surface: #151515;
-    --border: #C7A15C;
+    --border: #c7a15c;
 
     --border-outlined: var(--border);
 
@@ -67,11 +68,20 @@
 
     --faq-title: #451901;
     --faq-icon: var(--faq-title);
-    --faq-border:var(--faq-title);
+    --faq-border: var(--faq-title);
 
-    --button-primary-bg: linear-gradient(to right, var(--gradient-from), var(--gradient-via), var(--gradient-to));
+    --button-primary-bg: linear-gradient(
+      to right,
+      var(--gradient-from),
+      var(--gradient-via),
+      var(--gradient-to)
+    );
     --button-primary-text: #050505;
-    --button-primary-hover-bg: linear-gradient(to right, var(--gradient-from), var(--gradient-to));
+    --button-primary-hover-bg: linear-gradient(
+      to right,
+      var(--gradient-from),
+      var(--gradient-to)
+    );
     --button-primary-hover-text: #050505;
 
     --button-secondary-bg: transparent;
@@ -80,10 +90,14 @@
     --button-secondary-hover-bg: var(--secondary);
     --button-secondary-hover-text: #050505;
     --button-secondary-hover-border: var(--secondary);
-
+    --button-bg: var(--button-primary-bg);
+    --text-button: var(--button-primary-text);
   }
   * {
     border-color: var(--border);
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: ease-in;
+    transition-duration: 300ms;
   }
 
   body {
@@ -98,13 +112,13 @@
     background: var(--button-primary-bg);
     color: var(--button-primary-text);
     border: var(--button-primary-border);
-    cursor:pointer
+    cursor: pointer;
   }
 
   .btn-primary-hero:hover {
     background: var(--button-primary-hover-bg);
     color: var(--button-primary-hover-text);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   }
 
   .btn-secondary-hero {
@@ -112,7 +126,7 @@
     background: var(--button-secondary-bg);
     color: var(--button-secondary-text);
     border: 1px solid var(--button-secondary-border);
-    cursor:pointer
+    cursor: pointer;
   }
 
   .btn-secondary-hero:hover {
@@ -126,7 +140,7 @@
     background-color: transparent;
     color: var(--text);
     border: 1px solid transparent;
-    cursor:pointer
+    cursor: pointer;
   }
 
   .btn-ghost:hover {
@@ -135,7 +149,7 @@
   }
 
   .text-gradient-title {
-    background-color: var(--color-secondary); 
+    background-color: var(--color-secondary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -163,11 +177,16 @@
   }
 
   .button-gradient {
-    background: var(--color-primary)
+    background: var(--color-primary);
   }
 
   .dark .button-gradient {
-    background: linear-gradient(to right, var(--gradient-from), var(--gradient-via), var(--gradient-to));
+    background: linear-gradient(
+      to right,
+      var(--gradient-from),
+      var(--gradient-via),
+      var(--gradient-to)
+    );
   }
 
   .text-loop {
@@ -192,7 +211,6 @@
   }
 }
 
-
 @theme {
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
@@ -208,8 +226,8 @@
   --color-text-button: var(--text-button);
 
   --color-gradient-from: var(--gradient-from);
-  --color-gradient-via:  var(--gradient-via);
-  --color-gradient-to:   var(--gradient-to);
+  --color-gradient-via: var(--gradient-via);
+  --color-gradient-to: var(--gradient-to);
 
   --color-button-bg: var(--button-bg);
 }

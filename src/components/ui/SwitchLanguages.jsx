@@ -1,18 +1,35 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const Switch = () => {
   const [theme, setTheme] = useState("dark");
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme") || "dark";
     setTheme(storedTheme);
   }, []);
 
+  const toggleLanguage = (e) => {
+    const newLang = e.target.checked ? "ar" : "en";
+    i18n.changeLanguage(newLang);
+    document.dir = newLang === "ar" ? "rtl" : "ltr";
+  };
+
   return (
     <StyledWrapper theme={theme}>
-      <label htmlFor="filter" className="switch" aria-label="Toggle Filter">
-        <input type="checkbox" id="filter" />
+      <label
+        htmlFor="language-toggle"
+        className="switch"
+        aria-label="Toggle Language"
+      >
+        <input
+          type="checkbox"
+          id="language-toggle"
+          onChange={toggleLanguage}
+          checked={i18n.language === "ar"}
+        />
         <span>EN</span>
         <span>AR</span>
       </label>
@@ -22,6 +39,7 @@ const Switch = () => {
 
 const StyledWrapper = styled.div`
   .switch {
+    direction: ltr;
     --_switch-bg-clr: ${(props) =>
       props.theme === "dark"
         ? "linear-gradient(145deg, rgba(226, 199, 132, 0.2), rgba(189, 161, 100, 0.1))"
