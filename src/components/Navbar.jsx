@@ -271,7 +271,6 @@ export default function Navbar() {
                 )}
               </div> */}
               {user.id ? (
-                /* User Avatar Dropdown - Spotify Style */
                 <div className="hidden md:block relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}

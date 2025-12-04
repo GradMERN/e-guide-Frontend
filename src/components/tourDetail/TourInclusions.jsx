@@ -3,23 +3,20 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 
 const TourInclusions = ({ included, excluded }) => {
   return (
-    <div className="backdrop-blur-xl bg-white/5 rounded-2xl p-8 border border-white/10">
-      <h2 className="text-3xl font-bold text-white mb-6">What's Included</h2>
+    <div className="bg-surface rounded-2xl p-8 border border-border shadow-lg">
+      <h2 className="text-3xl font-bold text-text mb-6">What's Included</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Included */}
         <div>
-          <h3 className="text-xl font-semibold text-white mb-4">Included</h3>
+          <h3 className="text-xl font-semibold text-text mb-4">Included</h3>
           <div className="space-y-3">
-            {included.map((item, index) => (
+            {included?.map((item, index) => (
               <div key={index} className="flex items-start gap-3">
-                <div
-                  className="p-2 rounded-lg mt-0.5"
-                  style={{ backgroundColor: "rgba(255, 230, 160, 0.1)" }}
-                >
-                  <FaCheck style={{ color: "#FFE6A0" }} size={12} />
+                <div className="p-2 rounded-lg mt-0.5 bg-primary/10">
+                  <FaCheck className="text-primary" size={12} />
                 </div>
-                <p className="text-gray-300">{item}</p>
+                <p className="text-text-secondary">{item}</p>
               </div>
             ))}
           </div>
@@ -27,16 +24,14 @@ const TourInclusions = ({ included, excluded }) => {
 
         {/* Excluded */}
         <div>
-          <h3 className="text-xl font-semibold text-white mb-4">
-            Not Included
-          </h3>
+          <h3 className="text-xl font-semibold text-text mb-4">Not Included</h3>
           <div className="space-y-3">
-            {excluded.map((item, index) => (
+            {excluded?.map((item, index) => (
               <div key={index} className="flex items-start gap-3">
                 <div className="p-2 rounded-lg bg-red-500/10 mt-0.5">
-                  <FaTimes className="text-red-400" size={12} />
+                  <FaTimes className="text-red-500" size={12} />
                 </div>
-                <p className="text-gray-300">{item}</p>
+                <p className="text-text-secondary">{item}</p>
               </div>
             ))}
           </div>
