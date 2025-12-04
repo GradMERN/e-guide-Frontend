@@ -56,5 +56,235 @@
   "english": "الإنجليزية",
   "spanish": "الإسبانية",
   "french": "الفرنسية",
-  "german": "الألمانية"
+  "german": "الألمانية",
+  "admin": {
+    "dashboard": "لوحة التحكم",
+    "toursMenu": "الجولات",
+    "usersMenu": "المستخدمون",
+    "guidesMenu": "الأدلاء",
+    "settings": "الإعدادات",
+    "adminPanel": "لوحة الإدارة",
+    "manageEgyptTours": "إدارة منصة جولات مصر الخاصة بك",
+    "totalUsers": "إجمالي المستخدمين",
+    "totalGuides": "إجمالي المرشدين",
+    "totalTours": "إجمالي الجولات",
+    "totalRevenue": "إجمالي الإيرادات (جنيه مصري)",
+    "growthTrend": "اتجاه النمو",
+    "userDistribution": "توزيع المستخدمين",
+    "recentTours": "الجولات الحديثة",
+    "recentUsers": "المستخدمون الحديثون",
+    "monthlyRevenue": "الإيرادات الشهرية",
+    "refreshData": "تحديث البيانات",
+    "loadingDashboard": "جاري تحميل لوحة التحكم...",
+    "noTours": "لا توجد جولات بعد",
+    "noUsers": "لا يوجد مستخدمون بعد",
+    "profileSettings": "إعدادات الملف الشخصي",
+    "viewWebsite": "عرض الموقع",
+    "logout": "تسجيل الخروج",
+    "confirmLogout": "هل تريد فعلاً تسجيل الخروج؟",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "cancel": "إلغاء",
+    "tours": {
+      "title": "إدارة الجولات",
+      "add": "إضافة جولة",
+      "edit": "تعديل الجولة",
+      "addNew": "إضافة جولة جديدة",
+      "name": "اسم الجولة",
+      "city": "المدينة",
+      "price": "السعر",
+      "duration": "المدة (ساعات)",
+      "groupSize": "أقصى حجم للمجموعة",
+      "rating": "التقييم",
+      "actions": "الإجراءات",
+      "currency": "العملة",
+      "description": "الوصف",
+      "searchPlaceholder": "البحث عن جولات حسب الاسم أو المدينة...",
+      "notFound": "لم يتم العثور على جولات تطابق البحث",
+      "empty": "لا توجد جولات بعد",
+      "create": "إنشاء جولة",
+      "update": "تحديث الجولة",
+      "loadError": "فشل تحميل الجولات",
+      "saveError": "فشل حفظ الجولة",
+      "deleteError": "فشل حذف الجولة",
+      "confirmDelete": "هل تريد فعلاً حذف هذه الجولة؟"
+    },
+    "users": {
+      "title": "إدارة المستخدمين",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "location": "الموقع",
+      "role": "الدور",
+      "joined": "انضم",
+      "actions": "الإجراءات",
+      "roleUser": "مستخدم",
+      "roleGuide": "مرشد",
+      "roleAdmin": "مسؤول",
+      "allRoles": "جميع الأدوار",
+      "selectRole": "اختر دوراً...",
+      "totalUsers": "إجمالي المستخدمين",
+      "guides": "المرشدون",
+      "regularUsers": "المستخدمون العاديون",
+      "searchPlaceholder": "البحث حسب الاسم أو البريد الإلكتروني...",
+      "notFound": "لم يتم العثور على مستخدمين",
+      "empty": "لا يوجد مستخدمون بعد",
+      "loadError": "فشل تحميل المستخدمين",
+      "roleError": "فشل تحديث الدور",
+      "deleteError": "فشل حذف المستخدم",
+      "confirmDelete": "هل تريد فعلاً حذف هذا المستخدم؟"
+    },
+    "guides": {
+      "title": "إدارة المرشدين",
+      "subtitle": "إدارة ومراقبة مرشدي الجولات",
+      "totalGuides": "إجمالي المرشدين",
+      "activeGuides": "المرشدون النشطون",
+      "totalTours": "إجمالي الجولات",
+      "tours": "الجولات",
+      "rating": "التقييم",
+      "recentTours": "الجولات الأخيرة:",
+      "searchPlaceholder": "البحث عن المرشدين حسب الاسم أو المدينة...",
+      "notFound": "لم يتم العثور على مرشدين",
+      "empty": "لا يوجد مرشدون متاحون",
+      "loadError": "فشل تحميل المرشدين"
+    }
+  },
+  "guide": {
+    "dashboard": "لوحة التحكم الخاصة بي",
+    "myTours": "جولاتي",
+    "analyticsMenu": "التحليلات",
+    "settings": "الإعدادات",
+    "guidePanel": "لوحة المرشد",
+    "manageTours": "إدارة جولاتك وتتبع الأداء",
+    "myOverview": "نظرة عام عليّ",
+    "totalTours": "إجمالي الجولات",
+    "activeTours": "الجولات النشطة",
+    "totalBookings": "إجمالي الحجوزات",
+    "totalEarnings": "إجمالي الأرباح (جنيه مصري)",
+    "totalRating": "متوسط التقييم",
+    "bookingsTrend": "اتجاه الحجوزات",
+    "earningsTrend": "اتجاه الأرباح",
+    "tourPerformance": "أداء الجولة",
+    "recentBookings": "الحجوزات الأخيرة",
+    "refreshData": "تحديث البيانات",
+    "loadingDashboard": "جاري تحميل لوحة التحكم...",
+    "tours": {
+      "title": "جولاتي",
+      "add": "إنشاء جولة",
+      "edit": "تعديل الجولة",
+      "addNew": "إضافة جولة جديدة",
+      "name": "اسم الجولة",
+      "place": "المكان/الموقع",
+      "price": "السعر",
+      "duration": "المدة (ساعات)",
+      "groupSize": "أقصى حجم للمجموعة",
+      "rating": "التقييم",
+      "actions": "الإجراءات",
+      "currency": "العملة",
+      "description": "الوصف",
+      "images": "الصور",
+      "highlights": "الميزات",
+      "itinerary": "البرنامج الزمني",
+      "availability": "التوفر",
+      "searchPlaceholder": "البحث عن جولات حسب الاسم أو المكان...",
+      "notFound": "لم يتم العثور على جولات تطابق البحث",
+      "empty": "لا توجد جولات بعد",
+      "create": "إنشاء جولة",
+      "update": "تحديث الجولة",
+      "loadError": "فشل تحميل الجولات",
+      "saveError": "فشل حفظ الجولة",
+      "deleteError": "فشل حذف الجولة",
+      "confirmDelete": "هل تريد فعلاً حذف هذه الجولة؟",
+      "status": "الحالة",
+      "active": "نشطة",
+      "inactive": "غير نشطة",
+      "bookings": "الحجوزات",
+      "views": "المشاهدات",
+      "revenue": "الإيرادات"
+    },
+    "analytics": {
+      "title": "التحليلات",
+      "overview": "نظرة عامة",
+      "bookingAnalysis": "تحليل الحجوزات",
+      "revenueAnalysis": "تحليل الإيرادات",
+      "tourPerformance": "أداء الجولة",
+      "ratingTrend": "اتجاه التقييم",
+      "totalViews": "إجمالي المشاهدات",
+      "conversionRate": "معدل التحويل",
+      "averageBookingValue": "متوسط قيمة الحجز",
+      "topPerformingTour": "أفضل جولة أداء",
+      "noData": "لا توجد بيانات متاحة"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "description": "إدارة ملفك الشخصي وإعدادات حسابك",
+      "personalInfo": "المعلومات الشخصية",
+      "contactInfo": "معلومات الاتصال",
+      "emailReadOnly": "لا يمكن تغيير البريد الإلكتروني",
+      "accountInfo": "معلومات الحساب",
+      "joinDate": "عضو منذ",
+      "accountStatus": "الحالة",
+      "verificationStatus": "التحقق من البريد الإلكتروني"
+    }
+  },
+  "beforeAfter": {
+    "subtitle": "قارن والفرق",
+    "title": {
+      "normal": "دليل الجولات الإلكتروني",
+      "highlight": "الفرق"
+    },
+    "description": "شاهد ما يتغير عندما تسافر معنا",
+    "without": "بدوننا",
+    "with": "مع دليل الجولات الإلكتروني",
+    "comparisons": [
+      {
+        "before": {
+          "icon": "FaRegFrown",
+          "title": "إرهاق من التخطيط",
+          "text": "قضاء ساعات في البحث عن المعالم السياحية والنقل وأفضل أوقات الزيارة"
+        },
+        "after": {
+          "icon": "FaRegSmile",
+          "title": "خطط جاهزة",
+          "text": "أدلة تفصيلية يومية مع مسارات مثالية وتوقيتات لكل وجهة"
+        }
+      },
+      {
+        "before": {
+          "icon": "FaCamera",
+          "title": "نقص المعلومات الأساسية",
+          "text": "الوصول إلى المواقع دون سياق أو خلفية تاريخية"
+        },
+        "after": {
+          "icon": "FaSun",
+          "title": "تعليق صوتي غني",
+          "text": "سرد احترافي في كل محطة يكشف قصصًا وأسرارًا رائعة"
+        }
+      },
+      {
+        "before": {
+          "icon": "FaUsers",
+          "title": "الضياع بسهولة",
+          "text": "المعاناة مع الخرائط المربكة وحواجز اللغة في أماكن غير مألوفة"
+        },
+        "after": {
+          "icon": "FaUserFriends",
+          "title": "ملاحة GPS مدمجة",
+          "text": "اتجاهات خطوة بخطوة تعمل دون اتصال، ترشدك بسلاسة بين المواقع"
+        }
+      },
+      {
+        "before": {
+          "icon": "FaDollarSign",
+          "title": "مرشدون سياحيون مكلفون",
+          "text": "دفع أكثر من 100 دولار يوميًا لجولات جماعية بجداول ثابتة"
+        },
+        "after": {
+          "icon": "FaGem",
+          "title": "حرية بأسعار معقولة",
+          "text": "شراء لمرة واحدة يمنحك مرشدًا شخصيًا في جيبك، استكشف بوتيرتك الخاصة"
+        }
+      }
+    ]
+  }
 }

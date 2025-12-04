@@ -8,8 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import { register } from "../../apis/Auth/register.api";
-import "../../styles/Register.css";
-
 
 const countries = [
   "Egypt", "USA", "Canada", "UK", "Germany", "France", "Italy",
@@ -27,7 +25,7 @@ const cities = [
 ];
 
 const InputField = ({ icon: Icon, placeholder, type = "text", focusedInput, setFocusedInput, extraClass = "", ...props }) => {
-  const  [field, meta] = useField(props);
+  const [field, meta] = useField(props);
 
   return (
     <div className="flex flex-col w-full">
@@ -121,9 +119,6 @@ export default function Register() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const nextStep = () => step < 3 && setStep(step + 1);
-  const prevStep = () => step > 1 && setStep(step - 1);
-
   const formatPhoneNumber = (input) => {
     let cleaned = input.replace(/\D/g, "");
     if (cleaned.startsWith("20")) cleaned = cleaned.slice(1);
@@ -131,9 +126,7 @@ export default function Register() {
     return cleaned;
   };
 
-
   const validationSchema = [
-
     Yup.object({
       firstname: Yup.string().required("First name is required"),
       lastname: Yup.string().required("Last name is required"),
@@ -160,14 +153,11 @@ export default function Register() {
         .test("is-egyptian", "Invalid phone number", (val) => {
           if (!val) return false;
           const cleaned = formatPhoneNumber(val);
-
           return /^01[0125][0-9]{8}$/.test(cleaned);
         })
         .required("Phone is required"),
     }),
   ];
-
-
 
   const initialValues = {
     firstname: "", lastname: "", email: "", age: "",
@@ -190,7 +180,7 @@ export default function Register() {
         password: values.password,
       };
 
-      console.log(" SENDING :", body);
+      console.log("SENDING:", body);
 
       const res = await register(body);
       alert(res.data.message);
@@ -238,7 +228,7 @@ export default function Register() {
           validationSchema={validationSchema[step - 1]}
           onSubmit={(values, actions) => {
             if (step < 3) {
-              nextStep();
+              setStep(step + 1);
               actions.setTouched({});
               actions.setSubmitting(false);
             } else {
@@ -248,8 +238,6 @@ export default function Register() {
         >
           {({ isSubmitting, isValid, errors }) => (
             <Form className="flex flex-col gap-4 sm:gap-5 md:gap-6">
-
-
               {step === 1 && (
                 <>
                   <div className="flex flex-col gap-4">
@@ -266,18 +254,18 @@ export default function Register() {
                 </>
               )}
 
-
               {step === 2 && (
                 <>
-                  <PasswordField name="password" placeholder="password" show={showPwd1} setShow={setShowPwd1} focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
-                  <PasswordField name="confirmPassword" placeholder="confirm password" show={showPwd2} setShow={setShowPwd2} focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                  <div className="flex flex-col gap-4">
+                    <PasswordField name="password" placeholder="password" show={showPwd1} setShow={setShowPwd1} focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                    <PasswordField name="confirmPassword" placeholder="confirm password" show={showPwd2} setShow={setShowPwd2} focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                  </div>
                   <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={prevStep} className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer">Back</button>
+                    <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer">Back</button>
                     <button type="submit" className="w-1/2 py-3 bg-linear-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Next</button>
                   </div>
                 </>
               )}
-
 
               {step === 3 && (
                 <>
@@ -292,7 +280,7 @@ export default function Register() {
                   <InputField name="phone" icon={FaPhoneAlt} placeholder="phone" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
 
                   <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={prevStep} className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer">Back</button>
+                    <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer">Back</button>
                     <button
                       type="submit"
                       disabled={isSubmitting || !isValid}
@@ -304,7 +292,6 @@ export default function Register() {
                       {isSubmitting ? "Loading..." : "Register"}
                     </button>
                   </div>
-
                 </>
               )}
             </Form>
@@ -321,3 +308,4 @@ export default function Register() {
     </section>
   );
 }
+

@@ -13,17 +13,24 @@ import {
 } from "react-icons/fa";
 import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "../components/ThemeToggle";
-import Switch from "./ui/SwitchLanguages";
+import Switch from "./common/SwitchLanguages";
+//import { useAuth } from "../context/AuthContext";
+
 import { useAuth } from "../store/hooks";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
 
   // Use Redux auth state instead of useState
-  const { user, logout } = useAuth();
-
+  // const { logout } = useAuth();
+  const user = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -73,27 +80,34 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     setIsDropdownOpen(false);
     navigate("/login");
   };
 
   const getUserInitials = () => {
-    if (!user?.name) return "U";
+    if (!user) return "U";
 
-    const cleanName = user.name.trim();
-    const nameParts = cleanName.split(/\s+/);
+    // Try firstName and lastName first
+    if (user.firstName && user.lastName) {
+      const first = user.firstName[0].toUpperCase();
+      const last = user.lastName[0].toUpperCase();
+      return first + last;
+    }
 
-    if (nameParts.length >= 2) {
-      const firstNameInitial = nameParts[0][0].toUpperCase();
-      const lastNameInitial = nameParts[nameParts.length - 1][0].toUpperCase();
-      return firstNameInitial + lastNameInitial;
-    } else if (nameParts.length === 1) {
-      const name = nameParts[0];
-      if (name.length >= 2) {
-        return name.substring(0, 2).toUpperCase();
-      } else {
-        return name[0].toUpperCase();
+    // Fallback to name field
+    if (user.name) {
+      const cleanName = user.name.trim();
+      const nameParts = cleanName.split(/\s+/);
+
+      if (nameParts.length >= 2) {
+        return (
+          nameParts[0][0] + nameParts[nameParts.length - 1][0]
+        ).toUpperCase();
+      } else if (nameParts.length === 1 && nameParts[0].length >= 2) {
+        return nameParts[0].substring(0, 2).toUpperCase();
+      } else if (nameParts[0]) {
+        return nameParts[0][0].toUpperCase();
       }
     }
 
@@ -102,12 +116,21 @@ export default function Navbar() {
 
   // Get display name for greeting
   const getDisplayName = () => {
-    if (!user?.name) return "User";
+    if (!user) return "User";
 
-    const cleanName = user.name.trim();
-    const nameParts = cleanName.split(/\s+/);
+    // Try firstName and lastName
+    if (user.firstName) {
+      return user.firstName;
+    }
 
-    return nameParts[0];
+    // Fallback to name field
+    if (user.name) {
+      const cleanName = user.name.trim();
+      const nameParts = cleanName.split(/\s+/);
+      return nameParts[0];
+    }
+
+    return "User";
   };
 
   return (
@@ -185,8 +208,69 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-              {user ? (
-                /* User Avatar Dropdown - Spotify Style */
+              {/* 
+              <div className="hidden md:flex items-center gap-3">
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary 
+                               hover:bg-primary/20 transition-all"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary 
+                                    flex items-center justify-center text-black font-bold text-sm">
+                        {getUserInitials()}
+                      </div>
+                      <span className="font-medium">
+                        {user?.firstName && user?.lastName 
+                          ? `${user.firstName} ${user.lastName}` 
+                          : user?.name || "User"}
+                      </span>
+                    </button>
+                    
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface rounded-lg shadow-lg border border-border z-50">
+                        <div className="p-4 border-b border-border">
+                          <p className="text-sm font-medium text-text">{user?.email}</p>
+                          <p className="text-xs text-gray-500">{user?.role}</p>
+                        </div>
+                        <div className="py-2">
+                          <button
+                            onClick={() => {
+                              navigate('/profile');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-text hover:bg-gray-100 dark:hover:bg-surface/80 transition"
+                          >
+                            <FaUser size={16} />
+                            <span className="text-sm">Profile</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              logout();
+                              navigate('/');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition"
+                          >
+                            <FaSignOutAlt size={16} />
+                            <span className="text-sm">Logout</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    className="px-5 py-1.5 rounded-lg bg-linear-to-r from-primary to-secondary 
+                             text-black font-medium shadow-md hover:brightness-110 transition hover:scale-105 text-sm"
+                  >
+                    Login
+                  </NavLink>
+                )}
+              </div> */}
+              {user.id ? (
                 <div className="hidden md:block relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -217,10 +301,12 @@ export default function Navbar() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-text truncate">
-                              {user.name}
+                              {user?.firstName && user?.lastName
+                                ? `${user.firstName} ${user.lastName}`
+                                : user?.name || "User"}
                             </p>
                             <p className="text-xs text-text-muted truncate">
-                              {user.email}
+                              {user?.email || ""}
                             </p>
                           </div>
                         </div>
@@ -307,6 +393,28 @@ export default function Navbar() {
 
                 {user ? (
                   <>
+                    <button
+                      onClick={() => {
+                        navigate("/profile");
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left py-2 px-4 text-lg bg-primary/10 text-primary 
+                               font-medium shadow-md transition text-center rounded-lg"
+                    >
+                      Profile
+                    </button>
+                    <button
+                      onClick={() => {
+                        logout();
+                        navigate("/");
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left py-2 px-4 text-lg bg-red-500/10 text-red-500 
+                               font-medium shadow-md transition text-center rounded-lg"
+                    >
+                      Logout
+                    </button>
+
                     <div className="border-t border-border pt-4">
                       {/* User Info in Mobile */}
                       <div className="px-4 mb-4">
@@ -319,7 +427,7 @@ export default function Navbar() {
                               Hello, {getDisplayName()}!
                             </p>
                             <p className="text-xs text-text-muted truncate">
-                              {user.email}
+                              {user?.email || ""}
                             </p>
                           </div>
                         </div>
@@ -353,6 +461,8 @@ export default function Navbar() {
                   <NavLink
                     to="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    // className="block py-2 px-4 text-lg bg-linear-to-r from-primary to-secondary
+                    //          text-black font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
                     className="block py-3 px-4 text-base bg-gradient-to-r from-gradient-from via-gradient-via to-gradient-to 
                            text-background font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
                   >
