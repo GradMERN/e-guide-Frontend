@@ -40,13 +40,12 @@ const StyledWrapper = styled.div`
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     background: ${(props) =>
       props.theme === "dark"
         ? "linear-gradient(145deg, rgba(226,199,132,0.2), rgba(189,161,100,0.1))"
         : "linear-gradient(145deg, rgba(226,199,132,0.3), rgba(189,161,100,0.2))"};
-    padding: 0 0.2em;
     font-weight: 600;
   }
 
@@ -73,7 +72,7 @@ const StyledWrapper = styled.div`
     left: 2px;
     width: calc(50% - 4px);
     background: linear-gradient(to right, #b8941f, #d4b15b, #e2c784);
-    border-radius: 3px;
+    border-radius: 4px;
     transition: left 0.3s ease;
     z-index: 1;
   }

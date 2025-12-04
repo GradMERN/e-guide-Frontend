@@ -171,8 +171,8 @@ export default function PopularDestination() {
           </motion.div>
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.2 }} className="text-center mt-12">
-          <motion.button onClick={handleViewAllDestinations} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}className="btn-primary-hero">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.2 }} className="text-center mt-6 sm:mt-12">
+          <motion.button onClick={handleViewAllDestinations} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}className="btn-primary-hero text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3">
             <span>View All Destinations</span>
           </motion.button>
         </motion.div>
