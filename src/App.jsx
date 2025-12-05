@@ -9,6 +9,8 @@ import Home from "./pages/shared/Home";
 import Profile from "./pages/shared/Profile";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import GoogleRedirect from "./pages/auth/GoogleRedirect";
+import OAuthSuccess from "./pages/auth/OAuthSuccess";
 import GuideDashboardLayout from "./layout/GuideDashboardLayout";
 import GuideDashboard from "./pages/guide/Dashboard";
 import ManageTours from "./pages/guide/ManageTours";
@@ -69,6 +71,8 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
+  { path: "/auth/google-redirect", element: <GoogleRedirect /> },
+  { path: "/oauth-success", element: <OAuthSuccess /> },
   // Guide Dashboard Routes
   {
     element: <GuideDashboardLayout />,

@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaEye,
@@ -11,22 +12,18 @@ import {
   FaMapMarkedAlt,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./common/SwitchLanguages";
-//import { useAuth } from "../context/AuthContext";
-
-import { useAuth } from "../store/hooks";
+import { useAuth } from "../context/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../store/slices/authSlice";
+import { logout as reduxLogout } from "../store/slices/authSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
-
-  // Use Redux auth state instead of useState
-  // const { logout } = useAuth();
-  const user = useSelector((state) => state.auth);
+  const auth = useSelector((state) => state.auth);
+  const user = auth?.user || null;
   const dispatch = useDispatch();
+  const { logout: contextLogout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -79,10 +76,23 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = (redirect = "/login") => {
+    try {
+      // Prefer context logout (it now also clears redux). If context isn't
+      // available, fall back to dispatching redux logout directly.
+      let didContext = false;
+      try {
+        contextLogout();
+        didContext = true;
+      } catch (e) {
+        // ignore if context not available
+      }
+      if (!didContext) dispatch(reduxLogout());
+    } catch (e) {
+      console.warn("Logout failed", e);
+    }
     setIsDropdownOpen(false);
-    navigate("/login");
+    navigate(redirect);
   };
 
   const getUserInitials = () => {
@@ -270,7 +280,7 @@ export default function Navbar() {
                   </NavLink>
                 )}
               </div> */}
-              {user.id ? (
+              {auth?.isAuthenticated ? (
                 <div className="hidden md:block relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -391,7 +401,7 @@ export default function Navbar() {
                   </NavLink>
                 ))}
 
-                {user ? (
+                {auth?.isAuthenticated ? (
                   <>
                     <button
                       onClick={() => {

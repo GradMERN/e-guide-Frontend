@@ -1,55 +1,58 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const getDefaultState = () => ({
+  user: {
+    id: null,
+    firstName: null,
+    lastName: null,
+    email: null,
+    role: null,
+    phone: null,
+    country: null,
+    city: null,
+    avatar: null,
+    lastLogin: null,
+  },
+  token: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+});
+
 const loadInitialState = () => {
   try {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
+    const defaultState = getDefaultState();
 
-    if (!token || !userData) {
-      return getDefaultState();
-    }
+    if (!token || !userData) return defaultState;
 
     if (userData === "undefined" || userData === "null") {
-      console.warn("Invalid user data found in localStorage, clearing...");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      return getDefaultState();
+      return defaultState;
     }
 
-    const user = JSON.parse(userData);
-
-    // Validate parsed data
-    if (user && typeof user === "object" && token) {
-      return user;
-    } else {
-      // Data is invalid, clear it
+    const parsed = JSON.parse(userData);
+    if (!parsed || typeof parsed !== "object") {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      return getDefaultState();
+      return defaultState;
     }
+
+    return {
+      ...defaultState,
+      user: parsed,
+      token,
+      isAuthenticated: true,
+    };
   } catch (error) {
     console.error("Error loading auth from localStorage:", error);
-    // Clear corrupted data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     return getDefaultState();
   }
 };
-
-// Default initial state
-const getDefaultState = () => ({
-  id: null,
-  firstName: null,
-  lastName: null,
-  email: null,
-  role: null,
-  phone: null,
-  country: null,
-  city: null,
-  avatar: null,
-  lastLogin: null,
-  token: null,
-});
 
 const authSlice = createSlice({
   name: "auth",
@@ -60,26 +63,29 @@ const authSlice = createSlice({
       state.error = null;
     },
     loginSuccess: (state, { payload }) => {
-      // const { user, token } = action.payload;
-      // state.user = user;
-      // state.token = token;
-      // state.isAuthenticated = true;
-      // state.isLoading = false;
-      // state.error = null;
-      return { ...payload };
-      // Save to localStorage
-      // localStorage.setItem("token", token);
-      // localStorage.setItem("user", JSON.stringify(user));
+      const { user, token } = payload;
+      state.user = user;
+      state.token = token;
+      state.isAuthenticated = true;
+      state.isLoading = false;
+      state.error = null;
+
+      try {
+        localStorage.setItem("token", token || "");
+        localStorage.setItem("user", JSON.stringify(user || {}));
+      } catch (e) {
+        console.warn("Failed to persist auth to localStorage", e);
+      }
     },
     loginFailure: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
     logout: (state) => {
-      // Clear localStorage
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-
+      try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      } catch (e) {}
       return getDefaultState();
     },
     clearError: (state) => {
@@ -88,16 +94,13 @@ const authSlice = createSlice({
   },
 });
 
-// Export actions
 export const { loginStart, loginSuccess, loginFailure, logout, clearError } =
   authSlice.actions;
 
-// Export selectors
 export const selectAuth = (state) => state.auth;
 export const selectUser = (state) => state.auth.user;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectIsLoading = (state) => state.auth.isLoading;
 export const selectError = (state) => state.auth.error;
 
-// Export reducer
 export default authSlice.reducer;

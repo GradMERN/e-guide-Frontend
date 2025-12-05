@@ -1,5 +1,7 @@
 ﻿import React, { createContext, useState, useEffect, useContext } from "react";
 import { authService } from "../apis/authService";
+import { store } from "../store";
+import { logout as reduxLogout } from "../store/slices/authSlice";
 
 const AuthContext = createContext(null);
 
@@ -15,6 +17,16 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
     initializeTheme();
     initializeLanguage();
+  }, []);
+
+  // Listen for global logout events (fired by redux-only logout callers)
+  useEffect(() => {
+    const onLogout = () => {
+      setUser(null);
+      setError(null);
+    };
+    window.addEventListener("auth:logout", onLogout);
+    return () => window.removeEventListener("auth:logout", onLogout);
   }, []);
 
   const initializeAuth = () => {
@@ -112,7 +124,16 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setError(null);
-    authService.logout();
+    try {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    } catch (e) {}
+    try {
+      // Also clear redux auth state so UI synced across app
+      store.dispatch(reduxLogout());
+    } catch (e) {
+      // ignore if store not available
+    }
   };
 
   const updateUser = (userData) => {
