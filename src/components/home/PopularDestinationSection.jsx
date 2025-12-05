@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { FaArrowRight } from "react-icons/fa";
 import TitlesHome from "../common/TitlesHome";
 import SectionWrapperFull from "../common/SectionWrapper";
+import { useTranslation } from "react-i18next";
 
-export default function PopularDestination() {
+export default function PopularDestinationSection() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [activeCard, setActiveCard] = useState(null);
   const sliderRef = useRef(null);
@@ -82,7 +84,6 @@ export default function PopularDestination() {
     },
   ];
 
-
   const handleExploreDestination = (destinationId) => {
     navigate(`/destinations/${destinationId}`);
   };
@@ -96,8 +97,8 @@ export default function PopularDestination() {
       <div className="mt-12">
         <TitlesHome
           icon={GiEgypt}
-          title="Popular Destination"
-          paragraph="Discover essential insights to guide your adventure across the timeless land of PEACE, where history, culture, and breathtaking beauty meet."
+          title={t("popularDestination.title")}
+          paragraph={t("popularDestination.description")}
         />
 
         <div className="hidden lg:grid lg:grid-cols-3 gap-6 xl:gap-8 max-w-7xl mx-auto">
@@ -173,7 +174,7 @@ export default function PopularDestination() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.2 }} className="text-center mt-6 sm:mt-12">
           <motion.button onClick={handleViewAllDestinations} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}className="btn-primary-hero text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3">
-            <span>View All Destinations</span>
+            <span>{t("popularDestination.viewAll")}</span>
           </motion.button>
         </motion.div>
       </div>
