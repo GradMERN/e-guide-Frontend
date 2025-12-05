@@ -95,12 +95,7 @@ const handleNext = () => {
 
   return (
     <div className="pb-10 sm:pb-10 md:pb-28 ">
-      <TitlesHome
-        icon={GrGallery}
-        title={t("gallery.title")}
-        paragraph= {t("gallery.paragraph")}
-
-      />
+      <TitlesHome icon={GrGallery} title={t("gallery.title")} paragraph= {t("gallery.paragraph")}/>
 
       <div className="overflow-hidden">
         <div className="relative h-[250px] sm:h-[500px] md:h-[600px] flex items-center justify-center [--space:180px] sm:[--space:260px] md:[--space:320px] ">
