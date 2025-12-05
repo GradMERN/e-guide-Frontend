@@ -8,6 +8,7 @@ import {
   FaImages,
   FaMusic,
   FaSpinner,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { tourItemService } from "../../../apis/tourItemService";
@@ -41,6 +42,7 @@ const TourItemsManager = ({
   const [formMode, setFormMode] = useState("create"); // 'create' | 'edit' | 'gallery'
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(defaultItemForm());
+  const [taken, setTaken] = useState(false);
   const [audioPreviewUrl, setAudioPreviewUrl] = useState(null);
   const [mainImagePreviewUrl, setMainImagePreviewUrl] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -49,6 +51,8 @@ const TourItemsManager = ({
   const mainImageRef = useRef(null);
   const galleryRef = useRef(null);
   const audioRef = useRef(null);
+  const pinRef = useRef(null);
+  const sparkIntervalRef = useRef(null);
 
   const borderColor = "border-[var(--border)]";
   const inputBg = "bg-[var(--surface)]";
@@ -209,6 +213,86 @@ const TourItemsManager = ({
     }
   };
 
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(6));
+        const lng = parseFloat(pos.coords.longitude.toFixed(6));
+        setForm((p) => ({
+          ...p,
+          location: { type: "Point", coordinates: [lng, lat] },
+        }));
+        toast.success("Location detected");
+        // create a few quick sparks to simulate the key-reflection (only if not taken)
+        if (!taken) {
+          try {
+            spawnSpark();
+            setTimeout(spawnSpark, 120);
+            setTimeout(spawnSpark, 260);
+          } catch (e) {}
+        }
+      },
+      (err) => {
+        console.error("Geolocation error", err);
+        toast.error("Unable to detect location");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  const spawnSpark = (opts = {}) => {
+    const container = pinRef.current;
+    if (!container) return;
+    const spark = document.createElement("span");
+    spark.className = "desert-key-spark";
+    // random offset within the button area
+    const px = Math.round(Math.random() * 60 + 20); // percent-ish
+    const py = Math.round(Math.random() * 60 + 20);
+    spark.style.position = "absolute";
+    spark.style.left = `${px}%`;
+    spark.style.top = `${py}%`;
+    spark.style.pointerEvents = "none";
+    // slight random size
+    const size = Math.max(4, Math.round(Math.random() * 8));
+    spark.style.width = `${size}px`;
+    spark.style.height = `${size}px`;
+    spark.style.borderRadius = "50%";
+    spark.style.opacity = "0";
+    container.appendChild(spark);
+    // remove after animation
+    const remove = () => {
+      try {
+        spark.removeEventListener("animationend", remove);
+        container.removeChild(spark);
+      } catch (e) {}
+    };
+    spark.addEventListener("animationend", remove);
+    // force browser to pick up element before adding class
+    // start the animation via class
+    requestAnimationFrame(() => {
+      spark.style.opacity = "1";
+      spark.classList.add("desert-key-spark-anim");
+    });
+  };
+
+  useEffect(() => {
+    // start periodic subtle sparks when form is shown and key not taken
+    if (showForm && !taken) {
+      sparkIntervalRef.current = setInterval(() => {
+        spawnSpark();
+      }, 4200 + Math.floor(Math.random() * 3000));
+    }
+    return () => {
+      if (sparkIntervalRef.current) clearInterval(sparkIntervalRef.current);
+      sparkIntervalRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showForm, taken]);
+
   const handleRemoveNewGallery = (index) => {
     setForm((p) => ({
       ...p,
@@ -289,6 +373,61 @@ const TourItemsManager = ({
   // fullPage rendering is handled earlier; default modal rendering here
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto bg-black/50">
+      <style>{`
+        /* bigger, more powerful pulse */
+        @keyframes mapPinPulse {
+          0% { text-shadow: 0 0 2px rgba(255,223,120,0.95); transform: scale(1); }
+          40% { text-shadow: 0 0 22px rgba(255,223,120,0.98); transform: scale(1.18); }
+          60% { text-shadow: 0 0 14px rgba(255,223,120,0.96); transform: scale(1.12); }
+          100% { text-shadow: 0 0 2px rgba(255,223,120,0.95); transform: scale(1); }
+        }
+        .map-pin-pulse {
+          animation: mapPinPulse 1.2s cubic-bezier(.2,.9,.2,1) infinite;
+          will-change: transform, text-shadow;
+        }
+
+        /* halo around the pin to make it look like a shining key in the sand */
+        .pin-with-halo {
+          position: relative;
+          isolation: isolate;
+        }
+        .pin-with-halo::after {
+          content: '';
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 120%;
+          height: 120%;
+          border-radius: 50%;
+          pointer-events: none;
+          background: radial-gradient(circle at 50% 40%, rgba(255,245,200,0.95) 0%, rgba(255,223,120,0.55) 20%, rgba(213,179,106,0.12) 45%, transparent 70%);
+          filter: blur(10px) saturate(1.1);
+          opacity: 0.9;
+          animation: haloPulse 1.2s cubic-bezier(.2,.9,.2,1) infinite;
+        }
+        @keyframes haloPulse {
+          0% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; filter: blur(6px) saturate(1); }
+          45% { transform: translate(-50%,-50%) scale(1.18); opacity: 1; filter: blur(14px) saturate(1.15); }
+          100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; filter: blur(6px) saturate(1); }
+        }
+
+        /* spark animation (unchanged but slightly brighter) */
+        @keyframes desertSpark {
+          0% { opacity: 0; transform: translate(0,0) scale(0.6); filter: blur(0px); }
+          20% { opacity: 1; transform: translate(-8px,-8px) scale(1); filter: blur(0px); }
+          100% { opacity: 0; transform: translate(-20px,-20px) scale(0.3); filter: blur(3px); }
+        }
+        .desert-key-spark {
+          position: absolute;
+          background: radial-gradient(circle, rgba(255,250,210,1) 0%, rgba(255,224,110,1) 40%, rgba(213,179,106,0.6) 70%, transparent 100%);
+          pointer-events: none;
+          transform-origin: center;
+        }
+        .desert-key-spark-anim {
+          animation: desertSpark 900ms ease-out forwards;
+        }
+      `}</style>
       <div
         className={`max-w-3xl w-full mt-8 ${cardBg} rounded-xl border ${borderColor} p-6`}
       >
@@ -338,7 +477,10 @@ const TourItemsManager = ({
                   className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor}`}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div
+                className="grid gap-3 items-end"
+                style={{ gridTemplateColumns: "45% 45% 10%" }}
+              >
                 <div>
                   <label
                     className={`block text-sm font-medium ${secondaryText} mb-1`}
@@ -389,12 +531,52 @@ const TourItemsManager = ({
                     className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor}`}
                   />
                 </div>
+                <div>
+                  <button
+                    ref={pinRef}
+                    type="button"
+                    onClick={() => {
+                      // user takes the key: stop pulsing and sparks
+                      try {
+                        setTaken(true);
+                        if (sparkIntervalRef.current) {
+                          clearInterval(sparkIntervalRef.current);
+                          sparkIntervalRef.current = null;
+                        }
+                        // remove existing sparks
+                        const container = pinRef.current;
+                        if (container) {
+                          Array.from(
+                            container.querySelectorAll(".desert-key-spark")
+                          ).forEach((s) => s.remove());
+                        }
+                      } catch (e) {}
+                      detectLocation();
+                    }}
+                    title="Detect my location"
+                    className={`h-12 w-full bg-transparent text-[var(--text)] transition-all justify-self-end flex items-center justify-center p-0 border-0 cursor-pointer`}
+                    style={{
+                      background: "transparent",
+                    }}
+                  >
+                    <FaMapMarkerAlt
+                      className={`w-5 h-5 text-[#D5B36A] ${
+                        !taken ? "map-pin-pulse" : ""
+                      }`}
+                      style={{
+                        textShadow: taken
+                          ? "none"
+                          : "0 0 1px rgba(213,179,106,0.95)",
+                      }}
+                    />
+                  </button>
+                </div>
               </div>
               <div>
                 <label
                   className={`block text-sm font-medium ${secondaryText} mb-1`}
                 >
-                  Script (optional)
+                  Script
                 </label>
                 <textarea
                   value={form.script}
@@ -403,6 +585,7 @@ const TourItemsManager = ({
                   }
                   className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor}`}
                   rows={3}
+                  required
                 />
               </div>
               <div>

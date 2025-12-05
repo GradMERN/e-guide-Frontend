@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
-import { MdTitle, MdLocationOn, MdMovie } from "react-icons/md";
+import { MdTitle, MdLocationOn, MdMovie, MdMyLocation } from "react-icons/md";
 import { FaList } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { tourItemService } from "../../apis/tourItemService";
@@ -60,6 +60,33 @@ export default function AddTourItem() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
+    }
+    setError("");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(6));
+        const lng = parseFloat(pos.coords.longitude.toFixed(6));
+        setCoordinates({ longitude: lng, latitude: lat });
+        setFormData((prev) => ({
+          ...prev,
+          coordinateLong: lng,
+          coordinateLat: lat,
+        }));
+        setSuccess("Location detected");
+        setTimeout(() => setSuccess(""), 2000);
+      },
+      (err) => {
+        console.error("Geolocation error", err);
+        setError("Unable to detect location");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   const handleCoordinateChange = (type, value) => {
@@ -272,7 +299,7 @@ export default function AddTourItem() {
             </div>
 
             {/* Coordinates Input */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
               <div className="relative">
                 <MdLocationOn
                   className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
@@ -316,6 +343,16 @@ export default function AddTourItem() {
                   required
                   className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
                 />
+              </div>
+              <div className="flex items-center sm:justify-center">
+                <button
+                  type="button"
+                  onClick={detectLocation}
+                  title="Detect my location"
+                  className="p-2 rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 text-[#f7c95f] hover:bg-[#1a1a1a] transition-colors w-full sm:w-12 flex items-center justify-center"
+                >
+                  <MdMyLocation className="w-5 h-5" />
+                </button>
               </div>
             </div>
 
