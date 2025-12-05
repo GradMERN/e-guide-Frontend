@@ -2,38 +2,17 @@ import { motion } from "motion/react";
 import {FaTimesCircle,FaCheckCircle,FaRegFrown,FaRegSmile,FaCamera,FaSun,FaUsers,FaUserFriends,FaDollarSign,FaGem,} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
-const BeforeAndAfterIcons = {
-  planning: FaRegFrown,
-  readyPlan: FaRegSmile,
-  missingInfo: FaCamera,
-  audioCommentary: FaSun,
-  gettingLost: FaUsers,
-  gps: FaUserFriends,
-  expensiveGuides: FaDollarSign,
-  affordable: FaGem
-};
-
 export default function BeforeAfterSection() {
 
   const { t } = useTranslation();
-  const comparisons = [
-    {
-      before: { icon: BeforeAndAfterIcons.planning, title: t("beforeAfter.comparisons.0.before.title"), text: t("beforeAfter.comparisons.0.before.text") },
-      after: { icon: BeforeAndAfterIcons.readyPlan, title: t("beforeAfter.comparisons.0.after.title"), text: t("beforeAfter.comparisons.0.after.text") },
-    },
-    {
-      before: { icon: BeforeAndAfterIcons.missingInfo, title: t("beforeAfter.comparisons.1.before.title"), text: t("beforeAfter.comparisons.1.before.text") },
-      after: { icon: BeforeAndAfterIcons.audioCommentary, title: t("beforeAfter.comparisons.1.after.title"), text: t("beforeAfter.comparisons.1.after.text") },
-    },
-    {
-      before: { icon: BeforeAndAfterIcons.gettingLost, title: t("beforeAfter.comparisons.2.before.title"), text: t("beforeAfter.comparisons.2.before.text") },
-      after: { icon: BeforeAndAfterIcons.gps, title: t("beforeAfter.comparisons.2.after.title"), text: t("beforeAfter.comparisons.2.after.text") },
-    },
-    {
-      before: { icon: BeforeAndAfterIcons.expensiveGuides, title: t("beforeAfter.comparisons.3.before.title"), text: t("beforeAfter.comparisons.3.before.text") },
-      after: { icon: BeforeAndAfterIcons.affordable, title: t("beforeAfter.comparisons.3.after.title"), text: t("beforeAfter.comparisons.3.after.text") },
-    }
+  const iconMap = [
+    { before: FaRegFrown, after: FaRegSmile }, 
+    { before: FaCamera, after: FaSun }, 
+    { before: FaUsers, after: FaUserFriends },
+    { before: FaDollarSign, after: FaGem }, 
   ];
+
+  const comparisons = t("beforeAfter.comparisons", { returnObjects: true });
 
   return (
     <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-12">
@@ -54,8 +33,8 @@ export default function BeforeAfterSection() {
 
         <div className="grid gap-8">
           {comparisons.map((comparison, index) => {
-            const BeforeIcon = comparison.before.icon;
-            const AfterIcon = comparison.after.icon;
+            const BeforeIcon = iconMap[index].before;
+            const AfterIcon = iconMap[index].after;
 
             return (
               <motion.div key={index} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="grid md:grid-cols-2 gap-6">

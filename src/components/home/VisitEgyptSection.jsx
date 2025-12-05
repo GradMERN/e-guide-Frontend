@@ -9,42 +9,15 @@ import SectionWrapperFull from "../common/SectionWrapper";
 export default function VisitEgyptSection() {
   const { t } = useTranslation();
 
-  const reasons = [
-    {
-      id: 1,
-      icon: GiGreatPyramid,
-    },
-    {
-      id: 2,
-      icon: FaSwimmer,
-    },
-    {
-      id: 3,
-      icon: FaHeart,
-    },
-    {
-      id: 4,
-      icon: FaSun,
-    },
-    {
-      id: 5,
-      icon: FaWallet,
-    },
-    {
-      id: 6,
-      icon: FaUtensils,
-    },
-  ];
+  const reasons = [ GiGreatPyramid, FaSwimmer, FaHeart, FaSun, FaWallet, FaUtensils];
 
   return (
     <SectionWrapperFull>
       <TitlesHome icon={RiLandscapeAiLine} title={t("reasonsToVisit.title")} paragraph={t("reasonsToVisit.subtitle")}/>
       <motion.div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 lg:gap-8 max-w-7xl mx-auto" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}>
-        {reasons.map((reason, index) => {
-          const Icon = reason.icon;
+        {reasons.map((Icon, index) => {
           return (
             <motion.div key={index} className="group relative p-4 xs:p-4 sm:p-5 lg:p-8 rounded-xl bg-surface border-2 border-border hover:border-primary transition-all duration-300 min-h-[150px] xs:min-h-[160px] sm:min-h-[180px]" variants={{hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },}}>
-            <div className={`absolute -top-10 -right-10 w-60 h-60 bg-linear-to-br from-(--gradient-from) via-(--gradient-via) to-(--gradient-to) rounded-2xl blur-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-600`}/>
 
             <motion.div whileHover={{ rotate: 360, scale: 1.2 }} transition={{ duration: 0.6 }} className="relative w-9 h-9 xs:w-10 xs:h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 mb-2 xs:mb-2 sm:mb-3 rounded-xl bg-linear-to-br from-secondary to-tertiary flex items-center justify-center shadow-lg">
               <Icon className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 icon-card" strokeWidth={1}/>
