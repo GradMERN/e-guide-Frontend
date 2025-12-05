@@ -1,5 +1,7 @@
-﻿import React, { createContext, useState, useEffect, useContext } from 'react';
-import { authService } from '../services/authService';
+﻿import React, { createContext, useState, useEffect, useContext } from "react";
+import { authService } from "../apis/authService";
+import { store } from "../store";
+import { logout as reduxLogout } from "../store/slices/authSlice";
 
 const AuthContext = createContext(null);
 
@@ -8,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
 
   // Initialize auth, theme, and language on mount
   useEffect(() => {
@@ -17,17 +19,27 @@ export const AuthProvider = ({ children }) => {
     initializeLanguage();
   }, []);
 
+  // Listen for global logout events (fired by redux-only logout callers)
+  useEffect(() => {
+    const onLogout = () => {
+      setUser(null);
+      setError(null);
+    };
+    window.addEventListener("auth:logout", onLogout);
+    return () => window.removeEventListener("auth:logout", onLogout);
+  }, []);
+
   const initializeAuth = () => {
     try {
       const currentUser = authService.getCurrentUser();
       const token = authService.getToken();
-      
+
       if (currentUser && token) {
         setUser(currentUser);
       }
     } catch (error) {
-      console.error('Auth initialization error:', error);
-      setError('Failed to initialize authentication');
+      console.error("Auth initialization error:", error);
+      setError("Failed to initialize authentication");
     } finally {
       setLoading(false);
     }
@@ -35,45 +47,49 @@ export const AuthProvider = ({ children }) => {
 
   const initializeTheme = () => {
     try {
-      const storedTheme = localStorage.getItem('theme') || 'dark';
-      const isDark = storedTheme === 'dark';
+      const storedTheme = localStorage.getItem("theme") || "dark";
+      const isDark = storedTheme === "dark";
       setIsDarkMode(isDark);
       applyTheme(isDark);
     } catch (error) {
-      console.error('Theme initialization error:', error);
+      console.error("Theme initialization error:", error);
     }
   };
 
   const initializeLanguage = () => {
     try {
-      const storedLanguage = localStorage.getItem('language') || 'en';
+      const storedLanguage = localStorage.getItem("language") || "en";
       setLanguage(storedLanguage);
     } catch (error) {
-      console.error('Language initialization error:', error);
+      console.error("Language initialization error:", error);
     }
   };
 
   const applyTheme = (isDark) => {
     if (isDark) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   };
 
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    localStorage.setItem("theme", newTheme ? "dark" : "light");
     applyTheme(newTheme);
     // Dispatch custom event for components to listen
-    window.dispatchEvent(new CustomEvent('themeChange', { detail: { isDarkMode: newTheme } }));
+    window.dispatchEvent(
+      new CustomEvent("themeChange", { detail: { isDarkMode: newTheme } })
+    );
   };
 
   const changeLanguage = (lang) => {
     setLanguage(lang);
-    localStorage.setItem('language', lang);
-    window.dispatchEvent(new CustomEvent('languageChange', { detail: { language: lang } }));
+    localStorage.setItem("language", lang);
+    window.dispatchEvent(
+      new CustomEvent("languageChange", { detail: { language: lang } })
+    );
   };
 
   const login = async (credentials) => {
@@ -84,7 +100,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data);
       return response;
     } catch (error) {
-      setError(error.response?.data?.message || 'Login failed');
+      setError(error.response?.data?.message || "Login failed");
       throw error;
     } finally {
       setLoading(false);
@@ -98,7 +114,7 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.register(userData);
       return response;
     } catch (error) {
-      setError(error.response?.data?.message || 'Registration failed');
+      setError(error.response?.data?.message || "Registration failed");
       throw error;
     } finally {
       setLoading(false);
@@ -108,18 +124,30 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setError(null);
-    authService.logout();
+    try {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    } catch (e) {}
+    try {
+      // Also clear redux auth state so UI synced across app
+      store.dispatch(reduxLogout());
+    } catch (e) {
+      // ignore if store not available
+    }
   };
 
   const updateUser = (userData) => {
     setUser((prevUser) => ({
       ...prevUser,
-      ...userData
+      ...userData,
     }));
-    localStorage.setItem('user', JSON.stringify({
-      ...user,
-      ...userData
-    }));
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...user,
+        ...userData,
+      })
+    );
   };
 
   const clearError = () => {
@@ -140,30 +168,23 @@ export const AuthProvider = ({ children }) => {
     language,
     changeLanguage,
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    isGuide: user?.role === 'guide',
-    isUser: user?.role === 'user',
+    isAdmin: user?.role === "admin",
+    isGuide: user?.role === "guide",
+    isUser: user?.role === "user",
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
 
 export default AuthContext;
-
-
-
 
 // import React, { createContext, useContext, useState, useEffect } from 'react';
 
@@ -179,13 +200,13 @@ export default AuthContext;
 //   useEffect(() => {
 //     const storedTheme = localStorage.getItem('theme') || 'dark';
 //     const storedLanguage = localStorage.getItem('language') || 'en';
-    
+
 //     setIsDarkMode(storedTheme === 'dark');
 //     setLanguage(storedLanguage);
-    
+
 //     // Apply theme to document
 //     applyTheme(storedTheme);
-    
+
 //     setLoading(false);
 //   }, []);
 

@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaEye,
@@ -13,18 +14,17 @@ import {
   FaChalkboardTeacher,
   FaBookmark,
 } from "react-icons/fa";
-import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./common/SwitchLanguages";
-import { useAuth } from "../store/hooks";
+import { useAuth as useReduxAuth } from "../store/hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../store/slices/authSlice";
-import { FaB } from "react-icons/fa6";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth);
+  const auth = useSelector((state) => state.auth);
+  const user = auth?.user || null;
   const dispatch = useDispatch();
+  const { logout } = useReduxAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -96,10 +96,15 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = (redirect = "/login") => {
+    try {
+      // Use Redux hook logout which clears redux and notifies other parts
+      logout();
+    } catch (e) {
+      console.warn("Logout failed", e);
+    }
     setIsDropdownOpen(false);
-    navigate("/login");
+    navigate(redirect);
   };
 
   const getUserInitials = () => {
@@ -228,7 +233,69 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-              {user && user.id ? (
+              {/* 
+              <div className="hidden md:flex items-center gap-3">
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary 
+                               hover:bg-primary/20 transition-all"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary 
+                                    flex items-center justify-center text-black font-bold text-sm">
+                        {getUserInitials()}
+                      </div>
+                      <span className="font-medium">
+                        {user?.firstName && user?.lastName 
+                          ? `${user.firstName} ${user.lastName}` 
+                          : user?.name || "User"}
+                      </span>
+                    </button>
+                    
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface rounded-lg shadow-lg border border-border z-50">
+                        <div className="p-4 border-b border-border">
+                          <p className="text-sm font-medium text-text">{user?.email}</p>
+                          <p className="text-xs text-gray-500">{user?.role}</p>
+                        </div>
+                        <div className="py-2">
+                          <button
+                            onClick={() => {
+                              navigate('/profile');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-text hover:bg-gray-100 dark:hover:bg-surface/80 transition"
+                          >
+                            <FaUser size={16} />
+                            <span className="text-sm">Profile</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              logout();
+                              navigate('/');
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition"
+                          >
+                            <FaSignOutAlt size={16} />
+                            <span className="text-sm">Logout</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    className="px-5 py-1.5 rounded-lg bg-linear-to-r from-primary to-secondary 
+                             text-black font-medium shadow-md hover:brightness-110 transition hover:scale-105 text-sm"
+                  >
+                    Login
+                  </NavLink>
+                )}
+              </div> */}
+              {auth?.isAuthenticated ? (
                 <div className="hidden md:block relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -375,7 +442,7 @@ export default function Navbar() {
                   </NavLink>
                 ))}
 
-                {user && user.id ? (
+                {auth?.isAuthenticated ? (
                   <>
                     {/* User Info in Mobile */}
                     <div className="px-4 mb-4">

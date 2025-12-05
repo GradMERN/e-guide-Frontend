@@ -49,6 +49,14 @@ export const useAuth = () => {
 
     logout: useCallback(() => {
       dispatch(logout());
+      try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      } catch (e) {}
+      // Notify AuthContext and other parts of the app
+      try {
+        window.dispatchEvent(new CustomEvent("auth:logout"));
+      } catch (e) {}
     }, [dispatch]),
 
     clearError: useCallback(() => {
