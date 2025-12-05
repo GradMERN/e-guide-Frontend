@@ -6,14 +6,17 @@ import TourOverview from "../../components/tourDetail/TourOverview";
 import TourGuide from "../../components/tourDetail/TourGuide";
 import TourInclusions from "../../components/tourDetail/TourInclusions";
 import TourReviews from "../../components/tourDetail/TourReviews";
-import EnrollmentModal from "../../components/tourDetail/EnrollmentModal";
+import enrollmentApi from "../../apis/enrollment.api";
+import paymentApi from "../../apis/payment.api";
 import { FaArrowLeft } from "react-icons/fa";
 
 const TourDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentTour: tour, loading, error, fetchTourById } = useTours();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollError, setEnrollError] = useState(null);
 
   useEffect(() => {
     if (id) {
@@ -25,8 +28,37 @@ const TourDetail = () => {
     navigate(-1); // Go back one page in history
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  // modal removed: direct enrollment flow handled by `handleEnrollNow`
+
+  const handleEnrollNow = async () => {
+    if (!tour?._id) return;
+    try {
+      setEnrollError(null);
+      setEnrolling(true);
+
+      // 1) Create enrollment
+      const enrollRes = await enrollmentApi.enrollTour(tour._id);
+      const enrollmentId =
+        enrollRes?.data?.data?.enrollmentId || enrollRes?.data?.enrollmentId;
+      if (!enrollmentId) throw new Error("Could not create enrollment");
+
+      // 2) Initialize payment (get checkout URL)
+      const initRes = await paymentApi.initializePayment(enrollmentId);
+      const checkoutUrl =
+        initRes?.data?.checkoutUrl || initRes?.data?.data?.checkoutUrl;
+      if (!checkoutUrl) throw new Error("Payment initialization failed");
+
+      // 3) Redirect via spinner route
+      navigate(
+        `/payment-redirect?checkoutUrl=${encodeURIComponent(checkoutUrl)}`
+      );
+    } catch (err) {
+      console.error(err);
+      setEnrollError(err?.message || "Enrollment failed");
+    } finally {
+      setEnrolling(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -64,8 +96,7 @@ const TourDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Enrollment Modal */}
-      <EnrollmentModal tour={tour} isOpen={isModalOpen} onClose={closeModal} />
+      {/* Enrollment handled directly via button (no modal) */}
 
       {/* Floating Back Button */}
       <div className="absolute top-35 left-20 z-50">
@@ -78,8 +109,8 @@ const TourDetail = () => {
         </button>
       </div>
 
-      {/* Hero with Enroll button - REMOVE onBack prop since we have our own button */}
-      <TourDetailHero tour={tour} onEnrollClick={openModal} />
+      {/* Hero with Enroll button - direct enroll flow */}
+      <TourDetailHero tour={tour} onEnrollClick={handleEnrollNow} />
 
       {/* Main Content Container */}
       <div className="relative bg-background">
@@ -179,11 +210,42 @@ const TourDetail = () => {
                     {/* Enroll Button */}
                     <div className="pt-6">
                       <button
-                        onClick={openModal}
-                        className="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg hover:shadow-xl"
+                        onClick={handleEnrollNow}
+                        disabled={enrolling}
+                        className="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg hover:shadow-xl disabled:opacity-60"
                       >
-                        Enroll Now
+                        {enrolling ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <svg
+                              className="animate-spin h-5 w-5"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                                fill="none"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                              />
+                            </svg>
+                            Redirecting...
+                          </span>
+                        ) : (
+                          "Enroll Now"
+                        )}
                       </button>
+                      {enrollError && (
+                        <p className="text-sm text-red-500 text-center mt-2">
+                          {enrollError}
+                        </p>
+                      )}
                       <p className="text-sm text-text-muted text-center mt-3">
                         {tour.enrollmentsCount || 0} travelers enrolled
                       </p>

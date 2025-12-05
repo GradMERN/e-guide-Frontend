@@ -39,12 +39,16 @@ import Security from "./pages/profile/Security";
 import AllDestinationPage from "./pages/shared/AllDestinationPage";
 import DestinationDetail from "./components/allDestinations/DestinationDetail";
 import SavedTours from "./pages/shared/SavedTours";
+import PaymentRedirect from "./pages/payment/PaymentRedirect";
+import PaymentSuccess from "./pages/payment/PaymentSuccess";
 
 const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
       { path: "/", element: <Home /> },
+      { path: "/payment-redirect", element: <PaymentRedirect /> },
+      { path: "/payment-success", element: <PaymentSuccess /> },
       { path: "/tours", element: <TourPackages /> },
       { path: "/tours/:id", element: <TourDetail /> },
       { path: "/TourGuideProfile/:name", element: <TourGuideProfile /> },
