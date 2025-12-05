@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaEye,
+  FaEyeSlash,
+  FaSpinner,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TourItemsManager from "./TourItemsManager";
@@ -11,11 +18,10 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEditing, setModalEditing] = useState(null);
   const [modalMode, setModalMode] = useState("create");
-  const [confirmModal, setConfirmModal] = useState({
-    open: false,
-    item: null,
-    action: null,
-  });
+  const [confirmModal, setConfirmModal] = useState({ open: false, item: null });
+  const [visualizedItemIds, setVisualizedItemIds] = useState([]);
+  const [publishingIds, setPublishingIds] = useState([]);
+  const [deletingIds, setDeletingIds] = useState([]);
   const navigate = useNavigate();
 
   const borderColor = "border-[var(--border)]";
@@ -24,20 +30,34 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
   const secondaryText = "text-[var(--text-secondary)]";
   const hoverBg = "hover:bg-[var(--glass-bg-hover)]";
 
+  const isItemPopulated = (it) => {
+    if (!it) return false;
+    if (Object.prototype.hasOwnProperty.call(it, "isPublished"))
+      return !!it.isPublished;
+    return Boolean(
+      (it.script && it.script.length > 0) ||
+        (it.content && it.content.length > 0) ||
+        (it.mainImage && it.mainImage.url) ||
+        (it.location && (it.location.lat || it.location.lng)) ||
+        it.title
+    );
+  };
+
   useEffect(() => {
     if (!tour) return;
     fetchItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tour]);
 
-  const fetchItems = async () => {
-    setLoading(true);
+  const fetchItems = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const data = await tourItemService.getTourItems(tour._id || tour);
       setItems(data || []);
     } catch (err) {
-      toast.error("Failed to load waypoints");
+      if (!silent) toast.error("Failed to load waypoints");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -53,122 +73,215 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
     setModalOpen(true);
   };
 
-  const openGallery = (item) => {
-    setModalEditing(item);
-    setModalMode("gallery");
-    setModalOpen(true);
-  };
-
-  const handleDelete = (item) => {
-    setConfirmModal({ open: true, item, action: "delete" });
-  };
+  const handleDelete = (item) => setConfirmModal({ open: true, item });
 
   const confirmDelete = async () => {
     const item = confirmModal.item;
-    setConfirmModal({ open: false, item: null, action: null });
+    setConfirmModal({ open: false, item: null });
     try {
+      setDeletingIds((p) => [...p, item._id]);
       await tourItemService.deleteTourItem(tour._id || tour, item._id);
       toast.success("Waypoint deleted");
-      fetchItems();
+      // refresh silently to avoid flicker
+      await fetchItems(true);
     } catch (err) {
       toast.error("Failed to delete waypoint");
+    } finally {
+      setDeletingIds((p) => p.filter((id) => id !== item._id));
     }
   };
 
-  const cancelDelete = () => {
-    setConfirmModal({ open: false, item: null, action: null });
+  const cancelDelete = () => setConfirmModal({ open: false, item: null });
+
+  const toggleVisualizedItem = (id) => {
+    setVisualizedItemIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleItemPublished = async (item) => {
+    const tourId = tour._id || tour;
+    setPublishingIds((prev) => [...prev, item._id]);
+    try {
+      const updated = await tourItemService.publishTourItem(tourId, item._id, {
+        isPublished: !item.isPublished,
+      });
+      toast.success(
+        `Waypoint ${updated.isPublished ? "published" : "unpublished"}`
+      );
+      // refresh silently (keep showing old data until new arrives)
+      await fetchItems(true);
+    } catch (err) {
+      console.error("Failed to toggle publish state", err);
+      const serverMessage =
+        err?.response?.data?.message ||
+        err.message ||
+        "Failed to change publish state";
+      toast.error(serverMessage);
+    } finally {
+      setPublishingIds((prev) => prev.filter((id) => id !== item._id));
+    }
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <div>
-          {/* <button
-            onClick={() => navigate(-1)}
-            className="px-3 py-2 bg-[#D5B36A] rounded text-black"
-          >
-            Back
-          </button> */}
-        </div>
-        {/* <div>
-          <button
-            onClick={openCreate}
-            className="px-3 py-2 bg-[#D5B36A] rounded text-black"
-          >
-            <FaPlus /> Add
-          </button>
-        </div> */}
+        <div />
       </div>
 
       {loading ? (
         <div className={`p-4 ${secondaryText}`}>Loading...</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {items.map((it) => (
-            <div
-              key={it._id}
-              className={`rounded-lg overflow-hidden border ${borderColor} ${cardBg} shadow-md hover:shadow-xl transition-all duration-300 ${hoverBg} cursor-pointer group`}
-            >
-              <div className="relative h-40 w-full bg-gray-100">
-                {it.mainImage?.url ? (
-                  <img
-                    src={it.mainImage.url}
-                    alt={it.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300">
-                    No image
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="flex gap-3">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openEdit(it);
-                      }}
-                      className="p-3 bg-[#D5B36A] text-black rounded-full hover:bg-[#C4A55A] transition-colors duration-200 shadow-lg"
-                    >
-                      <FaEdit size={16} />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(it);
-                      }}
-                      className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200 shadow-lg"
-                    >
-                      <FaTrash size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4">
-                <div className={`font-semibold ${textColor} mb-2`}>
-                  {it.title}
-                </div>
-                <div
-                  className={`text-sm ${secondaryText} line-clamp-2 leading-relaxed`}
-                >
-                  {it.script || it.content || "—"}
-                </div>
-              </div>
-            </div>
-          ))}
+          {items.map((it) => {
+            const populated = isItemPopulated(it);
+            const active = visualizedItemIds.includes(it._id);
+            return (
+              <div
+                key={it._id}
+                className={`rounded-lg overflow-hidden border ${borderColor} ${cardBg} shadow-md hover:shadow-xl transition-all duration-300 ${hoverBg} cursor-pointer group relative`}
+              >
+                <div className="relative h-40 w-full bg-gray-100">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (publishingIds.includes(it._id)) return;
+                      toggleItemPublished(it);
+                    }}
+                    disabled={publishingIds.includes(it._id)}
+                    className={`absolute right-3 top-3 z-20 p-2 rounded-md transition-colors duration-150 ${
+                      it.isPublished
+                        ? "bg-green-600 text-white"
+                        : "bg-white text-[#333]"
+                    } shadow-lg ${
+                      publishingIds.includes(it._id)
+                        ? "opacity-80 cursor-wait"
+                        : ""
+                    }`}
+                    title={
+                      publishingIds.includes(it._id)
+                        ? "Publishing..."
+                        : it.isPublished
+                        ? "Unpublish waypoint"
+                        : "Publish waypoint"
+                    }
+                  >
+                    {publishingIds.includes(it._id) ? (
+                      <FaSpinner
+                        size={14}
+                        className={`animate-spin ${
+                          it.isPublished ? "text-white" : "text-[#333]"
+                        }`}
+                      />
+                    ) : it.isPublished ? (
+                      <FaEye size={14} />
+                    ) : (
+                      <FaEyeSlash size={14} />
+                    )}
+                  </button>
 
-          {/* add tile */}
+                  {it.mainImage?.url ? (
+                    <img
+                      src={it.mainImage.url}
+                      alt={it.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300">
+                      No image
+                    </div>
+                  )}
+
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="flex gap-3">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEdit(it);
+                        }}
+                        className="p-3 bg-[#D5B36A] text-black rounded-full hover:bg-[#C4A55A] transition-colors duration-200 shadow-lg"
+                      >
+                        <FaEdit size={16} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (deletingIds.includes(it._id)) return;
+                          handleDelete(it);
+                        }}
+                        disabled={deletingIds.includes(it._id)}
+                        className={`p-3 rounded-full transition-colors duration-200 shadow-lg ${deletingIds.includes(it._id) ? 'bg-red-400 text-white cursor-wait' : 'bg-red-500 text-white hover:bg-red-600'}`}
+                        title={deletingIds.includes(it._id) ? 'Deleting...' : 'Delete'}
+                      >
+                        {deletingIds.includes(it._id) ? (
+                          <FaSpinner size={16} className="animate-spin" />
+                        ) : (
+                          <FaTrash size={16} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <div className={`font-semibold ${textColor} mb-2`}>
+                    <div className="flex items-center gap-3">
+                      <span>{it.title}</span>
+                      {(() => {
+                        const hasPublished = !!it.isPublished;
+                        const hasContent = Boolean(
+                          (it.script && it.script.length > 0) ||
+                            (it.content && it.content.length > 0) ||
+                            (it.mainImage && it.mainImage.url) ||
+                            (it.location &&
+                              (it.location.lat || it.location.lng)) ||
+                            it.title
+                        );
+                        const label = hasPublished
+                          ? "Published"
+                          : hasContent
+                          ? "Not Published"
+                          : "Empty";
+                        const cls = hasPublished
+                          ? "bg-green-600 text-white"
+                          : hasContent
+                          ? "bg-yellow-500 text-black"
+                          : "bg-red-600 text-white";
+                        return (
+                          <span
+                            className={`text-xs font-semibold px-2 py-1 rounded-full ${cls}`}
+                          >
+                            {label}
+                          </span>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                  <div
+                    className={`text-sm ${secondaryText} line-clamp-2 leading-relaxed`}
+                  >
+                    {it.script || it.content || "—"}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
           <div
             onClick={openCreate}
-            className={`flex flex-col items-center justify-center h-44 rounded-lg border-dashed border-2 ${borderColor} ${cardBg} cursor-pointer hover:shadow-lg transition-all duration-300 ${hoverBg} group`}
+            className={`rounded-lg overflow-hidden border ${borderColor} ${cardBg} shadow-md hover:shadow-xl transition-all duration-300 ${hoverBg} cursor-pointer group relative`}
           >
-            <div className="text-4xl text-gray-400 group-hover:text-[#D5B36A] transition-colors duration-300 mb-2">
-              <FaPlus />
+            <div className="relative h-40 w-full flex items-center justify-center bg-gray-100">
+              <div className="text-4xl text-gray-400 group-hover:text-[#D5B36A] transition-colors duration-300">
+                <FaPlus />
+              </div>
             </div>
-            <div
-              className={`text-sm font-medium ${secondaryText} group-hover:${textColor} transition-colors duration-300`}
-            >
-              Add Waypoint
+            <div className="p-4 flex items-center justify-center">
+              <div
+                className={`text-sm font-medium ${secondaryText} group-hover:${textColor} transition-colors duration-300`}
+              >
+                Add Waypoint
+              </div>
             </div>
           </div>
         </div>
@@ -186,27 +299,23 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
         />
       )}
 
-      {/* CONFIRMATION MODAL */}
       {confirmModal.open && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-[#1a0f08] to-[#2c1810] border border-[var(--border)] rounded-xl p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-xl font-bold text-[var(--text)] mb-4">
-              Confirm Delete
-            </h3>
-            <p className="text-[var(--text-secondary)] mb-6">
-              Are you sure you want to delete the waypoint "
-              {confirmModal.item?.title}"? This action cannot be undone.
+          <div className="bg-[var(--surface)] rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
+            <p className="mb-6">
+              Are you sure you want to delete this waypoint?
             </p>
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 bg-[var(--secondary)] text-[var(--text)] rounded-lg hover:bg-[var(--secondary-hover)] transition-colors"
+                className="px-4 py-2 bg-gray-200 rounded"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="px-4 py-2 bg-red-600 text-white rounded"
               >
                 Delete
               </button>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth as useReduxAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import {
   FaHome,
@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 
 const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useReduxAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [confirmLogout, setConfirmLogout] = useState(false);

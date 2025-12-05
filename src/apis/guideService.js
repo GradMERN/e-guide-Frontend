@@ -135,10 +135,27 @@ export const guideService = {
     }
   },
 
-  // Publish tour
-  async publishTour(tourId) {
-    const response = await api.put(`/tours/${tourId}/publish`);
-    return response.data;
+  // Publish or unpublish tour. Pass an object like { isPublished: true|false } to set explicitly.
+  async publishTour(tourId, payload = {}) {
+    try {
+      // Ensure Authorization header is present for this request in case interceptor fails
+      const token = localStorage.getItem("token");
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : {};
+      const response = await api.put(
+        `/tours/${tourId}/publish`,
+        payload,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Publish tour failed for ${tourId}:`,
+        error.response?.data || error.message
+      );
+      throw error;
+    }
   },
 
   // Delete tour

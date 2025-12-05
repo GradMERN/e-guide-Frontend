@@ -57,6 +57,10 @@
   "spanish": "الإسبانية",
   "french": "الفرنسية",
   "german": "الألمانية",
+  "common": {
+    "loading": "جاري التحميل...",
+    "back": "رجوع"
+  },
   "admin": {
     "dashboard": "لوحة التحكم",
     "toursMenu": "الجولات",
@@ -109,6 +113,7 @@
       "deleteError": "فشل حذف الجولة",
       "confirmDelete": "هل تريد فعلاً حذف هذه الجولة؟"
     },
+    "currency": "جنيه مصري",
     "users": {
       "title": "إدارة المستخدمين",
       "name": "الاسم",
@@ -160,12 +165,15 @@
     "totalTours": "إجمالي الجولات",
     "activeTours": "الجولات النشطة",
     "totalBookings": "إجمالي الحجوزات",
+    "totalEnrollments": "إجمالي المشتركين",
     "totalEarnings": "إجمالي الأرباح (جنيه مصري)",
     "totalRating": "متوسط التقييم",
     "bookingsTrend": "اتجاه الحجوزات",
+    "enrollmentsTrend": "اتجاه المشتركين",
     "earningsTrend": "اتجاه الأرباح",
     "tourPerformance": "أداء الجولة",
     "recentBookings": "الحجوزات الأخيرة",
+    "recentEnrollments": "المشتركين الأخيرين",
     "refreshData": "تحديث البيانات",
     "loadingDashboard": "جاري تحميل لوحة التحكم...",
     "tours": {
@@ -174,7 +182,51 @@
       "edit": "تعديل الجولة",
       "addNew": "إضافة جولة جديدة",
       "name": "اسم الجولة",
+      "manageAndTrack": "إدارة جولاتك وتتبع الأداء",
+      "addPlace": "إضافة مكان",
+      "states": {
+        "published": "منشور",
+        "empty": "فارغ",
+        "notPublished": "غير منشور"
+      },
+      "errors": {
+        "noPublishedItems": "لا توجد عناصر منشورة",
+        "loadFailed": "فشل تحميل الجولة"
+      },
+      "titles": {
+        "edit": "تعديل",
+        "delete": "حذف",
+        "confirmDeleteMessage": "هل تريد فعلاً حذف الجولة \"{{name}}\"؟ هذا الإجراء لا يمكن التراجع عنه.",
+        "messages": {
+          "added": "تم إضافة الجولة بنجاح!",
+          "updated": "تم تحديث الجولة بنجاح!",
+          "deleted": "تم حذف الجولة بنجاح!",
+          "galleryUpdated": "تم تحديث صور المعرض بنجاح!"
+        },
+        "validation": {
+          "nameLength": "يجب أن يكون اسم الجولة بين 3 و 100 حرفًا",
+          "descriptionLength": "يجب أن تكون الوصف بين 10 و 2000 حرفًا",
+          "priceMin": "يجب أن تكون أقل قيمة للسعر هي 0.99",
+          "selectPlace": "يرجى اختيار مكان/موقع"
+        },
+        "errors": {
+          "noPublishedItems": "لا توجد عناصر منشورة",
+          "galleryUpdateFailed": "فشل تحديث صور المعرض.",
+          "deleteFailed": "فشل حذف الجولة"
+        },
+        "updating": "جارٍ التحديث...",
+        "unpublish": "إلغاء نشر الجولة",
+        "publish": "نشر الجولة",
+        "manageWaypoints": "إدارة مسارات الجولة",
+        "updateGalleryImages": "تحديث صور المعرض"
+      },
+      "waypointsTitle": "المسارات — {{name}}",
+      "edit": "تعديل",
+      "editTour": "تعديل الجولة",
+      "delete": "حذف",
+      "city": "المدينة",
       "place": "المكان/الموقع",
+      "noPlacesAvailable": "لا تتوفر أماكن",
       "price": "السعر",
       "duration": "المدة (ساعات)",
       "groupSize": "أقصى حجم للمجموعة",
@@ -196,6 +248,13 @@
       "deleteError": "فشل حذف الجولة",
       "confirmDelete": "هل تريد فعلاً حذف هذه الجولة؟",
       "status": "الحالة",
+      "places": {
+        "validation": {
+          "missingCountryCity": "يرجى توفير كل من الدولة والمدينة"
+        },
+        "added": "تم إضافة المكان بنجاح!",
+        "addFailed": "فشل إضافة المكان. تحقق من وحدة التحكم للمزيد من التفاصيل."
+      },
       "active": "نشطة",
       "inactive": "غير نشطة",
       "bookings": "الحجوزات",
@@ -209,6 +268,17 @@
       "revenueAnalysis": "تحليل الإيرادات",
       "tourPerformance": "أداء الجولة",
       "ratingTrend": "اتجاه التقييم",
+      "subtitle": "تتبع أداء وج نمو جولاتك",
+      "dailyViews": "المشاهدات اليومية والمشتركين",
+      "monthlyComparison": "مقارنة شهرية",
+      "trafficSource": "توزيع مصادر الحركة",
+      "columns": {
+        "tourName": "اسم الجولة",
+        "views": "المشاهدات",
+        "enrollments": "المشتركين",
+        "conversion": "التحويل",
+        "revenue": "الإيرادات"
+      },
       "totalViews": "إجمالي المشاهدات",
       "conversionRate": "معدل التحويل",
       "averageBookingValue": "متوسط قيمة الحجز",

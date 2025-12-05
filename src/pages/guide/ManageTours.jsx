@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth as useTheme } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import {
@@ -8,6 +8,7 @@ import {
   FaTrash,
   FaSearch,
   FaEye,
+  FaEyeSlash,
   FaTimes,
   FaImages,
   FaList,
@@ -22,8 +23,11 @@ import { placeService } from "../../apis/placeService";
 // TourItemsManager is available as a full-page at /guide/tours/:id/items
 
 const ManageTours = () => {
-  const { isDarkMode } = useAuth();
+  const { isDarkMode } = useTheme();
   const { t } = useTranslation();
+
+  const [visualizedTourIds, setVisualizedTourIds] = useState([]);
+  const [publishingTourIds, setPublishingTourIds] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [tours, setTours] = useState([]);
@@ -127,6 +131,41 @@ const ManageTours = () => {
       tour.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       tour.place.city.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Tour states: published (tour.isPublished === true), not published (isPublished === false), empty (no tourItems)
+  const isTourPublished = (tour) => {
+    if (!tour) return false;
+    if (Object.prototype.hasOwnProperty.call(tour, "isPublished")) {
+      return !!tour.isPublished;
+    }
+    return false;
+  };
+
+  const getTourItemsCount = (tour) => {
+    // prefer backend provided counts, fall back to legacy fields
+    if (typeof tour.itemsCount === "number") return tour.itemsCount;
+    if (Array.isArray(tour.tourItems)) return tour.tourItems.length;
+    if (Array.isArray(tour.items)) return tour.items.length;
+    if (Array.isArray(tour.waypoints)) return tour.waypoints.length;
+    return 0;
+  };
+
+  const getTourPublishedItemsCount = (tour) => {
+    if (typeof tour.publishedItemsCount === "number")
+      return tour.publishedItemsCount;
+    // heuristic: if items array has isPublished flags
+    const arr = tour.tourItems || tour.items || tour.waypoints || [];
+    if (Array.isArray(arr) && arr.length > 0) {
+      return arr.filter((it) => it && it.isPublished).length;
+    }
+    return 0;
+  };
+
+  const toggleVisualizedTour = (id) => {
+    setVisualizedTourIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
 
   const resetTourForm = () => {
     setEditingTour(null);
@@ -237,7 +276,10 @@ const ManageTours = () => {
         newTourForm.name.length < 3 ||
         newTourForm.name.length > 100
       ) {
-        toast.error("Tour name must be between 3 and 100 characters");
+        toast.error(
+          t("guide.tours.validation.nameLength") ||
+            "Tour name must be between 3 and 100 characters"
+        );
         return;
       }
 
@@ -246,17 +288,25 @@ const ManageTours = () => {
         newTourForm.description.length < 10 ||
         newTourForm.description.length > 2000
       ) {
-        toast.error("Description must be between 10 and 2000 characters");
+        toast.error(
+          t("guide.tours.validation.descriptionLength") ||
+            "Description must be between 10 and 2000 characters"
+        );
         return;
       }
 
       if (!newTourForm.price || parseFloat(newTourForm.price) < 0.99) {
-        toast.error("Price must be at least 0.99");
+        toast.error(
+          t("guide.tours.validation.priceMin") || "Price must be at least 0.99"
+        );
         return;
       }
 
       if (!newTourForm.place) {
-        toast.error("Please select a place/location");
+        toast.error(
+          t("guide.tours.validation.selectPlace") ||
+            "Please select a place/location"
+        );
         return;
       }
 
@@ -315,7 +365,11 @@ const ManageTours = () => {
 
       // Refresh dashboard data
       fetchTours();
-      toast.success(`Tour ${editingTour ? "updated" : "added"} successfully!`);
+      toast.success(
+        editingTour
+          ? t("guide.tours.messages.updated") || "Tour updated successfully!"
+          : t("guide.tours.messages.added") || "Tour added successfully!"
+      );
     } catch (err) {
       console.error("Error creating tour:", err);
       console.error("Full error response:", err.response?.data);
@@ -348,18 +402,24 @@ const ManageTours = () => {
     e.preventDefault();
     try {
       if (!newPlaceForm.country || !newPlaceForm.city) {
-        toast.error("Please provide both country and city");
+        toast.error(
+          t("guide.places.validation.missingCountryCity") ||
+            "Please provide both country and city"
+        );
         return;
       }
 
       await placeService.createPlace(newPlaceForm);
-      toast.success("Place added successfully!");
+      toast.success(t("guide.places.added") || "Place added successfully!");
       setShowPlaceModal(false);
       setNewPlaceForm({ country: "", city: "" });
       await fetchPlaces(); // REFRESH PLACE LIST
     } catch (err) {
       console.error("Error adding place:", err);
-      toast.error("Failed to add place. Check console for details.");
+      toast.error(
+        t("guide.places.addFailed") ||
+          "Failed to add place. Check console for details."
+      );
     }
   };
 
@@ -409,9 +469,15 @@ const ManageTours = () => {
       );
       setShowGalleryModal(false);
       fetchTours();
-      toast.success("Gallery images updated successfully!");
+      toast.success(
+        t("guide.tours.messages.galleryUpdated") ||
+          "Gallery images updated successfully!"
+      );
     } catch (err) {
-      toast.error("Failed to update gallery images.");
+      toast.error(
+        t("guide.tours.errors.galleryUpdateFailed") ||
+          "Failed to update gallery images."
+      );
     }
   };
 
@@ -426,10 +492,14 @@ const ManageTours = () => {
     try {
       await guideService.deleteTour(tour._id);
       await fetchTours();
-      toast.success("Tour deleted successfully!");
+      toast.success(
+        t("guide.tours.messages.deleted") || "Tour deleted successfully!"
+      );
     } catch (err) {
       console.error("Error deleting tour:", err);
-      toast.error("Failed to delete tour");
+      toast.error(
+        t("guide.tours.errors.deleteFailed") || "Failed to delete tour"
+      );
     }
   };
 
@@ -454,30 +524,11 @@ const ManageTours = () => {
               isDarkMode ? "text-gray-300 text-lg" : "text-gray-600 text-lg"
             }
           >
-            Manage and track all your tours
+            {t("guide.tours.manageAndTrack") ||
+              "Manage and track all your tours"}
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={() => {
-              resetTourForm();
-              setShowTourModal(true);
-            }}
-            className={`flex items-center gap-3 px-6 py-3 ${
-              isDarkMode
-                ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
-                : "bg-white"
-            } border-2 border-[#D5B36A] text-[#D5B36A] rounded-lg shadow-lg hover:shadow-[#D5B36A]/30 hover:shadow-xl transition-all duration-300 font-semibold relative overflow-hidden group cursor-pointer`}
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
-              boxShadow:
-                "0 4px 15px rgba(213, 179, 106, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            <div className="absolute inset-0 bg-[#D5B36A]/0 group-hover:bg-[#D5B36A]/10 transition-colors duration-300"></div>
-            <FaPlus className="text-[#D5B36A] group-hover:text-[#F5E6A3] transition-colors duration-300 z-10" />
-            <span className="z-10">{t("guide.tours.add") || "Add Tour"}</span>
-          </button>
           <button
             onClick={() => setShowPlaceModal(true)}
             className={`flex items-center gap-3 px-6 py-3 ${
@@ -493,7 +544,9 @@ const ManageTours = () => {
           >
             <div className="absolute inset-0 bg-[#D5B36A]/0 group-hover:bg-[#D5B36A]/10 transition-colors duration-300"></div>
             <FaPlus className="text-[#D5B36A] group-hover:text-[#F5E6A3] transition-colors duration-300 z-10" />
-            <span className="z-10">Add Place</span>
+            <span className="z-10">
+              {t("guide.tours.addPlace") || "Add Place"}
+            </span>
           </button>
         </div>
       </div>
@@ -565,13 +618,39 @@ const ManageTours = () => {
                     }}
                   >
                     <td className="px-6 py-4 text-[var(--text)] font-medium border-r border-[#D5B36A]/10">
-                      {tour.name}
+                      <div className="flex items-center gap-3">
+                        <span>{tour.name}</span>
+                        {(() => {
+                          const isPublished = isTourPublished(tour);
+                          const itemsCount = getTourItemsCount(tour);
+                          const publishedItemsCount =
+                            getTourPublishedItemsCount(tour);
+                          const statusLabel = isPublished
+                            ? t("guide.tours.states.published") || "Published"
+                            : itemsCount === 0
+                            ? t("guide.tours.states.empty") || "Empty"
+                            : t("guide.tours.states.notPublished") ||
+                              "Not Published";
+                          const statusClass = isPublished
+                            ? "bg-green-600 text-white"
+                            : itemsCount === 0
+                            ? "bg-red-600 text-white"
+                            : "bg-yellow-500 text-black";
+                          return (
+                            <span
+                              className={`text-xs font-semibold px-2 py-1 rounded-full ${statusClass}`}
+                            >
+                              {statusLabel}
+                            </span>
+                          );
+                        })()}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-[var(--text-secondary)] border-r border-[#D5B36A]/10">
                       {tour.place.city}
                     </td>
                     <td className="px-6 py-4 text-[var(--primary)] font-semibold border-r border-[#D5B36A]/10">
-                      {tour.price} EGP
+                      {tour.price} {t("guide.tours.currency") || "EGP"}
                     </td>
                     <td className="px-6 py-4 border-r border-[#D5B36A]/10">
                       <span className="text-[var(--secondary)]">
@@ -587,7 +666,7 @@ const ManageTours = () => {
                               ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
                               : "bg-white"
                           } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
-                          title="Edit"
+                          title={t("guide.tours.edit") || "Edit"}
                         >
                           <FaEdit className="text-sm" />
                         </button>
@@ -598,20 +677,108 @@ const ManageTours = () => {
                               ? "bg-gradient-to-b from-[#8B0000] to-[#5a0000]"
                               : "bg-white"
                           } border border-red-600/50 text-red-300 hover:bg-red-900/20 hover:border-red-500 transition-all duration-200 cursor-pointer`}
-                          title="Delete"
+                          title={t("guide.tours.delete") || "Delete"}
                         >
                           <FaTrash className="text-sm" />
                         </button>
-                        <button
-                          className={`p-3 rounded-lg ${
-                            isDarkMode
-                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
-                              : "bg-white"
-                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
-                          title="View"
-                        >
-                          <FaEye className="text-sm" />
-                        </button>
+                        {(() => {
+                          const isPublished = isTourPublished(tour);
+                          const itemsCount = getTourItemsCount(tour);
+                          const publishedItemsCount =
+                            getTourPublishedItemsCount(tour);
+                          const active = visualizedTourIds.includes(tour._id);
+                          // Enable button when there are items; only fully disabled when there are ZERO items
+                          const disabled = itemsCount === 0;
+                          const isPublishing = publishingTourIds.includes(
+                            tour._id
+                          );
+                          const iconColorClass = disabled
+                            ? isDarkMode
+                              ? "text-white"
+                              : "text-[#D5B36A]"
+                            : isPublished
+                            ? "text-green-600"
+                            : "text-red-600";
+                          return (
+                            <button
+                              onClick={async () => {
+                                if (disabled) return;
+                                // If there are items but none published, show a helpful toast and do not toggle visualization
+                                if (
+                                  itemsCount > 0 &&
+                                  publishedItemsCount === 0
+                                ) {
+                                  toast.error(
+                                    t("guide.tours.errors.noPublishedItems") ||
+                                      "There is no published items"
+                                  );
+                                  return;
+                                }
+                                // Toggle publish state on backend (like tour items)
+                                try {
+                                  setPublishingTourIds((prev) => [
+                                    ...prev,
+                                    tour._id,
+                                  ]);
+                                  const body = { isPublished: !isPublished };
+                                  await guideService.publishTour(
+                                    tour._id,
+                                    body
+                                  );
+                                  await fetchTours();
+                                } catch (err) {
+                                  const msg =
+                                    err?.response?.data?.message ||
+                                    err.message ||
+                                    "Failed to change publish state";
+                                  toast.error(msg);
+                                } finally {
+                                  setPublishingTourIds((prev) =>
+                                    prev.filter((id) => id !== tour._id)
+                                  );
+                                }
+                              }}
+                              disabled={disabled || isPublishing}
+                              className={`p-3 rounded-lg ${
+                                isDarkMode
+                                  ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
+                                  : "bg-white"
+                              } border border-[#D5B36A]/50 hover:bg-opacity-90 transition-all duration-200 ${
+                                disabled
+                                  ? "opacity-60 cursor-not-allowed"
+                                  : "cursor-pointer"
+                              } ${iconColorClass}`}
+                              title={
+                                disabled
+                                  ? t("guide.tours.titles.noItems") ||
+                                    "No items yet"
+                                  : itemsCount > 0 && publishedItemsCount === 0
+                                  ? t("guide.tours.titles.noPublishedItems") ||
+                                    "No published items"
+                                  : isPublishing
+                                  ? t("guide.tours.titles.updating") ||
+                                    "Updating..."
+                                  : isPublished
+                                  ? t("guide.tours.titles.unpublish") ||
+                                    "Unpublish tour"
+                                  : t("guide.tours.titles.publish") ||
+                                    "Publish tour"
+                              }
+                            >
+                              {isPublishing ? (
+                                <FaSpinner
+                                  className={`animate-spin text-sm ${
+                                    isDarkMode ? "text-white" : "text-[#8B4513]"
+                                  }`}
+                                />
+                              ) : isPublished ? (
+                                <FaEye className="text-sm" />
+                              ) : (
+                                <FaEyeSlash className="text-sm" />
+                              )}
+                            </button>
+                          );
+                        })()}
                         <button
                           onClick={() => handleOpenItems(tour)}
                           className={`p-3 rounded-lg ${
@@ -619,7 +786,10 @@ const ManageTours = () => {
                               ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
                               : "bg-white"
                           } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
-                          title="Manage Waypoints"
+                          title={
+                            t("guide.tours.titles.manageWaypoints") ||
+                            "Manage Waypoints"
+                          }
                         >
                           <FaList className="text-sm" />
                         </button>
@@ -630,7 +800,10 @@ const ManageTours = () => {
                               ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
                               : "bg-white"
                           } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
-                          title="Update Gallery Images"
+                          title={
+                            t("guide.tours.titles.updateGalleryImages") ||
+                            "Update Gallery Images"
+                          }
                         >
                           <FaImages className="text-sm" />
                         </button>
@@ -965,8 +1138,10 @@ const ManageTours = () => {
               {t("admin.tours.confirmDelete") || "Confirm Delete"}
             </h3>
             <p className="text-[var(--text-secondary)] mb-6">
-              Are you sure you want to delete the tour "
-              {confirmModal.item?.name}"? This action cannot be undone.
+              {t("guide.tours.confirmDeleteMessage", {
+                name: confirmModal.item?.name || "",
+              }) ||
+                `Are you sure you want to delete the tour "${confirmModal.item?.name}"? This action cannot be undone.`}
             </p>
             <div className="flex gap-3 justify-end">
               <button

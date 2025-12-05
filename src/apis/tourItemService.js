@@ -64,6 +64,18 @@ export const tourItemService = {
       throw err;
     }
   },
+  async publishTourItem(tourId, itemId, payload) {
+    try {
+      const res = await api.put(
+        `/tours/${tourId}/items/${itemId}/publish`,
+        payload
+      );
+      return res.data.data;
+    } catch (err) {
+      console.error("Error publishing tour item", err);
+      throw err;
+    }
+  },
 };
 
 export default tourItemService;

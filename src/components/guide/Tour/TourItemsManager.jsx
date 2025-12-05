@@ -44,6 +44,7 @@ const TourItemsManager = ({
   const [audioPreviewUrl, setAudioPreviewUrl] = useState(null);
   const [mainImagePreviewUrl, setMainImagePreviewUrl] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingIds, setDeletingIds] = useState([]);
   const [confirmModal, setConfirmModal] = useState({ open: false, item: null });
   const mainImageRef = useRef(null);
   const galleryRef = useRef(null);
@@ -89,15 +90,15 @@ const TourItemsManager = ({
     };
   }, [audioPreviewUrl, mainImagePreviewUrl]);
 
-  const fetchItems = async () => {
-    setLoading(true);
+  const fetchItems = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const data = await tourItemService.getTourItems(tour._id || tour);
       setItems(data || []);
     } catch (err) {
-      toast.error("Failed to load waypoints");
+      if (!silent) toast.error("Failed to load waypoints");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -154,12 +155,16 @@ const TourItemsManager = ({
     const item = confirmModal.item;
     setConfirmModal({ open: false, item: null });
     try {
+      setDeletingIds((p) => [...p, item._id]);
       await tourItemService.deleteTourItem(tour._id || tour, item._id);
       toast.success("Waypoint deleted");
-      fetchItems();
+      // refresh silently to avoid visible flicker
+      await fetchItems(true);
       onUpdated && onUpdated();
     } catch (err) {
       toast.error("Failed to delete waypoint");
+    } finally {
+      setDeletingIds((p) => p.filter((id) => id !== item._id));
     }
   };
 
@@ -222,6 +227,11 @@ const TourItemsManager = ({
     e.preventDefault();
     if (!form.title || form.title.trim().length < 3) {
       toast.error("Title must be at least 3 characters");
+      return;
+    }
+    // Script is required
+    if (!form.script || form.script.trim().length === 0) {
+      toast.error("Script is required for a waypoint");
       return;
     }
     setSubmitting(true);

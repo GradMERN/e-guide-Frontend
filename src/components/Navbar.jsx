@@ -14,16 +14,15 @@ import {
 } from "react-icons/fa";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./common/SwitchLanguages";
-import { useAuth } from "../context/AuthContext";
+import { useAuth as useReduxAuth } from "../store/hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { logout as reduxLogout } from "../store/slices/authSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
   const user = auth?.user || null;
   const dispatch = useDispatch();
-  const { logout: contextLogout } = useAuth();
+  const { logout } = useReduxAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -78,16 +77,8 @@ export default function Navbar() {
 
   const handleLogout = (redirect = "/login") => {
     try {
-      // Prefer context logout (it now also clears redux). If context isn't
-      // available, fall back to dispatching redux logout directly.
-      let didContext = false;
-      try {
-        contextLogout();
-        didContext = true;
-      } catch (e) {
-        // ignore if context not available
-      }
-      if (!didContext) dispatch(reduxLogout());
+      // Use Redux hook logout which clears redux and notifies other parts
+      logout();
     } catch (e) {
       console.warn("Logout failed", e);
     }

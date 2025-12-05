@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import userService from "../../apis/userService";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAuth as useReduxAuth } from "../../store/hooks";
 import { loginSuccess, loginFailure } from "../../store/slices/authSlice";
-import { useAuth } from "../../context/AuthContext";
 
 export default function OAuthSuccess() {
   const [searchParams] = useSearchParams();
@@ -11,7 +10,7 @@ export default function OAuthSuccess() {
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState("Signing you in...");
 
-  const { updateUser } = useAuth();
+  const { login } = useReduxAuth();
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -33,20 +32,13 @@ export default function OAuthSuccess() {
         const user = res?.data ?? res;
         if (!mounted) return;
 
-        // Persist user locally and update context
+        // Persist and update Redux via helper
         try {
-          localStorage.setItem("user", JSON.stringify(user));
-        } catch (e) {}
-
-        // Update context so components using AuthContext reflect the login
-        try {
-          updateUser(user);
+          login(user, token);
         } catch (e) {
-          // ignore if context update not available
+          // fallback to dispatch
+          dispatch(loginSuccess({ user, token }));
         }
-
-        // Update redux
-        dispatch(loginSuccess({ user, token }));
 
         // Redirect based on role or to home
         const role = (user?.role || "user").toLowerCase();

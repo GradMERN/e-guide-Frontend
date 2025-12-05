@@ -104,13 +104,13 @@ const GuideDashboard = () => {
       setDashboardData({
         totalTours,
         activeTours,
-        totalBookings: Math.floor(Math.random() * 100) + 30,
+        totalEnrollments: Math.floor(Math.random() * 100) + 30,
         totalEarnings: Math.floor(Math.random() * 50000) + 10000,
         averageRating: 4.8,
-        bookingTrend: generateBookingTrend(),
+        enrollmentTrend: generateEnrollmentTrend(),
         earningsTrend: generateEarningsTrend(),
         tourPerformance: generateTourPerformance(tours),
-        recentBookings: generateRecentBookings(),
+        recentEnrollments: generateRecentEnrollments(),
       });
     } catch (err) {
       console.error("Error fetching guide dashboard data:", err);
@@ -119,30 +119,30 @@ const GuideDashboard = () => {
       setDashboardData({
         totalTours: 12,
         activeTours: 8,
-        totalBookings: 45,
+        totalEnrollments: 45,
         totalEarnings: 28500,
         averageRating: 4.8,
-        bookingTrend: generateBookingTrend(),
+        enrollmentTrend: generateEnrollmentTrend(),
         earningsTrend: generateEarningsTrend(),
         tourPerformance: [
-          { name: "Nile Cruise", value: 15, bookings: 18 },
-          { name: "Pyramids Tour", value: 25, bookings: 22 },
-          { name: "Desert Safari", value: 20, bookings: 16 },
-          { name: "City Tour", value: 12, bookings: 14 },
-          { name: "Temples Tour", value: 28, bookings: 20 },
+          { name: "Nile Cruise", value: 15, enrollments: 18 },
+          { name: "Pyramids Tour", value: 25, enrollments: 22 },
+          { name: "Desert Safari", value: 20, enrollments: 16 },
+          { name: "City Tour", value: 12, enrollments: 14 },
+          { name: "Temples Tour", value: 28, enrollments: 20 },
         ],
-        recentBookings: generateRecentBookings(),
+        recentEnrollments: generateRecentEnrollments(),
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const generateBookingTrend = () => {
+  const generateEnrollmentTrend = () => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
     return months.map((month, idx) => ({
       month,
-      bookings: Math.floor(3 + idx * 1.2 + Math.random() * 2),
+      enrollments: Math.floor(3 + idx * 1.2 + Math.random() * 2),
     }));
   };
 
@@ -167,11 +167,11 @@ const GuideDashboard = () => {
       .map((name, idx) => ({
         name,
         value: Math.floor(Math.random() * 30) + 10,
-        bookings: Math.floor(Math.random() * 25) + 10,
+        enrollments: Math.floor(Math.random() * 25) + 10,
       }));
   };
 
-  const generateRecentBookings = () => {
+  const generateRecentEnrollments = () => {
     return [
       {
         id: 1,
@@ -377,8 +377,8 @@ const GuideDashboard = () => {
       bgColor: "from-green-500 to-green-600",
     },
     {
-      title: t("guide.totalBookings"),
-      value: dashboardData.totalBookings,
+      title: t("guide.totalEnrollments"),
+      value: dashboardData.totalEnrollments,
       icon: FaCalendarCheck,
       trend: 18,
       bgColor: "from-purple-500 to-purple-600",
@@ -421,9 +421,9 @@ const GuideDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartComponent
           type="line"
-          title={t("guide.bookingsTrend")}
-          data={dashboardData.bookingTrend}
-          dataKey="bookings"
+          title={t("guide.enrollmentsTrend")}
+          data={dashboardData.enrollmentTrend}
+          dataKey="enrollments"
           colors={["#7C3AED", "#C7A15C"]}
         />
         <ChartComponent
@@ -441,7 +441,7 @@ const GuideDashboard = () => {
           type="bar"
           title={t("guide.tourPerformance")}
           data={dashboardData.tourPerformance}
-          dataKey="bookings"
+          dataKey="enrollments"
           colors={["#F59E0B", "#D5B36A"]}
         />
         <ChartComponent
@@ -507,7 +507,7 @@ const GuideDashboard = () => {
       {/* Recent Bookings Table */}
       <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
         <h3 className={`text-lg font-semibold ${textColor} mb-4`}>
-          {t("guide.recentBookings")}
+          {t("guide.recentEnrollments")}
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -541,7 +541,7 @@ const GuideDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {dashboardData.recentBookings.map((item) => (
+              {dashboardData.recentEnrollments.map((item) => (
                 <tr
                   key={item.id}
                   className={`border-b ${borderColor} hover:${
