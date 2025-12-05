@@ -1,0 +1,77 @@
+.Toastify__toast-container {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+}
+
+/* Base toast */
+.Toastify__toast {
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  /* unified gold background for all toasts */
+  background: linear-gradient(90deg, #f7e7b5 0%, #f0d88a 100%);
+  color: #000;
+}
+
+/* Status indicators: keep unified gold background but change left border and icon color per status */
+.Toastify__toast--success {
+  border-left: 4px solid #d5b36a; /* gold */
+}
+
+.Toastify__toast--error {
+  border-left: 4px solid #e23a3a; /* red */
+}
+
+.Toastify__toast--info {
+  border-left: 4px solid #3b82f6; /* blue */
+}
+
+.Toastify__toast--warning {
+  border-left: 4px solid #d5b36a; /* gold */
+}
+
+/* Close button */
+.Toastify__close-button > svg {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Icon colors tuned to site palette */
+.Toastify__toast--success .Toastify__toast-icon {
+  color: #d5b36a; /* gold */
+}
+.Toastify__toast--warning .Toastify__toast-icon {
+  color: #d5b36a; /* gold */
+}
+.Toastify__toast--error .Toastify__toast-icon {
+  color: #e23a3a; /* red */
+}
+.Toastify__toast--info .Toastify__toast-icon {
+  color: #3b82f6; /* blue */
+}
+
+/* Progress bar colors */
+.Toastify__progress-bar--success {
+  background: #d5b36a;
+}
+.Toastify__progress-bar--error {
+  background: #e23a3a;
+}
+.Toastify__progress-bar--info {
+  background: #3b82f6;
+}
+.Toastify__progress-bar--warning {
+  background: #d5b36a;
+}
+
+/* Slightly darker close button on hover */
+.Toastify__close-button:hover > svg {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+/* Make toasts slightly larger on desktop */
+@media (min-width: 768px) {
+  .Toastify__toast {
+    padding: 14px 18px;
+  }
+}
