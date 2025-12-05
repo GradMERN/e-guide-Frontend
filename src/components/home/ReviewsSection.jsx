@@ -107,11 +107,7 @@ export default function ReviewsSection() {
 
   return (
     <div className="pb-10 sm:pb-10 md:pb-28">
-      <TitlesHome
-        icon={MdOutlineReviews}
-        title={t("reviewsSection.title")}
-        paragraph={t("reviewsSection.description")}
-      />
+      <TitlesHome icon={MdOutlineReviews} title={t("reviewsSection.title")} paragraph={t("reviewsSection.description")}/>
 
       <InfiniteMovingCards
         items={reviews}

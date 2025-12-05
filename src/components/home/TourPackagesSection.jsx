@@ -7,11 +7,7 @@ export default function TourPackagesSection() {
   const { t } = useTranslation();
   return (
     <SectionWrapperFull>
-      <TitlesHome
-        icon={MdOutlineTour}
-        title={t("tourPackages.title")}
-        paragraph={t("tourPackages.description")}
-      />
+      <TitlesHome icon={MdOutlineTour} title={t("tourPackages.title")} paragraph={t("tourPackages.description")}/>
     </SectionWrapperFull>
   );
 }

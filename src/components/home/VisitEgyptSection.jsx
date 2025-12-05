@@ -13,48 +13,32 @@ export default function VisitEgyptSection() {
     {
       id: 1,
       icon: GiGreatPyramid,
-      gradient: "from-primary to-secondary",
-      bgGradient: "from-primary/10 to-secondary/10",
     },
     {
       id: 2,
       icon: FaSwimmer,
-      gradient: "from-blue-500 to-cyan-600",
-      bgGradient: "from-blue-500/10 to-cyan-600/10",
     },
     {
       id: 3,
       icon: FaHeart,
-      gradient: "from-rose-500 to-pink-600",
-      bgGradient: "from-rose-500/10 to-pink-600/10",
     },
     {
       id: 4,
       icon: FaSun,
-      gradient: "from-yellow-500 to-amber-600",
-      bgGradient: "from-yellow-500/10 to-amber-600/10",
     },
     {
       id: 5,
       icon: FaWallet,
-      gradient: "from-emerald-500 to-green-600",
-      bgGradient: "from-emerald-500/10 to-green-600/10",
     },
     {
       id: 6,
       icon: FaUtensils,
-      gradient: "from-purple-500 to-indigo-600",
-      bgGradient: "from-purple-500/10 to-indigo-600/10",
     },
   ];
 
   return (
     <SectionWrapperFull>
-      <TitlesHome
-        icon={RiLandscapeAiLine}
-        title={t("reasonsToVisit.title")}
-        paragraph={t("reasonsToVisit.subtitle")}
-      />
+      <TitlesHome icon={RiLandscapeAiLine} title={t("reasonsToVisit.title")} paragraph={t("reasonsToVisit.subtitle")}/>
       <motion.div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 lg:gap-8 max-w-7xl mx-auto" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}>
         {reasons.map((reason, index) => {
           const Icon = reason.icon;

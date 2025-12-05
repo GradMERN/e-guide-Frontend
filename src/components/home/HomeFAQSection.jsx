@@ -233,9 +233,7 @@ const FAQSection = () => {
 
   return (
     <SectionWrapperFull>
-      <TitlesHome
-        icon={BsQuestionSquare}
-        title="Frequently Asked Questions"
+      <TitlesHome icon={BsQuestionSquare} title="Frequently Asked Questions"
         paragraph={
           <>
             Everything you need to know about your journey to the land of

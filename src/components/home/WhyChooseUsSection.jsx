@@ -20,11 +20,7 @@ export default function WhyChooseUsSection() {
 
   return (
     <SectionWrapperFull>
-      <TitlesHome
-        icon={TbPyramid}
-        title={t("whyChooseUs.title")}
-        paragraph={t("whyChooseUs.description")}
-      />
+      <TitlesHome icon={TbPyramid} title={t("whyChooseUs.title")} paragraph={t("whyChooseUs.description")}/>
 
     <motion.div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 lg:gap-8 max-w-7xl mx-auto" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}>
       {features.map((feature, index) => {
