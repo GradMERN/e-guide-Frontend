@@ -18,6 +18,15 @@ import {
   selectToursLoading,
   selectToursError,
 } from "./slices/tourSlice";
+import {
+  addToSaved,
+  removeFromSaved,
+  clearSaved,
+  selectSavedTours,
+  selectSavedLoading,
+  selectSavedError,
+  selectIsTourSaved,
+} from "./slices/savedSlice";
 
 // Custom hook for auth
 export const useAuth = () => {
@@ -80,6 +89,48 @@ export const useTours = () => {
   };
 };
 
+export const useSaved = () => {
+  const dispatch = useDispatch();
+
+  return {
+    // State
+    savedTours: useSelector(selectSavedTours),
+    savedLoading: useSelector(selectSavedLoading),
+    savedError: useSelector(selectSavedError),
+
+    // Actions
+    addToSaved: useCallback(
+      (tour) => {
+        dispatch(addToSaved(tour));
+      },
+      [dispatch]
+    ),
+
+    removeFromSaved: useCallback(
+      (tourId) => {
+        dispatch(removeFromSaved(tourId));
+      },
+      [dispatch]
+    ),
+
+    clearSaved: useCallback(() => {
+      dispatch(clearSaved());
+    }, [dispatch]),
+
+    clearSavedError: useCallback(() => {
+      dispatch(clearError());
+    }, [dispatch]),
+
+    // Helper method to check if a specific tour is saved
+    isTourSaved: useCallback((tourId) => {
+      const savedTours = useSelector(selectSavedTours);
+      return savedTours.some((tour) => {
+        const existingTourId = tour._id || tour.id;
+        return existingTourId === tourId;
+      });
+    }, []),
+  };
+};
 // Typed hooks for general use
 export const useAppDispatch = () => useDispatch();
 export const useAppSelector = useSelector;

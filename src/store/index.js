@@ -3,11 +3,11 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import rootReducer from "./rootReducer";
 
-// Persist config - only persist auth (not tours since they change often)
+// Persist config - persist auth and saved tours
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"], // Only persist auth state, not tours
+  whitelist: ["auth", "saved"], // Persist auth and saved tours
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
