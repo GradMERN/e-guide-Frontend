@@ -54,7 +54,14 @@ const TourDetail = () => {
       );
     } catch (err) {
       console.error(err);
-      setEnrollError(err?.message || "Enrollment failed");
+      const apiMsg = err?.response?.data?.message;
+      const status = err?.response?.status;
+      const msg = apiMsg || err?.message || "Enrollment failed";
+      setEnrollError(msg);
+      // If user already enrolled and paid, redirect to My Tours
+      if (status === 400 && /already enrolled/i.test(msg)) {
+        setTimeout(() => navigate("/my-tours"), 900);
+      }
     } finally {
       setEnrolling(false);
     }

@@ -12,15 +12,13 @@ import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
-import { useAuth } from "../../context/AuthContext";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { login } from "../../apis/Auth/login.api";
+import { login as loginApi } from "../../apis/Auth/login.api";
 import { useDispatch } from "react-redux";
 import { useAuth as useReduxAuth } from "../../store/hooks";
 
 export default function LoginPage() {
-  const dispatcher = useDispatch();
   const navigate = useNavigate();
   const { login } = useReduxAuth();
 
@@ -153,7 +151,7 @@ export default function LoginPage() {
               onSubmit={async (values, { setSubmitting }) => {
                 try {
                   setSubmitting(true);
-                  const res = await login(values);
+                  const res = await loginApi(values);
                   const token = res.data.data?.token || res.data?.token;
 
                   if (!token) {
