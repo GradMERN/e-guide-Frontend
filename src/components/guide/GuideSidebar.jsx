@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -17,30 +17,38 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   const menuItems = [
-    { name: t("guide.dashboard"), path: "/guide/dashboard", icon: FaHome },
-    { name: t("guide.myTours"), path: "/guide/tours", icon: FaMapMarkedAlt },
+    { name: t("Dashboard"), path: "/guide/dashboard", icon: FaHome },
+    { name: t("My Tours"), path: "/guide/tours", icon: FaMapMarkedAlt },
     {
-      name: t("guide.analyticsMenu"),
+      name: t("Analytics"),
       path: "/guide/analytics",
       icon: FaChartLine,
     },
   ];
 
   const handleLogout = () => {
-    if (window.confirm(t("admin.confirmLogout"))) {
-      logout();
-      navigate("/");
-    }
+    setConfirmLogout(true);
   };
 
-  const bgColor = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
-  const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
-  const textColor = isDarkMode ? "text-white" : "text-gray-900";
-  const hoverBg = isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100";
-  const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
-  const accentColor = "#D5B36A";
+  const confirmLogoutAction = () => {
+    setConfirmLogout(false);
+    logout();
+    navigate("/");
+  };
+
+  const cancelLogout = () => {
+    setConfirmLogout(false);
+  };
+
+  const bgColor = "bg-[var(--surface)]";
+  const borderColor = "border-[var(--border)]";
+  const textColor = "text-[var(--text)]";
+  const hoverBg = "hover:bg-[var(--glass-bg-hover)]";
+  const secondaryText = "text-[var(--text-secondary)]";
+  const accentColor = "var(--primary)";
 
   return (
     <aside
@@ -51,14 +59,16 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
       }`}
     >
       {/* Logo/Header */}
-      <div className="p-4 border-b border-[#D5B36A]/20 flex items-center justify-between">
+      <div
+        className={`p-4 border-b ${borderColor} flex items-center justify-between`}
+      >
         {sidebarOpen && (
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#C7A15C] to-[#E2C784] flex items-center justify-center">
-              <FaEye className="text-black" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center">
+              <FaEye className="text-[var(--text-loop)]" />
             </div>
             <span className={`font-semibold ${textColor}`}>
-              {t("guide.guidePanel")}
+              {t("Guide Panel")}
             </span>
           </div>
         )}
@@ -79,7 +89,7 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
             className={({ isActive }) =>
               `flex items-center gap-4 px-4 py-3 rounded-lg transition-all ${
                 isActive
-                  ? `bg-[#2c1b0f] ${textColor} ${
+                  ? `bg-[var(--glass-bg)] ${textColor} ${
                       isRtl ? "border-r-4" : "border-l-4"
                     }`
                   : `${secondaryText} ${hoverBg}`
@@ -102,17 +112,45 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-2 border-t border-[#D5B36A]/20">
+      <div className={`p-2 border-t ${borderColor}`}>
         <button
           onClick={handleLogout}
           className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg ${secondaryText} ${hoverBg} transition-all text-red-400 hover:text-red-300`}
         >
           <FaSignOutAlt className="text-lg flex-shrink-0" />
           {sidebarOpen && (
-            <span className="text-sm font-medium">{t("admin.logout")}</span>
+            <span className="text-sm font-medium">{t("Logout")}</span>
           )}
         </button>
       </div>
+
+      {/* CONFIRMATION MODAL */}
+      {confirmLogout && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-[var(--text)] mb-4">
+              {t("Confirm Logout") || "Confirm Logout"}
+            </h3>
+            <p className="text-[var(--text-secondary)] mb-6">
+              Are you sure you want to logout?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 bg-[var(--secondary)] text-[var(--text)] rounded-lg hover:bg-[var(--secondary-hover)] transition-colors"
+              >
+                {t("common.cancel") || "Cancel"}
+              </button>
+              <button
+                onClick={confirmLogoutAction}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                {t("Logout") || "Logout"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };

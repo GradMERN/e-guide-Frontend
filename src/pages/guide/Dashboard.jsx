@@ -720,7 +720,7 @@ const GuideDashboard = () => {
                 <label
                   className={`block text-sm font-medium ${secondaryText} mb-2`}
                 >
-                  {t("guide.tours.tags") || "Tags (comma-separated)"}
+                  {t("Tags (comma-separated)") || "Tags (comma-separated)"}
                 </label>
                 <input
                   type="text"
@@ -738,7 +738,8 @@ const GuideDashboard = () => {
                 <label
                   className={`block text-sm font-medium ${secondaryText} mb-2`}
                 >
-                  {t("guide.tours.languages") || "Languages (comma-separated)"}
+                  {t("Languages (comma-separated)") ||
+                    "Languages (comma-separated)"}
                 </label>
                 <input
                   type="text"
@@ -778,14 +779,14 @@ const GuideDashboard = () => {
                   className={`flex-1 px-4 py-2 rounded-lg border ${borderColor} 
                             ${textColor} hover:bg-[#D5B36A]/10 transition-all font-medium`}
                 >
-                  {t("admin.cancel") || "Cancel"}
+                  {t("Cancel") || "Cancel"}
                 </button>
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2 bg-[#D5B36A] text-black rounded-lg 
                            hover:bg-[#E2C784] transition-all font-medium"
                 >
-                  {t("admin.tours.create") || "Create"}
+                  {t("Create") || "Create"}
                 </button>
               </div>
             </form>

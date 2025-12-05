@@ -11,6 +11,7 @@ import {
   FaTimes,
   FaImages,
   FaList,
+  FaSpinner,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UpdateGalleryModal from "../../components/guide/UpdateTourGalleryModal";
@@ -27,6 +28,12 @@ const ManageTours = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [tours, setTours] = useState([]);
   const [places, setPlaces] = useState([]);
+  const [loadingTourSubmit, setLoadingTourSubmit] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    item: null,
+    action: null,
+  });
 
   const [showTourModal, setShowTourModal] = useState(false);
   const [showPlaceModal, setShowPlaceModal] = useState(false);
@@ -40,6 +47,7 @@ const ManageTours = () => {
   const [galleryNewPreviews, setGalleryNewPreviews] = useState([]);
   const [deletedGalleryIds, setDeletedGalleryIds] = useState([]); // public_ids marked for deletion
   const galleryPreviewsRef = React.useRef([]);
+  const [mainImagePreviewUrl, setMainImagePreviewUrl] = useState(null);
 
   const [newTourForm, setNewTourForm] = useState({
     name: "",
@@ -50,6 +58,7 @@ const ManageTours = () => {
     tags: "",
     languages: "",
     mainImage: null,
+    existingMainImage: null,
   });
 
   const [newPlaceForm, setNewPlaceForm] = useState({
@@ -58,10 +67,10 @@ const ManageTours = () => {
   });
 
   const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
-  const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
-  const textColor = isDarkMode ? "text-white" : "text-gray-900";
-  const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
-  const inputBg = isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50";
+  const borderColor = "border-[var(--border)]";
+  const textColor = "text-[var(--text)]";
+  const secondaryText = "text-[var(--text-secondary)]";
+  const inputBg = "bg-[var(--surface)]";
 
   // FETCH TOURS
   const fetchTours = async () => {
@@ -130,6 +139,7 @@ const ManageTours = () => {
       tags: "",
       languages: "",
       mainImage: null,
+      existingMainImage: null,
     });
     setGalleryOldImages([]);
     // revoke previews
@@ -142,13 +152,28 @@ const ManageTours = () => {
     setGalleryNewPreviews([]);
     setGalleryNewFiles([]);
     setDeletedGalleryIds([]);
+    if (mainImagePreviewUrl) {
+      URL.revokeObjectURL(mainImagePreviewUrl);
+      setMainImagePreviewUrl(null);
+    }
   };
 
   // HANDLE TOUR FORM CHANGE
   const handleTourChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "mainImage") {
-      setNewTourForm((prev) => ({ ...prev, mainImage: files[0] }));
+      const file = files[0] || null;
+      setNewTourForm((prev) => ({ ...prev, mainImage: file }));
+      // Handle preview
+      if (mainImagePreviewUrl) {
+        URL.revokeObjectURL(mainImagePreviewUrl);
+      }
+      if (file) {
+        const url = URL.createObjectURL(file);
+        setMainImagePreviewUrl(url);
+      } else {
+        setMainImagePreviewUrl(null);
+      }
       return;
     }
     setNewTourForm((prev) => ({ ...prev, [name]: value }));
@@ -204,6 +229,7 @@ const ManageTours = () => {
 
   const handleTourSubmit = async (e) => {
     e.preventDefault();
+    setLoadingTourSubmit(true);
     try {
       // Validate inputs before submitting
       if (
@@ -313,6 +339,8 @@ const ManageTours = () => {
       }
 
       toast.error(errorMessage);
+    } finally {
+      setLoadingTourSubmit(false);
     }
   };
   // HANDLE PLACE SUBMIT
@@ -347,6 +375,7 @@ const ManageTours = () => {
       tags: tour.tags.join(","),
       languages: tour.languages.join(","),
       mainImage: null,
+      existingMainImage: tour.mainImage || null,
     });
     // Initialize gallery editing state when opening edit modal
     setGalleryOldImages(tour.galleryImages || []);
@@ -387,15 +416,25 @@ const ManageTours = () => {
   };
 
   // HANDLE DELETE TOUR
-  const handleDeleteTour = async (id) => {
-    if (!window.confirm(t("admin.tours.confirmDelete"))) return;
+  const handleDeleteTour = (tour) => {
+    setConfirmModal({ open: true, item: tour, action: "delete" });
+  };
+
+  const confirmDeleteTour = async () => {
+    const tour = confirmModal.item;
+    setConfirmModal({ open: false, item: null, action: null });
     try {
-      await guideService.deleteTour(id);
+      await guideService.deleteTour(tour._id);
       await fetchTours();
+      toast.success("Tour deleted successfully!");
     } catch (err) {
       console.error("Error deleting tour:", err);
       toast.error("Failed to delete tour");
     }
+  };
+
+  const cancelDeleteTour = () => {
+    setConfirmModal({ open: false, item: null, action: null });
   };
 
   return (
@@ -403,10 +442,18 @@ const ManageTours = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className={`text-3xl font-bold ${textColor}`}>
+          <h1
+            className={`text-4xl font-bold ${
+              isDarkMode ? "text-[#D5B36A]" : "text-[#8B4513]"
+            } mb-2`}
+          >
             {t("guide.tours.title") || "Manage Tours"}
           </h1>
-          <p className={`${secondaryText} mt-1`}>
+          <p
+            className={
+              isDarkMode ? "text-gray-300 text-lg" : "text-gray-600 text-lg"
+            }
+          >
             Manage and track all your tours
           </p>
         </div>
@@ -416,29 +463,59 @@ const ManageTours = () => {
               resetTourForm();
               setShowTourModal(true);
             }}
-            className="flex items-center gap-2 bg-[#D5B36A] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#C7A15C] transition-all"
+            className={`flex items-center gap-3 px-6 py-3 ${
+              isDarkMode
+                ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
+                : "bg-white"
+            } border-2 border-[#D5B36A] text-[#D5B36A] rounded-lg shadow-lg hover:shadow-[#D5B36A]/30 hover:shadow-xl transition-all duration-300 font-semibold relative overflow-hidden group cursor-pointer`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
+              boxShadow:
+                "0 4px 15px rgba(213, 179, 106, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+            }}
           >
-            <FaPlus /> {t("guide.tours.add") || "Add Tour"}
+            <div className="absolute inset-0 bg-[#D5B36A]/0 group-hover:bg-[#D5B36A]/10 transition-colors duration-300"></div>
+            <FaPlus className="text-[#D5B36A] group-hover:text-[#F5E6A3] transition-colors duration-300 z-10" />
+            <span className="z-10">{t("guide.tours.add") || "Add Tour"}</span>
           </button>
           <button
             onClick={() => setShowPlaceModal(true)}
-            className="flex items-center gap-2 bg-[#D5B36A] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#C7A15C] transition-all"
+            className={`flex items-center gap-3 px-6 py-3 ${
+              isDarkMode
+                ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
+                : "bg-white"
+            } border-2 border-[#D5B36A] text-[#D5B36A] rounded-lg shadow-lg hover:shadow-[#D5B36A]/30 hover:shadow-xl transition-all duration-300 font-semibold relative overflow-hidden group cursor-pointer`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
+              boxShadow:
+                "0 4px 15px rgba(213, 179, 106, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+            }}
           >
-            <FaPlus /> Add Place
+            <div className="absolute inset-0 bg-[#D5B36A]/0 group-hover:bg-[#D5B36A]/10 transition-colors duration-300"></div>
+            <FaPlus className="text-[#D5B36A] group-hover:text-[#F5E6A3] transition-colors duration-300 z-10" />
+            <span className="z-10">Add Place</span>
           </button>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className={`${cardBg} rounded-xl border ${borderColor} p-4`}>
+      <div
+        className={`${
+          isDarkMode
+            ? "bg-gradient-to-br from-[#1a0f08] to-[#2c1810]"
+            : "bg-white"
+        } rounded-xl border border-[#D5B36A]/30 p-4 shadow-lg`}
+      >
         <div className="flex items-center gap-3">
-          <FaSearch className={secondaryText} />
+          <FaSearch className="text-[#D5B36A]" />
           <input
             type="text"
             placeholder={t("guide.tours.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`flex-1 bg-transparent ${textColor} placeholder-${secondaryText} border-0 outline-none`}
+            className={`flex-1 bg-transparent ${
+              isDarkMode ? "text-white" : "text-black"
+            } placeholder-[#D5B36A]/60 border-0 outline-none focus:ring-2 focus:ring-[#D5B36A]/50 rounded-lg px-3 py-2 transition-all`}
           />
         </div>
       </div>
@@ -447,110 +524,139 @@ const ManageTours = () => {
       <div
         className={`${cardBg} rounded-xl border ${borderColor} overflow-x-auto`}
       >
-        <table className="w-full min-w-[700px]">
-          <thead>
-            <tr className={`border-b ${borderColor} bg-opacity-50`}>
-              <th
-                className={`text-left py-4 px-6 font-semibold ${secondaryText}`}
-              >
-                {t("guide.tours.name")}
-              </th>
-              <th
-                className={`text-left py-4 px-6 font-semibold ${secondaryText}`}
-              >
-                {t("guide.tours.city")}
-              </th>
-              <th
-                className={`text-left py-4 px-6 font-semibold ${secondaryText}`}
-              >
-                {t("guide.tours.price")}
-              </th>
-              <th
-                className={`text-left py-4 px-6 font-semibold ${secondaryText}`}
-              >
-                {t("guide.tours.rating")}
-              </th>
-              <th
-                className={`text-left py-4 px-6 font-semibold ${secondaryText}`}
-              >
-                {t("guide.tours.actions")}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTours.length > 0 ? (
-              filteredTours.map((tour) => (
-                <tr
-                  key={tour._id}
-                  className={`border-b ${borderColor} hover:${
-                    isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"
-                  } transition-colors`}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px]">
+            <thead
+              className={`border-b ${borderColor} ${
+                isDarkMode ? "bg-opacity-50" : ""
+              }`}
+            >
+              <tr>
+                <th
+                  className={`text-left py-4 px-6 font-semibold ${secondaryText}`}
                 >
-                  <td className={`py-4 px-6 ${textColor} font-medium`}>
-                    {tour.name}
-                  </td>
-                  <td className={`py-4 px-6 ${secondaryText}`}>
-                    {tour.place.city}
-                  </td>
-                  <td className={`py-4 px-6 ${textColor}`}>{tour.price} EGP</td>
-                  <td className={`py-4 px-6`}>
-                    <span className="text-yellow-400">★ {tour.rating}</span>
-                  </td>
-                  <td className={`py-4 px-6`}>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleEditTour(tour)}
-                        className="p-2 rounded-lg hover:bg-blue-500/20 text-blue-400 transition-all"
-                        title="Edit"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteTour(tour._id)}
-                        className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-all"
-                        title="Delete"
-                      >
-                        <FaTrash />
-                      </button>
-                      <button
-                        className="p-2 rounded-lg hover:bg-green-500/20 text-green-400 transition-all"
-                        title="View"
-                      >
-                        <FaEye />
-                      </button>
-                      <button
-                        onClick={() => handleOpenItems(tour)}
-                        className="p-2 rounded-lg hover:bg-indigo-500/20 text-indigo-400 transition-all"
-                        title="Manage Waypoints"
-                      >
-                        <FaList />
-                      </button>
-                      <button
-                        onClick={() => handleOpenGalleryModal(tour)}
-                        className="p-2 rounded-lg hover:bg-yellow-500/20 text-yellow-500 transition-all"
-                        title="Update Gallery Images"
-                      >
-                        <FaImages />
-                      </button>
-                    </div>
+                  {t("guide.tours.name")}
+                </th>
+                <th className="px-6 py-4 text-left text-[#D5B36A] font-bold text-sm uppercase tracking-wider border-r border-[#D5B36A]/20">
+                  {t("guide.tours.city")}
+                </th>
+                <th className="px-6 py-4 text-left text-[#D5B36A] font-bold text-sm uppercase tracking-wider border-r border-[#D5B36A]/20">
+                  {t("guide.tours.price")}
+                </th>
+                <th className="px-6 py-4 text-left text-[#D5B36A] font-bold text-sm uppercase tracking-wider border-r border-[#D5B36A]/20">
+                  {t("guide.tours.rating")}
+                </th>
+                <th className="px-6 py-4 text-center text-[#D5B36A] font-bold text-sm uppercase tracking-wider">
+                  {t("guide.tours.actions")}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#D5B36A]/20">
+              {filteredTours.length > 0 ? (
+                filteredTours.map((tour, index) => (
+                  <tr
+                    key={tour._id}
+                    className="hover:bg-[#D5B36A]/5 transition-colors duration-200 group"
+                    style={{
+                      backgroundImage:
+                        index % 2 === 0
+                          ? `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`
+                          : "none",
+                    }}
+                  >
+                    <td className="px-6 py-4 text-[var(--text)] font-medium border-r border-[#D5B36A]/10">
+                      {tour.name}
+                    </td>
+                    <td className="px-6 py-4 text-[var(--text-secondary)] border-r border-[#D5B36A]/10">
+                      {tour.place.city}
+                    </td>
+                    <td className="px-6 py-4 text-[var(--primary)] font-semibold border-r border-[#D5B36A]/10">
+                      {tour.price} EGP
+                    </td>
+                    <td className="px-6 py-4 border-r border-[#D5B36A]/10">
+                      <span className="text-[var(--secondary)]">
+                        ★ {tour.rating}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => handleEditTour(tour)}
+                          className={`p-3 rounded-lg ${
+                            isDarkMode
+                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
+                              : "bg-white"
+                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
+                          title="Edit"
+                        >
+                          <FaEdit className="text-sm" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTour(tour)}
+                          className={`p-3 rounded-lg ${
+                            isDarkMode
+                              ? "bg-gradient-to-b from-[#8B0000] to-[#5a0000]"
+                              : "bg-white"
+                          } border border-red-600/50 text-red-300 hover:bg-red-900/20 hover:border-red-500 transition-all duration-200 cursor-pointer`}
+                          title="Delete"
+                        >
+                          <FaTrash className="text-sm" />
+                        </button>
+                        <button
+                          className={`p-3 rounded-lg ${
+                            isDarkMode
+                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
+                              : "bg-white"
+                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
+                          title="View"
+                        >
+                          <FaEye className="text-sm" />
+                        </button>
+                        <button
+                          onClick={() => handleOpenItems(tour)}
+                          className={`p-3 rounded-lg ${
+                            isDarkMode
+                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
+                              : "bg-white"
+                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
+                          title="Manage Waypoints"
+                        >
+                          <FaList className="text-sm" />
+                        </button>
+                        <button
+                          onClick={() => handleOpenGalleryModal(tour)}
+                          className={`p-3 rounded-lg ${
+                            isDarkMode
+                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
+                              : "bg-white"
+                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
+                          title="Update Gallery Images"
+                        >
+                          <FaImages className="text-sm" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="py-8 text-center text-[#D5B36A]/70"
+                  >
+                    {t("guide.tours.notFound") || "No tours found"}
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className={`py-8 text-center ${secondaryText}`}>
-                  {t("guide.tours.notFound") || "No tours found"}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* TOUR MODAL */}
       {showTourModal && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
           onMouseDown={() => {
             setShowTourModal(false);
             resetTourForm();
@@ -558,10 +664,15 @@ const ManageTours = () => {
         >
           <div
             onMouseDown={(e) => e.stopPropagation()}
-            className={`${cardBg} rounded-xl border ${borderColor} p-6 max-w-md w-full`}
+            className="bg-gradient-to-br from-[#1a0f08] to-[#2c1810] rounded-xl border-2 border-[#D5B36A]/50 p-6 max-w-md w-full shadow-2xl"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
+              boxShadow:
+                "0 0 30px rgba(213, 179, 106, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+            }}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-xl font-bold ${textColor}`}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-[#D5B36A]">
                 {editingTour
                   ? t("guide.tours.editTour") || "Edit Tour"
                   : t("guide.tours.addNew") || "Add New Tour"}
@@ -571,17 +682,15 @@ const ManageTours = () => {
                   setShowTourModal(false);
                   resetTourForm();
                 }}
-                className="p-2 hover:bg-[#D5B36A]/20 rounded-lg transition"
+                className="p-2 hover:bg-[#D5B36A]/20 rounded-lg transition-all duration-200 cursor-pointer"
               >
-                <FaTimes className={textColor} />
+                <FaTimes className="text-[#D5B36A]" />
               </button>
             </div>
             <form onSubmit={handleTourSubmit} className="space-y-4">
               {/* Name */}
               <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-2`}
-                >
+                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                   {t("guide.tours.name") || "Tour Name"}
                 </label>
                 <input
@@ -592,17 +701,15 @@ const ManageTours = () => {
                   placeholder="Enter tour name"
                   required
                   maxLength={100}
-                  className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
                 />
-                <span className={`text-xs ${secondaryText}`}>
+                <span className="text-xs text-[#D5B36A]/70">
                   {newTourForm.name.length}/100 characters
                 </span>
               </div>
               {/* Description */}
               <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-2`}
-                >
+                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                   {t("guide.tours.description") || "Description"}
                 </label>
                 <textarea
@@ -613,18 +720,16 @@ const ManageTours = () => {
                   required
                   rows="3"
                   maxLength={2000}
-                  className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
                 />
-                <span className={`text-xs ${secondaryText}`}>
+                <span className="text-xs text-[#D5B36A]/70">
                   {newTourForm.description.length}/2000 characters (min 10)
                 </span>
               </div>
               {/* Price & Place */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label
-                    className={`block text-sm font-medium ${secondaryText} mb-2`}
-                  >
+                  <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                     {t("guide.tours.price") || "Price (EGP)"}
                   </label>
                   <input
@@ -636,13 +741,11 @@ const ManageTours = () => {
                     step="0.01"
                     min="0.99"
                     required
-                    className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                    className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
                   />
                 </div>
                 <div>
-                  <label
-                    className={`block text-sm font-medium ${secondaryText} mb-2`}
-                  >
+                  <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                     {t("guide.tours.place") || "Place/Location"}
                   </label>
                   <select
@@ -650,7 +753,7 @@ const ManageTours = () => {
                     value={newTourForm.place}
                     onChange={handleTourChange}
                     required
-                    className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                    className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
                   >
                     <option value="">Select a place</option>
                     {places.map((place) => (
@@ -663,9 +766,7 @@ const ManageTours = () => {
               </div>
               {/* Categories */}
               <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-2`}
-                >
+                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                   Categories (comma-separated)
                 </label>
                 <input
@@ -674,14 +775,12 @@ const ManageTours = () => {
                   value={newTourForm.categories}
                   onChange={handleTourChange}
                   placeholder="e.g., Adventure, Cultural"
-                  className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
                 />
               </div>
               {/* Tags */}
               <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-2`}
-                >
+                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                   Tags (comma-separated)
                 </label>
                 <input
@@ -690,14 +789,12 @@ const ManageTours = () => {
                   value={newTourForm.tags}
                   onChange={handleTourChange}
                   placeholder="e.g., outdoor, guided"
-                  className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
                 />
               </div>
               {/* Languages */}
               <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-2`}
-                >
+                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                   Languages (comma-separated)
                 </label>
                 <input
@@ -706,14 +803,12 @@ const ManageTours = () => {
                   value={newTourForm.languages}
                   onChange={handleTourChange}
                   placeholder="e.g., English, Arabic"
-                  className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
                 />
               </div>
               {/* Main Image */}
               <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-2`}
-                >
+                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                   Image
                 </label>
                 <input
@@ -721,15 +816,13 @@ const ManageTours = () => {
                   name="mainImage"
                   onChange={handleTourChange}
                   accept="image/*"
-                  className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}
+                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all file:bg-[#D5B36A] file:text-black file:border-none file:rounded file:px-3 file:py-1 file:mr-3 file:font-medium hover:file:bg-[#C7A15C]"
                 />
               </div>
 
               {/* Gallery Images (edit & create) */}
               <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-2`}
-                >
+                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
                   Gallery Images
                 </label>
                 <div className="grid grid-cols-3 gap-3">
@@ -775,9 +868,11 @@ const ManageTours = () => {
                     </div>
                   ))}
 
-                  {/* add box */}
-                  <label className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer h-24">
-                    <FaPlus size={20} className="text-[#D5B36A]" />
+                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#D5B36A]/50 rounded-lg cursor-pointer h-24 bg-[#2c1810] hover:bg-[#D5B36A]/5 transition-all">
+                    <FaPlus size={20} className="text-[#D5B36A] mb-2" />
+                    <span className="text-[#D5B36A] text-sm font-medium">
+                      Add Images
+                    </span>
                     <input
                       type="file"
                       multiple
@@ -787,7 +882,7 @@ const ManageTours = () => {
                     />
                   </label>
                 </div>
-                <p className={`text-xs mt-2 ${secondaryText}`}>
+                <p className="text-xs text-[#D5B36A]/70 mt-2">
                   You can remove existing images or add new ones. Changes will
                   be saved on submit.
                 </p>
@@ -801,14 +896,16 @@ const ManageTours = () => {
                     setShowTourModal(false);
                     resetTourForm();
                   }}
-                  className={`flex-1 px-4 py-2 rounded-lg border ${borderColor} ${textColor} hover:bg-[#D5B36A]/10 transition-all font-medium`}
+                  className="flex-1 px-4 py-3 bg-gradient-to-b from-[#2c1810] to-[#1a0f08] border-2 border-[#D5B36A]/50 text-[#D5B36A] rounded-lg hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-300 font-semibold cursor-pointer"
                 >
                   {t("admin.cancel") || "Cancel"}
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-[#D5B36A] text-black rounded-lg hover:bg-[#E2C784] transition-all font-medium"
+                  disabled={loadingTourSubmit}
+                  className="flex-1 px-4 py-3 bg-gradient-to-b from-[#D5B36A] to-[#C7A15C] border-2 border-[#D5B36A] text-black rounded-lg hover:from-[#F5E6A3] hover:to-[#D5B36A] transition-all duration-300 font-semibold shadow-lg hover:shadow-[#D5B36A]/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
+                  {loadingTourSubmit && <FaSpinner className="animate-spin" />}
                   {editingTour
                     ? t("admin.tours.update") || "Update"
                     : t("admin.tours.create") || "Create"}
@@ -822,12 +919,21 @@ const ManageTours = () => {
       {/* PLACE MODAL */}
       {showPlaceModal && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
           onMouseDown={() => setShowPlaceModal(false)}
         >
           <div
             onMouseDown={(e) => e.stopPropagation()}
-            className={`${cardBg} rounded-xl border ${borderColor} p-6 max-w-md w-full`}
+            className={`${
+              isDarkMode
+                ? "bg-gradient-to-br from-[#1a0f08] to-[#2c1810]"
+                : "bg-white"
+            } rounded-xl border-2 border-[#D5B36A]/50 p-6 max-w-md w-full shadow-2xl`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
+              boxShadow:
+                "0 0 30px rgba(213, 179, 106, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+            }}
           >
             <AddPlaceForm
               onClose={() => setShowPlaceModal(false)}
@@ -850,6 +956,36 @@ const ManageTours = () => {
           isDarkMode={isDarkMode}
         />
       )}
+
+      {/* CONFIRMATION MODAL */}
+      {confirmModal.open && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-[#1a0f08] to-[#2c1810] border border-[var(--border)] rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-[var(--text)] mb-4">
+              {t("admin.tours.confirmDelete") || "Confirm Delete"}
+            </h3>
+            <p className="text-[var(--text-secondary)] mb-6">
+              Are you sure you want to delete the tour "
+              {confirmModal.item?.name}"? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelDeleteTour}
+                className="px-4 py-2 bg-[var(--secondary)] text-[var(--text)] rounded-lg hover:bg-[var(--secondary-hover)] transition-colors"
+              >
+                {t("common.cancel") || "Cancel"}
+              </button>
+              <button
+                onClick={confirmDeleteTour}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                {t("common.delete") || "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tour items are managed on a dedicated page: /guide/tours/:id/items */}
     </div>
   );

@@ -18,11 +18,11 @@ const AddPlaceForm = ({
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
 
-  const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
-  const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
-  const textColor = isDarkMode ? "text-white" : "text-gray-900";
-  const inputBg = isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50";
-  const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
+  const cardBg = "bg-[var(--surface)]";
+  const borderColor = "border-[var(--border)]";
+  const textColor = "text-[var(--text)]";
+  const inputBg = "bg-[var(--surface)]";
+  const secondaryText = "text-[var(--text-secondary)]";
 
   const handleChange = (e) => {
     const { name, value } = e.target;

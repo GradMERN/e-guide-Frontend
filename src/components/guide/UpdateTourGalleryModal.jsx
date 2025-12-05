@@ -50,9 +50,9 @@ const UpdateGalleryModal = ({
     onSave(newImages, deletedIds);
   };
 
-  const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
-  const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
-  const textColor = isDarkMode ? "text-white" : "text-gray-900";
+  const cardBg = "bg-[var(--surface)]";
+  const borderColor = "border-[var(--border)]";
+  const textColor = "text-[var(--text)]";
 
   // Filter out deleted images
   const visibleOldImages = images.filter(
