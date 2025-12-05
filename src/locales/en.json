@@ -59,7 +59,17 @@
   "german": "German",
   "common": {
     "loading": "Loading...",
-    "back": "Back"
+    "back": "Back",
+    "cancel": "Cancel",
+    "statuses": {
+      "pending": "Pending",
+      "active": "Active",
+      "started": "Started",
+      "completed": "Completed",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    }
   },
   "admin": {
     "dashboard": "Dashboard",
@@ -219,7 +229,8 @@
     "loadingDashboard": "Loading dashboard...",
     "tours": {
       "title": "My Tours",
-      "add": "Create Tour",
+      "addItem": "Add Item",
+      "addTour": "Create Tour",
       "edit": "Edit",
       "editTour": "Edit Tour",
       "addNew": "Add New Tour",
@@ -315,7 +326,9 @@
       "joinDate": "Member since",
       "accountStatus": "Status",
       "verificationStatus": "Email Verification"
-    }
+    },
+    "tourName": "Tour Name",
+    "guestName": "Guest Name"
   },
   "beforeAfter": {
     "subtitle": "Compare & Contrast",
@@ -376,5 +389,90 @@
         }
       }
     ]
+  },
+  "guide": {
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of your tours and performance",
+      "totalTours": "Total Tours",
+      "publishedTours": "Published Tours",
+      "totalBookings": "Total Bookings",
+      "averageRating": "Average Rating"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Track your tours performance and growth",
+      "totalViews": "Total Views",
+      "conversionRate": "Conversion Rate",
+      "averageBookingValue": "Average Booking Value",
+      "topPerformingTour": "Top Performing Tour",
+      "dailyViews": "Daily Views & Enrollments",
+      "monthlyComparison": "Monthly Comparison",
+      "tourPerformance": "Tour Performance",
+      "trafficSource": "Traffic Source Distribution",
+      "noDataTitle": "No Analytics Data Yet",
+      "noDataMessage": "Start publishing tours and getting enrollments to see analytics here."
+    },
+    "sidebar": {
+      "title": "Guide Panel",
+      "dashboard": "Dashboard",
+      "myTours": "My Tours",
+      "analytics": "Analytics",
+      "logout": "Logout",
+      "confirmLogout": "Confirm Logout",
+      "confirmLogoutMessage": "Are you sure you want to logout?"
+    },
+    "tours": {
+      "title": "Manage Tours",
+      "manageAndTrack": "Manage and track all your tours",
+      "addPlace": "Add Place",
+      "searchPlaceholder": "Search tours...",
+      "name": "Name",
+      "city": "City",
+      "price": "Price",
+      "rating": "Rating",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "currency": "EGP",
+      "states": {
+        "published": "Published",
+        "notPublished": "Not Published",
+        "empty": "Empty"
+      },
+      "titles": {
+        "noItems": "No items yet",
+        "noPublishedItems": "No published items",
+        "updating": "Updating...",
+        "unpublish": "Unpublish tour",
+        "publish": "Publish tour",
+        "manageWaypoints": "Manage Waypoints"
+      },
+      "messages": {
+        "added": "Tour added successfully!",
+        "updated": "Tour updated successfully!",
+        "deleted": "Tour deleted successfully!",
+        "galleryUpdated": "Gallery images updated successfully!"
+      },
+      "errors": {
+        "deleteFailed": "Failed to delete tour",
+        "galleryUpdateFailed": "Failed to update gallery images.",
+        "noPublishedItems": "There is no published items"
+      },
+      "validation": {
+        "nameLength": "Tour name must be between 3 and 100 characters",
+        "descriptionLength": "Description must be between 10 and 2000 characters",
+        "priceMin": "Price must be at least 0.99",
+        "selectPlace": "Please select a place/location"
+      }
+    },
+    "places": {
+      "added": "Place added successfully!",
+      "addFailed": "Failed to add place. Check console for details.",
+      "validation": {
+        "missingCountryCity": "Please provide both country and city"
+      }
+    },
+    "currency": "EGP"
   }
 }

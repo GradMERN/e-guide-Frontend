@@ -37,9 +37,9 @@ const AdminDashboard = () => {
           totalAdmins: data.adminsCount || 0,
           totalTours: data.toursCount || 0,
           totalEnrollments: data.enrollmentsCount || 0,
-          totalRevenue: (data.paymentsPaid || 0) * 1000, // Mock calculation
-          userGrowth: generateGrowthData(data),
-          revenueData: generateRevenueData(data),
+          totalRevenue: data.totalRevenue || 0,
+          userGrowth: data.growthChartData || [],
+          revenueData: data.revenueChartData || [],
           userDistribution: [
             {
               name: "Tourists",
@@ -64,32 +64,12 @@ const AdminDashboard = () => {
     }
   };
 
-  const generateGrowthData = (data) => {
-    // Generate mock monthly data
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-    return months.map((month, idx) => ({
-      month,
-      users: Math.floor((data.usersCount || 0) * (0.6 + idx * 0.07)),
-      guides: Math.floor((data.guidesCount || 0) * (0.6 + idx * 0.07)),
-      tours: Math.floor((data.toursCount || 0) * (0.6 + idx * 0.08)),
-    }));
-  };
-
-  const generateRevenueData = (data) => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-    const baseRevenue = (data.paymentsPaid || 0) * 5000;
-    return months.map((month) => ({
-      month,
-      revenue: Math.floor(baseRevenue * (0.7 + Math.random() * 0.5)),
-    }));
-  };
-
   const transformRecentUsers = (recentUsers) => {
     return recentUsers.slice(0, 4).map((user, idx) => ({
       id: idx + 1,
-      type: idx % 2 === 0 ? "user_joined" : "guide_joined",
+      type: user.role === "guide" ? "guide_joined" : "user_joined",
       user: `${user.firstName} ${user.lastName}`,
-      description: `${user.firstName} ${user.lastName} joined the platform`,
+      description: `${user.firstName} ${user.lastName} joined as ${user.role}`,
       time: new Date(user.createdAt).toLocaleDateString(),
     }));
   };
@@ -131,29 +111,25 @@ const AdminDashboard = () => {
       title: t("admin.totalUsers"),
       value: dashboardData.totalUsers.toLocaleString(),
       icon: FaUsers,
-      trend: 8,
       bgColor: "from-blue-500 to-blue-600",
     },
     {
       title: t("admin.totalGuides"),
       value: dashboardData.totalGuides,
       icon: FaUserTie,
-      trend: 12,
       bgColor: "from-purple-500 to-purple-600",
     },
     {
       title: t("admin.totalTours"),
       value: dashboardData.totalTours,
       icon: FaMapMarkedAlt,
-      trend: 18,
       bgColor: "from-green-500 to-green-600",
     },
     {
       title: t("admin.totalRevenue"),
       value: `${(dashboardData.totalRevenue / 1000).toLocaleString()}K`,
       icon: FaMoneyBillWave,
-      unit: "EGP",
-      trend: 25,
+      unit: t("admin.currency") || "EGP",
       bgColor: "from-emerald-500 to-emerald-600",
     },
   ];
@@ -252,7 +228,7 @@ const AdminDashboard = () => {
           <p className={`text-3xl font-bold ${textColor}`}>
             {dashboardData.totalTours}
           </p>
-          <p className={`text-xs text-green-400 mt-2`}>+14% this month</p>
+          <p className={`text-xs text-green-400 mt-2`}>Available tours</p>
         </div>
         <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
           <h4 className={`text-sm font-semibold ${secondaryText} mb-2`}>

@@ -1,62 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import ChartComponent from "../../components/analytics/ChartComponent";
 import AnalyticsCard from "../../components/analytics/AnalyticsCard";
 import { FaEye, FaExchangeAlt, FaCoins, FaMapMarkedAlt } from "react-icons/fa";
+import { guideService } from "../../apis/guideService";
+import { toast } from "react-toastify";
 
 const Analytics = () => {
   const { isDarkMode } = useAuth();
   const { t } = useTranslation();
-
-  const [analyticsData] = useState({
-    totalViews: 1245,
-    conversionRate: 8.5,
-    averageBookingValue: 1650,
-    topTour: "Pyramids Tour",
-    dailyViews: [
-      { day: "Mon", views: 150, enrollments: 8 },
-      { day: "Tue", views: 180, enrollments: 10 },
-      { day: "Wed", views: 220, enrollments: 12 },
-      { day: "Thu", views: 200, enrollments: 11 },
-      { day: "Fri", views: 290, enrollments: 18 },
-      { day: "Sat", views: 340, enrollments: 22 },
-      { day: "Sun", views: 310, enrollments: 20 },
-    ],
-    monthlyComparison: [
-      { month: "Jan", views: 2100, enrollments: 45, revenue: 45000 },
-      { month: "Feb", views: 2400, enrollments: 52, revenue: 52000 },
-      { month: "Mar", views: 2800, enrollments: 58, revenue: 58000 },
-      { month: "Apr", views: 3100, enrollments: 65, revenue: 65000 },
-      { month: "May", views: 3500, enrollments: 75, revenue: 75000 },
-      { month: "Jun", views: 4200, enrollments: 88, revenue: 88000 },
-    ],
-    tourAnalytics: [
-      { name: "Nile Cruise", views: 450, enrollments: 28, revenue: 70000 },
-      { name: "Pyramids Tour", views: 620, enrollments: 32, revenue: 48000 },
-      { name: "Desert Safari", views: 380, enrollments: 18, revenue: 21600 },
-      { name: "Temple Tour", views: 290, enrollments: 12, revenue: 19200 },
-      { name: "City Tour", views: 200, enrollments: 8, revenue: 9600 },
-    ],
-    sourceDistribution: [
-      { name: "Direct", value: 45 },
-      { name: "Search", value: 30 },
-      { name: "Social", value: 15 },
-      { name: "Referral", value: 10 },
-    ],
-  });
 
   const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
   const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
   const textColor = isDarkMode ? "text-white" : "text-gray-900";
   const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
 
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await guideService.getAnalytics();
+        setAnalyticsData(response.data);
+      } catch (error) {
+        console.error("Failed to fetch analytics", error);
+        toast.error("Failed to load analytics data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
+  if (loading || !analyticsData) {
+    return (
+      <div className="p-6 flex justify-center items-center">
+        <div className="text-[var(--text-secondary)]">Loading analytics...</div>
+      </div>
+    );
+  }
+
+  // Check if there's any data
+  const hasData =
+    analyticsData.totalViews > 0 ||
+    analyticsData.monthlyComparison.some((m) => m.enrollments > 0);
+
+  if (!hasData) {
+    return (
+      <div className="p-6">
+        <div>
+          <h1 className={`text-3xl font-bold ${textColor}`}>
+            {t("guide.analytics.title")}
+          </h1>
+          <p className={`${secondaryText} mt-1`}>
+            {t("guide.analytics.subtitle") ||
+              "Track your tours performance and growth"}
+          </p>
+        </div>
+        <div className="mt-8 text-center">
+          <div className="text-6xl text-gray-300 mb-4">📊</div>
+          <h3 className={`text-xl font-semibold ${textColor} mb-2`}>
+            {t("guide.analytics.noDataTitle") || "No Analytics Data Yet"}
+          </h3>
+          <p className={`${secondaryText}`}>
+            {t("guide.analytics.noDataMessage") ||
+              "Start publishing tours and getting enrollments to see analytics here."}
+          </p>
+        </div>
+      </div>
+    );
+  }
   const stats = [
     {
       title: t("guide.analytics.totalViews"),
       value: analyticsData.totalViews.toLocaleString(),
       icon: FaEye,
-      trend: 12,
       bgColor: "from-blue-500 to-blue-600",
     },
     {
@@ -64,15 +84,13 @@ const Analytics = () => {
       value: analyticsData.conversionRate,
       icon: FaExchangeAlt,
       unit: "%",
-      trend: 5,
       bgColor: "from-green-500 to-green-600",
     },
     {
       title: t("guide.analytics.averageBookingValue"),
       value: analyticsData.averageBookingValue.toLocaleString(),
       icon: FaCoins,
-      unit: "EGP",
-      trend: 8,
+      unit: t("guide.currency"),
       bgColor: "from-purple-500 to-purple-600",
     },
     {

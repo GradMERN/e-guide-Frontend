@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import TourItemsGrid from "../../components/guide/tour-items/TourItemsGrid";
+import TourPreview from "../../components/guide/TourPreview";
 import { guideService } from "../../apis/guideService";
 
 const TourItemsPage = () => {
@@ -56,11 +56,12 @@ const TourItemsPage = () => {
         </button>
 
         <h2 className={`text-2xl font-bold ${textColor}`}>
-          {t("guide.tours.waypointsTitle", { name: tour.name }) ||
-            `Waypoints — ${tour.name}`}
+          {t("guide.tours.waypointsTitle", { name: tour?.name }) ||
+            `Waypoints — ${tour?.name || ""}`}
         </h2>
       </div>
-      <TourItemsGrid tour={tour} isDarkMode={isDarkMode} />
+
+      <TourPreview tourId={tourId} />
     </div>
   );
 };

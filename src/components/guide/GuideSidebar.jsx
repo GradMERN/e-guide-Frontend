@@ -20,10 +20,18 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
   const [confirmLogout, setConfirmLogout] = useState(false);
 
   const menuItems = [
-    { name: t("Dashboard"), path: "/guide/dashboard", icon: FaHome },
-    { name: t("My Tours"), path: "/guide/tours", icon: FaMapMarkedAlt },
     {
-      name: t("Analytics"),
+      name: t("guide.sidebar.dashboard"),
+      path: "/guide/dashboard",
+      icon: FaHome,
+    },
+    {
+      name: t("guide.sidebar.myTours"),
+      path: "/guide/tours",
+      icon: FaMapMarkedAlt,
+    },
+    {
+      name: t("guide.sidebar.analytics"),
       path: "/guide/analytics",
       icon: FaChartLine,
     },
@@ -68,7 +76,7 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
               <FaEye className="text-[var(--text-loop)]" />
             </div>
             <span className={`font-semibold ${textColor}`}>
-              {t("Guide Panel")}
+              {t("guide.sidebar.title")}
             </span>
           </div>
         )}
@@ -119,7 +127,9 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
         >
           <FaSignOutAlt className="text-lg flex-shrink-0" />
           {sidebarOpen && (
-            <span className="text-sm font-medium">{t("Logout")}</span>
+            <span className="text-sm font-medium">
+              {t("guide.sidebar.logout")}
+            </span>
           )}
         </button>
       </div>
@@ -129,23 +139,23 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 max-w-md w-full shadow-2xl">
             <h3 className="text-xl font-bold text-[var(--text)] mb-4">
-              {t("Confirm Logout") || "Confirm Logout"}
+              {t("guide.sidebar.confirmLogout")}
             </h3>
             <p className="text-[var(--text-secondary)] mb-6">
-              Are you sure you want to logout?
+              {t("guide.sidebar.confirmLogoutMessage")}
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={cancelLogout}
                 className="px-4 py-2 bg-[var(--secondary)] text-[var(--text)] rounded-lg hover:bg-[var(--secondary-hover)] transition-colors"
               >
-                {t("common.cancel") || "Cancel"}
+                {t("common.cancel")}
               </button>
               <button
                 onClick={confirmLogoutAction}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
-                {t("Logout") || "Logout"}
+                {t("guide.sidebar.logout")}
               </button>
             </div>
           </div>

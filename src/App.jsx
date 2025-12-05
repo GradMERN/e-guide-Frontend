@@ -18,6 +18,7 @@ import Analytics from "./pages/guide/Analytics";
 import GuidSettings from "./pages/guide/Settings";
 import AddTourItem from "./pages/guide/AddTourItem";
 import TourItemsPage from "./pages/guide/TourItemsPage";
+import GuideTourPreview from "./pages/guide/GuideTourPreview";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminTours from "./pages/admin/AdminTours";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -79,6 +80,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/guide/dashboard", element: <GuideDashboard /> },
       { path: "/guide/tours", element: <ManageTours /> },
+      { path: "/guide/tour/:tourId", element: <GuideTourPreview /> },
       { path: "/guide/tours/:tourId/items", element: <TourItemsPage /> },
       { path: "/guide/analytics", element: <Analytics /> },
       { path: "/guide/settings", element: <GuidSettings /> },

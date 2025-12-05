@@ -1,6 +1,16 @@
 import api from "./axiosClient";
 
 export const tourItemService = {
+  async getContentTypes() {
+    try {
+      const res = await api.get(`/tours/items/content-types`);
+      return res.data.data || [];
+    } catch (err) {
+      console.error("Error getting content types", err);
+      throw err;
+    }
+  },
+
   async getTourItems(tourId) {
     try {
       const res = await api.get(`/tours/${tourId}/items`);

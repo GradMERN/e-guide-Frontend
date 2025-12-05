@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import i18n from "../../i18n";
 import { guideService } from "../../apis/guideService";
 import { placeService } from "../../apis/placeService";
+import { tourItemService } from "../../apis/tourItemService";
 import StatsOverview from "../../components/analytics/StatsOverview";
 import ChartComponent from "../../components/analytics/ChartComponent";
 import {
@@ -15,6 +16,8 @@ import {
   FaPlus,
   FaTimes,
   FaBoxOpen,
+  FaEye,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { main } from "motion/react-client";
 
@@ -39,6 +42,11 @@ const GuideDashboard = () => {
     tags: "",
     languages: "",
   });
+  const [previewTab, setPreviewTab] = useState("all");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewTour, setPreviewTour] = useState(null);
+  const [previewItems, setPreviewItems] = useState([]);
+  const [nearbyItems, setNearbyItems] = useState([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -67,7 +75,8 @@ const GuideDashboard = () => {
     try {
       setLoadingTours(true);
       const response = await guideService.getMyTours(1, 100);
-      setMyTours(response.data || []);
+      // guideService returns the backend payload; backend returns { success, status, count, data }
+      setMyTours((response && response.data) || []);
     } catch (err) {
       console.error("Error fetching tours:", err);
       setMyTours([]);
@@ -92,129 +101,67 @@ const GuideDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-
-      // Fetch guide's tours
-      const toursRes = await guideService.getMyTours(1, 100);
-      const tours = toursRes.data || [];
-
-      // Generate mock data based on tours
-      const totalTours = tours.length || 12;
-      const activeTours = Math.floor(totalTours * 0.65);
+      const response = await guideService.getDashboardStats();
+      const data = response.data || {};
 
       setDashboardData({
-        totalTours,
-        activeTours,
-        totalEnrollments: Math.floor(Math.random() * 100) + 30,
-        totalEarnings: Math.floor(Math.random() * 50000) + 10000,
-        averageRating: 4.8,
-        enrollmentTrend: generateEnrollmentTrend(),
-        earningsTrend: generateEarningsTrend(),
-        tourPerformance: generateTourPerformance(tours),
-        recentEnrollments: generateRecentEnrollments(),
+        totalTours: data.totalTours || data.toursCount || 0,
+        activeTours: data.publishedTours || data.published || 0,
+        totalEnrollments: data.totalEnrollments || data.enrollmentsCount || 0,
+        totalEarnings: data.totalEarnings || data.totalRevenue || 0,
+        averageRating: data.averageRating || 0,
+        enrollmentTrend: data.enrollmentTrends || data.enrollmentTrend || [],
+        earningsTrend: data.earningsTrends || data.earningsTrend || [],
+        tourPerformance: data.tourPerformance || [],
+        recentEnrollments: data.recentEnrollments || [],
       });
     } catch (err) {
       console.error("Error fetching guide dashboard data:", err);
       setError("Failed to load dashboard data");
-      // Set default data
       setDashboardData({
-        totalTours: 12,
-        activeTours: 8,
-        totalEnrollments: 45,
-        totalEarnings: 28500,
-        averageRating: 4.8,
-        enrollmentTrend: generateEnrollmentTrend(),
-        earningsTrend: generateEarningsTrend(),
-        tourPerformance: [
-          { name: "Nile Cruise", value: 15, enrollments: 18 },
-          { name: "Pyramids Tour", value: 25, enrollments: 22 },
-          { name: "Desert Safari", value: 20, enrollments: 16 },
-          { name: "City Tour", value: 12, enrollments: 14 },
-          { name: "Temples Tour", value: 28, enrollments: 20 },
-        ],
-        recentEnrollments: generateRecentEnrollments(),
+        totalTours: 0,
+        activeTours: 0,
+        totalEnrollments: 0,
+        totalEarnings: 0,
+        averageRating: 0,
+        enrollmentTrend: [],
+        earningsTrend: [],
+        tourPerformance: [],
+        recentEnrollments: [],
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const generateEnrollmentTrend = () => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-    return months.map((month, idx) => ({
-      month,
-      enrollments: Math.floor(3 + idx * 1.2 + Math.random() * 2),
-    }));
+  // Preview helpers: open/close preview modal and load tour items
+  const openPreview = async (tour) => {
+    try {
+      setPreviewTour(tour);
+      setPreviewOpen(true);
+      // try to load tour items (if service exists)
+      const res = await tourItemService.getTourItems(tour._id || tour.id);
+      // tourItemService may return either { data: [...] } or the array itself
+      const items = res?.data || res || [];
+      setPreviewItems(items);
+      setNearbyItems(items);
+      setPreviewTab("all");
+    } catch (err) {
+      console.error("Failed loading preview items:", err);
+      setPreviewItems([]);
+      setNearbyItems([]);
+    }
   };
 
-  const generateEarningsTrend = () => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-    return months.map((month, idx) => ({
-      month,
-      earnings: 3000 + idx * 1200 + Math.random() * 2000,
-    }));
+  const closePreview = () => {
+    setPreviewOpen(false);
+    setPreviewTour(null);
+    setPreviewItems([]);
+    setNearbyItems([]);
+    setPreviewTab("all");
   };
 
-  const generateTourPerformance = (tours) => {
-    const tourNames = [
-      "Nile Cruise",
-      "Pyramids Tour",
-      "Desert Safari",
-      "City Tour",
-      "Temples Tour",
-    ];
-    return tourNames
-      .slice(0, Math.min(5, tours.length || 5))
-      .map((name, idx) => ({
-        name,
-        value: Math.floor(Math.random() * 30) + 10,
-        enrollments: Math.floor(Math.random() * 25) + 10,
-      }));
-  };
-
-  const generateRecentEnrollments = () => {
-    return [
-      {
-        id: 1,
-        tourName: "Pyramids Tour",
-        guestName: "John Doe",
-        date: "2024-06-15",
-        amount: "1,500",
-        status: "Completed",
-      },
-      {
-        id: 2,
-        tourName: "Nile Cruise",
-        guestName: "Sarah Johnson",
-        date: "2024-06-14",
-        amount: "1,200",
-        status: "Completed",
-      },
-      {
-        id: 3,
-        tourName: "Desert Safari",
-        guestName: "Ahmed Hassan",
-        date: "2024-06-13",
-        amount: "1,800",
-        status: "Pending",
-      },
-      {
-        id: 4,
-        tourName: "City Tour",
-        guestName: "Fatima Mohamed",
-        date: "2024-06-12",
-        amount: "900",
-        status: "Completed",
-      },
-      {
-        id: 5,
-        tourName: "Temples Tour",
-        guestName: "Mike Wilson",
-        date: "2024-06-11",
-        amount: "2,100",
-        status: "Completed",
-      },
-    ];
-  };
+  // Data is loaded from backend via `fetchDashboardData` using `guideService.getDashboardStats`
 
   const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
   const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
@@ -334,6 +281,9 @@ const GuideDashboard = () => {
     }
   };
 
+  // helper for safe translations with default fallbacks
+  const safeT = (key, def) => t(key, { defaultValue: def });
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -366,29 +316,25 @@ const GuideDashboard = () => {
       title: t("guide.totalTours"),
       value: dashboardData.totalTours,
       icon: FaMapMarkedAlt,
-      trend: 12,
       bgColor: "from-blue-500 to-blue-600",
     },
     {
       title: t("guide.activeTours"),
       value: dashboardData.activeTours,
       icon: FaCalendarCheck,
-      trend: 5,
       bgColor: "from-green-500 to-green-600",
     },
     {
       title: t("guide.totalEnrollments"),
       value: dashboardData.totalEnrollments,
       icon: FaCalendarCheck,
-      trend: 18,
       bgColor: "from-purple-500 to-purple-600",
     },
     {
       title: t("guide.totalEarnings"),
       value: `${dashboardData.totalEarnings.toLocaleString()}`,
       icon: FaMoneyBillWave,
-      unit: "EGP",
-      trend: 25,
+      unit: t("guide.currency") || "EGP",
       bgColor: "from-emerald-500 to-emerald-600",
     },
   ];
@@ -468,41 +414,174 @@ const GuideDashboard = () => {
               "No tours created yet. Create your first tour!"}
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {myTours.map((tour) => (
               <div
                 key={tour._id}
-                className={`${
-                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"
-                } rounded-lg border ${borderColor} p-4 hover:shadow-lg transition-shadow`}
+                className={`relative overflow-hidden rounded-lg border ${borderColor} hover:shadow-lg transition-shadow group`}
+                style={{ background: isDarkMode ? "#1B1A17" : "#fff" }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h4 className={`font-semibold ${textColor} truncate`}>
+                <div className="relative">
+                  {tour.mainImage?.url ? (
+                    <img
+                      src={tour.mainImage.url}
+                      alt={tour.name}
+                      title={tour.mainImage?.url || "No image URL"}
+                      className="w-full h-56 object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-56 bg-gray-200 dark:bg-[#1f1f1f] flex items-center justify-center text-gray-500">
+                      <span>{t("guide.noImage") || "No Image"}</span>
+                    </div>
+                  )}
+
+                  {/* Center preview button with blurred translucent background; small external link opens full page in new tab */}
+                  <div className="absolute inset-0 flex items-center justify-center p-3 pointer-events-none">
+                    <button
+                      onClick={() => navigate(`/guide/tour/${tour._id}`)}
+                      className={`pointer-events-auto flex items-center justify-center w-12 h-12 bg-black/40 backdrop-blur-sm text-white rounded-full hover:bg-black/50 transition-opacity opacity-100 sm:opacity-0 sm:group-hover:opacity-100`}
+                      aria-label={`Preview ${tour.name}`}
+                    >
+                      <FaEye />
+                    </button>
+                  </div>
+
+                  {/* Name overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
+                    <h4 className={`text-white font-semibold truncate`}>
                       {tour.name}
                     </h4>
-                    <p className={`text-xs ${secondaryText}`}>
-                      ₹ {tour.price?.toLocaleString()}
-                    </p>
                   </div>
-                  <FaBoxOpen className="text-[#D5B36A]" />
                 </div>
-                <p className={`text-sm ${secondaryText} line-clamp-2 mb-4`}>
-                  {tour.description}
-                </p>
-                <button
-                  onClick={() => navigate(`/guide/tour/${tour._id}/add-item`)}
-                  className="w-full px-3 py-2 bg-[#D5B36A] text-black rounded-lg hover:bg-[#E2C784] 
-                           transition-all font-medium text-sm flex items-center justify-center gap-2"
-                >
-                  <FaPlus className="text-sm" />
-                  Add Item
-                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Preview Modal */}
+      {previewOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div
+            className={`w-full max-w-5xl rounded-xl overflow-hidden ${cardBg} border ${borderColor} p-4`}
+          >
+            <div className="flex items-start justify-between">
+              <h3 className={`text-xl font-bold ${textColor}`}>
+                {previewTour?.name || "Preview"}
+              </h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    window.open(
+                      `/guide/tour/${previewTour?._id || previewTour?.id}`,
+                      "_blank"
+                    )
+                  }
+                  className="px-3 py-1 rounded bg-[#D5B36A] text-black"
+                >
+                  {t("guide.openFull") || "Open full page"}
+                </button>
+                <button
+                  onClick={closePreview}
+                  className="p-2 rounded hover:bg-gray-200"
+                >
+                  <FaTimes className={textColor} />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2">
+                {previewTour?.mainImage?.url ? (
+                  <img
+                    src={previewTour.mainImage.url}
+                    alt={previewTour.name}
+                    className="w-full h-64 object-cover rounded"
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-gray-200 dark:bg-[#1f1f1f] flex items-center justify-center text-gray-500 rounded">
+                    {t("guide.noImage") || "No Image"}
+                  </div>
+                )}
+
+                <div className={`mt-4 ${textColor} leading-relaxed`}>
+                  <p>
+                    {previewTour?.description ||
+                      previewTour?.shortDescription ||
+                      ""}
+                  </p>
+                </div>
+              </div>
+
+              <div className="lg:col-span-1">
+                <div className="flex items-center gap-2 mb-3">
+                  <button
+                    onClick={() => setPreviewTab("all")}
+                    className={`px-3 py-1 rounded ${
+                      previewTab === "all"
+                        ? "bg-[#D5B36A] text-black dark:text-white"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                    }`}
+                  >
+                    {t("guide.showAll") || "Show All"}
+                  </button>
+                  <button
+                    onClick={() => setPreviewTab("live")}
+                    className={`px-3 py-1 rounded ${
+                      previewTab === "live"
+                        ? "bg-[#D5B36A] text-black dark:text-white"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                    }`}
+                  >
+                    {t("guide.liveMode") || "Live Mode"}
+                  </button>
+                </div>
+
+                <div className="overflow-y-auto max-h-80 pr-2">
+                  {(previewTab === "all" ? previewItems : nearbyItems)
+                    .length === 0 ? (
+                    <div className={`text-sm ${secondaryText}`}>
+                      {previewTab === "live"
+                        ? t("guide.liveNone") || "No nearby items"
+                        : t("guide.noItems") || "No items"}
+                    </div>
+                  ) : (
+                    (previewTab === "all" ? previewItems : nearbyItems).map(
+                      (it) => (
+                        <div
+                          key={it._id || it.id}
+                          className={`p-3 mb-2 rounded border ${borderColor} ${cardBg}`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-semibold">
+                                {it.title || it.name}
+                              </div>
+                              <div
+                                className={`text-sm ${secondaryText} line-clamp-2`}
+                              >
+                                {it.script ||
+                                  it.content ||
+                                  it.description ||
+                                  "—"}
+                              </div>
+                            </div>
+                            {it.distance != null && (
+                              <div className="text-xs text-gray-500 ml-2">
+                                {Math.round(it.distance)} m
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Bookings Table */}
       <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
