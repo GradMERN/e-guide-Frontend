@@ -11,6 +11,7 @@ import {
   FaMapMarkedAlt,
   FaSignOutAlt,
   FaChalkboardTeacher,
+  FaBookmark,
 } from "react-icons/fa";
 import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "../components/ThemeToggle";
@@ -18,6 +19,7 @@ import Switch from "./common/SwitchLanguages";
 import { useAuth } from "../store/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/slices/authSlice";
+import { FaB } from "react-icons/fa6";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -40,7 +42,7 @@ export default function Navbar() {
   const baseDropdownItems = [
     { name: "My Tours", path: "/my-tours", icon: FaMapMarkedAlt },
     { name: "Profile", path: "/profile", icon: FaUser },
-    { name: "Saved", path: "/saved", icon: FaHeart },
+    { name: "Saved", path: "/saved", icon: FaBookmark },
   ];
 
   // Guide-specific dropdown item
@@ -154,7 +156,7 @@ export default function Navbar() {
   return (
     <div
       className={`
-        fixed top-0 left-0 right-0 z-50 transition-transform duration-500
+        fixed top-0 left-0 right-0 z-100 transition-transform duration-500
         ${showNavbar ? "translate-y-0" : "-translate-y-full"}
       `}
     >

@@ -4,67 +4,112 @@ import {
   FaMapMarkerAlt,
   FaClock,
   FaUsers,
-  FaSignal,
+  FaBookmark,
+  FaArrowLeft,
 } from "react-icons/fa";
+import { useSaved } from "../../store/hooks";
 
-const TourDetailHero = ({ tour }) => {
+const TourDetailHero = ({ tour, onEnrollClick, onBack }) => {
+  const tourImage = tour.mainImage?.url || null;
+
+  const { savedTours, addToSaved, removeFromSaved } = useSaved();
+  const tourId = tour._id || tour.id;
+
+  const isSaved = savedTours.some((savedTour) => {
+    const savedTourId = savedTour._id || savedTour.id;
+    return savedTourId === tourId;
+  });
+
+  const handleSaveTour = (e) => {
+    e.stopPropagation();
+
+    if (isSaved) {
+      removeFromSaved(tourId);
+    } else {
+      addToSaved(tour);
+    }
+  };
+
+  const handleBack = (e) => {
+    e.stopPropagation();
+    if (onBack) onBack();
+    else window.history.back();
+  };
+
   return (
     <div className="relative">
-      {/* Hero Image */}
-      <div className="relative h-[500px] rounded-3xl overflow-hidden border border-border">
-        {/* Background with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-secondary/20 to-tertiary/20">
-          {tour.mainImage?.url ? (
+      <div className="relative h-[85vh] min-h-[600px] overflow-hidden">
+        <div className="absolute inset-0">
+          {tourImage ? (
             <img
-              src={tour.mainImage.url}
+              src={tourImage}
               alt={tour.name}
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-9xl">🏛️</div>
-            </div>
+            <div className="w-full h-full bg-linear-to-br from-primary/30 via-secondary/20 to-tertiary/20" />
           )}
+
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-background/70 via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background" />
         </div>
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent"></div>
+        <div className="relative h-full flex items-end">
+          <div className="max-w-7xl mx-auto px-6 pb-16 w-full">
+            {/* BACK BUTTON */}
+            <div className="absolute top-0 -translate-y-16 z-10">
+              <button
+                onClick={handleBack}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/90 hover:bg-white backdrop-blur-md rounded-xl text-gray-800 hover:text-black transition-all duration-200 group shadow-lg border border-gray-200/50"
+              >
+                <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                <span className="text-sm font-medium">Back</span>
+              </button>
+            </div>
 
-        {/* Content Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-8">
-          <div className="max-w-4xl">
-            {/* Category & Difficulty Badges */}
-            <div className="flex flex-wrap gap-3 mb-4">
-              {/* Category Badges */}
-              {tour.categories?.slice(0, 2).map((category, index) => (
-                <div
+            {/* Rest of your content */}
+            <div className="flex flex-wrap gap-3 mb-6">
+              {tour.categories?.slice(0, 3).map((category, index) => (
+                <span
                   key={index}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-primary/30 text-sm font-medium text-text"
+                  className="px-3 py-1.5 rounded-full bg-surface/80 backdrop-blur-sm border border-primary/30 text-sm text-text font-medium"
                 >
                   {category}
-                </div>
+                </span>
               ))}
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-bold text-text mb-4">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-text mb-6 leading-tight">
               {tour.name}
             </h1>
 
-            {/* Meta Info */}
-            <div className="flex flex-wrap items-center gap-6 text-text-secondary">
+            <div className="flex flex-wrap items-center gap-6 text-text-secondary mb-8">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-primary/10">
-                  <FaStar className="text-primary" size={14} />
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar
+                      key={i}
+                      className={
+                        i < Math.floor(tour.rating || 0)
+                          ? "text-primary"
+                          : "text-text-muted"
+                      }
+                      size={18}
+                    />
+                  ))}
                 </div>
                 <span className="font-semibold text-text">
-                  {tour.rating?.toFixed(1)}
+                  {tour.rating?.toFixed(1) || "N/A"}
                 </span>
-                <span className="text-sm">({tour.ratingsCount} reviews)</span>
+                <span className="text-sm">
+                  ({tour.ratingsCount || 0} reviews)
+                </span>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-secondary/10">
-                  <FaMapMarkerAlt className="text-secondary" size={14} />
+                <div className="p-1.5 rounded-lg bg-primary/10">
+                  <FaMapMarkerAlt className="text-primary" size={14} />
                 </div>
                 <span>
                   {tour.place?.city || "Unknown"},{" "}
@@ -74,21 +119,44 @@ const TourDetailHero = ({ tour }) => {
 
               {tour.duration && (
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-tertiary/10">
-                    <FaClock className="text-tertiary" size={14} />
+                  <div className="p-1.5 rounded-lg bg-secondary/10">
+                    <FaClock className="text-secondary" size={14} />
                   </div>
                   <span>{tour.duration} hours</span>
                 </div>
               )}
 
-              {tour.maxGroupSize && (
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-primary/10">
-                    <FaUsers className="text-primary" size={14} />
-                  </div>
-                  <span>Max {tour.maxGroupSize} people</span>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-tertiary/10">
+                  <FaUsers className="text-tertiary" size={14} />
                 </div>
-              )}
+                <span>{tour.enrollmentsCount || 0} travelers enrolled</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                onClick={onEnrollClick}
+                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-all duration-300 hover:scale-105 shadow-lg"
+              >
+                Enroll Now
+              </button>
+
+              <button
+                onClick={handleSaveTour}
+                className="p-3.5 rounded-xl bg-surface border border-border hover:bg-surface/80 transition-all duration-300 hover:scale-105 cursor-pointer group/save"
+                title={isSaved ? "Remove from saved" : "Save tour"}
+              >
+                <FaBookmark
+                  className={`transition-all duration-300 ${
+                    isSaved
+                      ? "text-primary fill-primary transform scale-110"
+                      : "text-text-secondary group-hover/save:text-primary group-hover/save:scale-110"
+                  }`}
+                  size={20}
+                />
+              </button>
             </div>
           </div>
         </div>

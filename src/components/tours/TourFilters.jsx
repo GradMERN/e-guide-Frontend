@@ -42,7 +42,7 @@ const TourFilters = ({
     sortBy !== "popular";
 
   return (
-    <div className="sticky top-24 bg-surface rounded-2xl p-6 border border-border shadow-2xl">
+    <div className="sticky top-24 bg-surface rounded-2xl p-6 border border-border/10 shadow-2xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">

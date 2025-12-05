@@ -65,7 +65,7 @@ const TourHero = () => {
         {/* Right Side - Image Grid */}
         <div className="grid grid-cols-2 gap-4">
           {/* Large Card - Pyramids */}
-          <div className="col-span-2 bg-surface rounded-2xl overflow-hidden border border-border hover:border-primary transition-all group">
+          <div className="col-span-2 bg-surface rounded-2xl overflow-hidden border border-border/40 hover:border-primary transition-all group">
             <div className="relative h-64">
               <img
                 src={images.pyramids}
@@ -84,7 +84,7 @@ const TourHero = () => {
           </div>
 
           {/* Small Card 1 - Nile Cruise */}
-          <div className="bg-surface rounded-2xl overflow-hidden border border-border hover:border-primary transition-all group">
+          <div className="bg-surface rounded-2xl overflow-hidden border border-border/40 hover:border-primary transition-all group">
             <div className="relative h-48">
               <img
                 src={images.nileCruise}
@@ -102,7 +102,7 @@ const TourHero = () => {
           </div>
 
           {/* Small Card 2 - Islamic Cairo */}
-          <div className="bg-surface rounded-2xl overflow-hidden border border-border hover:border-primary transition-all group">
+          <div className="bg-surface rounded-2xl overflow-hidden border border-border/40 hover:border-primary transition-all group">
             <div className="relative h-48">
               <img
                 src={images.islamicCairo}

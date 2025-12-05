@@ -31,6 +31,7 @@ import Preferences from "./pages/profile/Preferences";
 import Security from "./pages/profile/Security";
 import AllDestinationPage from "./pages/shared/AllDestinationPage";
 import DestinationDetail from "./components/allDestinations/DestinationDetail";
+import SavedTours from "./pages/shared/SavedTours";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "/TourGuideProfile/:name", element: <TourGuideProfile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/my-tours", element: <MyTours /> },
+      { path: "/saved", element: <SavedTours /> },
       { path: "/about", element: <About /> },
       { path: "/destinations", element: <AllDestinationPage /> },
       { path: "/destinations/:id", element: <DestinationDetail /> },
