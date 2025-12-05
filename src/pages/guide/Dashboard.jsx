@@ -98,6 +98,18 @@ const GuideDashboard = () => {
     }
   };
 
+  // Helper function to check if tour has published items
+  const hasPublishedItems = (tour) => {
+    if (!tour) return false;
+    // Check if backend provided published items count
+    if (typeof tour.publishedItemsCount === "number") {
+      return tour.publishedItemsCount > 0;
+    }
+    // Fallback: check items array for published items
+    const items = tour.tourItems || tour.items || tour.waypoints || [];
+    return items.some((item) => item && item.isPublished === true);
+  };
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
@@ -340,7 +352,7 @@ const GuideDashboard = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6  p-4">
       {/* Header with Add Tour Button */}
       <div className="flex items-center justify-between">
         <div>
@@ -437,13 +449,15 @@ const GuideDashboard = () => {
 
                   {/* Center preview button with blurred translucent background; small external link opens full page in new tab */}
                   <div className="absolute inset-0 flex items-center justify-center p-3 pointer-events-none">
-                    <button
-                      onClick={() => navigate(`/guide/tour/${tour._id}`)}
-                      className={`pointer-events-auto flex items-center justify-center w-12 h-12 bg-black/40 backdrop-blur-sm text-white rounded-full hover:bg-black/50 transition-opacity opacity-100 sm:opacity-0 sm:group-hover:opacity-100`}
-                      aria-label={`Preview ${tour.name}`}
-                    >
-                      <FaEye />
-                    </button>
+                    {hasPublishedItems(tour) && (
+                      <button
+                        onClick={() => navigate(`/guide/tour/${tour._id}`)}
+                        className={`pointer-events-auto flex items-center justify-center w-12 h-12 bg-black/40 backdrop-blur-sm text-white rounded-full hover:bg-black/50 transition-opacity opacity-100 sm:opacity-0 sm:group-hover:opacity-100`}
+                        aria-label={`Preview ${tour.name}`}
+                      >
+                        <FaEye />
+                      </button>
+                    )}
                   </div>
 
                   {/* Name overlay */}

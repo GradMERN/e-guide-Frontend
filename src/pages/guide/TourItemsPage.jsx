@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import TourPreview from "../../components/guide/TourPreview";
+import TourItemsGrid from "../../components/guide/Tour/TourItemsGrid";
 import { guideService } from "../../apis/guideService";
 
 const TourItemsPage = () => {
@@ -42,7 +42,7 @@ const TourItemsPage = () => {
     return <div className="p-6">{t("common.loading") || "Loading..."}</div>;
   if (!tour)
     return (
-      <div className="p-6">{t("guide.tours.notFound") || "Tour not found"}</div>
+      <div className="p-6">{t("guide.tours.empty") || "Tour not found"}</div>
     );
 
   return (
@@ -61,7 +61,7 @@ const TourItemsPage = () => {
         </h2>
       </div>
 
-      <TourPreview tourId={tourId} />
+      <TourItemsGrid tour={tour} isDarkMode={isDarkMode} />
     </div>
   );
 };

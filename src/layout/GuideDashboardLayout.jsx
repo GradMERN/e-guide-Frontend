@@ -36,9 +36,7 @@ const GuideDashboardLayout = () => {
     i18n?.language === "ar" || document.documentElement.dir === "rtl";
 
   return (
-    <div
-      className={`min-h-full fixed top-0 left-0 right-0 ${mainBg} flex justify-between`}
-    >
+    <div className={`min-h-ful${mainBg} flex justify-between`}>
       <GuideSidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -48,12 +46,11 @@ const GuideDashboardLayout = () => {
 
       {/* Main Content */}
       <div
-        className={` ms-20
-        flex-1 flex flex-col  w-full  transition-all duration-300`}
+        className={`flex-1 flex flex-col ms-20 w-full transition-all duration-300`}
       >
         {/* Header */}
         <header
-          className={`relative h-16 ${headerBg} border-b ${borderColor} flex items-center justify-between px-6 z-30`}
+          className={`relativel fixed top-0 start-20 end-0  h-16 ${headerBg} border-b ${borderColor} flex items-center justify-between px-6 z-30`}
         >
           <div className="hidden md:block">
             <h1 className={`text-xl font-semibold ${textColor}`}>
@@ -178,7 +175,7 @@ const GuideDashboardLayout = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className={`flex-1 overflow-auto`}>
+        <main className={`flex-1 overflow-auto mt-16`}>
           <Outlet />
         </main>
       </div>

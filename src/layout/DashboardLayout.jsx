@@ -4,7 +4,7 @@ export default function DashboardLayout() {
   return (
     <div className="min-h-screen flex">
       <aside className="w-64 bg-gray-100 p-6">
-        <h2 className="text-xl font-bold mb-4 text-blue-600">Guide Panel</h2>
+        <h2 className="text-xl font-bold mb-4  text-blue-600">Guide Panel</h2>
         <nav className="flex flex-col space-y-2">
           <Link to="/dashboard">Dashboard</Link>
           <Link to="/profile">Profile</Link>

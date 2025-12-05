@@ -57,10 +57,15 @@
   "spanish": "Spanish",
   "french": "French",
   "german": "German",
+  "language": "Language",
   "common": {
     "loading": "Loading...",
     "back": "Back",
     "cancel": "Cancel",
+    "retry": "Retry",
+    "date": "Date",
+    "amount": "Amount",
+    "status": "Status",
     "statuses": {
       "pending": "Pending",
       "active": "Active",
@@ -70,6 +75,10 @@
       "failed": "Failed",
       "refunded": "Refunded"
     }
+  },
+  "theme": {
+    "light": "Switch to Light Mode",
+    "dark": "Switch to Dark Mode"
   },
   "admin": {
     "dashboard": "Dashboard",
@@ -212,6 +221,11 @@
     "settings": "Settings",
     "guidePanel": "Guide Panel",
     "manageTours": "Manage your tours and track performance",
+    "noImage": "No Image",
+    "openFull": "Open full page",
+    "showAll": "Show All",
+    "liveMode": "Live Mode",
+    "liveNone": "No nearby items",
     "myOverview": "My Overview",
     "totalTours": "Total Tours",
     "activeTours": "Active Tours",
@@ -258,6 +272,8 @@
       "city": "City",
       "place": "Place/Location",
       "noPlacesAvailable": "No places available",
+      "categories": "Categories",
+      "languages": "Languages",
       "price": "Price",
       "duration": "Duration (hours)",
       "groupSize": "Max Group Size",
