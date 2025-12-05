@@ -25,11 +25,7 @@ export default function ImagesSliderDemo() {
   ];
 
   const { t } = useTranslation();
-  const homepageIcons = [
-    { icon: LuMapPin, label: t("homepage.labels.destinations") },
-    { icon: CiCalendarDate, label: t("homepage.labels.booking") },
-    { icon: LuUsers, label: t("homepage.labels.guides") },
-  ];
+  const icons = [LuMapPin, CiCalendarDate, LuUsers];
 
 
 return (
@@ -46,12 +42,11 @@ return (
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }} className="flex flex-wrap gap-2 sm:gap-4 justify-center mb-6 md:mb-12 max-w-4xl">
-          {homepageIcons.map((item, index) => {
-            const Icon = item.icon;
+          {icons.map((Icon, index) => {
             return (
               <div key={index} className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20">
                 <Icon className="text-[#FFD97F] w-5 h-5" />
-                <span className="text-white text-sm">{item.label}</span>
+                <span className="text-white text-sm">{t(`homepage.labels.${index}`)}</span>
               </div>
             );
         })}

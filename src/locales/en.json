@@ -232,11 +232,11 @@
     "subtitle": "Where history comes alive and adventures begin",
     "exploreBtn": "Explore Egypt",
     "watchBtn": "Watch Video",
-    "labels": {
-      "destinations": "50+ Destinations",
-      "booking": "Flexible Booking",
-      "guides": "Expert Guides"
-    }
+    "labels": [
+      "50+ Destinations",
+      "Flexible Booking",
+      "Expert Guides"
+    ]
   },
   "popularDestination": {
     "title": "Popular Destination",
@@ -250,79 +250,36 @@
   "reasonsToVisit": {
     "title": "Top Reasons To Visit Egypt",
     "subtitle": "Discover what makes Egypt an unforgettable destination for travelers worldwide",
-    "cta": "Start Planning Your Journey",
-    "reasons": {
-      "0": {
+    "reasons": [
+      {
         "title": "Timeless Ancient History",
         "description": "Walk among 5,000-year-old pyramids, temples, and tombs that tell stories of pharaohs and ancient civilizations."
       },
-      "1": {
+      {
         "title": "World-Class Diving",
         "description": "Explore vibrant coral reefs and marine life in the crystal-clear waters of the Red Sea, ranked among the world's best dive sites."
       },
-      "2": {
+      {
         "title": "Warm Hospitality",
         "description": "Experience genuine Egyptian kindness and welcoming culture that makes every visitor feel like family."
       },
-      "3": {
+      {
         "title": "Year-Round Sunshine",
         "description": "Enjoy over 300 days of sunshine annually with pleasant weather perfect for exploring any time of year."
       },
-      "4": {
+      {
         "title": "Affordable Experiences",
         "description": "Discover luxury and adventure at incredible value, with world-class experiences that won't break the bank."
       },
-      "5": {
+      {
         "title": "Delicious Cuisine",
         "description": "Savor authentic Egyptian flavors from koshari and falafel to fresh seafood and traditional sweets that delight every palate."
       }
-    }
+    ]
   },
   "reviewsSection": {
     "title": "Traveler Reviews",
     "description": "Real experiences shared by travelers who explored the wonders of Egypt — stories that bring each destination to life with authentic insights and memorable moments."
-  },
-    "mustTryExperiences": {
-    "title": "Must-Try Experiences",
-    "subtitle": "Unforgettable activities that define the essence of Egypt",
-    "cta": "Book Your Experience",
-    "experiences": {
-      "0": {
-        "title": "Nile Cruise",
-        "description": "Sail through history on a luxurious multi-day cruise between Luxor and Aswan, with stops at magnificent temples along the way.",
-        "duration": "3-7 days",
-        "price": "From $500",
-        "tags": ["Luxury", "Scenic", "Cultural"]
-      },
-      "1": {
-        "title": "Felucca Ride",
-        "description": "Glide peacefully on the Nile aboard a traditional sailboat as the sun sets over ancient landscapes and modern cities.",
-        "duration": "1-3 hours",
-        "price": "From $30",
-        "tags": ["Romantic", "Sunset", "Traditional"]
-      },
-      "2": {
-        "title": "Bazaar Visit",
-        "description": "Lose yourself in the vibrant chaos of Khan El-Khalili, haggling for spices, jewelry, and treasures in Cairo's historic marketplace.",
-        "duration": "2-4 hours",
-        "price": "Free entry",
-        "tags": ["Shopping", "Culture", "Food"]
-      },
-      "3": {
-        "title": "Desert Safari",
-        "description": "Ride camels across golden dunes, visit Bedouin camps, and witness breathtaking sunsets in Egypt's vast desert wilderness.",
-        "duration": "Half/Full day",
-        "price": "From $80",
-        "tags": ["Adventure", "Nature", "Camping"]
-      },
-      "4": {
-        "title": "Red Sea Snorkeling",
-        "description": "Dive into crystal-clear waters teeming with colorful coral reefs and exotic marine life at world-renowned dive sites.",
-        "duration": "Half/Full day",
-        "price": "From $60",
-        "tags": ["Water Sports", "Marine Life", "Adventure"]
-      }
-    }
   },
   "whyChooseUs": {
     "title": "Why Choose Us",
@@ -357,6 +314,96 @@
   "gallery": {
     "title": "Gallery",
     "paragraph": "Explore a curated collection of stunning moments captured across Egypt — showcasing its rich heritage, vibrant culture, and unforgettable landscapes."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about your journey to the land of PEACE",
+
+    "categories": {
+      "0": {
+        "title": "About E-Tour Guide",
+        "questions": {
+          "0": {
+            "question": "What is E-Tour Guide?",
+            "answer": "E-Tour Guide is your comprehensive digital companion for exploring Egypt's wonders. We provide virtual tours, interactive maps, historical information, booking services, and personalized itineraries to make your Egyptian adventure seamless and unforgettable."
+          },
+          "1": {
+            "question": "How does the E-Tour Guide platform work?",
+            "answer": "Simply create an account, browse our extensive collection of tours and destinations, and book experiences directly through our platform. Access audio guides and real-time information during your visit."
+          }
+        }
+      },
+
+      "1": {
+        "title": "Tours & Experiences",
+        "questions": {
+          "0": {
+            "question": "What types of tours does E-Tour Guide offer?",
+            "answer": "We offer virtual tours, self-guided audio tours, private guided experiences, group tours, Nile cruises, desert safaris, cultural experiences, and customized itineraries. From the Pyramids of Giza to hidden gems in Aswan, we cover all of Egypt's treasures."
+          }
+        }
+      },
+
+      "2": {
+        "title": "Website Features & Access",
+        "questions": {
+          "0": {
+            "question": "Can I access E-Tour Guide on my mobile device?",
+            "answer": "Yes! Our website is fully responsive and optimized for mobile devices. Access all features directly through your mobile browser. We're also developing a Progressive Web App (PWA) for an even better mobile experience in the future."
+          },
+          "1": {
+            "question": "Do I need to download anything to use E-Tour Guide?",
+            "answer": "No downloads required! Simply visit our website from any device with a browser. In the future, our PWA will allow you to add E-Tour Guide to your home screen for quick access, even with limited internet connectivity."
+          },
+          "2": {
+            "question": "Can I save tours for offline viewing?",
+            "answer": "Currently, you need an internet connection to browse tours and access content. However, you can bookmark pages and save tour details. Our upcoming PWA feature will enable offline access to downloaded tours and guides."
+          }
+        }
+      },
+
+      "3": {
+        "title": "Account & Membership",
+        "questions": {
+          "0": {
+            "question": "Is creating an account free?",
+            "answer": "Yes! Creating an E-Tour Guide account is completely free. Enjoy benefits like saved itineraries, booking history, personalized recommendations, exclusive deals, and loyalty rewards."
+          }
+        }
+      },
+
+      "4": {
+        "title": "Destinations & Planning",
+        "questions": {
+          "0": {
+            "question": "Which Egyptian cities do you cover?",
+            "answer": "We cover all major tourist destinations including Cairo, Giza, Luxor, Aswan, Alexandria, Hurghada, Sharm El-Sheikh, Dahab, and the Western Desert oases. We're constantly adding new destinations and hidden gems."
+          },
+          "1": {
+            "question": "What's the best time to visit Egypt?",
+            "answer": "October to April offers pleasant weather (20-25°C) and is ideal for sightseeing. Summer is hot but less crowded with better prices. Red Sea resorts are great year-round."
+          },
+          "2": {
+            "question": "Can I visit lesser-known destinations?",
+            "answer": "Absolutely! Beyond famous sites, we offer tours to Siwa Oasis, White Desert, Fayoum, Abydos, Dendera and many hidden treasures."
+          }
+        }
+      },
+
+      "5": {
+        "title": "Travel Tips & Information",
+        "questions": {
+          "0": {
+            "question": "Do I need a visa to visit Egypt?",
+            "answer": "Most nationalities can obtain a visa on arrival for $25 USD. E-visas are also available online. Some require advance arrangements."
+          },
+          "1": {
+            "question": "What currency is used in Egypt?",
+            "answer": "The Egyptian Pound (EGP). USD and EUR are widely accepted in tourist areas. ATMs are common. Keep small bills for tips."
+          }
+        }
+      }
+    }
   },
   "beforeAfter": {
     "subtitle": "Compare & Contrast",
