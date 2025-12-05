@@ -9,6 +9,15 @@ import {
   selectIsLoading,
   selectError,
 } from "./slices/authSlice";
+import {
+  fetchTours,
+  fetchTourById,
+  clearTourError,
+  selectTours,
+  selectCurrentTour,
+  selectToursLoading,
+  selectToursError,
+} from "./slices/tourSlice";
 
 // Custom hook for auth
 export const useAuth = () => {
@@ -35,6 +44,38 @@ export const useAuth = () => {
 
     clearError: useCallback(() => {
       dispatch(clearError());
+    }, [dispatch]),
+  };
+};
+
+// Custom hook for tours
+export const useTours = () => {
+  const dispatch = useDispatch();
+
+  return {
+    // State
+    tours: useSelector(selectTours),
+    currentTour: useSelector(selectCurrentTour),
+    loading: useSelector(selectToursLoading),
+    error: useSelector(selectToursError),
+
+    // Actions
+    fetchTours: useCallback(
+      (params) => {
+        dispatch(fetchTours(params));
+      },
+      [dispatch]
+    ),
+
+    fetchTourById: useCallback(
+      (id) => {
+        dispatch(fetchTourById(id));
+      },
+      [dispatch]
+    ),
+
+    clearTourError: useCallback(() => {
+      dispatch(clearTourError());
     }, [dispatch]),
   };
 };
