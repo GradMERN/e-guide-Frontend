@@ -7,7 +7,7 @@ import ValuesSection from "../../components/about/ValuesSection.jsx";
 
 import { LuUsers } from "react-icons/lu";
 import { FaAward } from "react-icons/fa";
-import { FiMapPin } from "react-icons/fi";
+import { LuMapPin } from "react-icons/lu";
 import { IoStarOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
 import { IoIosGlobe } from "react-icons/io";
@@ -31,7 +31,7 @@ export default function About() {
       color: "text-orange-400",
     },
     {
-      icon: FiMapPin,
+      icon: LuMapPin,
       value: "100+",
       label: "Destinations",
       color: "text-yellow-400",

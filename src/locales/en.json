@@ -227,6 +227,137 @@
       "verificationStatus": "Email Verification"
     }
   },
+  "homepage": {
+    "title": "Discover Egypt",
+    "subtitle": "Where history comes alive and adventures begin",
+    "exploreBtn": "Explore Egypt",
+    "watchBtn": "Watch Video",
+    "labels": {
+      "destinations": "50+ Destinations",
+      "booking": "Flexible Booking",
+      "guides": "Expert Guides"
+    }
+  },
+  "popularDestination": {
+    "title": "Popular Destination",
+    "description": "Discover essential insights to guide your adventure across the timeless land of PEACE, where history, culture, and breathtaking beauty meet.",
+    "viewAll": "View All Destinations"
+  },
+  "tourPackages": {
+    "title": "Featured Tour Packages",
+    "description": "Discover curated tour packages designed to help you explore Egypt’s iconic landmarks, hidden gems, and unforgettable cultural experiences with ease and comfort."
+  },
+  "reasonsToVisit": {
+    "title": "Top Reasons To Visit Egypt",
+    "subtitle": "Discover what makes Egypt an unforgettable destination for travelers worldwide",
+    "cta": "Start Planning Your Journey",
+    "reasons": {
+      "0": {
+        "title": "Timeless Ancient History",
+        "description": "Walk among 5,000-year-old pyramids, temples, and tombs that tell stories of pharaohs and ancient civilizations."
+      },
+      "1": {
+        "title": "World-Class Diving",
+        "description": "Explore vibrant coral reefs and marine life in the crystal-clear waters of the Red Sea, ranked among the world's best dive sites."
+      },
+      "2": {
+        "title": "Warm Hospitality",
+        "description": "Experience genuine Egyptian kindness and welcoming culture that makes every visitor feel like family."
+      },
+      "3": {
+        "title": "Year-Round Sunshine",
+        "description": "Enjoy over 300 days of sunshine annually with pleasant weather perfect for exploring any time of year."
+      },
+      "4": {
+        "title": "Affordable Experiences",
+        "description": "Discover luxury and adventure at incredible value, with world-class experiences that won't break the bank."
+      },
+      "5": {
+        "title": "Delicious Cuisine",
+        "description": "Savor authentic Egyptian flavors from koshari and falafel to fresh seafood and traditional sweets that delight every palate."
+      }
+    }
+  },
+  "reviewsSection": {
+    "title": "Traveler Reviews",
+    "description": "Real experiences shared by travelers who explored the wonders of Egypt — stories that bring each destination to life with authentic insights and memorable moments."
+  },
+    "mustTryExperiences": {
+    "title": "Must-Try Experiences",
+    "subtitle": "Unforgettable activities that define the essence of Egypt",
+    "cta": "Book Your Experience",
+    "experiences": {
+      "0": {
+        "title": "Nile Cruise",
+        "description": "Sail through history on a luxurious multi-day cruise between Luxor and Aswan, with stops at magnificent temples along the way.",
+        "duration": "3-7 days",
+        "price": "From $500",
+        "tags": ["Luxury", "Scenic", "Cultural"]
+      },
+      "1": {
+        "title": "Felucca Ride",
+        "description": "Glide peacefully on the Nile aboard a traditional sailboat as the sun sets over ancient landscapes and modern cities.",
+        "duration": "1-3 hours",
+        "price": "From $30",
+        "tags": ["Romantic", "Sunset", "Traditional"]
+      },
+      "2": {
+        "title": "Bazaar Visit",
+        "description": "Lose yourself in the vibrant chaos of Khan El-Khalili, haggling for spices, jewelry, and treasures in Cairo's historic marketplace.",
+        "duration": "2-4 hours",
+        "price": "Free entry",
+        "tags": ["Shopping", "Culture", "Food"]
+      },
+      "3": {
+        "title": "Desert Safari",
+        "description": "Ride camels across golden dunes, visit Bedouin camps, and witness breathtaking sunsets in Egypt's vast desert wilderness.",
+        "duration": "Half/Full day",
+        "price": "From $80",
+        "tags": ["Adventure", "Nature", "Camping"]
+      },
+      "4": {
+        "title": "Red Sea Snorkeling",
+        "description": "Dive into crystal-clear waters teeming with colorful coral reefs and exotic marine life at world-renowned dive sites.",
+        "duration": "Half/Full day",
+        "price": "From $60",
+        "tags": ["Water Sports", "Marine Life", "Adventure"]
+      }
+    }
+  },
+  "whyChooseUs": {
+    "title": "Why Choose Us",
+    "description": "We provide exceptional travel experiences through trusted service, professional guidance, and tailored journeys designed to make your exploration of Egypt smooth, memorable, and truly unique.",
+    "features": [
+      {
+        "title": "Trusted Service",
+        "description": "100% secure bookings with verified guides and accommodations for your peace of mind."
+      },
+      {
+        "title": "Expert Guides",
+        "description": "Licensed Egyptologists and local experts bring history to life with fascinating stories."
+      },
+      {
+        "title": "Custom Itineraries",
+        "description": "Personalized tours tailored to your interests, pace, and travel style."
+      },
+      {
+        "title": "24/7 Support",
+        "description": "Round-the-clock assistance ensuring you're never alone on your journey."
+      },
+      {
+        "title": "Best Value",
+        "description": "Premium experiences at competitive prices with no hidden fees or surprises."
+      },
+      {
+        "title": "Memorable Moments",
+        "description": "We create unforgettable experiences that go beyond typical tourist attractions."
+      }
+    ]
+  },
+  "gallery": {
+    "title": "Gallery",
+    "paragraph": "Explore a curated collection of stunning moments captured across Egypt — showcasing its rich heritage, vibrant culture, and unforgettable landscapes."
+  },
   "beforeAfter": {
     "subtitle": "Compare & Contrast",
     "title": {
@@ -239,48 +370,40 @@
     "comparisons": [
       {
         "before": {
-          "icon": "FaRegFrown",
           "title": "Overwhelmed by planning",
           "text": "Spending hours researching attractions, transportation, and best times to visit"
         },
         "after": {
-          "icon": "FaRegSmile",
           "title": "Pre-planned itineraries",
           "text": "Detailed day-by-day guides with optimal routes and timing for each destination"
         }
       },
       {
         "before": {
-          "icon": "FaCamera",
           "title": "Missing key information",
           "text": "Arriving at sites without context or historical background"
         },
         "after": {
-          "icon": "FaSun",
           "title": "Rich audio commentary",
           "text": "Professional narration at every stop revealing fascinating stories and secrets"
         }
       },
       {
         "before": {
-          "icon": "FaUsers",
           "title": "Getting lost easily",
           "text": "Struggling with confusing maps and language barriers in unfamiliar places"
         },
         "after": {
-          "icon": "FaUserFriends",
           "title": "GPS navigation built-in",
           "text": "Turn-by-turn directions that work offline, guiding you seamlessly between locations"
         }
       },
       {
         "before": {
-          "icon": "FaDollarSign",
           "title": "Expensive tour guides",
           "text": "Paying $100+ per day for group tours with fixed schedules"
         },
         "after": {
-          "icon": "FaGem",
           "title": "Affordable freedom",
           "text": "One-time purchase gives you a personal guide in your pocket, explore at your pace"
         }
