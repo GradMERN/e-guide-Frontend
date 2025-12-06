@@ -24,7 +24,7 @@
     --text-loop: #050505;
 
     --glass-bg: var(--color-surface);
-    --glass-bg-hover:#f0e6c9 ;
+    --glass-bg-hover: #f0e6c9;
     --glass-border: rgba(0, 0, 0, 0.08);
 
     --icon-card: #050505;
@@ -70,7 +70,7 @@
     --text-muted: #7a7a7a;
     --text-loop: #050505;
 
-    --glass-bg: rgba(255, 255, 255, 0.03); 
+    --glass-bg: rgba(255, 255, 255, 0.03);
     --glass-bg-hover: rgba(255, 255, 255, 0.06);
     --glass-border: rgba(255, 255, 255, 0.1);
 
@@ -102,6 +102,7 @@
     --button-bg: var(--button-primary-bg);
     --text-button: var(--button-primary-text);
   }
+
   * {
     border-color: var(--border);
     transition-property: background-color, border-color, color, fill, stroke;
@@ -218,6 +219,90 @@
   .icon-card {
     color: var(--icon-card);
   }
+
+  .guide-img-active {
+    @apply scale-100 group-hover:scale-110;
+    @apply grayscale-0 group-hover:grayscale;
+  }
+
+  .dark .guide-img-active {
+    @apply grayscale group-hover:grayscale-0;
+  }
+
+  .guide-img-inactive {
+    @apply grayscale scale-110 blur-[2px];
+  }
+
+
+  .guide-content-card {
+    background-color: var(--surface);
+  }
+
+  .dark .guide-content-card {
+    @apply bg-neutral-800/60;
+  }
+
+  .guide-title {
+    color: var(--text);
+  }
+
+  .dark .guide-title {
+    color: var(--secondary);
+  }
+  .guide-quote-word {
+    color: var(--primary);
+  }
+  .dark .guide-quote-word {
+    color: var(--text-secondary);
+  }
+
+
+ .guide-profile-bg {
+    background: var(--background)
+  }
+  .guide-profile-title{
+        color: var(--text-secondary);
+    color: var(--primary);
+    color: var(--text);
+
+  }
+
+  .dark .guide-profile-title{
+   color: var(--button-primary-text);
+   @apply text-[#ffff]
+  }
+
+    
+  
+  
+  
+  
+  .guide-profile-subtitle{
+        color: var(--text-secondary);
+    color: var(--primary);
+    color: var(--text);
+
+  }
+
+  .dark .guide-profile-subtitle{
+   @apply text-gray-300 ;
+   
+  }
+
+
+  .guide-profile-icon{
+        color: var(--text);
+     color: var(--text-secondary);
+    color: var(--primary);
+   
+
+  }
+   .dark .guide-profile-icon{
+   @apply text-[#C7A15C]
+
+  }
+
+  /* background */
 }
 
 @theme {

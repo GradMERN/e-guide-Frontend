@@ -6,13 +6,13 @@ import guide1 from '../../assets/images/guide1.avif';
 import guide2 from '../../assets/images/guide2.avif';
 import guide3 from '../../assets/images/guide3.avif';
 import TourCard from "../tours/TourCard";
-import TourGuideLoadingScreen from "./TourGuideLoadingScreen";
+import TourGuideLoadingScreen from "../common/LoadingScreen";
 import TourGuideNotFoundScreen from "./TourGuideNotFoundScreen";
 
 
 const GUIDES_DATA = {
-    "yacin samy": {
-        name: "Yacin Samy",
+    "yassen samy": {
+        name: "Yassen Samy",
         designation: "Egyptologist & Historian",
         image: guide1,
         cover: "https://images.unsplash.com/photo-1568603417739-95a3ee515c00?q=80&w=1600&auto=format&fit=crop",
@@ -113,12 +113,12 @@ export default function TourGuideProfile() {
 
     return (
 
-        <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans pb-24 selection:bg-[#C7A15C] selection:text-black overflow-x-hidden">
+        <div className="min-h-screen  guide-profile-bg  font-sans pb-24 selection:bg-[#C7A15C] selection:text-black overflow-x-hidden">
 
 
-            <div className="relative h-[30vh] sm:h-[40vh] w-full bg-neutral-900">
+            <div className="relative h-[30vh] sm:h-[40vh] w-full guide-profile-bg">
                 <img src={guide.cover} alt="Cover" className="w-full h-full object-cover opacity-60" />
-                <div className="absolute inset-0 bg-linear-to-b from-black/70 via-transparent to-neutral-950" />
+                <div className="absolute inset-0" />
             </div>
 
             <div className="max-w-4xl mx-auto px-3 sm:px-6 relative -mt-30 z-10">
@@ -135,21 +135,21 @@ export default function TourGuideProfile() {
                     </motion.div>
 
                     <div className="pb-1 text-center md:text-left flex-1 min-w-0 w-full">
-                        <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight wrap-break-word leading-tight">{guide.name}</h1>
+                        <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold guide-profile-title tracking-tight wrap-break-word leading-tight">{guide.name}</h1>
                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-1 mb-3">
-                            <span className="text-[#C7A15C] text-[10px] sm:text-xs font-bold uppercase tracking-widest">{guide.designation}</span>
-                            <BadgeCheck size={14} className="text-[#C7A15C]" />
+                            <span className="guide-profile-icon text-[10px] sm:text-xs font-bold uppercase tracking-widest">{guide.designation}</span>
+                            <BadgeCheck size={14} className="guide-profile-icon" />
                         </div>
-                        <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                            <StatBadge icon={<Star size={10} />} text={guide.rating} sub={`(${guide.reviews})`} />
-                            <StatBadge icon={<MapPin size={10} />} text="Cairo" />
-                            <StatBadge icon={<Languages size={10} />} text={`${guide.languages?.length || 0} Langs`} />
+                        <div className="flex flex-wrap justify-center md:justify-start gap-2 ">
+                            <StatBadge icon={<Star size={10} className="guide-profile-icon" />} text={guide.rating} sub={`(${guide.reviews})`} />
+                            <StatBadge icon={<MapPin size={10} className="guide-profile-icon" />} text="Cairo" />
+                            <StatBadge icon={<Languages size={10} className="guide-profile-icon" />} text={`${guide.languages?.length || 0} Langs`} />
                         </div>
                     </div>
                 </div>
 
 
-                <div className="sticky top-0 z-40 bg-neutral-950/95 backdrop-blur-xl border-b border-white/5 pt-2 mb-8">
+                <div className="sticky top-0 z-40 backdrop-blur-xl border-b border-white/5  pt-2 mb-8">
                     <div className="flex w-full overflow-x-auto no-scrollbar gap-2 sm:gap-0">
                         <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" />
                         <TabButton active={activeTab === "reviews"} onClick={() => setActiveTab("reviews")} label={`Reviews (${guide.reviews})`} />
@@ -162,27 +162,27 @@ export default function TourGuideProfile() {
                         <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-12">
 
                             <section>
-                                <h3 className="text-lg md:text-2xl font-bold text-white mb-3 flex items-center gap-2">
-                                    <BookOpen size={18} className="text-[#C7A15C]" /> Biography
+                                <h3 className="text-lg md:text-2xl font-bold guide-profile-title mb-3 flex items-center gap-2 ">
+                                    <BookOpen size={18} className="guide-profile-icon" /> Biography
                                 </h3>
-                                <p className="text-gray-300 leading-relaxed font-light text-sm sm:text-lg wrap-break-word">{guide.bio}</p>
+                                <p className="guide-profile-subtitle leading-relaxed font-light text-sm sm:text-lg wrap-break-word">{guide.bio}</p>
                             </section>
 
 
                             <section>
-                                <h3 className="text-lg md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Sparkles size={18} className="text-[#C7A15C]" /> Why Choose Me?
+                                <h3 className="text-lg md:text-2xl font-bold guide-profile-title mb-4 flex items-center gap-2">
+                                    <Sparkles size={18} className="guide-profile-icon" /> Why Choose Me?
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                     {guide.whyChooseMe?.map((item, i) => (
                                         <div key={i} className="bg-linear-to-br from-white/5 to-white/[0.02] p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
                                             <div className="flex items-center gap-2 mb-2">
-                                                <div className="bg-[#C7A15C]/10 p-2 rounded-lg text-[#C7A15C] mt-0.5">
-                                                    <CheckCircle2 size={16} className="text-[#C7A15C] shrink-0" />
+                                                <div className="bg-[#C7A15C]/10 p-2 rounded-lg guide-profile-icon mt-0.5">
+                                                    <CheckCircle2 size={16} className="guide-profile-icon shrink-0" />
                                                 </div>
-                                                <h4 className="text-white font-bold text-sm truncate">{item.title}</h4>
+                                                <h4 className="guide-profile-title font-bold text-sm truncate">{item.title}</h4>
                                             </div>
-                                            <p className="text-gray-400 text-xs leading-relaxed wrap-break-word">{item.desc}</p>
+                                            <p className="guide-profile-subtitle text-xs leading-relaxed wrap-break-word">{item.desc}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -191,8 +191,8 @@ export default function TourGuideProfile() {
 
                             <section>
                                 <div className="flex items-center gap-3 mb-8">
-                                    <Crown size={24} className="text-[#C7A15C]" />
-                                    <h3 className="text-lg md:text-2xl font-bold text-white">Top 3 Tours</h3>
+                                    <Crown size={24} className="guide-profile-icon" />
+                                    <h3 className="text-lg md:text-2xl font-bold guide-profile-title">Top 3 Tours</h3>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 min-w-0">
                                     {guide.tours?.slice(0, 3).map(tour => <TourCard key={tour._id} tour={tour} />)}
