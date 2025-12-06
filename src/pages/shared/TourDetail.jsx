@@ -102,7 +102,7 @@ const TourDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background mt-22">
       {/* Enrollment handled directly via button (no modal) */}
 
       {/* Floating Back Button */}
