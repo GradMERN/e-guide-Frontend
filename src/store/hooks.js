@@ -57,6 +57,8 @@ export const useAuth = () => {
       try {
         window.dispatchEvent(new CustomEvent("auth:logout"));
       } catch (e) {}
+      // Redirect to login
+      window.location.href = "/login";
     }, [dispatch]),
 
     clearError: useCallback(() => {

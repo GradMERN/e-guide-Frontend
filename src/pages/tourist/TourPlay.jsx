@@ -23,6 +23,11 @@ export default function TourPlay() {
   const navigate = useNavigate();
   const { isDarkMode, user } = useAuth();
 
+  console.log("TourPlay component mounted");
+  console.log("Tour ID from params:", tourId);
+  console.log("User from auth:", user);
+  console.log("Is authenticated:", !!user);
+
   const isRtl =
     (typeof document !== "undefined" &&
       document.documentElement?.dir === "rtl") ||
@@ -37,27 +42,52 @@ export default function TourPlay() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const [enrollments, setEnrollments] = useState([]);
+  const [enrollmentLoading, setEnrollmentLoading] = useState(true);
   const [nearbyLoading, setNearbyLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
+        console.log("Fetching tour with ID:", tourId);
         const tRes = await tourService.getTourById(tourId);
+        console.log("Tour API response:", tRes);
+        console.log("Tour API response type:", typeof tRes);
+        console.log("Tour API response keys:", Object.keys(tRes || {}));
         const t = tRes?.data || tRes;
+        console.log("Parsed tour data:", t);
+        console.log("Parsed tour data type:", typeof t);
+        console.log("Parsed tour data keys:", Object.keys(t || {}));
         if (!mounted) return;
         setTour(t);
+
+        console.log("Fetching tour items for ID:", tourId);
         const its = await tourItemService.getTourItems(tourId);
+        console.log("Tour items response:", its);
         if (!mounted) return;
         setItems(its || []);
         setSelectedItem((prev) => prev || (its && its[0]) || null);
         // fetch user enrollments
         try {
+          console.log("Fetching user enrollments...");
           const enr = await enrollmentApi.getUserEnrollments();
-          const data = enr?.data?.data || enr?.data || enr || [];
+          console.log("Enrollment API response:", enr);
+          const data =
+            enr?.data?.data?.all ||
+            enr?.data?.all ||
+            enr?.data?.data ||
+            enr?.data ||
+            enr ||
+            [];
+          console.log("Parsed enrollment data:", data);
           if (mounted) setEnrollments(Array.isArray(data) ? data : []);
         } catch (e) {
-          // ignore
+          console.error("Enrollment fetch error:", e);
+          console.error("Error details:", e.response?.data || e.message);
+          // Set empty array on error
+          if (mounted) setEnrollments([]);
+        } finally {
+          if (mounted) setEnrollmentLoading(false);
         }
       } catch (err) {
         console.error("Failed to load tour play", err);
@@ -150,7 +180,9 @@ export default function TourPlay() {
     // Allow if user is the guide of the tour
     const isGuide = user && tour && user._id === tour.guide._id;
     if (isGuide) return true;
-
+    console.log("Current enrollment:", currentEnrollment);
+    console.log("User:", user);
+    console.log("Tour:", tour);
     // Allow if enrolled, started, and not expired
     if (!currentEnrollment) return false;
     const isExpired =
@@ -166,11 +198,13 @@ export default function TourPlay() {
     selectedItem?.audioFile ||
     selectedItem?.media?.audio ||
     "";
+  console.log("Selected item:", selectedItem);
+  console.log("Audio src:", audioSrc);
   const audio = useAudioPlayer(audioSrc);
 
   const currentItems = tab === "all" ? items : nearbyItems;
 
-  if (initialLoading) {
+  if (initialLoading || enrollmentLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -181,7 +215,7 @@ export default function TourPlay() {
     );
   }
 
-  if (!canView) {
+  if (!initialLoading && !enrollmentLoading && !canView) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="max-w-xl text-center p-8 bg-surface rounded-2xl shadow-lg border border-border">
@@ -389,6 +423,7 @@ export default function TourPlay() {
                       (selectedItem._id || selectedItem.id) ===
                         (it._id || it.id);
                     const img = it.mainImage?.url || it.image || it.cover || "";
+                    console.log("Item:", it.name || it.title, "Image:", img);
                     if (displayMode === "card") {
                       return (
                         <button

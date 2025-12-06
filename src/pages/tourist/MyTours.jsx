@@ -405,11 +405,11 @@ const MyTours = () => {
 
                   {/* Action Section */}
                   <div className="px-6 py-4 bg-background/50 border-t border-border/40 h-20">
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center justify-center gap-2 h-full">
                       {e.status === "started" ? null : (
                         <Link
                           to={`/tours/${e.tour?._id}`}
-                          className="px-4 py-2 rounded-lg bg-surface border border-border text-sm font-medium text-text hover:bg-surface/80 transition-colors"
+                          className="px-4 py-2 rounded-lg bg-surface border border-border text-sm font-medium text-text hover:bg-surface/80 transition-colors h-10 flex items-center justify-center"
                         >
                           View Tour Details
                         </Link>
@@ -418,7 +418,7 @@ const MyTours = () => {
                       {isPendingValid && (
                         <button
                           onClick={() => completePayment(e._id, e.tour?._id)}
-                          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold hover:opacity-90 transition-opacity shadow-lg flex items-center gap-2"
+                          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-opacity shadow-lg flex items-center gap-2 h-10"
                         >
                           <FaCreditCard className="text-sm" />
                           Complete Payment
@@ -428,7 +428,7 @@ const MyTours = () => {
                       {e.status === "active" && !isExpired && (
                         <button
                           onClick={() => startEnrollment(e._id, e.tour?._id)}
-                          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-opacity hover:scale-105 transition-transform shadow-lg"
+                          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-opacity hover:scale-105 transition-transform shadow-lg h-10 flex items-center justify-center"
                         >
                           Start Tour
                         </button>
@@ -437,14 +437,14 @@ const MyTours = () => {
                       {e.status === "started" && !isExpired && (
                         <Link
                           to={`/tour/play/${e.tour?._id}`}
-                          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-opacity shadow-lg"
+                          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-opacity shadow-lg h-10 flex items-center justify-center"
                         >
                           View Tour
                         </Link>
                       )}
 
                       {e.status === "completed" && (
-                        <div className="flex items-center gap-2 text-green-600">
+                        <div className="flex items-center gap-2 text-green-600 h-10 flex items-center justify-center">
                           <FaCheckCircle className="text-sm" />
                           <span className="font-medium">Completed</span>
                         </div>
