@@ -572,7 +572,6 @@ const TourPreview = ({ tourId, onClose }) => {
                                 </span>
                               </div>
                             )}
-                            {/* index removed per request */}
                           </div>
                           <div
                             className={`p-3 ${
@@ -627,7 +626,6 @@ const TourPreview = ({ tourId, onClose }) => {
                               </span>
                             </div>
                           )}
-                          {/* index badge removed */}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate">
@@ -746,7 +744,7 @@ const TourPreview = ({ tourId, onClose }) => {
                     const isSel =
                       selectedItem &&
                       (selectedItem._id || selectedItem.id) ===
-                        (it._1d || it.id);
+                        (it._id || it.id);
                     const img = it.mainImage?.url || it.image || it.cover || "";
                     return (
                       <button
@@ -755,50 +753,47 @@ const TourPreview = ({ tourId, onClose }) => {
                           setSelectedItem(it);
                           setSidebarOpen(false);
                         }}
-                        className={`w-full text-left p-3 rounded-xl transition-all ${
-                          isSel
-                            ? "bg-[#D5B36A] text-white shadow-lg"
-                            : isDarkMode
-                            ? "bg-[#2c1b0f] text-white"
-                            : "bg-gray-50 text-gray-900"
-                        }`}
+                        className={`w-full text-left rounded-xl overflow-hidden transition-all ${
+                          isSel ? "ring-2 ring-[#D5B36A]" : "hover:scale-[1.01]"
+                        } ${isDarkMode ? "bg-[#15120f]" : "bg-white"}`}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
-                            {img ? (
-                              <img
-                                src={img}
-                                alt={it.title || it.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div
+                        <div className="relative w-full h-36 bg-gray-100">
+                          {img ? (
+                            <img
+                              src={img}
+                              alt={it.title || it.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className={`${
+                                isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
+                              } w-full h-full flex items-center justify-center`}
+                            >
+                              <span
                                 className={`${
-                                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                                } w-full h-full flex items-center justify-center`}
+                                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
                               >
-                                <span
-                                  className={`${
-                                    isDarkMode
-                                      ? "text-gray-400"
-                                      : "text-gray-500"
-                                  }`}
-                                >
-                                  No Image
-                                </span>
-                              </div>
-                            )}
-                            {/* index badge removed (mobile) */}
+                                No Image
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          className={`p-3 ${
+                            isDarkMode ? "text-white" : "text-gray-900"
+                          }`}
+                        >
+                          <div className="font-semibold truncate">
+                            {it.title || it.name}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium truncate">
-                              {it.title || it.name}
-                            </p>
-                            {tab === "live" && it.distance && (
-                              <p className="text-sm opacity-75">
-                                {Math.round(it.distance)}m away
-                              </p>
-                            )}
+                          <div className="text-sm opacity-80 mt-1">
+                            {(
+                              it.shortDescription ||
+                              it.description ||
+                              ""
+                            ).slice(0, 80)}
                           </div>
                         </div>
                       </button>
