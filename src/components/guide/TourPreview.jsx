@@ -98,7 +98,18 @@ const TourPreview = ({ tourId, onClose }) => {
     return R * c;
   };
 
-  const updateNearby = (itemsSource = items, showLoading = false) => {
+  const formatDistance = (dist) => {
+    if (dist >= 1000) {
+      return `≈ ${(dist / 1000).toFixed(1)} km`;
+    }
+    return `≈ ${Math.round(dist)} m`;
+  };
+
+  const updateNearby = (
+    itemsSource = items,
+    showLoading = false,
+    isLiveTab = false
+  ) => {
     if (showLoading) setNearbyLoading(true);
     if (!navigator.geolocation) {
       setNearbyItems([]);
@@ -132,11 +143,27 @@ const TourPreview = ({ tourId, onClose }) => {
           // use the raw distance for filtering/sorting so adjustment only affects display
           .filter((it) => it._rawDistance <= 25)
           .sort((a, b) => a._rawDistance - b._rawDistance);
-        setNearbyItems(found);
+        if (isLiveTab) setNearbyItems(found);
+        // Also update all items with distances
+        const allWithDistances = (itemsSource || []).map((it) => {
+          const lat =
+            it.location?.coordinates?.[1] ||
+            it.location?.lat ||
+            it.location?.latitude;
+          const lng =
+            it.location?.coordinates?.[0] ||
+            it.location?.lng ||
+            it.location?.longitude;
+          if (!lat || !lng) return it; // keep as is if no location
+          const rawDist = distanceMeters(latitude, longitude, lat, lng);
+          const displayDist = rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
+          return { ...it, distance: displayDist, _rawDistance: rawDist };
+        });
+        setItems(allWithDistances);
         if (showLoading) setNearbyLoading(false);
       },
       () => {
-        setNearbyItems([]);
+        if (isLiveTab) setNearbyItems([]);
         if (showLoading) setNearbyLoading(false);
       },
       { enableHighAccuracy: true, maximumAge: 5000 }
@@ -144,9 +171,11 @@ const TourPreview = ({ tourId, onClose }) => {
   };
 
   useEffect(() => {
-    if (tab !== "live") return;
-    updateNearby(items, true);
-    const id = setInterval(() => updateNearby(items, false), 10000);
+    updateNearby(items, tab === "live", tab === "live");
+    const id = setInterval(
+      () => updateNearby(items, false, tab === "live"),
+      10000
+    );
     return () => clearInterval(id);
   }, [tab, items]);
 
@@ -244,7 +273,7 @@ const TourPreview = ({ tourId, onClose }) => {
                     toggle={toggle}
                     seekPercent={seekPercent}
                   />
-                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                  <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <Review
                       tourId={tourId}
                       enrollment={currentEnrollment}
@@ -474,9 +503,9 @@ const TourPreview = ({ tourId, onClose }) => {
                             <div className="font-semibold truncate">
                               {it.title || it.name}
                             </div>
-                            {tab === "live" && it.distance ? (
+                            {it.distance ? (
                               <div className="text-sm opacity-70 mt-1">
-                                ≈ {Math.round(it.distance)} m
+                                {formatDistance(it.distance)}
                               </div>
                             ) : null}
                             <div className="text-sm opacity-80 mt-1">
@@ -529,9 +558,9 @@ const TourPreview = ({ tourId, onClose }) => {
                           <p className="font-medium truncate">
                             {it.title || it.name}
                           </p>
-                          {tab === "live" && it.distance ? (
+                          {it.distance ? (
                             <div className="text-sm opacity-70 mt-1">
-                              ≈ {Math.round(it.distance)} m
+                              {formatDistance(it.distance)}
                             </div>
                           ) : null}
                           <div className="text-sm opacity-75 mt-1 truncate">
@@ -566,9 +595,7 @@ const TourPreview = ({ tourId, onClose }) => {
           <div
             className={`${
               isDarkMode ? "bg-[#1B1A17]" : "bg-white"
-            } absolute top-0 ${
-              isRtl ? "start-0" : "end-0"
-            } h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
+            } absolute top-0 end-0 h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
               sidebarOpen
                 ? "translate-x-0"
                 : isRtl
@@ -693,6 +720,11 @@ const TourPreview = ({ tourId, onClose }) => {
                           <div className="font-semibold truncate">
                             {it.title || it.name}
                           </div>
+                          {it.distance ? (
+                            <div className="text-sm opacity-70 mt-1">
+                              {formatDistance(it.distance)}
+                            </div>
+                          ) : null}
                           <div className="text-sm opacity-80 mt-1">
                             {(
                               it.shortDescription ||

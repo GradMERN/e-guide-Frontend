@@ -9,6 +9,7 @@ import {
   FaTimes,
   FaChevronLeft,
   FaChevronRight,
+  FaArrowRight,
 } from "react-icons/fa";
 import tourService from "../../apis/tourService";
 import { tourItemService } from "../../apis/tourItemService";
@@ -17,21 +18,34 @@ import TourView from "../../components/guide/subcomponents/TourView";
 import Review from "../../components/guide/subcomponents/Review";
 import useAudioPlayer from "../../hooks/useAudioPlayer";
 import { useAuth } from "../../context/AuthContext";
+import { useSelector } from "react-redux";
 
 export default function TourPlay() {
   const { tourId } = useParams();
   const navigate = useNavigate();
   const { isDarkMode, user } = useAuth();
+  const navbarVisible = useSelector((state) => state.ui.navbarVisible);
+  const navbarHeight = useSelector((state) => state.ui.navbarHeight);
+
+  const [isRtl, setIsRtl] = useState(false);
+
+  useEffect(() => {
+    const checkRtl = () => {
+      setIsRtl(document.documentElement?.dir === "rtl");
+    };
+    checkRtl();
+    const observer = new MutationObserver(checkRtl);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["dir"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   console.log("TourPlay component mounted");
   console.log("Tour ID from params:", tourId);
   console.log("User from auth:", user);
   console.log("Is authenticated:", !!user);
-
-  const isRtl =
-    (typeof document !== "undefined" &&
-      document.documentElement?.dir === "rtl") ||
-    false;
 
   const [tour, setTour] = useState(null);
   const [items, setItems] = useState([]);
@@ -110,7 +124,18 @@ export default function TourPlay() {
     return R * c;
   };
 
-  const updateNearby = (itemsSource = items, showLoading = false) => {
+  const formatDistance = (dist) => {
+    if (dist >= 1000) {
+      return `≈ ${(dist / 1000).toFixed(1)} km`;
+    }
+    return `≈ ${Math.round(dist)} m`;
+  };
+
+  const updateNearby = (
+    itemsSource = items,
+    showLoading = false,
+    isLiveTab = false
+  ) => {
     if (showLoading) setNearbyLoading(true);
     if (!navigator.geolocation) {
       setNearbyItems([]);
@@ -144,11 +169,27 @@ export default function TourPlay() {
           // use the raw distance for filtering/sorting so adjustment only affects display
           .filter((it) => it._rawDistance <= 25)
           .sort((a, b) => a._rawDistance - b._rawDistance);
-        setNearbyItems(found);
+        if (isLiveTab) setNearbyItems(found);
+        // Also update all items with distances
+        const allWithDistances = (itemsSource || []).map((it) => {
+          const lat =
+            it.location?.coordinates?.[1] ||
+            it.location?.lat ||
+            it.location?.latitude;
+          const lng =
+            it.location?.coordinates?.[0] ||
+            it.location?.lng ||
+            it.location?.longitude;
+          if (!lat || !lng) return it; // keep as is if no location
+          const rawDist = distanceMeters(latitude, longitude, lat, lng);
+          const displayDist = rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
+          return { ...it, distance: displayDist, _rawDistance: rawDist };
+        });
+        setItems(allWithDistances);
         if (showLoading) setNearbyLoading(false);
       },
       () => {
-        setNearbyItems([]);
+        if (isLiveTab) setNearbyItems([]);
         if (showLoading) setNearbyLoading(false);
       },
       { enableHighAccuracy: true, maximumAge: 5000 }
@@ -156,9 +197,11 @@ export default function TourPlay() {
   };
 
   useEffect(() => {
-    if (tab !== "live") return;
-    updateNearby(items, true);
-    const id = setInterval(() => updateNearby(items, false), 10000);
+    updateNearby(items, tab === "live", tab === "live");
+    const id = setInterval(
+      () => updateNearby(items, false, tab === "live"),
+      10000
+    );
     return () => clearInterval(id);
   }, [tab, items]);
 
@@ -253,31 +296,38 @@ export default function TourPlay() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-20">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+    <div
+      className="min-h-screen bg-background"
+      style={{ paddingTop: navbarVisible ? `${navbarHeight}px` : "0px" }}
+    >
+      {/* Fixed Title Bar */}
+      <div
+        className={`fixed left-0 right-0 z-50 bg-background border-b border-border transition-all duration-500`}
+        style={{ top: navbarVisible ? `${navbarHeight}px` : "0px" }}
+      >
+        <div className="max-w-7xl mx-auto px-2 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 rounded-lg bg-surface border border-border"
+              >
+                {isRtl ? <FaArrowRight /> : <FaArrowLeft />}
+              </button>
+              <h1 className="text-2xl font-bold text-text">{tour?.name}</h1>
+            </div>
             <button
-              onClick={() => navigate(-1)}
-              className="p-2 rounded-lg bg-surface border border-border"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label="Toggle navigation"
+              className="p-3 text-primary hover:text-primary/80 transition-all duration-300 flex items-center justify-center rounded-full"
             >
-              <FaArrowLeft />
+              <FaBars className="w-5 h-5" />
             </button>
-            <h1 className="text-2xl font-bold text-text">{tour?.name}</h1>
           </div>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Toggle navigation"
-            className="p-2 rounded-lg bg-primary text-background hover:bg-primary/80 transition-colors"
-          >
-            {isRtl ? (
-              <FaChevronRight className="w-5 h-5" />
-            ) : (
-              <FaChevronLeft className="w-5 h-5" />
-            )}
-          </button>
         </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-6 pt-16">
         <div
           className={`transition-all duration-300 ${
             sidebarOpen ? "lg:me-80" : "me-0"
@@ -319,20 +369,26 @@ export default function TourPlay() {
 
         {/* Sidebar (desktop) */}
         <div
-          className={`fixed top-32 end-0 h-[calc(100vh-8rem)] w-80 ${
-            isDarkMode ? "bg-surface" : "bg-background"
-          } border-start ${
+          className={`fixed ${
+            isRtl ? "left-0" : "right-0"
+          } w-80 bg-background border-end ${
             isDarkMode ? "border-border" : "border-border"
-          } shadow-2xl transform transition-transform duration-300 z-10 ${
+          } shadow-2xl transform transition-all duration-500 z-[110] ${
             sidebarOpen
-              ? "translate-x-0"
+              ? "translate-x-0 opacity-100"
               : isRtl
-              ? "-translate-x-full"
-              : "translate-x-full"
+              ? "-translate-x-full opacity-0"
+              : "translate-x-full opacity-0"
           }`}
+          style={{
+            top: `${(navbarVisible ? navbarHeight : 0) + 80}px`,
+            height: `calc(100vh - ${
+              (navbarVisible ? navbarHeight : 0) + 80
+            }px)`,
+          }}
         >
           <div className="h-full flex flex-col">
-            <div className="sticky top-0 z-20 bg-transparent">
+            <div className="z-20 bg-transparent">
               <div
                 className="p-4 border-b"
                 style={{
@@ -450,9 +506,9 @@ export default function TourPlay() {
                             <div className="font-semibold truncate">
                               {it.title || it.name}
                             </div>
-                            {tab === "live" && it.distance ? (
+                            {it.distance ? (
                               <div className="text-sm text-text-secondary mt-1">
-                                ≈ {Math.round(it.distance)} m
+                                {formatDistance(it.distance)}
                               </div>
                             ) : null}
                             <div className="text-sm text-text-secondary mt-1">
@@ -493,9 +549,9 @@ export default function TourPlay() {
                           <p className="font-medium truncate">
                             {it.title || it.name}
                           </p>
-                          {tab === "live" && it.distance ? (
+                          {it.distance ? (
                             <div className="text-sm text-text-secondary mt-1">
-                              ≈ {Math.round(it.distance)} m
+                              {formatDistance(it.distance)}
                             </div>
                           ) : null}
                           <div className="text-sm text-text-secondary mt-1 truncate">
@@ -517,7 +573,7 @@ export default function TourPlay() {
 
         {/* Mobile Sidebar Overlay */}
         <div
-          className={`fixed inset-0 z-60 lg:hidden transition-opacity duration-300 ${
+          className={`fixed inset-0 z-[110] lg:hidden transition-opacity duration-300 ${
             sidebarOpen
               ? "opacity-100 pointer-events-auto"
               : "opacity-0 pointer-events-none"
@@ -530,7 +586,9 @@ export default function TourPlay() {
           <div
             className={`${
               isDarkMode ? "bg-surface" : "bg-background"
-            } absolute top-0 end-0 h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
+            } absolute top-0 ${
+              isRtl ? "left-0" : "right-0"
+            } h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
               sidebarOpen
                 ? "translate-x-0"
                 : isRtl
@@ -550,18 +608,6 @@ export default function TourPlay() {
               >
                 Navigation
               </h2>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className={`p-2 rounded-lg transition-colors duration-200 ${
-                  isDarkMode ? "hover:bg-surface/80" : "hover:bg-surface/80"
-                }`}
-              >
-                <FaTimes
-                  className={`${
-                    isDarkMode ? "text-text-secondary" : "text-text-secondary"
-                  } w-5 h-5`}
-                />
-              </button>
             </div>
             <div className="p-4 border-b">
               <div className="flex space-x-2">
@@ -637,6 +683,11 @@ export default function TourPlay() {
                           <div className="font-semibold truncate">
                             {it.title || it.name}
                           </div>
+                          {it.distance ? (
+                            <div className="text-sm text-text-secondary mt-1">
+                              {formatDistance(it.distance)}
+                            </div>
+                          ) : null}
                           <div className="text-sm text-text-secondary mt-1">
                             {(
                               it.shortDescription ||

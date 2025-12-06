@@ -19,6 +19,7 @@ import Switch from "./common/SwitchLanguages";
 import { useTranslation } from "react-i18next";
 import { useAuth as useReduxAuth } from "../store/hooks";
 import { useDispatch, useSelector } from "react-redux";
+import { setNavbarVisible, setNavbarHeight } from "../store/slices/uiSlice";
 
 export default function Navbar() {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ export default function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navbarRef = useRef(null);
 
   const links = [
     { name: t("navbar.links.home"), path: "/" },
@@ -75,8 +77,10 @@ export default function Navbar() {
 
       if (currentScroll < lastScrollY - 10) {
         setShowNavbar(true);
+        dispatch(setNavbarVisible(true));
       } else if (currentScroll > lastScrollY + 10) {
         setShowNavbar(false);
+        dispatch(setNavbarVisible(false));
       }
 
       lastScrollY = currentScroll;
@@ -97,6 +101,20 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Update navbar height
+  useEffect(() => {
+    const updateHeight = () => {
+      if (navbarRef.current) {
+        const height = navbarRef.current.offsetHeight;
+        dispatch(setNavbarHeight(height));
+      }
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, [dispatch]);
 
   const handleLogout = (redirect = "/login") => {
     try {
@@ -156,7 +174,9 @@ export default function Navbar() {
   const isGuide = user?.role && user.role.toLowerCase() === "guide";
 
   return (
-    <div dir="ltr" 
+    <div
+      dir="ltr"
+      ref={navbarRef}
       className={`
         fixed top-0 left-0 right-0 z-100 transition-transform duration-500 text-left!
         ${showNavbar ? "translate-y-0" : "-translate-y-full"}
@@ -315,7 +335,8 @@ export default function Navbar() {
                     {/* Tooltip on hover */}
                     <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                       <div className="bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap">
-                        {t("navbar.greeting", { name: getDisplayName() })}{isGuide && ` (${t("navbar.guide")})`}
+                        {t("navbar.greeting", { name: getDisplayName() })}
+                        {isGuide && ` (${t("navbar.guide")})`}
                       </div>
                       <div className="w-2 h-2 bg-gray-900 transform rotate-45 absolute -top-1 left-1/2 -translate-x-1/2"></div>
                     </div>
@@ -368,7 +389,8 @@ export default function Navbar() {
                             <span className="text-sm font-medium">
                               {item.name}
                             </span>
-                            {item.name === t("navbar.dropdown.guideDashboard") && (
+                            {item.name ===
+                              t("navbar.dropdown.guideDashboard") && (
                               <span className="ml-auto text-xs bg-secondary/20 text-secondary px-2 py-0.5 rounded-full">
                                 {t("navbar.guide")}
                               </span>
@@ -383,7 +405,9 @@ export default function Navbar() {
                             className="flex items-center gap-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-500/10 transition-colors group"
                           >
                             <FaSignOutAlt className="text-base group-hover:scale-110 transition-transform" />
-                            <span className="text-sm font-medium">{t("navbar.logout")}</span>
+                            <span className="text-sm font-medium">
+                              {t("navbar.logout")}
+                            </span>
                           </button>
                         </div>
                       </div>
@@ -516,4 +540,4 @@ export default function Navbar() {
       </nav>
     </div>
   );
-};
+}
