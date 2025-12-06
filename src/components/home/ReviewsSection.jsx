@@ -111,7 +111,6 @@ export default function ReviewsSection() {
 
       <InfiniteMovingCards
         items={reviews}
-        direction="left"
         speed="fast"
         pauseOnHover={true}
       />
