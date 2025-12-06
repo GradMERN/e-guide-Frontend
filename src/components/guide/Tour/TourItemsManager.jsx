@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { tourItemService } from "../../../apis/tourItemService";
+import ConfirmModal from "../../common/ConfirmModal";
 
 const defaultItemForm = () => ({
   title: "",
@@ -851,33 +852,16 @@ const TourItemsManager = ({
         )}
 
         {/* CONFIRMATION MODAL */}
-        {confirmModal.open && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gradient-to-br from-[#1a0f08] to-[#2c1810] border border-[var(--border)] rounded-xl p-6 max-w-md w-full shadow-2xl">
-              <h3 className="text-xl font-bold text-[var(--text)] mb-4">
-                Confirm Delete
-              </h3>
-              <p className="text-[var(--text-secondary)] mb-6">
-                Are you sure you want to delete the waypoint "
-                {confirmModal.item?.title}"? This action cannot be undone.
-              </p>
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={cancelDelete}
-                  className="px-4 py-2 bg-[var(--secondary)] text-[var(--text)] rounded-lg hover:bg-[var(--secondary-hover)] transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <ConfirmModal
+          isOpen={confirmModal.open}
+          title="Confirm Delete"
+          message={`Are you sure you want to delete the waypoint "${confirmModal.item?.title}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+          type="danger"
+        />
       </div>
     </div>
   );

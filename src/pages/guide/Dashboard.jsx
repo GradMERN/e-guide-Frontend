@@ -6,6 +6,7 @@ import i18n from "../../i18n";
 import { guideService } from "../../apis/guideService";
 import { placeService } from "../../apis/placeService";
 import { tourItemService } from "../../apis/tourItemService";
+import { toast } from "react-toastify";
 import StatsOverview from "../../components/analytics/StatsOverview";
 import ChartComponent from "../../components/analytics/ChartComponent";
 import {
@@ -199,7 +200,7 @@ const GuideDashboard = () => {
         newTourForm.name.length < 3 ||
         newTourForm.name.length > 100
       ) {
-        alert("Tour name must be between 3 and 100 characters");
+        toast.error("Tour name must be between 3 and 100 characters");
         return;
       }
 
@@ -208,17 +209,17 @@ const GuideDashboard = () => {
         newTourForm.description.length < 10 ||
         newTourForm.description.length > 2000
       ) {
-        alert("Description must be between 10 and 2000 characters");
+        toast.error("Description must be between 10 and 2000 characters");
         return;
       }
 
       if (!newTourForm.price || parseFloat(newTourForm.price) < 0.99) {
-        alert("Price must be at least 0.99");
+        toast.error("Price must be at least 0.99");
         return;
       }
 
       if (!newTourForm.place) {
-        alert("Please select a place/location");
+        toast.error("Please select a place/location");
         return;
       }
 
@@ -266,7 +267,7 @@ const GuideDashboard = () => {
 
       // Refresh dashboard data
       fetchDashboardData();
-      alert("Tour created successfully!");
+      toast.success("Tour created successfully!");
     } catch (err) {
       console.error("Error creating tour:", err);
       console.error("Full error response:", err.response?.data);
@@ -289,7 +290,7 @@ const GuideDashboard = () => {
         errorMessage += "Please check all required fields.";
       }
 
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 

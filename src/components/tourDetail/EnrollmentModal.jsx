@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import enrollmentApi from "../../apis/enrollment.api";
 import paymentApi from "../../apis/payment.api";
+import { toast } from "react-toastify";
 
 const EnrollmentModal = ({ tour, isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const EnrollmentModal = ({ tour, isOpen, onClose }) => {
           );
         } else if (initRes?.data?.clientSecret) {
           onClose?.();
-          alert("Payment initialized. Complete payment in the app.");
+          toast.success("Payment initialized. Complete payment in the app.");
         } else {
           onClose?.();
         }

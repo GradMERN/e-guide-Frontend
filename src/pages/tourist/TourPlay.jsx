@@ -1,85 +1,67 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
-  FaTimes,
-  FaBars,
-  FaPlay,
-  FaPause,
+  FaArrowLeft,
+  FaSpinner,
   FaThLarge,
   FaList,
-  FaSpinner,
+  FaBars,
+  FaTimes,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext";
-import { guideService } from "../../apis/guideService";
+import tourService from "../../apis/tourService";
 import { tourItemService } from "../../apis/tourItemService";
 import enrollmentApi from "../../apis/enrollment.api";
-import TourView from "./subcomponents/TourView";
-import Review from "./subcomponents/Review";
+import TourView from "../../components/guide/subcomponents/TourView";
+import Review from "../../components/guide/subcomponents/Review";
 import useAudioPlayer from "../../hooks/useAudioPlayer";
+import { useAuth } from "../../context/AuthContext";
 
-const TourPreview = ({ tourId, onClose }) => {
-  const { isDarkMode } = useAuth();
-  const { t, i18n } = useTranslation();
-  const safeT = (k, def) => t(k, { defaultValue: def });
+export default function TourPlay() {
+  const { tourId } = useParams();
+  const navigate = useNavigate();
+  const { isDarkMode, user } = useAuth();
+
+  const isRtl =
+    (typeof document !== "undefined" &&
+      document.documentElement?.dir === "rtl") ||
+    false;
 
   const [tour, setTour] = useState(null);
   const [items, setItems] = useState([]);
   const [nearbyItems, setNearbyItems] = useState([]);
   const [tab, setTab] = useState("all");
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [displayMode, setDisplayMode] = useState("card");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [nearbyLoading, setNearbyLoading] = useState(false);
-
-  // audio handled by useAudioPlayer hook (see below)
-  const playTimeoutRef = null;
   const [enrollments, setEnrollments] = useState([]);
-
-  const currentEnrollment = React.useMemo(() => {
-    if (!enrollments || !tour) return null;
-    return (
-      enrollments.find((e) => {
-        const tId =
-          e.tour?._id ||
-          e.tour?.id ||
-          (e.tour && typeof e.tour === "string" ? e.tour : null);
-        const tourIdLocal = tour._id || tour.id || tourId;
-        return tId && tourIdLocal && String(tId) === String(tourIdLocal);
-      }) || null
-    );
-  }, [enrollments, tour, tourId]);
-
-  const isRtl =
-    (typeof document !== "undefined" &&
-      document.documentElement?.dir === "rtl") ||
-    (i18n && typeof i18n.dir === "function" && i18n.dir() === "rtl");
+  const [nearbyLoading, setNearbyLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const res = await guideService.getTour(tourId);
-        const payload = res?.data || res || null;
+        const tRes = await tourService.getTourById(tourId);
+        const t = tRes?.data || tRes;
         if (!mounted) return;
-        setTour(payload);
+        setTour(t);
         const its = await tourItemService.getTourItems(tourId);
         if (!mounted) return;
-        const list = its || [];
-        setItems(list);
-        setSelectedItem((prev) => prev || list[0] || null);
-        // fetch user enrollments to allow review/posting permissions and expiry handling
+        setItems(its || []);
+        setSelectedItem((prev) => prev || (its && its[0]) || null);
+        // fetch user enrollments
         try {
           const enr = await enrollmentApi.getUserEnrollments();
-          // the api returns response object; normalize
           const data = enr?.data?.data || enr?.data || enr || [];
           if (mounted) setEnrollments(Array.isArray(data) ? data : []);
         } catch (e) {
-          // ignore enrollment fetch failures
+          // ignore
         }
-        if (mounted) setInitialLoading(false);
       } catch (err) {
-        console.error("Failed to load preview", err);
+        console.error("Failed to load tour play", err);
+      } finally {
         if (mounted) setInitialLoading(false);
       }
     })();
@@ -150,77 +132,118 @@ const TourPreview = ({ tourId, onClose }) => {
     return () => clearInterval(id);
   }, [tab, items]);
 
-  useEffect(() => {
-    // No-op: audio hook handles src changes/reset
-    return () => {};
-  }, [selectedItem]);
+  const currentEnrollment = useMemo(() => {
+    if (!enrollments || !tour) return null;
+    return (
+      enrollments.find((e) => {
+        const tId =
+          e.tour?._id ||
+          e.tour?.id ||
+          (e.tour && typeof e.tour === "string" ? e.tour : null);
+        const tourIdLocal = tour._id || tour.id || tourId;
+        return tId && tourIdLocal && String(tId) === String(tourIdLocal);
+      }) || null
+    );
+  }, [enrollments, tour, tourId]);
 
-  // use reusable audio hook to manage playback and progress
+  const canView = useMemo(() => {
+    // Allow if user is the guide of the tour
+    const isGuide = user && tour && user._id === tour.guide._id;
+    if (isGuide) return true;
+
+    // Allow if enrolled, started, and not expired
+    if (!currentEnrollment) return false;
+    const isExpired =
+      currentEnrollment.expiresAt &&
+      new Date(currentEnrollment.expiresAt) < new Date();
+    return currentEnrollment.status === "started" && !isExpired;
+  }, [currentEnrollment, user, tour]);
+
+  // audio hook
   const audioSrc =
     selectedItem?.audioUrl ||
     selectedItem?.audio?.url ||
     selectedItem?.audioFile ||
     selectedItem?.media?.audio ||
     "";
-  const {
-    audioRef,
-    isPlaying,
-    progress: audioProgress,
-    currentTime,
-    duration,
-    isDragging,
-    setIsDragging,
-    toggle,
-    seekPercent,
-  } = useAudioPlayer(audioSrc);
+  const audio = useAudioPlayer(audioSrc);
 
   const currentItems = tab === "all" ? items : nearbyItems;
 
-  return (
-    <div
-      className={`${isDarkMode ? "bg-[#0d0c0a]" : "bg-gray-50"} min-h-screen`}
-    >
-      {/* header */}
-      <div
-        className={`mx-auto fixed start-20 end-0 top-16 z-10 ${
-          isDarkMode ? "bg-[#1B1A17]/80" : "bg-white/80"
-        } backdrop-blur-md border-b ${
-          isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
-        }`}
-      >
-        <div className="flex items-center justify-center h-16">
-          <h1
-            className={`${
-              isDarkMode ? "text-white" : "text-gray-900"
-            } text-xl font-bold`}
-          >
-            {tour?.name || safeT("guide.preview", "Tour Preview")}
-          </h1>
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <FaSpinner className="w-12 h-12 animate-spin text-primary mx-auto" />
+          <p className="mt-4 text-text-secondary">Loading tour...</p>
         </div>
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          aria-label="Toggle navigation"
-          className="absolute end-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg bg-[#D5B36A] text-white hover:bg-[#C4A55A] transition-colors duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-        >
-          <FaBars className="w-5 h-5" />
-        </button>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className={`absolute end-16 top-1/2 transform -translate-y-1/2 p-2 rounded-lg transition-colors duration-200 ${
-              isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100"
-            }`}
-          >
-            <FaTimes
-              className={`${
-                isDarkMode ? "text-gray-400" : "text-gray-600"
-              } w-5 h-5`}
-            />
-          </button>
-        )}
       </div>
+    );
+  }
 
-      <div className="relative mt-16">
+  if (!canView) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="max-w-xl text-center p-8 bg-surface rounded-2xl shadow-lg border border-border">
+          <h2 className="text-2xl font-bold text-text mb-3">
+            Access Restricted
+          </h2>
+          <p className="text-text-secondary mb-6">
+            You must be enrolled and within the valid access window to view this
+            tour. If you already paid, go to{" "}
+            <button
+              onClick={() => navigate("/my-tours")}
+              className="underline font-medium"
+            >
+              My Tours
+            </button>{" "}
+            and start the enrollment.
+          </p>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="px-4 py-2 rounded-lg bg-surface/80 border border-border text-text-secondary"
+            >
+              Back
+            </button>
+            <button
+              onClick={() => navigate(`/tours/${tourId}`)}
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-background"
+            >
+              View Tour Page
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background pt-20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg bg-surface border border-border"
+            >
+              <FaArrowLeft />
+            </button>
+            <h1 className="text-2xl font-bold text-text">{tour?.name}</h1>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle navigation"
+            className="p-2 rounded-lg bg-primary text-background hover:bg-primary/80 transition-colors"
+          >
+            {isRtl ? (
+              <FaChevronRight className="w-5 h-5" />
+            ) : (
+              <FaChevronLeft className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+
         <div
           className={`transition-all duration-300 ${
             sidebarOpen ? "lg:me-80" : "me-0"
@@ -228,82 +251,34 @@ const TourPreview = ({ tourId, onClose }) => {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="space-y-6">
-              {selectedItem ? (
+              {selectedItem && (
                 <>
                   <TourView
                     selectedItem={selectedItem}
                     isDarkMode={isDarkMode}
-                    safeT={safeT}
-                    audioRef={audioRef}
+                    safeT={(k, def) => def}
+                    audioRef={audio.audioRef}
                     audioSrc={audioSrc}
-                    isPlaying={isPlaying}
-                    progress={audioProgress}
-                    currentTime={currentTime}
-                    duration={duration}
-                    setIsDragging={setIsDragging}
-                    toggle={toggle}
-                    seekPercent={seekPercent}
+                    isPlaying={audio.isPlaying}
+                    progress={audio.progress}
+                    currentTime={audio.currentTime}
+                    duration={audio.duration}
+                    setIsDragging={audio.setIsDragging}
+                    toggle={audio.toggle}
+                    seekPercent={audio.seekPercent}
                   />
-                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <Review
-                      tourId={tourId}
-                      enrollment={currentEnrollment}
-                      tour={tour}
-                    />
-                  </div>
                 </>
-              ) : (
-                <div
-                  className={`${
-                    isDarkMode ? "bg-[#1B1A17]" : "bg-white"
-                  } rounded-2xl shadow-xl overflow-hidden border ${
-                    isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
-                  }`}
-                >
-                  {initialLoading ? (
-                    <div
-                      className={`${
-                        isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-200"
-                      } w-full h-80 flex items-center justify-center`}
-                    >
-                      <FaSpinner
-                        className={`w-10 h-10 animate-spin ${
-                          isDarkMode ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      />
-                    </div>
-                  ) : tour?.mainImage?.url ? (
-                    <img
-                      src={tour.mainImage.url}
-                      alt={tour.name}
-                      className="w-full h-80 object-cover"
-                    />
-                  ) : (
-                    <div
-                      className={`${
-                        isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-200"
-                      } w-full h-80 flex items-center justify-center`}
-                    >
-                      <p
-                        className={`${
-                          isDarkMode ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        {safeT("guide.noImage", "No Image")}
-                      </p>
-                    </div>
-                  )}
-                  <div className="p-6">
-                    <p
-                      className={`${
-                        isDarkMode ? "text-gray-300" : "text-gray-600"
-                      } leading-relaxed`}
-                    >
-                      {tour?.description}
-                    </p>
-                  </div>
-                </div>
               )}
+
+              {/* Show reviews for the tour */}
+              <div>
+                <Review
+                  tourId={tourId}
+                  enrollment={currentEnrollment}
+                  tour={tour}
+                  readOnly={true}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -311,9 +286,9 @@ const TourPreview = ({ tourId, onClose }) => {
         {/* Sidebar (desktop) */}
         <div
           className={`fixed top-32 end-0 h-[calc(100vh-8rem)] w-80 ${
-            isDarkMode ? "bg-[#1B1A17]" : "bg-white"
+            isDarkMode ? "bg-surface" : "bg-background"
           } border-start ${
-            isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
+            isDarkMode ? "border-border" : "border-border"
           } shadow-2xl transform transition-transform duration-300 z-10 ${
             sidebarOpen
               ? "translate-x-0"
@@ -327,9 +302,7 @@ const TourPreview = ({ tourId, onClose }) => {
               <div
                 className="p-4 border-b"
                 style={{
-                  borderColor: isDarkMode
-                    ? "rgba(213,179,106,0.12)"
-                    : undefined,
+                  borderColor: isDarkMode ? "var(--border)" : "var(--border)",
                 }}
               >
                 <div className="flex flex-col gap-2">
@@ -338,25 +311,21 @@ const TourPreview = ({ tourId, onClose }) => {
                       onClick={() => setTab("all")}
                       className={`flex-1 py-2 px-3 rounded-xl font-medium ${
                         tab === "all"
-                          ? "bg-[#D5B36A] text-white"
-                          : isDarkMode
-                          ? "bg-[#2c1b0f] text-gray-300"
-                          : "bg-gray-100 text-gray-700"
+                          ? "bg-primary text-background"
+                          : "bg-surface text-text-secondary hover:bg-surface/80"
                       }`}
                     >
-                      {safeT("guide.showAll", "All Items")}
+                      All Items
                     </button>
                     <button
                       onClick={() => setTab("live")}
                       className={`flex-1 py-2 px-3 rounded-xl font-medium ${
                         tab === "live"
-                          ? "bg-[#D5B36A] text-white"
-                          : isDarkMode
-                          ? "bg-[#2c1b0f] text-gray-300"
-                          : "bg-gray-100 text-gray-700"
+                          ? "bg-primary text-background"
+                          : "bg-surface text-text-secondary hover:bg-surface/80"
                       }`}
                     >
-                      {safeT("guide.liveMode", "Nearby")}
+                      Nearby
                     </button>
                   </div>
                   <div className="flex items-center justify-end gap-2">
@@ -366,10 +335,8 @@ const TourPreview = ({ tourId, onClose }) => {
                         title="Card view"
                         className={`p-2 rounded-md ${
                           displayMode === "card"
-                            ? "bg-[#D5B36A] text-black"
-                            : isDarkMode
-                            ? "bg-[#2c1b0f] text-gray-300"
-                            : "bg-gray-100 text-gray-700"
+                            ? "bg-primary text-background"
+                            : "bg-surface text-text-secondary hover:bg-surface/80"
                         }`}
                       >
                         <FaThLarge />
@@ -379,10 +346,8 @@ const TourPreview = ({ tourId, onClose }) => {
                         title="List view"
                         className={`p-2 rounded-md ${
                           displayMode === "list"
-                            ? "bg-[#D5B36A] text-black"
-                            : isDarkMode
-                            ? "bg-[#2c1b0f] text-gray-300"
-                            : "bg-gray-100 text-gray-700"
+                            ? "bg-primary text-background"
+                            : "bg-surface text-text-secondary hover:bg-surface/80"
                         }`}
                       >
                         <FaList />
@@ -393,15 +358,9 @@ const TourPreview = ({ tourId, onClose }) => {
                     <button
                       onClick={() => updateNearby(items, true)}
                       disabled={nearbyLoading}
-                      className={`w-full mt-2 py-2 px-3 rounded-xl font-medium ${
-                        isDarkMode
-                          ? "bg-[#2c1b0f] text-gray-300 hover:bg-[#3c2b1f] border border-gray-600"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300"
-                      } disabled:opacity-50`}
+                      className="w-full mt-2 py-2 px-3 rounded-xl font-medium bg-surface text-text-secondary hover:bg-surface/80 border border-border disabled:opacity-50"
                     >
-                      {nearbyLoading
-                        ? safeT("guide.refreshing", "Refreshing...")
-                        : safeT("guide.refreshNearby", "Refresh Nearby")}
+                      {nearbyLoading ? "Refreshing..." : "Refresh Nearby"}
                     </button>
                   )}
                 </div>
@@ -412,19 +371,19 @@ const TourPreview = ({ tourId, onClose }) => {
               {nearbyLoading ? (
                 <div className="p-6 text-center">
                   <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
-                  <p className="mt-2 text-gray-400">
-                    {safeT("guide.findingNearby", "Finding nearby items...")}
+                  <p className="mt-2 text-text-secondary">
+                    Finding nearby items...
                   </p>
                 </div>
               ) : currentItems.length === 0 ? (
-                <div className="p-6 text-center text-gray-400">
+                <div className="p-6 text-center text-text-secondary">
                   {tab === "live"
-                    ? safeT("guide.liveNone", "No nearby items found")
-                    : safeT("guide.noItems", "No items available")}
+                    ? "No nearby items found"
+                    : "No items available"}
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {currentItems.map((it, index) => {
+                  {currentItems.map((it) => {
                     const isSel =
                       selectedItem &&
                       (selectedItem._id || selectedItem.id) ===
@@ -436,10 +395,8 @@ const TourPreview = ({ tourId, onClose }) => {
                           key={it._id || it.id}
                           onClick={() => setSelectedItem(it)}
                           className={`w-full text-left rounded-xl overflow-hidden transition-all ${
-                            isSel
-                              ? "ring-2 ring-[#D5B36A]"
-                              : "hover:scale-[1.01]"
-                          } ${isDarkMode ? "bg-[#15120f]" : "bg-white"}`}
+                            isSel ? "ring-2 ring-primary" : "hover:scale-[1.01]"
+                          } bg-surface`}
                         >
                           <div className="relative w-full h-36 bg-gray-100">
                             {img ? (
@@ -449,37 +406,21 @@ const TourPreview = ({ tourId, onClose }) => {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div
-                                className={`${
-                                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                                } w-full h-full flex items-center justify-center`}
-                              >
-                                <span
-                                  className={`${
-                                    isDarkMode
-                                      ? "text-gray-400"
-                                      : "text-gray-500"
-                                  }`}
-                                >
-                                  No Image
-                                </span>
+                              <div className="bg-gray-100 w-full h-full flex items-center justify-center">
+                                <span className="text-gray-500">No Image</span>
                               </div>
                             )}
                           </div>
-                          <div
-                            className={`p-3 ${
-                              isDarkMode ? "text-white" : "text-gray-900"
-                            }`}
-                          >
+                          <div className="p-3 text-text">
                             <div className="font-semibold truncate">
                               {it.title || it.name}
                             </div>
                             {tab === "live" && it.distance ? (
-                              <div className="text-sm opacity-70 mt-1">
+                              <div className="text-sm text-text-secondary mt-1">
                                 ≈ {Math.round(it.distance)} m
                               </div>
                             ) : null}
-                            <div className="text-sm opacity-80 mt-1">
+                            <div className="text-sm text-text-secondary mt-1">
                               {(
                                 it.shortDescription ||
                                 it.description ||
@@ -496,10 +437,8 @@ const TourPreview = ({ tourId, onClose }) => {
                         onClick={() => setSelectedItem(it)}
                         className={`w-full text-left rounded-xl p-3 flex items-center gap-3 transition-all ${
                           isSel
-                            ? "bg-[#D5B36A] text-black shadow-lg"
-                            : isDarkMode
-                            ? "bg-[#13100e] text-white"
-                            : "bg-white text-gray-900"
+                            ? "bg-primary text-background shadow-lg"
+                            : "bg-surface text-text hover:bg-surface/80"
                         }`}
                       >
                         <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
@@ -510,18 +449,8 @@ const TourPreview = ({ tourId, onClose }) => {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div
-                              className={`${
-                                isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                              } w-full h-full flex items-center justify-center`}
-                            >
-                              <span
-                                className={`${
-                                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                              >
-                                No Image
-                              </span>
+                            <div className="bg-gray-100 w-full h-full flex items-center justify-center">
+                              <span className="text-gray-500">No Image</span>
                             </div>
                           )}
                         </div>
@@ -530,11 +459,11 @@ const TourPreview = ({ tourId, onClose }) => {
                             {it.title || it.name}
                           </p>
                           {tab === "live" && it.distance ? (
-                            <div className="text-sm opacity-70 mt-1">
+                            <div className="text-sm text-text-secondary mt-1">
                               ≈ {Math.round(it.distance)} m
                             </div>
                           ) : null}
-                          <div className="text-sm opacity-75 mt-1 truncate">
+                          <div className="text-sm text-text-secondary mt-1 truncate">
                             {(
                               it.shortDescription ||
                               it.description ||
@@ -565,10 +494,8 @@ const TourPreview = ({ tourId, onClose }) => {
           />
           <div
             className={`${
-              isDarkMode ? "bg-[#1B1A17]" : "bg-white"
-            } absolute top-0 ${
-              isRtl ? "start-0" : "end-0"
-            } h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
+              isDarkMode ? "bg-surface" : "bg-background"
+            } absolute top-0 end-0 h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
               sidebarOpen
                 ? "translate-x-0"
                 : isRtl
@@ -578,25 +505,25 @@ const TourPreview = ({ tourId, onClose }) => {
           >
             <div
               className={`flex items-center justify-between p-4 border-b ${
-                isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
+                isDarkMode ? "border-border" : "border-border"
               }`}
             >
               <h2
                 className={`${
-                  isDarkMode ? "text-white" : "text-gray-900"
+                  isDarkMode ? "text-text" : "text-text"
                 } text-xl font-bold`}
               >
-                {safeT("guide.navigation", "Navigation")}
+                Navigation
               </h2>
               <button
                 onClick={() => setSidebarOpen(false)}
                 className={`p-2 rounded-lg transition-colors duration-200 ${
-                  isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100"
+                  isDarkMode ? "hover:bg-surface/80" : "hover:bg-surface/80"
                 }`}
               >
                 <FaTimes
                   className={`${
-                    isDarkMode ? "text-gray-400" : "text-gray-600"
+                    isDarkMode ? "text-text-secondary" : "text-text-secondary"
                   } w-5 h-5`}
                 />
               </button>
@@ -607,25 +534,21 @@ const TourPreview = ({ tourId, onClose }) => {
                   onClick={() => setTab("all")}
                   className={`flex-1 py-3 px-4 rounded-xl font-medium ${
                     tab === "all"
-                      ? "bg-[#D5B36A] text-white"
-                      : isDarkMode
-                      ? "bg-[#2c1b0f] text-gray-300"
-                      : "bg-gray-100 text-gray-700"
+                      ? "bg-primary text-background"
+                      : "bg-surface text-text-secondary hover:bg-surface/80"
                   }`}
                 >
-                  {safeT("guide.showAll", "All Items")}
+                  All Items
                 </button>
                 <button
                   onClick={() => setTab("live")}
                   className={`flex-1 py-3 px-4 rounded-xl font-medium ${
                     tab === "live"
-                      ? "bg-[#D5B36A] text-white"
-                      : isDarkMode
-                      ? "bg-[#2c1b0f] text-gray-300"
-                      : "bg-gray-100 text-gray-700"
+                      ? "bg-primary text-background"
+                      : "bg-surface text-text-secondary hover:bg-surface/80"
                   }`}
                 >
-                  {safeT("guide.liveMode", "Nearby")}
+                  Nearby
                 </button>
               </div>
             </div>
@@ -633,19 +556,19 @@ const TourPreview = ({ tourId, onClose }) => {
               {nearbyLoading ? (
                 <div className="p-6 text-center">
                   <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
-                  <p className="mt-2 text-gray-400">
-                    {safeT("guide.findingNearby", "Finding nearby items...")}
+                  <p className="mt-2 text-text-secondary">
+                    Finding nearby items...
                   </p>
                 </div>
               ) : currentItems.length === 0 ? (
-                <div className="p-6 text-center text-gray-400">
+                <div className="p-6 text-center text-text-secondary">
                   {tab === "live"
-                    ? safeT("guide.liveNone", "No nearby items found")
-                    : safeT("guide.noItems", "No items available")}
+                    ? "No nearby items found"
+                    : "No items available"}
                 </div>
               ) : (
                 <div className="space-y-1 p-1">
-                  {currentItems.map((it, index) => {
+                  {currentItems.map((it) => {
                     const isSel =
                       selectedItem &&
                       (selectedItem._id || selectedItem.id) ===
@@ -659,8 +582,8 @@ const TourPreview = ({ tourId, onClose }) => {
                           setSidebarOpen(false);
                         }}
                         className={`w-full text-left rounded-xl overflow-hidden transition-all ${
-                          isSel ? "ring-2 ring-[#D5B36A]" : "hover:scale-[1.01]"
-                        } ${isDarkMode ? "bg-[#15120f]" : "bg-white"}`}
+                          isSel ? "ring-2 ring-primary" : "hover:scale-[1.01]"
+                        } bg-surface`}
                       >
                         <div className="relative w-full h-36 bg-gray-100">
                           {img ? (
@@ -670,30 +593,16 @@ const TourPreview = ({ tourId, onClose }) => {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div
-                              className={`${
-                                isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                              } w-full h-full flex items-center justify-center`}
-                            >
-                              <span
-                                className={`${
-                                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                              >
-                                No Image
-                              </span>
+                            <div className="bg-gray-100 w-full h-full flex items-center justify-center">
+                              <span className="text-gray-500">No Image</span>
                             </div>
                           )}
                         </div>
-                        <div
-                          className={`p-3 ${
-                            isDarkMode ? "text-white" : "text-gray-900"
-                          }`}
-                        >
+                        <div className="p-3 text-text">
                           <div className="font-semibold truncate">
                             {it.title || it.name}
                           </div>
-                          <div className="text-sm opacity-80 mt-1">
+                          <div className="text-sm text-text-secondary mt-1">
                             {(
                               it.shortDescription ||
                               it.description ||
@@ -712,6 +621,4 @@ const TourPreview = ({ tourId, onClose }) => {
       </div>
     </div>
   );
-};
-
-export default TourPreview;
+}

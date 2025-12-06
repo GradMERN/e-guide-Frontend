@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import UpdateGalleryModal from "../../components/guide/UpdateTourGalleryModal";
 import AddPlaceForm from "../../components/guide/Place/AddPlaceForm";
+import ConfirmModal from "../../components/common/ConfirmModal";
 import { toast } from "react-toastify";
 import { guideService } from "../../apis/guideService";
 import { placeService } from "../../apis/placeService";
@@ -1131,35 +1132,21 @@ const ManageTours = () => {
       )}
 
       {/* CONFIRMATION MODAL */}
-      {confirmModal.open && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-[#1a0f08] to-[#2c1810] border border-[var(--border)] rounded-xl p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-xl font-bold text-[var(--text)] mb-4">
-              {t("admin.tours.confirmDelete") || "Confirm Delete"}
-            </h3>
-            <p className="text-[var(--text-secondary)] mb-6">
-              {t("guide.tours.confirmDeleteMessage", {
-                name: confirmModal.item?.name || "",
-              }) ||
-                `Are you sure you want to delete the tour "${confirmModal.item?.name}"? This action cannot be undone.`}
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={cancelDeleteTour}
-                className="px-4 py-2 bg-[var(--secondary)] text-[var(--text)] rounded-lg hover:bg-[var(--secondary-hover)] transition-colors"
-              >
-                {t("common.cancel") || "Cancel"}
-              </button>
-              <button
-                onClick={confirmDeleteTour}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
-                {t("common.delete") || "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        isOpen={confirmModal.open}
+        title={t("admin.tours.confirmDelete") || "Confirm Delete"}
+        message={
+          t("guide.tours.confirmDeleteMessage", {
+            name: confirmModal.item?.name || "",
+          }) ||
+          `Are you sure you want to delete the tour "${confirmModal.item?.name}"? This action cannot be undone.`
+        }
+        confirmText={t("common.delete") || "Delete"}
+        cancelText={t("common.cancel") || "Cancel"}
+        onConfirm={confirmDeleteTour}
+        onCancel={cancelDeleteTour}
+        type="danger"
+      />
 
       {/* Tour items are managed on a dedicated page: /guide/tours/:id/items */}
     </div>

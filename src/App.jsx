@@ -30,6 +30,7 @@ import About from "./pages/shared/About";
 import NotFound from "./pages/NotFound";
 import TourPackages from "./pages/shared/TourPackages";
 import TourDetail from "./pages/shared/TourDetail";
+import TourPlay from "./pages/tourist/TourPlay";
 import TourGuideProfile from "./components/tourGuides/TourGuideProfile";
 import ProfileLayout from "./pages/profile/profileLayout";
 import Overview from "./pages/profile/Overview";
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
       { path: "/payment-success", element: <PaymentSuccess /> },
       { path: "/tours", element: <TourPackages /> },
       { path: "/tours/:id", element: <TourDetail /> },
+      { path: "/tour/play/:tourId", element: <TourPlay /> },
       { path: "/TourGuideProfile/:name", element: <TourGuideProfile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/my-tours", element: <MyTours /> },

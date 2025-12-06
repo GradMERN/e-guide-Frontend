@@ -17,6 +17,7 @@ import * as Yup from "yup";
 import { login as loginApi } from "../../apis/Auth/login.api";
 import { useDispatch } from "react-redux";
 import { useAuth as useReduxAuth } from "../../store/hooks";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -223,7 +224,7 @@ export default function LoginPage() {
                   }
                 } catch (err) {
                   console.error("Login error:", err);
-                  alert(err.response?.data?.message || "Login failed");
+                  toast.error(err.response?.data?.message || "Login failed");
                 } finally {
                   setSubmitting(false);
                 }

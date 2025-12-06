@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TourItemsManager from "./TourItemsManager";
 import { tourItemService } from "../../../apis/tourItemService";
+import ConfirmModal from "../../common/ConfirmModal";
 
 const TourItemsGrid = ({ tour, isDarkMode }) => {
   const [items, setItems] = useState([]);
@@ -210,8 +211,16 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                           handleDelete(it);
                         }}
                         disabled={deletingIds.includes(it._id)}
-                        className={`p-3 rounded-full transition-colors duration-200 shadow-lg ${deletingIds.includes(it._id) ? 'bg-red-400 text-white cursor-wait' : 'bg-red-500 text-white hover:bg-red-600'}`}
-                        title={deletingIds.includes(it._id) ? 'Deleting...' : 'Delete'}
+                        className={`p-3 rounded-full transition-colors duration-200 shadow-lg ${
+                          deletingIds.includes(it._id)
+                            ? "bg-red-400 text-white cursor-wait"
+                            : "bg-red-500 text-white hover:bg-red-600"
+                        }`}
+                        title={
+                          deletingIds.includes(it._id)
+                            ? "Deleting..."
+                            : "Delete"
+                        }
                       >
                         {deletingIds.includes(it._id) ? (
                           <FaSpinner size={16} className="animate-spin" />
@@ -300,28 +309,16 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
       )}
 
       {confirmModal.open && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[var(--surface)] rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
-            <p className="mb-6">
-              Are you sure you want to delete this waypoint?
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 bg-gray-200 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmModal
+          isOpen={confirmModal.open}
+          title="Confirm Deletion"
+          message="Are you sure you want to delete this waypoint?"
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+          type="danger"
+        />
       )}
     </div>
   );
