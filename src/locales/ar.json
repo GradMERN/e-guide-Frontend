@@ -317,6 +317,31 @@
     "tourName": "اسم الجولة",
     "guestName": "اسم الضيف"
   },
+  "navbar": {
+    "user": "مستخدم",
+    "guide": "مرشد",
+    "greeting": "مرحباً، {{name}}!",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "links": {
+      "home": "الرئيسية",
+      "tours": "الجولات",
+      "destinations": "الوجهات",
+      "about": "من نحن",
+      "contact": "اتصل بنا"
+    },
+    "contact": {
+      "phone": "+20 123 456 7890",
+      "email": "info@mysticegypttours.com",
+      "support": "دعم على مدار الساعة"
+    },
+    "dropdown": {
+      "guideDashboard": "لوحة المرشد",
+      "myTours": "جولاتي",
+      "profile": "الملف الشخصي",
+      "saved": "المحفوظات"
+    }
+  },
   "homepage": {
     "title": "اكتشف مصر",
     "subtitle": "حيث يعيش التاريخ وتبدأ المغامرات",

@@ -346,6 +346,31 @@
     "tourName": "Tour Name",
     "guestName": "Guest Name"
   },
+  "navbar": {
+    "user": "User",
+    "guide": "Guide",
+    "greeting": "Hello, {{name}}!",
+    "login": "Login",
+    "logout": "Logout",
+    "links": {
+      "home": "Home",
+      "tours": "Tours",
+      "destinations": "Destinations",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "contact": {
+      "phone": "+20 123 456 7890",
+      "email": "info@mysticegypttours.com",
+      "support": "24/7 Support"
+    },
+    "dropdown": {
+      "guideDashboard": "Guide Dashboard",
+      "myTours": "My Tours",
+      "profile": "Profile",
+      "saved": "Saved"
+    }
+  },
   "homepage": {
     "title": "Discover Egypt",
     "subtitle": "Where history comes alive and adventures begin",

@@ -21,7 +21,7 @@ const Switch = () => {
   };
 
   return (
-    <StyledWrapper theme={theme}>
+    <StyledWrapper theme={theme} isArabic={isArabic}>
       <label htmlFor="langSwitch" className="switch" aria-label="Toggle Language">
         <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle} />
         <span className="label-en">English</span>
@@ -34,69 +34,71 @@ const Switch = () => {
 
 const StyledWrapper = styled.div`
   .switch {
+    --_switch-padding: 2px;
+    --_switch-easing: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    position: relative;
+    border-radius: 5px;
+    cursor: pointer;
     width: 7em;
     height: 1.5em;
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 6px;
-    cursor: pointer;
-    background: ${(props) =>
-      props.theme === "dark"
-        ? "linear-gradient(145deg, rgba(226,199,132,0.2), rgba(189,161,100,0.1))"
-        : "linear-gradient(145deg, rgba(226,199,132,0.3), rgba(189,161,100,0.2))"};
     font-weight: 600;
+    user-select: none;
+    background: linear-gradient(145deg, rgba(226,199,132,0.2), rgba(189,161,100,0.1));
   }
 
   .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .switch .label-en,
-  .switch .label-ar {
-    z-index: 2;
-    font-size: 0.75rem;
-    width: 50%;
-    text-align: center;
-    pointer-events: none;
-    transition: color 0.3s ease;
-  }
-
-  .switch .slider {
     position: absolute;
-    top: 2px;
-    bottom: 2px;
-    left: 2px;
-    width: calc(50% - 4px);
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+    white-space: nowrap;
+  }
+
+  .switch > span {
+    display: grid;
+    place-content: center;
+    z-index: 2;
+    transition: color 0.3s ease, opacity 0.3s ease;
+    font-size: 0.75rem;
+  }
+
+  .switch::before {
+    content: "";
+    position: absolute;
+    top: var(--_switch-padding);
+    bottom: var(--_switch-padding);
+    width: 50%;
+    left: 0;
     background: linear-gradient(to right, #b8941f, #d4b15b, #e2c784);
-    border-radius: 4px;
-    transition: transform 0.8s ease;
+    border-radius: 3px;
     z-index: 1;
+    transition: transform 0.5s var(--_switch-easing), background-color 0.5s ease-in-out;
   }
 
-  .switch input:checked ~ .slider {
-    transform: translateX(105%);
+  .switch:has(input:checked)::before {
+    transform: translateX(100%);
   }
 
-  .switch input:not(:checked) ~ .slider {
-    transform: translateX(0);
+  .switch > span.label-en {
+    color: ${props => (props.isArabic ? "white" : "black")};
+  }
+  .switch > span.label-ar {
+    color: ${props => (props.isArabic ? "black" : "white")};
   }
 
-  .switch input:not(:checked) ~ .label-en {
-    color: black;
-  }
-  .switch input:not(:checked) ~ .label-ar {
-    color: white;
+  .switch > input:checked + span:first-of-type {
+    opacity: 0.75;
   }
 
-  .switch input:checked ~ .label-en {
-    color: black;
-  }
-  .switch input:checked ~ .label-ar {
-    color: white;
+  .switch > input:checked ~ span:last-of-type {
+    opacity: 1;
   }
 `;
 

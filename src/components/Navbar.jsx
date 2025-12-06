@@ -16,10 +16,12 @@ import {
 } from "react-icons/fa";
 import ThemeToggle from "../components/ThemeToggle";
 import Switch from "./common/SwitchLanguages";
+import { useTranslation } from "react-i18next";
 import { useAuth as useReduxAuth } from "../store/hooks";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Navbar() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
   const user = auth?.user || null;
@@ -31,23 +33,23 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
 
   const links = [
-    { name: "Home", path: "/" },
-    { name: "Tours", path: "/tours" },
-    { name: "Destinations", path: "/destinations" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: t("navbar.links.home"), path: "/" },
+    { name: t("navbar.links.tours"), path: "/tours" },
+    { name: t("navbar.links.destinations"), path: "/destinations" },
+    { name: t("navbar.links.about"), path: "/about" },
+    { name: t("navbar.links.contact"), path: "/contact" },
   ];
 
   // Base dropdown items
   const baseDropdownItems = [
-    { name: "My Tours", path: "/my-tours", icon: FaMapMarkedAlt },
-    { name: "Profile", path: "/profile", icon: FaUser },
-    { name: "Saved", path: "/saved", icon: FaBookmark },
+    { name: t("navbar.dropdown.myTours"), path: "/my-tours", icon: FaMapMarkedAlt },
+    { name: t("navbar.dropdown.profile"), path: "/profile", icon: FaUser },
+    { name: t("navbar.dropdown.saved"), path: "/saved", icon: FaBookmark },
   ];
 
   // Guide-specific dropdown item
   const guideDashboardItem = {
-    name: "Guide Dashboard",
+    name: t("navbar.dropdown.guideDashboard"),
     path: "/guide/dashboard",
     icon: FaChalkboardTeacher,
   };
@@ -138,30 +140,25 @@ export default function Navbar() {
 
   // Get display name for greeting
   const getDisplayName = () => {
-    if (!user || !user.id) return "User";
-
-    // Try firstName and lastName
+    if (!user || !user.id) return t("navbar.user");
     if (user.firstName) {
       return user.firstName;
     }
-
-    // Fallback to name field
     if (user.name) {
       const cleanName = user.name.trim();
       const nameParts = cleanName.split(/\s+/);
       return nameParts[0];
     }
-
-    return "User";
+    return t("navbar.user");
   };
 
   // Check if user is a guide
   const isGuide = user?.role && user.role.toLowerCase() === "guide";
 
   return (
-    <div
+    <div dir="ltr" 
       className={`
-        fixed top-0 left-0 right-0 z-100 transition-transform duration-500
+        fixed top-0 left-0 right-0 z-100 transition-transform duration-500 text-left!
         ${showNavbar ? "translate-y-0" : "-translate-y-full"}
       `}
     >
@@ -172,21 +169,21 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-4 text-sm text-text-secondary">
               <div className="flex items-center gap-1">
                 <FaPhone className="text-primary text-xs" />
-                <span>+20 123 456 7890</span>
+                <span>{t("navbar.contact.phone")}</span>
               </div>
               <div className="flex items-center gap-1">
                 <FaEnvelope className="text-primary text-xs" />
-                <span>info@mysticegypttours.com</span>
+                <span>{t("navbar.contact.email")}</span>
               </div>
               <div className="flex items-center gap-1">
                 <FaClock className="text-primary text-xs" />
-                <span>24/7 Support</span>
+                <span>{t("navbar.contact.support")}</span>
               </div>
             </div>
 
             <div className="lg:hidden flex items-center gap-2 text-xs text-text-secondary">
               <FaPhone className="text-primary" />
-              <span>+20 123 456 7890</span>
+              <span>{t("navbar.contact.phone")}</span>
             </div>
 
             <div className="flex items-center gap-3">
@@ -318,7 +315,7 @@ export default function Navbar() {
                     {/* Tooltip on hover */}
                     <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                       <div className="bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap">
-                        Hello, {getDisplayName()}!{isGuide && " (Guide)"}
+                        {t("navbar.greeting", { name: getDisplayName() })}{isGuide && ` (${t("navbar.guide")})`}
                       </div>
                       <div className="w-2 h-2 bg-gray-900 transform rotate-45 absolute -top-1 left-1/2 -translate-x-1/2"></div>
                     </div>
@@ -344,10 +341,10 @@ export default function Navbar() {
                             <p className="text-sm font-semibold text-text truncate">
                               {user?.firstName && user?.lastName
                                 ? `${user.firstName} ${user.lastName}`
-                                : user?.name || "User"}
+                                : user?.name || t("navbar.user")}
                               {isGuide && (
                                 <span className="ml-2 text-xs bg-secondary/20 text-secondary px-2 py-0.5 rounded-full">
-                                  Guide
+                                  {t("navbar.guide")}
                                 </span>
                               )}
                             </p>
@@ -371,9 +368,9 @@ export default function Navbar() {
                             <span className="text-sm font-medium">
                               {item.name}
                             </span>
-                            {item.name === "Guide Dashboard" && (
+                            {item.name === t("navbar.dropdown.guideDashboard") && (
                               <span className="ml-auto text-xs bg-secondary/20 text-secondary px-2 py-0.5 rounded-full">
-                                Guide
+                                {t("navbar.guide")}
                               </span>
                             )}
                           </NavLink>
@@ -386,7 +383,7 @@ export default function Navbar() {
                             className="flex items-center gap-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-500/10 transition-colors group"
                           >
                             <FaSignOutAlt className="text-base group-hover:scale-110 transition-transform" />
-                            <span className="text-sm font-medium">Logout</span>
+                            <span className="text-sm font-medium">{t("navbar.logout")}</span>
                           </button>
                         </div>
                       </div>
@@ -401,7 +398,7 @@ export default function Navbar() {
                     className="px-5 py-2 rounded-lg bg-linear-to-r from-gradient-from via-gradient-via to-gradient-to 
                            text-background font-medium shadow-md hover:brightness-110 transition hover:scale-105 text-sm"
                   >
-                    Login
+                    {t("navbar.login")}
                   </NavLink>
                 </div>
               )}
@@ -459,10 +456,10 @@ export default function Navbar() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-text truncate">
-                            Hello, {getDisplayName()}!
+                            {t("navbar.greeting", { name: getDisplayName() })}
                             {isGuide && (
                               <span className="ml-2 text-xs bg-secondary/20 text-secondary px-2 py-0.5 rounded-full">
-                                Guide
+                                {t("navbar.guide")}
                               </span>
                             )}
                           </p>
@@ -483,9 +480,9 @@ export default function Navbar() {
                       >
                         <item.icon className="text-lg" />
                         <span>{item.name}</span>
-                        {item.name === "Guide Dashboard" && (
+                        {item.name === t("navbar.dropdown.guideDashboard") && (
                           <span className="ml-auto text-xs bg-secondary/20 text-secondary px-2 py-0.5 rounded-full">
-                            Guide
+                            {t("navbar.guide")}
                           </span>
                         )}
                       </NavLink>
@@ -499,7 +496,7 @@ export default function Navbar() {
                       className="flex items-center gap-3 py-3 px-4 text-base font-medium text-red-500 hover:bg-red-500/10 rounded-lg w-full text-left mt-2"
                     >
                       <FaSignOutAlt className="text-lg" />
-                      <span>Logout</span>
+                      <span>{t("navbar.logout")}</span>
                     </button>
                   </>
                 ) : (
@@ -509,7 +506,7 @@ export default function Navbar() {
                     className="block py-3 px-4 text-base bg-linear-to-r from-gradient-from via-gradient-via to-gradient-to 
                            text-background font-medium shadow-md hover:brightness-110 transition text-center rounded-lg"
                   >
-                    Login
+                    {t("navbar.login")}
                   </NavLink>
                 )}
               </div>
@@ -519,4 +516,4 @@ export default function Navbar() {
       </nav>
     </div>
   );
-}
+};
