@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import {
   FaTimes,
   FaBars,
-  FaChevronLeft,
   FaPlay,
   FaPause,
+  FaThLarge,
+  FaList,
+  FaSpinner,
 } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { guideService } from "../../apis/guideService";
@@ -13,36 +15,28 @@ import { tourItemService } from "../../apis/tourItemService";
 
 const TourPreview = ({ tourId, onClose }) => {
   const { isDarkMode } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const safeT = (k, def) => t(k, { defaultValue: def });
+
   const [tour, setTour] = useState(null);
   const [items, setItems] = useState([]);
   const [nearbyItems, setNearbyItems] = useState([]);
   const [tab, setTab] = useState("all");
   const [selectedItem, setSelectedItem] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [displayMode, setDisplayMode] = useState("card");
+  const [initialLoading, setInitialLoading] = useState(true);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioProgress, setAudioProgress] = useState(0);
-  const [audioDuration, setAudioDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const audioRef = useRef(null);
   const playTimeoutRef = useRef(null);
 
-  // Distance helper (meters)
-  const distanceMeters = (lat1, lon1, lat2, lon2) => {
-    const toRad = (v) => (v * Math.PI) / 180;
-    const R = 6371000;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
+  const isRtl =
+    (typeof document !== "undefined" &&
+      document.documentElement?.dir === "rtl") ||
+    (i18n && typeof i18n.dir === "function" && i18n.dir() === "rtl");
 
   useEffect(() => {
     let mounted = true;
@@ -57,14 +51,26 @@ const TourPreview = ({ tourId, onClose }) => {
         const list = its || [];
         setItems(list);
         setSelectedItem((prev) => prev || list[0] || null);
-        updateNearby(list);
+        if (mounted) setInitialLoading(false);
       } catch (err) {
         console.error("Failed to load preview", err);
+        if (mounted) setInitialLoading(false);
       }
     })();
     return () => (mounted = false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourId]);
+
+  const distanceMeters = (lat1, lon1, lat2, lon2) => {
+    const toRad = (v) => (v * Math.PI) / 180;
+    const R = 6371000;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
 
   const updateNearby = (itemsSource = items) => {
     if (!navigator.geolocation) return setNearbyItems([]);
@@ -73,8 +79,14 @@ const TourPreview = ({ tourId, onClose }) => {
         const { latitude, longitude } = pos.coords;
         const found = (itemsSource || [])
           .map((it) => {
-            const lat = it.location?.lat || it.location?.latitude;
-            const lng = it.location?.lng || it.location?.longitude;
+            const lat =
+              it.location?.coordinates?.[1] ||
+              it.location?.lat ||
+              it.location?.latitude;
+            const lng =
+              it.location?.coordinates?.[0] ||
+              it.location?.lng ||
+              it.location?.longitude;
             if (!lat || !lng) return null;
             const dist = distanceMeters(latitude, longitude, lat, lng);
             return { ...it, distance: dist };
@@ -84,10 +96,7 @@ const TourPreview = ({ tourId, onClose }) => {
           .sort((a, b) => a.distance - b.distance);
         setNearbyItems(found);
       },
-      (err) => {
-        console.warn("Geolocation failed", err);
-        setNearbyItems([]);
-      },
+      () => setNearbyItems([]),
       { enableHighAccuracy: true, maximumAge: 5000 }
     );
   };
@@ -99,34 +108,22 @@ const TourPreview = ({ tourId, onClose }) => {
     return () => clearInterval(id);
   }, [tab, items]);
 
-  // Autoplay audio 2s after selecting an item
   useEffect(() => {
     if (playTimeoutRef.current) {
       clearTimeout(playTimeoutRef.current);
       playTimeoutRef.current = null;
     }
-    if (!selectedItem) {
-      if (audioRef.current) {
-        try {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-          setIsPlaying(false);
-        } catch (e) {}
-      }
-      return;
-    }
-
-    // Reset audio progress when item changes
+    if (!selectedItem) return;
     setAudioProgress(0);
     if (audioRef.current) {
-      audioRef.current.currentTime = 0;
+      // reset position and ensure audio is paused — do NOT auto-play
+      try {
+        audioRef.current.currentTime = 0;
+        audioRef.current.pause();
+      } catch (e) {
+        // ignore if not ready
+      }
     }
-
-    playTimeoutRef.current = setTimeout(() => {
-      if (!audioRef.current) return;
-      const p = audioRef.current.play();
-      if (p && typeof p.catch === "function") p.catch(() => {});
-    }, 2000);
     return () => {
       if (playTimeoutRef.current) {
         clearTimeout(playTimeoutRef.current);
@@ -135,7 +132,6 @@ const TourPreview = ({ tourId, onClose }) => {
     };
   }, [selectedItem]);
 
-  // Cleanup event listeners on unmount
   useEffect(() => {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -145,34 +141,24 @@ const TourPreview = ({ tourId, onClose }) => {
 
   const toggleAudio = () => {
     if (!audioRef.current) return;
-    if (audioRef.current.paused) {
-      audioRef.current.play().catch(() => {});
-    } else {
-      audioRef.current.pause();
-    }
+    if (audioRef.current.paused) audioRef.current.play().catch(() => {});
+    else audioRef.current.pause();
   };
 
-  // Audio event handlers
   const handleAudioTimeUpdate = () => {
     if (audioRef.current && !isDragging) {
-      const progress =
+      const p =
         (audioRef.current.currentTime / audioRef.current.duration) * 100;
-      setAudioProgress(progress);
+      setAudioProgress(isFinite(p) ? p : 0);
     }
   };
 
-  const handleAudioLoadedMetadata = () => {
-    if (audioRef.current) {
-      setAudioDuration(audioRef.current.duration);
-    }
-  };
-
+  const handleAudioLoadedMetadata = () => {};
   const handleAudioEnded = () => {
     setIsPlaying(false);
     setAudioProgress(0);
   };
 
-  // Progress bar drag handlers
   const handleProgressMouseDown = (e) => {
     setIsDragging(true);
     if (audioRef.current) {
@@ -180,102 +166,85 @@ const TourPreview = ({ tourId, onClose }) => {
       setIsPlaying(false);
     }
     updateProgressFromMouse(e);
-
-    // Add global mouse event listeners
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleMouseMove = (e) => {
-    if (isDragging) {
-      updateProgressFromMouse(e);
-    }
+    if (isDragging) updateProgressFromMouse(e);
   };
-
   const handleMouseUp = () => {
     setIsDragging(false);
-    // Remove global event listeners
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {});
-    }
+    if (audioRef.current) audioRef.current.play().catch(() => {});
   };
 
   const updateProgressFromMouse = (e) => {
     if (!audioRef.current) return;
-
-    // Find the progress bar element
     const progressBar =
       e.currentTarget || document.querySelector("[data-progress-bar]");
     if (!progressBar) return;
-
     const rect = progressBar.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = (x / rect.width) * 100;
-    const clampedPercentage = Math.max(0, Math.min(100, percentage));
-
-    setAudioProgress(clampedPercentage);
-    audioRef.current.currentTime =
-      (clampedPercentage / 100) * audioRef.current.duration;
+    const clamped = Math.max(0, Math.min(100, percentage));
+    setAudioProgress(clamped);
+    if (audioRef.current && isFinite(audioRef.current.duration))
+      audioRef.current.currentTime =
+        (clamped / 100) * audioRef.current.duration;
   };
 
   const currentItems = tab === "all" ? items : nearbyItems;
 
   return (
     <div
-      className={`min-h-screen ${isDarkMode ? "bg-[#0d0c0a]" : "bg-gray-50"}`}
+      className={`${isDarkMode ? "bg-[#0d0c0a]" : "bg-gray-50"} min-h-screen`}
     >
-      {/* Header */}
+      {/* header */}
       <div
-        className={`
-             mx-auto relative
-             ${
-               isDarkMode ? "bg-[#1B1A17]/80" : "bg-white/80"
-             } backdrop-blur-md border-b ${
+        className={`mx-auto fixed start-20 end-0 top-16 z-10 ${
+          isDarkMode ? "bg-[#1B1A17]/80" : "bg-white/80"
+        } backdrop-blur-md border-b ${
           isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
         }`}
       >
         <div className="flex items-center justify-center h-16">
           <h1
-            className={`text-xl font-bold ${
+            className={`${
               isDarkMode ? "text-white" : "text-gray-900"
-            }`}
+            } text-xl font-bold`}
           >
             {tour?.name || safeT("guide.preview", "Tour Preview")}
           </h1>
         </div>
-        {/* Toggler positioned at screen right edge */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg bg-[#D5B36A] text-white hover:bg-[#C4A55A] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           aria-label="Toggle navigation"
+          className="absolute end-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg bg-[#D5B36A] text-white hover:bg-[#C4A55A] transition-colors duration-200 shadow-lg hover:shadow-xl hover:scale-105"
         >
           <FaBars className="w-5 h-5" />
         </button>
         {onClose && (
           <button
             onClick={onClose}
-            className={`absolute right-16 top-1/2 transform -translate-y-1/2 p-2 rounded-lg hover:${
-              isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-            } transition-colors duration-200`}
+            className={`absolute end-16 top-1/2 transform -translate-y-1/2 p-2 rounded-lg transition-colors duration-200 ${
+              isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100"
+            }`}
           >
             <FaTimes
-              className={`w-5 h-5 ${
+              className={`${
                 isDarkMode ? "text-gray-400" : "text-gray-600"
-              }`}
+              } w-5 h-5`}
             />
           </button>
         )}
       </div>
 
-      {/* Main Content with Sidebar */}
-      <div className="relative">
-        {/* Main Content Area */}
+      <div className="relative mt-16">
         <div
           className={`transition-all duration-300 ${
-            sidebarOpen ? "lg:mr-80" : "mr-0"
+            sidebarOpen ? "lg:me-80" : "me-0"
           }`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -288,7 +257,6 @@ const TourPreview = ({ tourId, onClose }) => {
                     isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
                   }`}
                 >
-                  {/* Image with Play/Pause Overlay and Progress Bar */}
                   <div className="relative group">
                     {selectedItem.mainImage?.url ? (
                       <>
@@ -312,20 +280,20 @@ const TourPreview = ({ tourId, onClose }) => {
                       </>
                     ) : (
                       <div
-                        className={`w-full h-80 ${
+                        className={`${
                           isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-200"
-                        } flex items-center justify-center relative`}
+                        } w-full h-80 flex items-center justify-center`}
                       >
                         <div className="text-center">
                           <div
-                            className={`w-16 h-16 ${
+                            className={`${
                               isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-300"
-                            } rounded-full flex items-center justify-center mx-auto mb-4`}
+                            } w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}
                           >
                             <FaPlay
-                              className={`w-6 h-6 ${
+                              className={`${
                                 isDarkMode ? "text-gray-400" : "text-gray-600"
-                              } ml-1`}
+                              } w-6 h-6 ml-1`}
                             />
                           </div>
                           <p
@@ -340,7 +308,6 @@ const TourPreview = ({ tourId, onClose }) => {
                     )}
                   </div>
 
-                  {/* Audio Progress Bar - Break Line */}
                   <div className="px-6 py-2">
                     <div
                       data-progress-bar
@@ -358,16 +325,14 @@ const TourPreview = ({ tourId, onClose }) => {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6 space-y-4">
                     <h2
-                      className={`text-2xl font-bold ${
+                      className={`${
                         isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
+                      } text-2xl font-bold`}
                     >
                       {selectedItem.title || selectedItem.name}
                     </h2>
-
                     <p
                       className={`${
                         isDarkMode ? "text-gray-300" : "text-gray-600"
@@ -377,7 +342,6 @@ const TourPreview = ({ tourId, onClose }) => {
                         selectedItem.shortDescription ||
                         ""}
                     </p>
-
                     {selectedItem.script && (
                       <div
                         className={`${
@@ -385,30 +349,21 @@ const TourPreview = ({ tourId, onClose }) => {
                         } rounded-lg p-4`}
                       >
                         <h3
-                          className={`text-lg font-semibold ${
+                          className={`${
                             isDarkMode ? "text-white" : "text-gray-900"
-                          } mb-2`}
+                          } text-lg font-semibold mb-2`}
                         >
                           {safeT("guide.script", "Script")}
                         </h3>
                         <p
-                          className={`whitespace-pre-wrap leading-relaxed ${
+                          className={`${
                             isDarkMode ? "text-gray-300" : "text-gray-700"
-                          }`}
+                          } whitespace-pre-wrap leading-relaxed`}
                         >
                           {selectedItem.script}
                         </p>
                       </div>
                     )}
-
-                    {/* Audio Controls */}
-                    {/* <div
-                      className={`${
-                        isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"
-                      } rounded-lg p-4 border ${
-                        isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
-                      }`}
-                    > */}
                     <audio
                       ref={audioRef}
                       src={
@@ -424,7 +379,6 @@ const TourPreview = ({ tourId, onClose }) => {
                       onPlay={() => setIsPlaying(true)}
                       onPause={() => setIsPlaying(false)}
                     />
-                    {/* </div> */}
                   </div>
                 </div>
               ) : (
@@ -435,7 +389,19 @@ const TourPreview = ({ tourId, onClose }) => {
                     isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
                   }`}
                 >
-                  {tour?.mainImage?.url ? (
+                  {initialLoading ? (
+                    <div
+                      className={`${
+                        isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-200"
+                      } w-full h-80 flex items-center justify-center`}
+                    >
+                      <FaSpinner
+                        className={`w-10 h-10 animate-spin ${
+                          isDarkMode ? "text-gray-300" : "text-gray-600"
+                        }`}
+                      />
+                    </div>
+                  ) : tour?.mainImage?.url ? (
                     <img
                       src={tour.mainImage.url}
                       alt={tour.name}
@@ -443,9 +409,9 @@ const TourPreview = ({ tourId, onClose }) => {
                     />
                   ) : (
                     <div
-                      className={`w-full h-80 ${
+                      className={`${
                         isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-200"
-                      } flex items-center justify-center`}
+                      } w-full h-80 flex items-center justify-center`}
                     >
                       <p
                         className={`${
@@ -468,120 +434,223 @@ const TourPreview = ({ tourId, onClose }) => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
 
-            {/* Fixed Sidebar */}
-            <div
-              className={`fixed top-32 right-0 h-[calc(100vh-8rem)] w-80 ${
-                isDarkMode ? "bg-[#1B1A17]" : "bg-white"
-              } border-l ${
-                isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
-              } shadow-2xl transform transition-transform duration-300 z-50 ${
-                sidebarOpen ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div className="h-full flex flex-col">
-                {/* Tab Buttons */}
-                <div className="p-4 border-b border-[#D5B36A]/20">
-                  <div className="flex space-x-2">
+        {/* Sidebar (desktop) */}
+        <div
+          className={`fixed top-32 end-0 h-[calc(100vh-8rem)] w-80 ${
+            isDarkMode ? "bg-[#1B1A17]" : "bg-white"
+          } border-start ${
+            isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
+          } shadow-2xl transform transition-transform duration-300 z-10 ${
+            sidebarOpen
+              ? "translate-x-0"
+              : isRtl
+              ? "-translate-x-full"
+              : "translate-x-full"
+          }`}
+        >
+          <div className="h-full flex flex-col">
+            <div className="sticky top-0 z-20 bg-transparent">
+              <div
+                className="p-4 border-b"
+                style={{
+                  borderColor: isDarkMode
+                    ? "rgba(213,179,106,0.12)"
+                    : undefined,
+                }}
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => setTab("all")}
-                      className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
+                      className={`flex-1 py-2 px-3 rounded-xl font-medium ${
                         tab === "all"
-                          ? "bg-[#D5B36A] text-white shadow-lg transform scale-105"
-                          : `${
-                              isDarkMode
-                                ? "bg-[#2c1b0f] text-gray-300 hover:bg-[#1B1A17]"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            } shadow-md`
+                          ? "bg-[#D5B36A] text-white"
+                          : isDarkMode
+                          ? "bg-[#2c1b0f] text-gray-300"
+                          : "bg-gray-100 text-gray-700"
                       }`}
                     >
                       {safeT("guide.showAll", "All Items")}
                     </button>
                     <button
                       onClick={() => setTab("live")}
-                      className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
+                      className={`flex-1 py-2 px-3 rounded-xl font-medium ${
                         tab === "live"
-                          ? "bg-[#D5B36A] text-white shadow-lg transform scale-105"
-                          : `${
-                              isDarkMode
-                                ? "bg-[#2c1b0f] text-gray-300 hover:bg-[#1B1A17]"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            } shadow-md`
+                          ? "bg-[#D5B36A] text-white"
+                          : isDarkMode
+                          ? "bg-[#2c1b0f] text-gray-300"
+                          : "bg-gray-100 text-gray-700"
                       }`}
                     >
                       {safeT("guide.liveMode", "Nearby")}
                     </button>
                   </div>
-                </div>
-
-                {/* Items List */}
-                <div className="flex-1 overflow-hidden">
-                  <div className="p-4 border-b border-[#D5B36A]/20">
-                    <h3
-                      className={`text-lg font-semibold ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {tab === "live"
-                        ? safeT("guide.nearbyItems", "Nearby Items")
-                        : safeT("guide.tourItems", "Tour Items")}
-                    </h3>
-                  </div>
-                  <div className="flex-1 overflow-y-auto">
-                    {currentItems.length === 0 ? (
-                      <div className="p-6 text-center text-gray-400">
-                        {tab === "live"
-                          ? safeT("guide.liveNone", "No nearby items found")
-                          : safeT("guide.noItems", "No items available")}
-                      </div>
-                    ) : (
-                      <div className="p-2 space-y-1">
-                        {currentItems.map((it, index) => {
-                          const isSel =
-                            selectedItem &&
-                            (selectedItem._id || selectedItem.id) ===
-                              (it._id || it.id);
-                          return (
-                            <button
-                              key={it._id || it.id}
-                              onClick={() => setSelectedItem(it)}
-                              className={`w-full text-left p-4 rounded-xl transition-all duration-200 transform hover:scale-102 ${
-                                isSel
-                                  ? "bg-[#D5B36A] text-white shadow-lg"
-                                  : `${
-                                      isDarkMode
-                                        ? "bg-[#2c1b0f] text-white hover:bg-[#1B1A17]"
-                                        : "bg-gray-50 text-gray-900 hover:bg-gray-100"
-                                    }`
-                              }`}
-                            >
-                              <div className="flex items-center space-x-3">
-                                <div
-                                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                                    isSel ? "bg-white/20" : "bg-[#D5B36A]/20"
-                                  }`}
-                                >
-                                  {index + 1}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="font-medium truncate">
-                                    {it.title || it.name}
-                                  </p>
-                                  {tab === "live" && it.distance && (
-                                    <p className="text-sm opacity-75">
-                                      {Math.round(it.distance)}m away
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
+                  <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setDisplayMode("card")}
+                        title="Card view"
+                        className={`p-2 rounded-md ${
+                          displayMode === "card"
+                            ? "bg-[#D5B36A] text-black"
+                            : isDarkMode
+                            ? "bg-[#2c1b0f] text-gray-300"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        <FaThLarge />
+                      </button>
+                      <button
+                        onClick={() => setDisplayMode("list")}
+                        title="List view"
+                        className={`p-2 rounded-md ${
+                          displayMode === "list"
+                            ? "bg-[#D5B36A] text-black"
+                            : isDarkMode
+                            ? "bg-[#2c1b0f] text-gray-300"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        <FaList />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-2">
+              {currentItems.length === 0 ? (
+                <div className="p-6 text-center text-gray-400">
+                  {tab === "live"
+                    ? safeT("guide.liveNone", "No nearby items found")
+                    : safeT("guide.noItems", "No items available")}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {currentItems.map((it, index) => {
+                    const isSel =
+                      selectedItem &&
+                      (selectedItem._id || selectedItem.id) ===
+                        (it._id || it.id);
+                    const img = it.mainImage?.url || it.image || it.cover || "";
+                    if (displayMode === "card") {
+                      return (
+                        <button
+                          key={it._id || it.id}
+                          onClick={() => setSelectedItem(it)}
+                          className={`w-full text-left rounded-xl overflow-hidden transition-all ${
+                            isSel
+                              ? "ring-2 ring-[#D5B36A]"
+                              : "hover:scale-[1.01]"
+                          } ${isDarkMode ? "bg-[#15120f]" : "bg-white"}`}
+                        >
+                          <div className="relative w-full h-36 bg-gray-100">
+                            {img ? (
+                              <img
+                                src={img}
+                                alt={it.title || it.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div
+                                className={`${
+                                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
+                                } w-full h-full flex items-center justify-center`}
+                              >
+                                <span
+                                  className={`${
+                                    isDarkMode
+                                      ? "text-gray-400"
+                                      : "text-gray-500"
+                                  }`}
+                                >
+                                  No Image
+                                </span>
+                              </div>
+                            )}
+                            {/* index removed per request */}
+                          </div>
+                          <div
+                            className={`p-3 ${
+                              isDarkMode ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            <div className="font-semibold truncate">
+                              {it.title || it.name}
+                            </div>
+                            <div className="text-sm opacity-80 mt-1">
+                              {(
+                                it.shortDescription ||
+                                it.description ||
+                                ""
+                              ).slice(0, 80)}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    }
+                    return (
+                      <button
+                        key={it._id || it.id}
+                        onClick={() => setSelectedItem(it)}
+                        className={`w-full text-left rounded-xl p-3 flex items-center gap-3 transition-all ${
+                          isSel
+                            ? "bg-[#D5B36A] text-black shadow-lg"
+                            : isDarkMode
+                            ? "bg-[#13100e] text-white"
+                            : "bg-white text-gray-900"
+                        }`}
+                      >
+                        <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                          {img ? (
+                            <img
+                              src={img}
+                              alt={it.title || it.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className={`${
+                                isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
+                              } w-full h-full flex items-center justify-center`}
+                            >
+                              <span
+                                className={`${
+                                  isDarkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                              >
+                                No Image
+                              </span>
+                            </div>
+                          )}
+                          {/* index badge removed */}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">
+                            {it.title || it.name}
+                          </p>
+                          <div className="text-sm opacity-75 flex items-center gap-2">
+                            {tab === "live" && it.distance ? (
+                              <span>{Math.round(it.distance)}m</span>
+                            ) : null}
+                            <span className="truncate">
+                              {(
+                                it.shortDescription ||
+                                it.description ||
+                                ""
+                              ).slice(0, 80)}
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -598,12 +667,17 @@ const TourPreview = ({ tourId, onClose }) => {
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
-
           <div
-            className={`absolute top-0 right-0 h-full w-80 max-w-[85vw] ${
+            className={`${
               isDarkMode ? "bg-[#1B1A17]" : "bg-white"
-            } shadow-2xl transform transition-transform duration-300 ease-out ${
-              sidebarOpen ? "translate-x-0" : "translate-x-full"
+            } absolute top-0 ${
+              isRtl ? "start-0" : "end-0"
+            } h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
+              sidebarOpen
+                ? "translate-x-0"
+                : isRtl
+                ? "-translate-x-full"
+                : "translate-x-full"
             }`}
           >
             <div
@@ -612,129 +686,126 @@ const TourPreview = ({ tourId, onClose }) => {
               }`}
             >
               <h2
-                className={`text-xl font-bold ${
+                className={`${
                   isDarkMode ? "text-white" : "text-gray-900"
-                }`}
+                } text-xl font-bold`}
               >
                 {safeT("guide.navigation", "Navigation")}
               </h2>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className={`p-2 rounded-lg hover:${
-                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                } transition-colors duration-200`}
+                className={`p-2 rounded-lg transition-colors duration-200 ${
+                  isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100"
+                }`}
               >
                 <FaTimes
-                  className={`w-5 h-5 ${
+                  className={`${
                     isDarkMode ? "text-gray-400" : "text-gray-600"
-                  }`}
+                  } w-5 h-5`}
                 />
               </button>
             </div>
-
-            {/* Mobile Tab Buttons */}
-            <div className="p-4 border-b border-[#D5B36A]/20">
+            <div className="p-4 border-b">
               <div className="flex space-x-2">
                 <button
                   onClick={() => setTab("all")}
-                  className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
+                  className={`flex-1 py-3 px-4 rounded-xl font-medium ${
                     tab === "all"
-                      ? "bg-[#D5B36A] text-white shadow-lg transform scale-105"
-                      : `${
-                          isDarkMode
-                            ? "bg-[#2c1b0f] text-gray-300 hover:bg-[#1B1A17]"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        } shadow-md`
+                      ? "bg-[#D5B36A] text-white"
+                      : isDarkMode
+                      ? "bg-[#2c1b0f] text-gray-300"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {safeT("guide.showAll", "All Items")}
                 </button>
                 <button
                   onClick={() => setTab("live")}
-                  className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
+                  className={`flex-1 py-3 px-4 rounded-xl font-medium ${
                     tab === "live"
-                      ? "bg-[#D5B36A] text-white shadow-lg transform scale-105"
-                      : `${
-                          isDarkMode
-                            ? "bg-[#2c1b0f] text-gray-300 hover:bg-[#1B1A17]"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        } shadow-md`
+                      ? "bg-[#D5B36A] text-white"
+                      : isDarkMode
+                      ? "bg-[#2c1b0f] text-gray-300"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {safeT("guide.liveMode", "Nearby")}
                 </button>
               </div>
             </div>
-
-            {/* Mobile Items List */}
-            <div className="flex-1 overflow-hidden">
-              <div className="p-4 border-b border-[#D5B36A]/20">
-                <h3
-                  className={`text-lg font-semibold ${
-                    isDarkMode ? "text-white" : "text-gray-900"
-                  }`}
-                >
+            <div className="flex-1 overflow-y-auto p-2">
+              {currentItems.length === 0 ? (
+                <div className="p-6 text-center text-gray-400">
                   {tab === "live"
-                    ? safeT("guide.nearbyItems", "Nearby Items")
-                    : safeT("guide.tourItems", "Tour Items")}
-                </h3>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                {currentItems.length === 0 ? (
-                  <div className="p-6 text-center text-gray-400">
-                    {tab === "live"
-                      ? safeT("guide.liveNone", "No nearby items found")
-                      : safeT("guide.noItems", "No items available")}
-                  </div>
-                ) : (
-                  <div className="p-2 space-y-1">
-                    {currentItems.map((it, index) => {
-                      const isSel =
-                        selectedItem &&
-                        (selectedItem._id || selectedItem.id) ===
-                          (it._id || it.id);
-                      return (
-                        <button
-                          key={it._id || it.id}
-                          onClick={() => {
-                            setSelectedItem(it);
-                            setSidebarOpen(false);
-                          }}
-                          className={`w-full text-left p-4 rounded-xl transition-all duration-200 transform hover:scale-102 ${
-                            isSel
-                              ? "bg-[#D5B36A] text-white shadow-lg"
-                              : `${
-                                  isDarkMode
-                                    ? "bg-[#2c1b0f] text-white hover:bg-[#1B1A17]"
-                                    : "bg-gray-50 text-gray-900 hover:bg-gray-100"
-                                }`
-                          }`}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div
-                              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                                isSel ? "bg-white/20" : "bg-[#D5B36A]/20"
-                              }`}
-                            >
-                              {index + 1}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium truncate">
-                                {it.title || it.name}
-                              </p>
-                              {tab === "live" && it.distance && (
-                                <p className="text-sm opacity-75">
-                                  {Math.round(it.distance)}m away
-                                </p>
-                              )}
-                            </div>
+                    ? safeT("guide.liveNone", "No nearby items found")
+                    : safeT("guide.noItems", "No items available")}
+                </div>
+              ) : (
+                <div className="space-y-1 p-1">
+                  {currentItems.map((it, index) => {
+                    const isSel =
+                      selectedItem &&
+                      (selectedItem._id || selectedItem.id) ===
+                        (it._1d || it.id);
+                    const img = it.mainImage?.url || it.image || it.cover || "";
+                    return (
+                      <button
+                        key={it._id || it.id}
+                        onClick={() => {
+                          setSelectedItem(it);
+                          setSidebarOpen(false);
+                        }}
+                        className={`w-full text-left p-3 rounded-xl transition-all ${
+                          isSel
+                            ? "bg-[#D5B36A] text-white shadow-lg"
+                            : isDarkMode
+                            ? "bg-[#2c1b0f] text-white"
+                            : "bg-gray-50 text-gray-900"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                            {img ? (
+                              <img
+                                src={img}
+                                alt={it.title || it.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div
+                                className={`${
+                                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
+                                } w-full h-full flex items-center justify-center`}
+                              >
+                                <span
+                                  className={`${
+                                    isDarkMode
+                                      ? "text-gray-400"
+                                      : "text-gray-500"
+                                  }`}
+                                >
+                                  No Image
+                                </span>
+                              </div>
+                            )}
+                            {/* index badge removed (mobile) */}
                           </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">
+                              {it.title || it.name}
+                            </p>
+                            {tab === "live" && it.distance && (
+                              <p className="text-sm opacity-75">
+                                {Math.round(it.distance)}m away
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
