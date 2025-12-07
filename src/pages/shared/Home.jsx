@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import Hero from "../../components/hero.jsx";
 import ImageSliderDemo from "../../components/home/HomeHeroSection.jsx";
 import TourGuidesSection from "../../components/home/TourGuidesSection.jsx";
 import PopularDestinationSection from "../../components/home/PopularDestinationSection.jsx";

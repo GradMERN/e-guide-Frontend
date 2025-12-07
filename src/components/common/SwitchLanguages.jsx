@@ -24,8 +24,8 @@ const Switch = () => {
     <StyledWrapper theme={theme} isArabic={isArabic}>
       <label htmlFor="langSwitch" className="switch" aria-label="Toggle Language">
         <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle} />
-        <span className="label-en">English</span>
-        <span className="label-ar">العربية</span>
+          <span className={isArabic ? "label-inactive" : "label-active"}>English</span>
+          <span className={isArabic ? "label-active" : "label-inactive"}>العربية</span>
         <span className="slider" />
       </label>
     </StyledWrapper>
@@ -35,7 +35,7 @@ const Switch = () => {
 const StyledWrapper = styled.div`
   .switch {
     --_switch-padding: 2px;
-    --_switch-easing: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+    --_switch-easing: cubic-bezier(0.45, 1.64, 0.41, 0.8);
 
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -46,7 +46,8 @@ const StyledWrapper = styled.div`
     height: 1.5em;
     font-weight: 600;
     user-select: none;
-    background: linear-gradient(145deg, rgba(226,199,132,0.2), rgba(189,161,100,0.1));
+    background: var(--surface);
+    border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
   }
 
   .switch input {
@@ -56,7 +57,7 @@ const StyledWrapper = styled.div`
     padding: 0;
     margin: -1px;
     overflow: hidden;
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
     border: 0;
     white-space: nowrap;
   }
@@ -72,33 +73,24 @@ const StyledWrapper = styled.div`
   .switch::before {
     content: "";
     position: absolute;
-    top: var(--_switch-padding);
-    bottom: var(--_switch-padding);
+    top: 0;
+    bottom: 0;
     width: 50%;
     left: 0;
-    background: linear-gradient(to right, #b8941f, #d4b15b, #e2c784);
+    background: linear-gradient(
+      to right,
+      var(--gradient-from),
+      var(--gradient-via),
+      var(--gradient-to)
+    );
     border-radius: 3px;
     z-index: 1;
-    transition: transform 0.5s var(--_switch-easing), background-color 0.5s ease-in-out;
+    transition: transform 0.4s var(--_switch-easing),
+      background-color 0.4s ease-in-out;
   }
 
   .switch:has(input:checked)::before {
     transform: translateX(100%);
-  }
-
-  .switch > span.label-en {
-    color: ${props => (props.isArabic ? "white" : "black")};
-  }
-  .switch > span.label-ar {
-    color: ${props => (props.isArabic ? "black" : "white")};
-  }
-
-  .switch > input:checked + span:first-of-type {
-    opacity: 0.75;
-  }
-
-  .switch > input:checked ~ span:last-of-type {
-    opacity: 1;
   }
 `;
 

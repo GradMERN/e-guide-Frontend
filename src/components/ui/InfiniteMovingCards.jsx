@@ -21,20 +21,20 @@ export const InfiniteMovingCards = ({
   useEffect(() => { 
     if (!containerRef.current || !scrollerRef.current) return; 
 
-  const scrollerContent = Array.from(scrollerRef.current.children);
-    const originalItemsCount = items.length;
-    while (scrollerRef.current.children.length > originalItemsCount) {
-      scrollerRef.current.removeChild(scrollerRef.current.lastChild);
-    }
-
     const currentChildren = Array.from(scrollerRef.current.children);
-    currentChildren.forEach((item) => { 
-      const clone = item.cloneNode(true); 
-      scrollerRef.current?.appendChild(clone); 
-    }); 
+    const hasClones = scrollerRef.current.children.length > items.length;
+    
+    if (!hasClones) {
+      currentChildren.forEach((item) => { 
+        const clone = item.cloneNode(true); 
+        scrollerRef.current?.appendChild(clone); 
+      }); 
+    }
 
     const finalDirection = isRTL ? (direction === "left" ? "right" : "left") : direction;
     const dir = finalDirection === "left" ? "normal" : "reverse";
+    
+    containerRef.current.style.setProperty("--animation-direction", dir);
 
     const totalWidth = scrollerRef.current.scrollWidth / 2; 
     const speedMultiplier = speed === "fast" ? 0.6 : speed === "normal" ? 1 : 1.5; 
@@ -42,7 +42,8 @@ export const InfiniteMovingCards = ({
     containerRef.current.style.setProperty("--animation-duration", duration); 
 
     setStart(true); 
-  }, [direction, speed]); 
+  }, [direction, speed, items.length, isRTL]); 
+
 
   const getDisplayName = (fullName) => {
     if (!fullName) return "U";
