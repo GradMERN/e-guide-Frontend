@@ -1,22 +1,26 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
-import { MdTitle, MdLocationOn, MdMovie } from "react-icons/md";
+import { MdTitle, MdLocationOn, MdMovie, MdMyLocation } from "react-icons/md";
 import { FaList } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
-
-const contentTypes = ["video", "audio", "text", "image", "interactive"];
+import { tourItemService } from "../../apis/tourItemService";
 
 export default function AddTourItem() {
   const { tourId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [focusedInput, setFocusedInput] = useState(null);
   const [showMap, setShowMap] = useState(false);
-  const [coordinates, setCoordinates] = useState({ longitude: 31.2357, latitude: 30.0444 }); // Default: Cairo
+  const [coordinates, setCoordinates] = useState({
+    longitude: 31.2357,
+    latitude: 30.0444,
+  }); // Default: Cairo
   const [showCoordinatesInput, setShowCoordinatesInput] = useState(false);
+  const [availableContentTypes, setAvailableContentTypes] = useState([]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -26,12 +30,63 @@ export default function AddTourItem() {
     coordinateLat: coordinates.latitude,
   });
 
+  useEffect(() => {
+    const fetchContentTypes = async () => {
+      try {
+        const types = await tourItemService.getContentTypes();
+        setAvailableContentTypes(types);
+        if (types.length > 0 && !formData.contentType) {
+          setFormData((prev) => ({ ...prev, contentType: types[0] }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch content types", err);
+        setAvailableContentTypes([
+          "video",
+          "audio",
+          "text",
+          "image",
+          "interactive",
+        ]); // fallback
+      } finally {
+        setFetchLoading(false);
+      }
+    };
+    fetchContentTypes();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
+    }
+    setError("");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(6));
+        const lng = parseFloat(pos.coords.longitude.toFixed(6));
+        setCoordinates({ longitude: lng, latitude: lat });
+        setFormData((prev) => ({
+          ...prev,
+          coordinateLong: lng,
+          coordinateLat: lat,
+        }));
+        setSuccess("Location detected");
+        setTimeout(() => setSuccess(""), 2000);
+      },
+      (err) => {
+        console.error("Geolocation error", err);
+        setError("Unable to detect location");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   const handleCoordinateChange = (type, value) => {
@@ -92,7 +147,7 @@ export default function AddTourItem() {
       formDataToSend.append("tour", tourId);
       formDataToSend.append("script", formData.script);
       formDataToSend.append("contentType", formData.contentType);
-      
+
       // Send coordinates as JSON string (backend preprocessor will parse it)
       const locationData = {
         type: "Point",
@@ -115,7 +170,7 @@ export default function AddTourItem() {
 
       const result = await response.json();
       setSuccess("Tour item created successfully!");
-      
+
       // Reset form
       setFormData({
         title: "",
@@ -141,10 +196,10 @@ export default function AddTourItem() {
   return (
     <section className="relative min-h-screen flex justify-center items-center bg-black overflow-hidden px-4 sm:px-6 lg:px-8 py-12">
       <div className="absolute inset-0">
-        <img 
-          src="src/assets/images/loginBg.webp" 
-          className="h-full w-full object-cover opacity-20" 
-          alt="bg-add-item" 
+        <img
+          src="src/assets/images/loginBg.webp"
+          className="h-full w-full object-cover opacity-20"
+          alt="bg-add-item"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505]" />
       </div>
@@ -182,9 +237,11 @@ export default function AddTourItem() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           {/* Title */}
           <div className="relative">
-            <MdTitle className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-              focusedInput === "title" ? "text-[#f7c95f]" : "text-[#bfb191]"
-            }`} />
+            <MdTitle
+              className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                focusedInput === "title" ? "text-[#f7c95f]" : "text-[#bfb191]"
+              }`}
+            />
             <input
               type="text"
               name="title"
@@ -197,27 +254,38 @@ export default function AddTourItem() {
               required
               className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
             />
-            <span className="text-xs text-gray-400 mt-1">{formData.title.length}/100</span>
+            <span className="text-xs text-gray-400 mt-1">
+              {formData.title.length}/100
+            </span>
           </div>
 
           {/* Content Type */}
           <div className="relative">
-            <MdMovie className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-              focusedInput === "contentType" ? "text-[#f7c95f]" : "text-[#bfb191]"
-            }`} />
+            <MdMovie
+              className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                focusedInput === "contentType"
+                  ? "text-[#f7c95f]"
+                  : "text-[#bfb191]"
+              }`}
+            />
             <select
               name="contentType"
               value={formData.contentType}
               onChange={handleChange}
               onFocus={() => setFocusedInput("contentType")}
               onBlur={() => setFocusedInput(null)}
-              className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
+              disabled={fetchLoading}
+              className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50 disabled:opacity-50"
             >
-              {contentTypes.map((type) => (
-                <option key={type} value={type} className="bg-[#0a0a0a]">
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </option>
-              ))}
+              {fetchLoading ? (
+                <option>Loading...</option>
+              ) : (
+                availableContentTypes.map((type) => (
+                  <option key={type} value={type} className="bg-[#0a0a0a]">
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
@@ -225,20 +293,28 @@ export default function AddTourItem() {
           <div className="border border-[#2b2b2b] rounded-xl p-4 space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <FaMapLocationDot className="text-[#f7c95f]" />
-              <h3 className="text-[#f7c95f] font-semibold">Location (Coordinates)</h3>
+              <h3 className="text-[#f7c95f] font-semibold">
+                Location (Coordinates)
+              </h3>
             </div>
 
             {/* Coordinates Input */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
               <div className="relative">
-                <MdLocationOn className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-                  focusedInput === "longitude" ? "text-[#f7c95f]" : "text-[#bfb191]"
-                }`} />
+                <MdLocationOn
+                  className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                    focusedInput === "longitude"
+                      ? "text-[#f7c95f]"
+                      : "text-[#bfb191]"
+                  }`}
+                />
                 <input
                   type="number"
                   placeholder="Longitude"
                   value={coordinates.longitude}
-                  onChange={(e) => handleCoordinateChange("longitude", e.target.value)}
+                  onChange={(e) =>
+                    handleCoordinateChange("longitude", e.target.value)
+                  }
                   onFocus={() => setFocusedInput("longitude")}
                   onBlur={() => setFocusedInput(null)}
                   step="0.0001"
@@ -247,14 +323,20 @@ export default function AddTourItem() {
                 />
               </div>
               <div className="relative">
-                <MdLocationOn className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-                  focusedInput === "latitude" ? "text-[#f7c95f]" : "text-[#bfb191]"
-                }`} />
+                <MdLocationOn
+                  className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                    focusedInput === "latitude"
+                      ? "text-[#f7c95f]"
+                      : "text-[#bfb191]"
+                  }`}
+                />
                 <input
                   type="number"
                   placeholder="Latitude"
                   value={coordinates.latitude}
-                  onChange={(e) => handleCoordinateChange("latitude", e.target.value)}
+                  onChange={(e) =>
+                    handleCoordinateChange("latitude", e.target.value)
+                  }
                   onFocus={() => setFocusedInput("latitude")}
                   onBlur={() => setFocusedInput(null)}
                   step="0.0001"
@@ -262,18 +344,31 @@ export default function AddTourItem() {
                   className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
                 />
               </div>
+              <div className="flex items-center sm:justify-center">
+                <button
+                  type="button"
+                  onClick={detectLocation}
+                  title="Detect my location"
+                  className="p-2 rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 text-[#f7c95f] hover:bg-[#1a1a1a] transition-colors w-full sm:w-12 flex items-center justify-center"
+                >
+                  <MdMyLocation className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             <p className="text-xs text-gray-400">
-              Current location: [{coordinates.longitude.toFixed(4)}, {coordinates.latitude.toFixed(4)}]
+              Current location: [{coordinates.longitude.toFixed(4)},{" "}
+              {coordinates.latitude.toFixed(4)}]
             </p>
           </div>
 
           {/* Script */}
           <div className="relative">
-            <FaList className={`absolute left-4 top-4 transition-colors duration-300 ${
-              focusedInput === "script" ? "text-[#f7c95f]" : "text-[#bfb191]"
-            }`} />
+            <FaList
+              className={`absolute left-4 top-4 transition-colors duration-300 ${
+                focusedInput === "script" ? "text-[#f7c95f]" : "text-[#bfb191]"
+              }`}
+            />
             <textarea
               name="script"
               placeholder="Enter script/content (max 5000 characters)"
@@ -286,7 +381,9 @@ export default function AddTourItem() {
               required
               className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50 resize-none"
             />
-            <span className="text-xs text-gray-400 mt-1">{formData.script.length}/5000</span>
+            <span className="text-xs text-gray-400 mt-1">
+              {formData.script.length}/5000
+            </span>
           </div>
 
           {/* Buttons */}

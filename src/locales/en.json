@@ -57,6 +57,29 @@
   "spanish": "Spanish",
   "french": "French",
   "german": "German",
+  "language": "Language",
+  "common": {
+    "loading": "Loading...",
+    "back": "Back",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "date": "Date",
+    "amount": "Amount",
+    "status": "Status",
+    "statuses": {
+      "pending": "Pending",
+      "active": "Active",
+      "started": "Started",
+      "completed": "Completed",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    }
+  },
+  "theme": {
+    "light": "Switch to Light Mode",
+    "dark": "Switch to Dark Mode"
+  },
   "admin": {
     "dashboard": "Dashboard",
     "toursMenu": "Tours",
@@ -91,6 +114,47 @@
       "edit": "Edit Tour",
       "addNew": "Add New Tour",
       "name": "Tour Name",
+      "manageAndTrack": "Manage and track all your tours",
+      "addPlace": "Add Place",
+      "status": {
+        "published": "Published",
+        "empty": "Empty",
+        "notPublished": "Not Published"
+      },
+      "errors": {
+        "noPublishedItems": "There are no published items",
+        "loadFailed": "Failed to load tour"
+      },
+      "titles": {
+        "noItems": "No items yet",
+        "noPublishedItems": "No published items",
+        "updating": "Updating...",
+        "unpublish": "Unpublish tour",
+        "publish": "Publish tour",
+        "manageWaypoints": "Manage Waypoints",
+        "updateGalleryImages": "Update Gallery Images"
+      },
+      "waypointsTitle": "Waypoints — {{name}}",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDeleteMessage": "Are you sure you want to delete the tour \"{{name}}\"? This action cannot be undone.",
+      "messages": {
+        "added": "Tour added successfully!",
+        "updated": "Tour updated successfully!",
+        "deleted": "Tour deleted successfully!",
+        "galleryUpdated": "Gallery images updated successfully!"
+      },
+      "validation": {
+        "nameLength": "Tour name must be between 3 and 100 characters",
+        "descriptionLength": "Description must be between 10 and 2000 characters",
+        "priceMin": "Price must be at least 0.99",
+        "selectPlace": "Please select a place/location"
+      },
+      "errors": {
+        "noPublishedItems": "There are no published items",
+        "galleryUpdateFailed": "Failed to update gallery images.",
+        "deleteFailed": "Failed to delete tour"
+      },
       "city": "City",
       "price": "Price",
       "duration": "Duration (hours)",
@@ -109,6 +173,7 @@
       "deleteError": "Failed to delete tour",
       "confirmDelete": "Are you sure you want to delete this tour?"
     },
+    "currency": "EGP",
     "users": {
       "title": "Manage Users",
       "name": "Name",
@@ -156,25 +221,59 @@
     "settings": "Settings",
     "guidePanel": "Guide Panel",
     "manageTours": "Manage your tours and track performance",
+    "noImage": "No Image",
+    "openFull": "Open full page",
+    "showAll": "Show All",
+    "liveMode": "Live Mode",
+    "liveNone": "No nearby items",
     "myOverview": "My Overview",
     "totalTours": "Total Tours",
     "activeTours": "Active Tours",
     "totalBookings": "Total Bookings",
+    "totalEnrollments": "Total Enrollments",
     "totalEarnings": "Total Earnings (EGP)",
     "totalRating": "Average Rating",
     "bookingsTrend": "Bookings Trend",
+    "enrollmentsTrend": "Enrollments Trend",
     "earningsTrend": "Earnings Trend",
     "tourPerformance": "Tour Performance",
     "recentBookings": "Recent Bookings",
+    "recentEnrollments": "Recent Enrollments",
     "refreshData": "Refresh Data",
     "loadingDashboard": "Loading dashboard...",
     "tours": {
       "title": "My Tours",
-      "add": "Create Tour",
-      "edit": "Edit Tour",
+      "addItem": "Add Item",
+      "addTour": "Create Tour",
+      "edit": "Edit",
+      "editTour": "Edit Tour",
       "addNew": "Add New Tour",
       "name": "Tour Name",
+      "manageAndTrack": "Manage and track all your tours",
+      "addPlace": "Add Place",
+      "states": {
+        "published": "Published",
+        "empty": "Empty",
+        "notPublished": "Not Published"
+      },
+      "errors": {
+        "noPublishedItems": "There are no published items"
+      },
+      "titles": {
+        "noItems": "No items yet",
+        "noPublishedItems": "No published items",
+        "updating": "Updating...",
+        "unpublish": "Unpublish tour",
+        "publish": "Publish tour",
+        "manageWaypoints": "Manage Waypoints",
+        "updateGalleryImages": "Update Gallery Images"
+      },
+      "delete": "Delete",
+      "city": "City",
       "place": "Place/Location",
+      "noPlacesAvailable": "No places available",
+      "categories": "Categories",
+      "languages": "Languages",
       "price": "Price",
       "duration": "Duration (hours)",
       "groupSize": "Max Group Size",
@@ -202,6 +301,13 @@
       "views": "Views",
       "revenue": "Revenue"
     },
+    "places": {
+      "validation": {
+        "missingCountryCity": "Please provide both country and city"
+      },
+      "added": "Place added successfully!",
+      "addFailed": "Failed to add place. Check console for details."
+    },
     "analytics": {
       "title": "Analytics",
       "overview": "Overview",
@@ -209,6 +315,17 @@
       "revenueAnalysis": "Revenue Analysis",
       "tourPerformance": "Tour Performance",
       "ratingTrend": "Rating Trend",
+      "subtitle": "Track your tours performance and growth",
+      "dailyViews": "Daily Views & Enrollments",
+      "monthlyComparison": "Monthly Comparison",
+      "trafficSource": "Traffic Source Distribution",
+      "columns": {
+        "tourName": "Tour Name",
+        "views": "Views",
+        "enrollments": "Enrollments",
+        "conversion": "Conversion",
+        "revenue": "Revenue"
+      },
       "totalViews": "Total Views",
       "conversionRate": "Conversion Rate",
       "averageBookingValue": "Average Booking Value",
@@ -225,6 +342,33 @@
       "joinDate": "Member since",
       "accountStatus": "Status",
       "verificationStatus": "Email Verification"
+    },
+    "tourName": "Tour Name",
+    "guestName": "Guest Name"
+  },
+  "navbar": {
+    "user": "User",
+    "guide": "Guide",
+    "greeting": "Hello, {{name}}!",
+    "login": "Login",
+    "logout": "Logout",
+    "links": {
+      "home": "Home",
+      "tours": "Tours",
+      "destinations": "Destinations",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "contact": {
+      "phone": "+20 123 456 7890",
+      "email": "info@mysticegypttours.com",
+      "support": "24/7 Support"
+    },
+    "dropdown": {
+      "guideDashboard": "Guide Dashboard",
+      "myTours": "My Tours",
+      "profile": "Profile",
+      "saved": "Saved"
     }
   },
   "homepage": {
@@ -456,5 +600,90 @@
         }
       }
     ]
+  },
+  "guide": {
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of your tours and performance",
+      "totalTours": "Total Tours",
+      "publishedTours": "Published Tours",
+      "totalBookings": "Total Bookings",
+      "averageRating": "Average Rating"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Track your tours performance and growth",
+      "totalViews": "Total Views",
+      "conversionRate": "Conversion Rate",
+      "averageBookingValue": "Average Booking Value",
+      "topPerformingTour": "Top Performing Tour",
+      "dailyViews": "Daily Views & Enrollments",
+      "monthlyComparison": "Monthly Comparison",
+      "tourPerformance": "Tour Performance",
+      "trafficSource": "Traffic Source Distribution",
+      "noDataTitle": "No Analytics Data Yet",
+      "noDataMessage": "Start publishing tours and getting enrollments to see analytics here."
+    },
+    "sidebar": {
+      "title": "Guide Panel",
+      "dashboard": "Dashboard",
+      "myTours": "My Tours",
+      "analytics": "Analytics",
+      "logout": "Logout",
+      "confirmLogout": "Confirm Logout",
+      "confirmLogoutMessage": "Are you sure you want to logout?"
+    },
+    "tours": {
+      "title": "Manage Tours",
+      "manageAndTrack": "Manage and track all your tours",
+      "addPlace": "Add Place",
+      "searchPlaceholder": "Search tours...",
+      "name": "Name",
+      "city": "City",
+      "price": "Price",
+      "rating": "Rating",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "currency": "EGP",
+      "states": {
+        "published": "Published",
+        "notPublished": "Not Published",
+        "empty": "Empty"
+      },
+      "titles": {
+        "noItems": "No items yet",
+        "noPublishedItems": "No published items",
+        "updating": "Updating...",
+        "unpublish": "Unpublish tour",
+        "publish": "Publish tour",
+        "manageWaypoints": "Manage Waypoints"
+      },
+      "messages": {
+        "added": "Tour added successfully!",
+        "updated": "Tour updated successfully!",
+        "deleted": "Tour deleted successfully!",
+        "galleryUpdated": "Gallery images updated successfully!"
+      },
+      "errors": {
+        "deleteFailed": "Failed to delete tour",
+        "galleryUpdateFailed": "Failed to update gallery images.",
+        "noPublishedItems": "There is no published items"
+      },
+      "validation": {
+        "nameLength": "Tour name must be between 3 and 100 characters",
+        "descriptionLength": "Description must be between 10 and 2000 characters",
+        "priceMin": "Price must be at least 0.99",
+        "selectPlace": "Please select a place/location"
+      }
+    },
+    "places": {
+      "added": "Place added successfully!",
+      "addFailed": "Failed to add place. Check console for details.",
+      "validation": {
+        "missingCountryCity": "Please provide both country and city"
+      }
+    },
+    "currency": "EGP"
   }
 }

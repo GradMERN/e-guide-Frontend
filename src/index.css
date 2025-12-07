@@ -52,8 +52,8 @@
   .dark {
     /* Dark Theme */
     --primary: #cfaa65;
-    --secondary: #FFD97F;
-    --tertiary: #FFE6A0;
+    --secondary: #ffd97f;
+    --tertiary: #ffe6a0;
 
     --gradient-from: var(--color-primary);
     --gradient-via: var(--color-secondary);
@@ -73,7 +73,6 @@
     --glass-bg: rgba(255, 255, 255, 0.03);
     --glass-bg-hover: rgba(255, 255, 255, 0.06);
     --glass-border: rgba(255, 255, 255, 0.1);
-
 
     --faq-title: #451901;
     --faq-icon: var(--faq-title);
@@ -108,6 +107,14 @@
     transition-property: background-color, border-color, color, fill, stroke;
     transition-timing-function: ease-in;
     transition-duration: 300ms;
+  }
+
+  /* Ensure clickable controls show pointer */
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    cursor: pointer;
   }
 
   body {

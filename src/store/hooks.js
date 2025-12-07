@@ -18,6 +18,15 @@ import {
   selectToursLoading,
   selectToursError,
 } from "./slices/tourSlice";
+import {
+  addToSaved,
+  removeFromSaved,
+  clearSaved,
+  selectSavedTours,
+  selectSavedLoading,
+  selectSavedError,
+  selectIsTourSaved,
+} from "./slices/savedSlice";
 
 // Custom hook for auth
 export const useAuth = () => {
@@ -40,6 +49,16 @@ export const useAuth = () => {
 
     logout: useCallback(() => {
       dispatch(logout());
+      try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      } catch (e) {}
+      // Notify AuthContext and other parts of the app
+      try {
+        window.dispatchEvent(new CustomEvent("auth:logout"));
+      } catch (e) {}
+      // Redirect to login
+      window.location.href = "/login";
     }, [dispatch]),
 
     clearError: useCallback(() => {
@@ -80,6 +99,48 @@ export const useTours = () => {
   };
 };
 
+export const useSaved = () => {
+  const dispatch = useDispatch();
+
+  return {
+    // State
+    savedTours: useSelector(selectSavedTours),
+    savedLoading: useSelector(selectSavedLoading),
+    savedError: useSelector(selectSavedError),
+
+    // Actions
+    addToSaved: useCallback(
+      (tour) => {
+        dispatch(addToSaved(tour));
+      },
+      [dispatch]
+    ),
+
+    removeFromSaved: useCallback(
+      (tourId) => {
+        dispatch(removeFromSaved(tourId));
+      },
+      [dispatch]
+    ),
+
+    clearSaved: useCallback(() => {
+      dispatch(clearSaved());
+    }, [dispatch]),
+
+    clearSavedError: useCallback(() => {
+      dispatch(clearError());
+    }, [dispatch]),
+
+    // Helper method to check if a specific tour is saved
+    isTourSaved: useCallback((tourId) => {
+      const savedTours = useSelector(selectSavedTours);
+      return savedTours.some((tour) => {
+        const existingTourId = tour._id || tour.id;
+        return existingTourId === tourId;
+      });
+    }, []),
+  };
+};
 // Typed hooks for general use
 export const useAppDispatch = () => useDispatch();
 export const useAppSelector = useSelector;

@@ -12,17 +12,16 @@ import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
-import { useAuth } from "../../context/AuthContext";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { login } from "../../apis/Auth/login.api";
+import { login as loginApi } from "../../apis/Auth/login.api";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../../store/slices/authSlice";
+import { useAuth as useReduxAuth } from "../../store/hooks";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
-  const dispatcher = useDispatch();
   const navigate = useNavigate();
-  const { updateUser } = useAuth();
+  const { login } = useReduxAuth();
 
   const [animate, setAnimate] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -153,7 +152,7 @@ export default function LoginPage() {
               onSubmit={async (values, { setSubmitting }) => {
                 try {
                   setSubmitting(true);
-                  const res = await login(values);
+                  const res = await loginApi(values);
                   const token = res.data.data?.token || res.data?.token;
 
                   if (!token) {
@@ -202,18 +201,17 @@ export default function LoginPage() {
                   // console.log("Decoded user from token:", user);
                   // console.log("Token:", token);
 
-                  // Store token and user
-                  localStorage.setItem("token", token);
-                  localStorage.setItem("user", JSON.stringify(res.data.data));
-
-                  // Update auth context
-                  updateUser(res.data.data);
-
-                  dispatcher(loginSuccess(res.data.data));
+                  // Use redux login helper which persists token/user and updates state
+                  login(res.data.data, token);
 
                   // Route based on user role
                   const role = res.data.data?.role?.toLowerCase();
-                  console.log("User role:", res.data.data?.role, "Lowercased:", role);
+                  console.log(
+                    "User role:",
+                    res.data.data?.role,
+                    "Lowercased:",
+                    role
+                  );
                   if (role === "admin") {
                     console.log("Routing to /admin/dashboard");
                     navigate("/admin/dashboard");
@@ -226,7 +224,7 @@ export default function LoginPage() {
                   }
                 } catch (err) {
                   console.error("Login error:", err);
-                  alert(err.response?.data?.message || "Login failed");
+                  toast.error(err.response?.data?.message || "Login failed");
                 } finally {
                   setSubmitting(false);
                 }

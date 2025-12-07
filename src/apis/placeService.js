@@ -1,13 +1,13 @@
-import api from './api';
+import api from "./axiosClient";
 
 export const placeService = {
   // Get all places
   async getAllPlaces() {
     try {
-      const response = await api.get('/places');
+      const response = await api.get("/places");
       return response.data.data || [];
     } catch (error) {
-      console.error('Error fetching places:', error);
+      console.error("Error fetching places:", error);
       return [];
     }
   },
@@ -18,7 +18,7 @@ export const placeService = {
       const response = await api.get(`/places/${id}`);
       return response.data.data;
     } catch (error) {
-      console.error('Error fetching place:', error);
+      console.error("Error fetching place:", error);
       return null;
     }
   },
@@ -26,10 +26,10 @@ export const placeService = {
   // Create a new place (admin only)
   async createPlace(placeData) {
     try {
-      const response = await api.post('/places', placeData);
+      const response = await api.post("/places", placeData);
       return response.data.data;
     } catch (error) {
-      console.error('Error creating place:', error);
+      console.error("Error creating place:", error);
       throw error;
     }
   },
@@ -37,13 +37,15 @@ export const placeService = {
   // Get places by city
   async getPlacesByCity(city) {
     try {
-      const response = await api.get('/places', {
-        params: { city }
+      const response = await api.get("/places", {
+        params: { city },
       });
       return response.data.data || [];
     } catch (error) {
-      console.error('Error fetching places by city:', error);
+      console.error("Error fetching places by city:", error);
       return [];
     }
-  }
+  },
 };
+
+export default placeService;
