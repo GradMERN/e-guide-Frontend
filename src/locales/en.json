@@ -389,7 +389,13 @@
   },
   "tourPackages": {
     "title": "Featured Tour Packages",
-    "description": "Discover curated tour packages designed to help you explore Egypt’s iconic landmarks, hidden gems, and unforgettable cultural experiences with ease and comfort."
+    "description": "Discover curated tour packages designed to help you explore Egypt's iconic landmarks, hidden gems, and unforgettable cultural experiences with ease and comfort.",
+    "loadError": "Unable to Load Tour Packages",
+    "noTours": "No Tour Packages Available",
+    "noToursMessage": "We're currently updating our tour packages. Check back soon for exciting new adventures, or reach out to us for custom tour options!",
+    "contactForCustom": "Contact Us for Custom Tours",
+    "refresh": "Refresh",
+    "viewAll": "View All Packages"
   },
   "reasonsToVisit": {
     "title": "Top Reasons To Visit Egypt",
