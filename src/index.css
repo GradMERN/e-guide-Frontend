@@ -78,18 +78,14 @@
     --faq-icon: var(--faq-title);
     --faq-border: var(--faq-title);
 
-    --button-primary-bg: linear-gradient(
-      to right,
-      var(--gradient-from),
-      var(--gradient-via),
-      var(--gradient-to)
-    );
+    --button-primary-bg: linear-gradient(to right,
+        var(--gradient-from),
+        var(--gradient-via),
+        var(--gradient-to));
     --button-primary-text: #050505;
-    --button-primary-hover-bg: linear-gradient(
-      to right,
-      var(--gradient-from),
-      var(--gradient-to)
-    );
+    --button-primary-hover-bg: linear-gradient(to right,
+        var(--gradient-from),
+        var(--gradient-to));
     --button-primary-hover-text: #050505;
 
     --button-secondary-bg: transparent;
@@ -198,12 +194,10 @@
   }
 
   .dark .button-gradient {
-    background: linear-gradient(
-      to right,
-      var(--gradient-from),
-      var(--gradient-via),
-      var(--gradient-to)
-    );
+    background: linear-gradient(to right,
+        var(--gradient-from),
+        var(--gradient-via),
+        var(--gradient-to));
   }
 
   .text-loop {
@@ -227,6 +221,7 @@
     color: var(--icon-card);
   }
 
+
   .guide-img-active {
     @apply scale-100 group-hover:scale-110;
     @apply grayscale-0 group-hover:grayscale;
@@ -240,7 +235,6 @@
     @apply grayscale scale-110 blur-[2px];
   }
 
-
   .guide-content-card {
     background-color: var(--surface);
   }
@@ -249,67 +243,93 @@
     @apply bg-neutral-800/60;
   }
 
-  .guide-title {
+  .guide-title,
+  .guide-profile-title,
+  .dark .guide-profile-title {
     color: var(--text);
   }
 
-  .dark .guide-title {
+  .dark .guide-title,
+  .dark .guide-profile-icon {
     color: var(--secondary);
   }
-  .guide-quote-word {
+
+  .guide-quote-word,
+  .guide-profile-icon,
+  .guide-profile-icon,
+  .dark .guide-profile-tab,
+  .guide-profile-line,
+  .guide-profile-tab {
     color: var(--primary);
   }
-  .dark .guide-quote-word {
+
+  .dark .guide-quote-word,
+  .guide-profile-subtitle,
+  .guide-profile-tab {
     color: var(--text-secondary);
   }
 
-
- .guide-profile-bg {
-    background: var(--background)
-  }
-  .guide-profile-title{
-        color: var(--text-secondary);
-    color: var(--primary);
-    color: var(--text);
-
+  .guide-profile-bg {
+    background: var(--background);
   }
 
-  .dark .guide-profile-title{
-   color: var(--button-primary-text);
-   @apply text-[#ffff]
+  .dark .guide-profile-icon,
+  .dark .guide-profile-tab,
+  .dark .guide-profile-line {
+    @apply text-[#C7A15C];
   }
 
-    
-  
-  
-  
-  
-  .guide-profile-subtitle{
-        color: var(--text-secondary);
-    color: var(--primary);
-    color: var(--text);
-
+  .guide-profile-tab,
+  .dark .guide-profile-tab {
+    @apply hover:text-[primary];
   }
 
-  .dark .guide-profile-subtitle{
-   @apply text-gray-300 ;
-   
+  .guide-profile-line {
+    border: 1px solid var(--primary);
   }
 
-
-  .guide-profile-icon{
-        color: var(--text);
-     color: var(--text-secondary);
-    color: var(--primary);
-   
-
-  }
-   .dark .guide-profile-icon{
-   @apply text-[#C7A15C]
-
+  .dark .guide-profile-line {
+    border: 1px solid #C7A15C;
   }
 
-  /* background */
+  .guide-content-card {
+    background-color: var(--surface);
+  }
+
+  .dark .guide-profile-subtitle {
+    color: var(--text-muted);
+  }
+
+  .bg-register-form {
+    background-color: var(--surface);
+  }
+
+  .dark .bg-register-form {
+    background-color: var(--background);
+  }
+
+  .input-register-border {
+    border: 1px solid #dcc9a1;
+  }
+
+  .dark .input-register-border {
+    border: 1px solid #2b2b2b;
+  }
+
+  .auth-login-overlay {
+    @apply absolute inset-0 bg-background;
+  }
+
+  .dark .auth-login-overlay {
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505];
+  }
+  .auth-register-overlay {
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-secondary/70 to-[#050505];;
+  }
+
+  .dark .auth-register-overlay {
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505];
+  }
 }
 
 @theme {

@@ -5,19 +5,19 @@ import DestinationsGrid from './../../components/allDestinations/DestinationsGri
 import LoadingScreen from "../../components/common/LoadingScreen";
 
 export default function AllDestinationPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("recommended");
-  const [selectedRegion, setSelectedRegion] = useState("all");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [sortBy, setSortBy] = useState("recommended");
+    const [selectedRegion, setSelectedRegion] = useState("all");
+    
+    const [isLoading, setIsLoading] = useState(true);
 
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    useEffect(() => {
+        setIsLoading(true);
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, []);
 
   // --- Data ---
   const destinations = [
@@ -395,42 +395,42 @@ export default function AllDestinationPage() {
     return result;
   }, [destinations, searchQuery, sortBy, selectedRegion]);
 
-  return (
-    <div className="relative text-text overflow-hidden bg-background w-full">
-      <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden"></div>
+    return (
+        <div className="relative text-text overflow-hidden bg-background w-full">
+            <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden"></div>
 
-      <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
+            <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
 
-        <DestinationsHero />
+                <DestinationsHero />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8 min-w-0">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8 min-w-0">
 
-          <div className="lg:col-span-1 min-w-0">
-            <DestinationsFilter
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              selectedRegion={selectedRegion}
-              setSelectedRegion={setSelectedRegion}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              regions={regions}
-              filteredCount={filteredDestinations.length}
-              totalCount={destinations.length} />
-          </div>
+                    <div className="lg:col-span-1 min-w-0">
+                        <DestinationsFilter
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            selectedRegion={selectedRegion}
+                            setSelectedRegion={setSelectedRegion}
+                            sortBy={sortBy}
+                            setSortBy={setSortBy}
+                            regions={regions}
+                            filteredCount={filteredDestinations.length}
+                            totalCount={destinations.length} />
+                    </div>
 
-          <div className="lg:col-span-3 min-w-0">
-            {isLoading ? (
-              <LoadingScreen />
-            ) : (
-              <DestinationsGrid
-                destinations={filteredDestinations}
-                searchQuery={searchQuery}
-              />
-            )}
-          </div>
+                    <div className="lg:col-span-3 min-w-0">
+                        {isLoading ? (
+                            <LoadingScreen />
+                        ) : (
+                            <DestinationsGrid
+                                destinations={filteredDestinations}
+                                searchQuery={searchQuery} 
+                            />
+                        )}
+                    </div>
 
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
   );
 }

@@ -89,23 +89,10 @@ const InputField = ({
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <Icon
-          className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-            focusedInput === placeholder ? "text-[#f7c95f]" : "text-[#bfb191]"
-          }`}
-        />
-        <input
-          {...field}
-          {...props}
-          type={type}
-          placeholder={placeholder}
-          onFocus={() => setFocusedInput(placeholder)}
-          onBlur={(e) => {
-            field.onBlur(e);
-            setFocusedInput(null);
-          }}
-          className={`w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50 ${extraClass}`}
-        />
+        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
+        <input {...field} {...props} type={type} placeholder={placeholder}
+          onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
+          className={`w-full rounded-xl  input-register-border bg-background py-3 pl-12 pr-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50 ${extraClass}`} />
       </div>
       {meta.touched && meta.error && (
         <p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>
@@ -127,28 +114,11 @@ const PasswordField = ({
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <FaLock
-          className={`absolute left-4 top-1/2 -translate-y-1/2 ${
-            focusedInput === placeholder ? "text-[#f7c95f]" : "text-[#bfb191]"
-          }`}
-        />
-        <input
-          {...field}
-          {...props}
-          type={show ? "text" : "password"}
-          placeholder={placeholder}
-          onFocus={() => setFocusedInput(placeholder)}
-          onBlur={(e) => {
-            field.onBlur(e);
-            setFocusedInput(null);
-          }}
-          className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-12 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50"
-        />
-        <button
-          type="button"
-          onClick={() => setShow(!show)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#f7c95f]"
-        >
+        <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
+        <input {...field} {...props} type={show ? "text" : "password"} placeholder={placeholder}
+          onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
+          className="w-full rounded-xl input-register-border bg-background py-3 pl-12 pr-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50" />
+        <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary">
           {show ? <FaEyeSlash /> : <FaEye />}
         </button>
       </div>
@@ -173,31 +143,18 @@ const DropdownField = ({
 
   return (
     <div className="flex flex-col w-full">
-      <div
-        className="relative flex items-center"
-        onClick={() => setOpen(!open)}
-      >
-        <Icon
-          className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${
-            focusedInput === placeholder ? "text-[#f7c95f]" : "text-[#bfb191]"
-          }`}
-        />
+      <div className="relative flex items-center" onClick={() => setOpen(!open)}>
+        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
 
-        <div
-          className={`w-full rounded-xl border bg-[#0a0a0a] py-3 pl-12 pr-10 text-white cursor-pointer flex items-center transition-all duration-300 ${
-            meta.touched && meta.error
-              ? "border-red-500"
-              : "border-[#2b2b2b] hover:border-[#f7c95f]"
-          }`}
-        >
-          <span className={`truncate ${!field.value && "text-gray-500"}`}>
+        <div className={`w-full rounded-xl  input-register-border bg-background py-3 pl-12 pr-10 text-text cursor-pointer flex items-center transition-all duration-300`}>
+          <span className={`truncate ${!field.value && "text-text-muted"}`}>
             {field.value || `Select ${placeholder}`}
           </span>
-          <span className="ml-auto text-gray-400">▼</span>
+          <span className="ml-auto text-text-muted">▼</span>
         </div>
 
         {open && (
-          <div className="absolute top-full left-0 w-full bg-[#1a1a1a] border border-[#2b2b2b] rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50 scrollbar-none">
+          <div className="absolute top-full left-0 w-full bg-surface  input-register-border rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50 scrollbar-none">
             {options.map((opt) => (
               <div
                 key={opt}
@@ -207,8 +164,7 @@ const DropdownField = ({
                   helpers.setTouched(true);
                   setOpen(false);
                 }}
-                className="px-4 py-2 cursor-pointer text-white hover:bg-[#aa853c] hover:text-black transition"
-              >
+                className="px-4 py-2 cursor-pointer text-text hover:bg-primary hover:text-white transition">
                 {opt}
               </div>
             ))}
@@ -344,49 +300,30 @@ export default function Register() {
   };
 
   return (
-    <section className="relative min-h-screen flex justify-center items-center bg-black overflow-hidden px-4 sm:px-6 lg:px-8 py-25">
+    <section className="relative min-h-screen flex justify-center items-center bg-background overflow-hidden px-4 sm:px-6 lg:px-8 py-25">
+
       <div className="absolute inset-0">
-        <img
-          src="src/assets/images/loginBg.webp"
-          className="h-full w-full object-cover opacity-30"
-          alt="bg-register"
-        />
-        <div className="absolute inset-0 bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505]" />
+        <img src="src/assets/images/loginBg.webp" className="h-full w-full object-cover opacity-30" alt="bg-register" />
+        <div className="absolute inset-0 auth-register-overlay" />
       </div>
 
-      <div
-        className={`relative w-full max-w-md sm:max-w-lg lg:max-w-xl px-6 sm:px-8 md:px-10 lg:px-12 py-8 sm:py-10 md:py-12 rounded-2xl border border-[#f7c95f]/20 bg-[#0c0c0c] backdrop-blur-xl shadow-[0_0_50px_-10px_rgba(247,201,95,0.2)] overflow-hidden transition-all duration-1000 ease-out ${
-          animate ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"
-        }`}
-      >
-        <div className="absolute top-0 h-1 w-full bg-linear-to-r from-transparent via-[#f7c95f] to-transparent opacity-50" />
+      <div className={`relative w-full max-w-md sm:max-w-lg lg:max-w-xl px-6 sm:px-8 md:px-10 lg:px-12 py-8 sm:py-10 md:py-12 rounded-2xl border border-border bg-register-form backdrop-blur-xl shadow-[0_0_50px_-10px_rgba(247,201,95,0.2)] overflow-hidden transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
+        <div className="absolute top-0 h-1 w-full bg-linear-to-r from-transparent via-primary to-transparent opacity-50" />
 
         <div className="flex flex-col items-center mb-8 sm:mb-10">
-          <div className="mb-4 rounded-full border border-[#f7c95f]/40 bg-linear-to-br from-[#1a1a1a] to-[#0a0a0a] p-4 shadow-[0_0_20px_rgba(247,201,95,0.15)]">
-            <GiEgyptianProfile className="h-8 w-8 sm:h-12 sm:w-12 text-[#f7c95f]" />
+          <div className="mb-4 rounded-full border border-primary/40 bg-background p-4 shadow-[0_0_20px_rgba(247,201,95,0.15)]">
+            <GiEgyptianProfile className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
           </div>
-          <h2 className="bg-linear-to-r from-[#f7c95f] via-[#e9dcc0] to-[#f7c95f] bg-clip-text text-transparent text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center font-extrabold tracking-wide">
+          <h2 className="text-gradient-title bg-clip-text text-transparent text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center font-extrabold tracking-wide">
             Create Your Account
           </h2>
         </div>
 
         <div className="relative flex items-center justify-between mb-8">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-600 -z-10 rounded"></div>
-          <div
-            className="absolute top-1/2 left-0 h-0.5 bg-[#f7c95f] -z-10 rounded transition-all duration-500"
-            style={{ width: step === 1 ? "30%" : step === 2 ? "60%" : "100%" }}
-          ></div>
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-text-muted/30 -z-10 rounded"></div>
+          <div className="absolute top-1/2 left-0 h-0.5 bg-primary-z-10 rounded transition-all duration-500" style={{ width: step === 1 ? "30%" : step === 2 ? "60%" : "100%" }}></div>
           {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={`w-4 h-4 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${
-                step >= s
-                  ? "bg-[#f7c95f] text-black scale-110 shadow-lg"
-                  : "bg-gray-600 text-white"
-              }`}
-            >
-              {s}
-            </div>
+            <div key={s} className={`w-4 h-4 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${step >= s ? "bg-primary text-button-text scale-110 shadow-lg" : "bg-surface border border-text-muted text-text-muted"}`}>{s}</div>
           ))}
         </div>
 
@@ -441,10 +378,7 @@ export default function Register() {
                       setFocusedInput={setFocusedInput}
                     />
                   </div>
-                  <button
-                    type="submit"
-                    className="w-full py-3 mt-2 bg-linear-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer"
-                  >
+                  <button type="submit" className="w-full py-3 mt-2 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">
                     Next
                   </button>
                 </>
@@ -471,19 +405,8 @@ export default function Register() {
                     />
                   </div>
                   <div className="flex gap-4 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-1/2 py-3 bg-linear-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer"
-                    >
-                      Next
-                    </button>
+                    <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer">Back</button>
+                    <button type="submit" className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Next</button>
                   </div>
                 </>
               )}
@@ -525,13 +448,7 @@ export default function Register() {
                   />
 
                   <div className="flex gap-4 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setStep(2)}
-                      className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer"
-                    >
-                      Back
-                    </button>
+                    <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Back</button>
                     <button
                       type="submit"
                       disabled={isSubmitting || !isValid}
@@ -551,12 +468,9 @@ export default function Register() {
           )}
         </Formik>
 
-        <p className="text-gray-400 text-sm mt-4 text-center">
+        <p className="text-text-muted text-sm mt-4 text-center">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-[#f7c95f] font-semibold hover:underline"
-          >
+          <Link to="/login" className="text-primary font-semibold hover:underline">
             Login
           </Link>
         </p>

@@ -6,8 +6,8 @@ import guide1 from '../../assets/images/guide1.avif';
 import guide2 from '../../assets/images/guide2.avif';
 import guide3 from '../../assets/images/guide3.avif';
 import TourCard from "../tours/TourCard";
-import TourGuideLoadingScreen from "../common/LoadingScreen";
 import TourGuideNotFoundScreen from "./TourGuideNotFoundScreen";
+import LoadingScreen from "../common/LoadingScreen";
 
 
 const GUIDES_DATA = {
@@ -79,17 +79,17 @@ const GUIDES_DATA = {
 
 
 const StatBadge = ({ icon, text, sub }) => (
-    <div className="flex items-center gap-1.5 bg-neutral-800 px-2.5 py-1.5 rounded-full border border-white/10 shrink-0 max-w-full">
-        <span className="text-[#C7A15C] shrink-0">{icon}</span>
-        <span className="text-[10px] sm:text-xs font-medium text-gray-200 truncate">{text}</span>
+    <div className="flex items-center gap-1.5 guide-profile-icon bg-glass-bg px-2.5 py-1.5 rounded-full border border-glass-border shrink-0 max-w-full">
+        <span className="shrink-0">{icon}</span>
+        <span className="text-[10px] sm:text-xs font-medium truncate">{text}</span>
         {sub && <span className="text-[10px] text-gray-500 hidden sm:inline">{sub}</span>}
     </div>
 );
 
 const TabButton = ({ active, onClick, label }) => (
-    <button onClick={onClick} className={`flex-1 min-w-[100px] pb-4 pt-2 text-sm font-bold transition-colors relative text-center whitespace-nowrap ${active ? "text-[#C7A15C]" : "text-gray-500 hover:text-white"}`}>
+    <button onClick={onClick} className={`flex-1 min-w-[100px] pb-4 pt-2 text-sm font-bold transition-colors relative text-center whitespace-nowrap ${active ? "guide-profile-tab" : "text-gray-500 hover:text-gray-300"}`}>
         {label}
-        {active && <motion.div layoutId="tabLine" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C7A15C]" />}
+        {active && <motion.div layoutId="tabLine" className="absolute bottom-0 left-0 right-0  guide-profile-line" />}
     </button>
 );
 
@@ -108,7 +108,7 @@ export default function TourGuideProfile() {
         }, 1000);
     }, [name]);
 
-    if (loading) return <TourGuideLoadingScreen />;
+    if (loading) return <LoadingScreen />;
     if (!guide) return <TourGuideNotFoundScreen navigate={navigate} />;
 
     return (
@@ -150,8 +150,8 @@ export default function TourGuideProfile() {
 
 
                 <div className="sticky top-0 z-40 backdrop-blur-xl border-b border-white/5  pt-2 mb-8">
-                    <div className="flex w-full overflow-x-auto no-scrollbar gap-2 sm:gap-0">
-                        <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" />
+                    <div className="flex w-full overflow-x-auto no-scrollbar gap-2 sm:gap-0 ">
+                        <TabButton className="" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" />
                         <TabButton active={activeTab === "reviews"} onClick={() => setActiveTab("reviews")} label={`Reviews (${guide.reviews})`} />
                     </div>
                 </div>
@@ -159,7 +159,7 @@ export default function TourGuideProfile() {
 
                 <AnimatePresence mode="wait">
                     {activeTab === "overview" && (
-                        <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-12">
+                        <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-12 ">
 
                             <section>
                                 <h3 className="text-lg md:text-2xl font-bold guide-profile-title mb-3 flex items-center gap-2 ">
@@ -203,7 +203,7 @@ export default function TourGuideProfile() {
 
                     {activeTab === "reviews" && (
                         <motion.div key="reviews" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6 max-w-3xl mx-auto">
-                            <div className="flex flex-col items-center justify-center gap-2 bg-white/5 p-6 rounded-3xl border border-white/5 mb-8 text-center">
+                            <div className="flex flex-col items-center justify-center gap-2  bg-glass-bg p-6 rounded-3xl border border-glass-border mb-8 text-center">
                                 <div className="text-5xl font-bold text-[#C7A15C]">{guide.rating}</div>
                                 <div>
                                     <div className="flex justify-center text-[#C7A15C] mb-2">{[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}</div>
@@ -212,12 +212,12 @@ export default function TourGuideProfile() {
                             </div>
 
                             {guide.reviewsList?.length > 0 ? guide.reviewsList.map((r, i) => (
-                                <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/5">
+                                <div key={i} className="guide-content-card p-5 rounded-2xl  border ">
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="font-bold text-white text-sm">{r.user}</span>
+                                        <span className="font-bold guide-profile-title  text-sm">{r.user}</span>
                                         <div className="flex text-[#C7A15C]"><Star size={12} fill="currentColor" /></div>
                                     </div>
-                                    <p className="text-gray-300 text-xs sm:text-sm italic wrap-break-word">"{r.comment}"</p>
+                                    <p className="guide-profile-subtitle text-xs sm:text-sm italic wrap-break-word">"{r.comment}"</p>
                                 </div>
                             )) : (
                                 <div className="text-gray-500 italic py-10 text-center border border-dashed border-white/10 rounded-2xl text-sm">
