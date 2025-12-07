@@ -6,6 +6,7 @@ import {
   FaSun, FaTshirt, FaMoneyBillWave, FaPassport
 } from "react-icons/fa";
 import { GiAncientRuins, GiCommercialAirplane } from "react-icons/gi";
+import LoadingScreen from "../common/LoadingScreen";
 
 // --- FULL DATA: 25 Destinations ---
 const destinationsData = [
@@ -297,8 +298,7 @@ export default function DestinationDetail() {
     setDestination(found || destinationsData[0]);
   }, [id]);
 
-  if (!destination) return <div className="text-white text-center pt-32">Loading...</div>;
-
+if (!destination) return <LoadingScreen/>;
   const attractions = destination.highlights.map(h => ({ name: h, type: "Must See" }));
 
 
@@ -306,40 +306,39 @@ export default function DestinationDetail() {
 
   return (
     <div
-      className="relative text-white min-h-screen w-full overflow-x-hidden bg-black"
-      style={{ background: "linear-gradient(#000000 100%)" }}>
+      className="relative text-text min-h-screen w-full overflow-x-hidden bg-background">
       <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl" style={{ backgroundColor: "rgba(255, 230, 160, 0.1)" }}></div>
-        <div className="absolute top-40 right-20 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: "rgba(255, 214, 112, 0.1)" }}></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 rounded-full blur-3xl" style={{ backgroundColor: "rgba(255, 201, 64, 0.1)" }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl bg-primary/20"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 rounded-full blur-3xl bg-secondary/20"></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 rounded-full blur-3xl bg-primary/20"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 w-full">
 
 
         <button onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-white/60 hover:text-[#c7a15c] transition-colors mb-6 text-sm sm:text-base cursor-pointer">
+          className="flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-6 text-sm sm:text-base cursor-pointer">
           <FaArrowLeft /> Back to Destinations
         </button>
 
         {/* Hero Section */}
-        <div className="relative w-full h-[350px] md:h-[500px] rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl">
+        <div className="relative w-full h-[350px] md:h-[500px] rounded-3xl overflow-hidden mb-12 border border-border shadow-2xl">
           <img src={destination.image} alt={destination.name} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-background/20 via-background/15 " />
 
           <div className="absolute bottom-0 left-0 p-6 md:p-8 w-full">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c7a15c]/20 border border-[#c7a15c]/50 backdrop-blur-md mb-4">
-              <FaMapMarkerAlt className="text-[#c7a15c] text-xs" />
-              <span className="text-[#c7a15c] text-xs font-bold uppercase tracking-wider">{destination.region}</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-primary/50 backdrop-blur-md mb-4">
+              <FaMapMarkerAlt className="text-primary text-xs" />
+              <span className="text-primary text-xs font-bold uppercase tracking-wider">{destination.region}</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-2 wrap-break-word leading-tight">{destination.name}</h1>
-            <p className="text-white/80 text-sm md:text-lg mb-4 max-w-2xl line-clamp-2 md:line-clamp-none">{destination.tagline}</p>
+            <p className="text-surface text-sm md:text-lg mb-4 max-w-2xl line-clamp-2 md:line-clamp-none">{destination.tagline}</p>
 
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/70">
-              <span className="flex items-center gap-2"><FaStar className="text-yellow-400" /> {destination.rating}</span>
-              <span className="flex items-center gap-2"><FaTemperatureHigh className="text-white/50" /> Oct - Apr</span>
-              <span className="flex items-center gap-2"><FaClock className="text-white/50" /> 3-4 Days</span>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-text-muted bg-surface w-fit p-1 rounded-2xl">
+              <span className="flex items-center gap-2"><FaStar className="text-text-muted" /> {destination.rating}</span>
+              <span className="flex items-center gap-2"><FaTemperatureHigh className="text-text-muted/" /> Oct - Apr</span>
+              <span className="flex items-center gap-2"><FaClock className="text-text-muted" /> 3-4 Days</span>
             </div>
           </div>
         </div>
@@ -351,29 +350,29 @@ export default function DestinationDetail() {
           <div className="lg:col-span-2 space-y-8 min-w-0">
 
 
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+            <div className="bg-surface/50 border border-border rounded-2xl p-6 md:p-8 backdrop-blur-sm">
               <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Overview</h2>
-              <p className="text-white/70 leading-relaxed text-sm md:text-lg wrap-break-word">{destination.description}</p>
+              <p className="text-text-muted leading-relaxed text-sm md:text-lg wrap-break-word">{destination.description}</p>
             </div>
 
 
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+            <div className="bg-surface/50 border border-border rounded-2xl p-6 md:p-8 backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-[#c7a15c]/20 rounded-xl shrink-0"><GiAncientRuins className="text-2xl text-[#c7a15c]" /></div>
+                <div className="p-3 bg-primary/20 rounded-xl shrink-0"><GiAncientRuins className="text-2xl text-primary" /></div>
                 <div className="min-w-0">
-                  <h2 className="text-lg md:text-xl font-bold text-white truncate">Top Attractions</h2>
-                  <p className="text-white/50 text-xs md:text-sm truncate">Must-visit spots in {destination.name}</p>
+                  <h2 className="text-lg md:text-xl font-bold text-text truncate">Top Attractions</h2>
+                  <p className="text-text-muted text-xs md:text-sm truncate">Must-visit spots in {destination.name}</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {attractions.map((spot, idx) => (
-                  <div key={idx} className="flex items-center gap-4 p-4 bg-black/20 rounded-xl border border-white/5 hover:border-[#c7a15c]/50 transition-colors group cursor-pointer">
-                    <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                      <FaCamera className="text-white/70 group-hover:text-[#c7a15c]" />
+                  <div key={idx} className="flex items-center gap-4 p-4 bg-background rounded-xl border border-border hover:border-primary transition-colors group cursor-pointer">
+                    <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                      <FaCamera className="text-text-muted group-hover:text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-white font-bold truncate">{spot.name}</h4>
-                      <p className="text-white/40 text-xs truncate">{spot.type}</p>
+                      <h4 className="text-text font-bold truncate">{spot.name}</h4>
+                      <p className="text-text-muted text-xs truncate">{spot.type}</p>
                     </div>
                   </div>
                 ))}
@@ -381,31 +380,31 @@ export default function DestinationDetail() {
             </div>
 
 
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-6">Experience Highlights</h2>
+            <div className="bg-surface/50 border border-border rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+              <h2 className="text-xl md:text-2xl font-bold text-text mb-6">Experience Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                 {destination.highlights.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <div className="mt-1 min-w-5 shrink-0"><FaCheck className="text-[#c7a15c] text-sm" /></div>
-                    <span className="text-white/80 text-sm leading-relaxed wrap-break-word">{item}</span>
+                    <div className="mt-1 min-w-5 shrink-0"><FaCheck className="text-primary text-sm" /></div>
+                    <span className="text-text-muted text-sm leading-relaxed wrap-break-word">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
 
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-6">Travel Essentials</h2>
+            <div className="bg-surface/50 border border-border rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+              <h2 className="text-xl md:text-2xl font-bold text-text mb-6">Travel Essentials</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
 
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-[#c7a15c]">
+                  <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 text-primary border border-border">
                     <FaSun />
                   </div>
                   <div>
-                    <h4 className="font-bold text-white text-sm">Weather</h4>
-                    <p className="text-white/60 text-xs mt-1">
+                    <h4 className="font-bold text-text text-sm">Weather</h4>
+                    <p className="text-text-muted text-xs mt-1">
                       Sunny & dry year-round. Highs of 35°C in summer, pleasant 20°C in winter.
                     </p>
                   </div>
@@ -413,12 +412,12 @@ export default function DestinationDetail() {
 
 
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-[#c7a15c]">
+                  <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 text-primary border border-border">
                     <FaTshirt />
                   </div>
                   <div>
-                    <h4 className="font-bold text-white text-sm">What to Wear</h4>
-                    <p className="text-white/60 text-xs mt-1">
+                    <h4 className="font-bold text-text text-sm">What to Wear</h4>
+                    <p className="text-text-muted text-xs mt-1">
                       {isBeach
                         ? "Light beachwear allowed at resorts. Modest dress recommended when visiting towns."
                         : "Conservative dress recommended. Cover shoulders and knees when visiting cultural sites."}
@@ -428,12 +427,12 @@ export default function DestinationDetail() {
 
 
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-[#c7a15c]">
+                  <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 text-primary border border-border">
                     <FaMoneyBillWave />
                   </div>
                   <div>
-                    <h4 className="font-bold text-white text-sm">Currency</h4>
-                    <p className="text-white/60 text-xs mt-1">
+                    <h4 className="font-bold text-text text-sm">Currency</h4>
+                    <p className="text-text-muted text-xs mt-1">
                       Egyptian Pound (EGP). Cash is preferred for small shops and tips. Cards accepted at hotels.
                     </p>
                   </div>
@@ -441,12 +440,12 @@ export default function DestinationDetail() {
 
 
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-[#c7a15c]">
+                  <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 text-primary border border-border">
                     <FaPassport />
                   </div>
                   <div>
-                    <h4 className="font-bold text-white text-sm">Visa Info</h4>
-                    <p className="text-white/60 text-xs mt-1">
+                    <h4 className="font-bold text-text text-sm">Visa Info</h4>
+                    <p className="text-text-muted text-xs mt-1">
                       Visa on arrival available for many nationalities (25 USD). E-Visa recommended.
                     </p>
                   </div>
@@ -462,20 +461,20 @@ export default function DestinationDetail() {
             <div className="sticky top-28 space-y-6">
 
 
-              <div className="bg-black/40 border border-[#c7a15c]/30 rounded-2xl p-6 backdrop-blur-md shadow-lg shadow-[#c7a15c]/5">
+              <div className="bg-surface/80 border border-primary/30 rounded-2xl p-6 backdrop-blur-md shadow-lg shadow-primary/5">
                 <div className="mb-6">
-                  <p className="text-white/60 text-sm mb-1">Tours starting from</p>
+                  <p className="text-text-muted text-sm mb-1">Tours starting from</p>
                   <div className="flex items-end gap-2 flex-wrap">
-                    <span className="text-3xl font-bold text-white">{destination.price} EGP</span>
-                    <span className="text-white/40 mb-1">/ person</span>
+                    <span className="text-3xl font-bold text-primary">{destination.price} EGP</span>
+                    <span className="text-text-muted mb-1">/ person</span>
                   </div>
                 </div>
 
                 <div className="space-y-4 mb-6">
-                  <div className="bg-white/5 rounded-xl p-3 border border-white/10">
-                    <label className="text-xs text-white/50 block mb-1">Travel Date</label>
-                    <div className="flex items-center gap-2 text-white">
-                      <FaCalendarAlt className="text-[#c7a15c]" />
+                  <div className="bg-background rounded-xl p-3 border border-border">
+                    <label className="text-xs text-text-muted block mb-1">Travel Date</label>
+                    <div className="flex items-center gap-2 text-text">
+                      <FaCalendarAlt className="text-primary" />
                       <span className="text-sm">Select Dates</span>
                     </div>
                   </div>
@@ -483,19 +482,19 @@ export default function DestinationDetail() {
 
                 <button
                   onClick={() => navigate('/tours')}
-                  className="w-full py-4 bg-[#c7a15c] text-black font-extrabold text-lg rounded-xl transition-all duration-300 transform hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(199,161,92,0.3)] hover:shadow-[0_0_30px_rgba(199,161,92,0.5)] flex items-center justify-center gap-2 cursor-pointer">
+                  className="w-full py-4 btn-primary-hero font-extrabold text-lg rounded-xl transition-all duration-300 transform hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(199,161,92,0.3)] hover:shadow-[0_0_30px_rgba(199,161,92,0.5)] flex items-center justify-center gap-2 cursor-pointer">
                   <GiCommercialAirplane className="text-xl" />
                   Explore Tours
                 </button>
 
-                <p className="text-center text-white/30 text-xs mt-4">Free cancellation up to 24 hours before trip.</p>
+                <p className="text-center text-text-muted text-xs mt-4">Free cancellation up to 24 hours before trip.</p>
               </div>
 
 
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-                <h3 className="text-white font-bold mb-2">Need Help?</h3>
-                <p className="text-white/60 text-sm mb-4">Speak to our expert travel guides to plan your perfect {destination.name} itinerary.</p>
-                <a href="mailto:info@mysticegypttours.com" className="block text-[#c7a15c] text-sm font-bold hover:underline text-center">Contact Support →</a>
+              <div className="bg-surface/50 border border-border rounded-2xl p-6 backdrop-blur-sm">
+                <h3 className="text-text font-bold mb-2">Need Help?</h3>
+                <p className="text-text-muted text-sm mb-4">Speak to our expert travel guides to plan your perfect {destination.name} itinerary.</p>
+                <a href="mailto:info@mysticegypttours.com" className="block text-primary text-sm font-bold hover:underline text-center">Contact Support →</a>
               </div>
 
             </div>

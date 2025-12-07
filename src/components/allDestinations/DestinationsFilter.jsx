@@ -27,7 +27,7 @@ const DestinationsFilter = ({
     ];
 
     return (
-        <div className="sticky top-24 bg-surface rounded-2xl p-6 border border-border shadow-2xl">
+        <div className="sticky top-24 bg-surface rounded-2xl p-6 border border-border shadow-2xl overflow-hidden">
 
             <div className="flex items-center gap-3 mb-6">
                 <FaFilter className="text-xl text-[#c7a15c]" />
