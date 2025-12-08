@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  FaTimes,
-  FaBars,
-  FaPlay,
-  FaPause,
-  FaThLarge,
-  FaList,
-  FaSpinner,
-} from "react-icons/fa";
+import { FaTimes, FaBars, FaThLarge, FaList, FaSpinner } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { guideService } from "../../apis/guideService";
 import { tourItemService } from "../../apis/tourItemService";
@@ -25,18 +17,26 @@ const TourPreview = ({ tourId, onClose }) => {
   const [tour, setTour] = useState(null);
   const [items, setItems] = useState([]);
   const [nearbyItems, setNearbyItems] = useState([]);
+  const itemsRef = useRef(items);
+
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
   const [tab, setTab] = useState("all");
   const [selectedItem, setSelectedItem] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : false
+  );
   const [displayMode, setDisplayMode] = useState("card");
   const [initialLoading, setInitialLoading] = useState(true);
   const [nearbyLoading, setNearbyLoading] = useState(false);
 
-  // audio handled by useAudioPlayer hook (see below)
-  const playTimeoutRef = null;
+  // audio handled by useAudioPlayer hook
+  const playTimeoutRef = useRef(null);
   const [enrollments, setEnrollments] = useState([]);
 
-  const currentEnrollment = React.useMemo(() => {
+  const currentEnrollment = useMemo(() => {
     if (!enrollments || !tour) return null;
     return (
       enrollments.find((e) => {
@@ -68,10 +68,9 @@ const TourPreview = ({ tourId, onClose }) => {
         const list = its || [];
         setItems(list);
         setSelectedItem((prev) => prev || list[0] || null);
-        // fetch user enrollments to allow review/posting permissions and expiry handling
+        // fetch user enrollments
         try {
           const enr = await enrollmentApi.getUserEnrollments();
-          // the api returns response object; normalize
           const data = enr?.data?.data || enr?.data || enr || [];
           if (mounted) setEnrollments(Array.isArray(data) ? data : []);
         } catch (e) {
@@ -119,6 +118,7 @@ const TourPreview = ({ tourId, onClose }) => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
+
         const found = (itemsSource || [])
           .map((it) => {
             const lat =
@@ -130,21 +130,18 @@ const TourPreview = ({ tourId, onClose }) => {
               it.location?.lng ||
               it.location?.longitude;
             if (!lat || !lng) return null;
-            // compute raw distance (meters)
             const rawDist = distanceMeters(latitude, longitude, lat, lng);
-            // adjust displayed distance to account for GPS inaccuracy:
-            // when raw distance > 4m, subtract 3m for display purposes
             const displayDist =
               rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
-            // keep raw distance in a separate field to use for filtering/sorting
             return { ...it, distance: displayDist, _rawDistance: rawDist };
           })
           .filter(Boolean)
-          // use the raw distance for filtering/sorting so adjustment only affects display
           .filter((it) => it._rawDistance <= 25)
           .sort((a, b) => a._rawDistance - b._rawDistance);
+
         if (isLiveTab) setNearbyItems(found);
-        // Also update all items with distances
+
+        // Also update all items with distances, then conditionally set state
         const allWithDistances = (itemsSource || []).map((it) => {
           const lat =
             it.location?.coordinates?.[1] ||
@@ -154,12 +151,35 @@ const TourPreview = ({ tourId, onClose }) => {
             it.location?.coordinates?.[0] ||
             it.location?.lng ||
             it.location?.longitude;
-          if (!lat || !lng) return it; // keep as is if no location
+          if (!lat || !lng) return it;
           const rawDist = distanceMeters(latitude, longitude, lat, lng);
           const displayDist = rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
           return { ...it, distance: displayDist, _rawDistance: rawDist };
         });
-        setItems(allWithDistances);
+
+        allWithDistances.sort((a, b) => {
+          const aD =
+            a && a._rawDistance !== undefined ? a._rawDistance : Infinity;
+          const bD =
+            b && b._rawDistance !== undefined ? b._rawDistance : Infinity;
+          return aD - bD;
+        });
+
+        try {
+          const prevMap = new Map(
+            (itemsRef.current || []).map((it) => [
+              it._id || it.id,
+              it._rawDistance,
+            ])
+          );
+          const needUpdate = allWithDistances.some(
+            (it) => prevMap.get(it._id || it.id) !== it._rawDistance
+          );
+          if (needUpdate) setItems(allWithDistances);
+        } catch (e) {
+          setItems(allWithDistances);
+        }
+
         if (showLoading) setNearbyLoading(false);
       },
       () => {
@@ -171,20 +191,18 @@ const TourPreview = ({ tourId, onClose }) => {
   };
 
   useEffect(() => {
-    updateNearby(items, tab === "live", tab === "live");
-    const id = setInterval(
-      () => updateNearby(items, false, tab === "live"),
-      10000
-    );
+    const run = () =>
+      updateNearby(itemsRef.current, tab === "live", tab === "live");
+    run();
+    const id = setInterval(() => run(), 10000);
     return () => clearInterval(id);
-  }, [tab, items]);
+  }, [tab]);
 
   useEffect(() => {
     // No-op: audio hook handles src changes/reset
     return () => {};
   }, [selectedItem]);
 
-  // use reusable audio hook to manage playback and progress
   const audioSrc =
     selectedItem?.audioUrl ||
     selectedItem?.audio?.url ||
@@ -479,7 +497,7 @@ const TourPreview = ({ tourId, onClose }) => {
                               />
                             ) : (
                               <div
-                                className={`${
+                                className={` ${
                                   isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
                                 } w-full h-full flex items-center justify-center`}
                               >
@@ -564,168 +582,6 @@ const TourPreview = ({ tourId, onClose }) => {
                             </div>
                           ) : null}
                           <div className="text-sm opacity-75 mt-1 truncate">
-                            {(
-                              it.shortDescription ||
-                              it.description ||
-                              ""
-                            ).slice(0, 80)}
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Sidebar Overlay */}
-        <div
-          className={`fixed inset-0 z-60 lg:hidden transition-opacity duration-300 ${
-            sidebarOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
-          }`}
-        >
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setSidebarOpen(false)}
-          />
-          <div
-            className={`${
-              isDarkMode ? "bg-[#1B1A17]" : "bg-white"
-            } absolute top-0 end-0 h-full w-80 max-w-[85vw] shadow-2xl transform transition-transform duration-300 ${
-              sidebarOpen
-                ? "translate-x-0"
-                : isRtl
-                ? "-translate-x-full"
-                : "translate-x-full"
-            }`}
-          >
-            <div
-              className={`flex items-center justify-between p-4 border-b ${
-                isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200"
-              }`}
-            >
-              <h2
-                className={`${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                } text-xl font-bold`}
-              >
-                {safeT("guide.navigation", "Navigation")}
-              </h2>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className={`p-2 rounded-lg transition-colors duration-200 ${
-                  isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100"
-                }`}
-              >
-                <FaTimes
-                  className={`${
-                    isDarkMode ? "text-gray-400" : "text-gray-600"
-                  } w-5 h-5`}
-                />
-              </button>
-            </div>
-            <div className="p-4 border-b">
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setTab("all")}
-                  className={`flex-1 py-3 px-4 rounded-xl font-medium ${
-                    tab === "all"
-                      ? "bg-[#D5B36A] text-white"
-                      : isDarkMode
-                      ? "bg-[#2c1b0f] text-gray-300"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {safeT("guide.showAll", "All Items")}
-                </button>
-                <button
-                  onClick={() => setTab("live")}
-                  className={`flex-1 py-3 px-4 rounded-xl font-medium ${
-                    tab === "live"
-                      ? "bg-[#D5B36A] text-white"
-                      : isDarkMode
-                      ? "bg-[#2c1b0f] text-gray-300"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {safeT("guide.liveMode", "Nearby")}
-                </button>
-              </div>
-            </div>
-            <div className="flex-1 overflow-y-auto p-2">
-              {nearbyLoading ? (
-                <div className="p-6 text-center">
-                  <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
-                  <p className="mt-2 text-gray-400">
-                    {safeT("guide.findingNearby", "Finding nearby items...")}
-                  </p>
-                </div>
-              ) : currentItems.length === 0 ? (
-                <div className="p-6 text-center text-gray-400">
-                  {tab === "live"
-                    ? safeT("guide.liveNone", "No nearby items found")
-                    : safeT("guide.noItems", "No items available")}
-                </div>
-              ) : (
-                <div className="space-y-1 p-1">
-                  {currentItems.map((it, index) => {
-                    const isSel =
-                      selectedItem &&
-                      (selectedItem._id || selectedItem.id) ===
-                        (it._id || it.id);
-                    const img = it.mainImage?.url || it.image || it.cover || "";
-                    return (
-                      <button
-                        key={it._id || it.id}
-                        onClick={() => {
-                          setSelectedItem(it);
-                          setSidebarOpen(false);
-                        }}
-                        className={`w-full text-left rounded-xl overflow-hidden transition-all ${
-                          isSel ? "ring-2 ring-[#D5B36A]" : "hover:scale-[1.01]"
-                        } ${isDarkMode ? "bg-[#15120f]" : "bg-white"}`}
-                      >
-                        <div className="relative w-full h-36 bg-gray-100">
-                          {img ? (
-                            <img
-                              src={img}
-                              alt={it.title || it.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div
-                              className={`${
-                                isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                              } w-full h-full flex items-center justify-center`}
-                            >
-                              <span
-                                className={`${
-                                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                              >
-                                No Image
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          className={`p-3 ${
-                            isDarkMode ? "text-white" : "text-gray-900"
-                          }`}
-                        >
-                          <div className="font-semibold truncate">
-                            {it.title || it.name}
-                          </div>
-                          {it.distance ? (
-                            <div className="text-sm opacity-70 mt-1">
-                              {formatDistance(it.distance)}
-                            </div>
-                          ) : null}
-                          <div className="text-sm opacity-80 mt-1">
                             {(
                               it.shortDescription ||
                               it.description ||

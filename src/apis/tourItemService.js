@@ -13,8 +13,28 @@ export const tourItemService = {
 
   async getTourItems(tourId) {
     try {
-      const res = await api.get(`/tours/${tourId}/items`);
-      return res.data.data || [];
+      // add a short cache-buster to avoid browser returning 304 (empty body)
+      // which caused the frontend to receive no data despite the backend
+      // reporting items. This forces a fresh response during development.
+      const res = await api.get(`/tours/${tourId}/items`, {
+        params: { cb: Date.now() },
+        // ask intermediaries and browser to revalidate instead of returning stale 304
+        headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+        // accept 304 so we can explicitly handle it rather than throwing
+        validateStatus: (status) => status === 200 || status === 304,
+      });
+
+      // If we got 304 (Not Modified) some environments may not include a body.
+      // Retry once with a stronger cache-buster to force a full response.
+      if (res.status === 304) {
+        const retry = await api.get(`/tours/${tourId}/items`, {
+          params: { cb: Date.now(), force: true },
+          headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+        });
+        return retry?.data?.data || [];
+      }
+
+      return res?.data?.data || [];
     } catch (err) {
       console.error("Error getting tour items", err);
       throw err;

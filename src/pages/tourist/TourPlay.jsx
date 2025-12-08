@@ -49,10 +49,18 @@ export default function TourPlay() {
 
   const [tour, setTour] = useState(null);
   const [items, setItems] = useState([]);
+  const itemsRef = React.useRef(items);
+
+  // keep a ref in sync to avoid putting `items` into effect deps
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
   const [nearbyItems, setNearbyItems] = useState([]);
   const [tab, setTab] = useState("all");
   const [displayMode, setDisplayMode] = useState("card");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : false
+  );
   const [selectedItem, setSelectedItem] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const [enrollments, setEnrollments] = useState([]);
@@ -185,7 +193,29 @@ export default function TourPlay() {
           const displayDist = rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
           return { ...it, distance: displayDist, _rawDistance: rawDist };
         });
-        setItems(allWithDistances);
+        // Sort items with known distances first (nearest -> farthest), keep items without location at the end
+        allWithDistances.sort((a, b) => {
+          const aD =
+            a && a._rawDistance !== undefined ? a._rawDistance : Infinity;
+          const bD =
+            b && b._rawDistance !== undefined ? b._rawDistance : Infinity;
+          return aD - bD;
+        });
+        // Only update items if distances actually changed to avoid re-render loops
+        try {
+          const prevMap = new Map(
+            (itemsRef.current || []).map((it) => [
+              it._id || it.id,
+              it._rawDistance,
+            ])
+          );
+          const needUpdate = allWithDistances.some(
+            (it) => prevMap.get(it._id || it.id) !== it._rawDistance
+          );
+          if (needUpdate) setItems(allWithDistances);
+        } catch (e) {
+          setItems(allWithDistances);
+        }
         if (showLoading) setNearbyLoading(false);
       },
       () => {
@@ -197,13 +227,14 @@ export default function TourPlay() {
   };
 
   useEffect(() => {
-    updateNearby(items, tab === "live", tab === "live");
-    const id = setInterval(
-      () => updateNearby(items, false, tab === "live"),
-      10000
-    );
+    // read from ref to avoid re-running when `items` is updated by updateNearby
+    const run = () =>
+      updateNearby(itemsRef.current, tab === "live", tab === "live");
+    run();
+    const id = setInterval(() => run(), 10000);
     return () => clearInterval(id);
-  }, [tab, items]);
+    // intentionally only depends on `tab`
+  }, [tab]);
 
   const currentEnrollment = useMemo(() => {
     if (!enrollments || !tour) return null;
