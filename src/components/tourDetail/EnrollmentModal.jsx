@@ -21,8 +21,14 @@ const EnrollmentModal = ({ tour, isOpen, onClose }) => {
         setError(null);
 
         const enrollRes = await enrollmentApi.enrollTour(tour._id);
+        // backend may return an existing pending enrollment under data.enrollment
+        const existingEnrollment =
+          enrollRes?.data?.data?.enrollment || enrollRes?.data?.enrollment;
         const enrollmentId =
-          enrollRes?.data?.data?.enrollmentId || enrollRes?.data?.enrollmentId;
+          existingEnrollment?._id ||
+          enrollRes?.data?.data?.enrollmentId ||
+          enrollRes?.data?.enrollmentId ||
+          (enrollRes?.data?.data && enrollRes?.data?.data?.enrollment?._id);
         if (!enrollmentId) {
           onClose?.();
           return;

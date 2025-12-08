@@ -104,8 +104,13 @@ const MyTours = () => {
     try {
       setReEnrollingId(tourId);
       const enrollRes = await enrollmentApi.enrollTour(tourId);
+      const existingEnrollment =
+        enrollRes?.data?.data?.enrollment || enrollRes?.data?.enrollment;
       const enrollmentId =
-        enrollRes?.data?.data?.enrollmentId || enrollRes?.data?.enrollmentId;
+        existingEnrollment?._id ||
+        enrollRes?.data?.data?.enrollmentId ||
+        enrollRes?.data?.enrollmentId ||
+        (enrollRes?.data?.data && enrollRes?.data?.data?.enrollment?._id);
       if (!enrollmentId) throw new Error("Could not create enrollment");
 
       const initRes = await paymentApi.initializePayment(enrollmentId);

@@ -9,33 +9,63 @@ export default function useAudioPlayer(src) {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    let mounted = true;
+    let cleanup = null;
 
-    const onTime = () => {
-      if (!isDragging && audio.duration) {
-        setCurrentTime(audio.currentTime || 0);
-        setProgress(((audio.currentTime || 0) / audio.duration) * 100);
-      }
-    };
-    const onLoaded = () => {
-      setDuration(audio.duration || 0);
-    };
-    const onEnded = () => {
-      setIsPlaying(false);
-      setProgress(0);
-      setCurrentTime(0);
+    const attach = () => {
+      const audio = audioRef.current;
+      if (!audio || !mounted) return false;
+
+      const onTime = () => {
+        if (!isDragging && audio.duration) {
+          setCurrentTime(audio.currentTime || 0);
+          setProgress(((audio.currentTime || 0) / audio.duration) * 100);
+        }
+      };
+      const onLoaded = () => {
+        setDuration(audio.duration || 0);
+      };
+      const onEnded = () => {
+        setIsPlaying(false);
+        setProgress(0);
+        setCurrentTime(0);
+      };
+
+      audio.addEventListener("timeupdate", onTime);
+      audio.addEventListener("loadedmetadata", onLoaded);
+      audio.addEventListener("ended", onEnded);
+
+      cleanup = () => {
+        try {
+          audio.removeEventListener("timeupdate", onTime);
+          audio.removeEventListener("loadedmetadata", onLoaded);
+          audio.removeEventListener("ended", onEnded);
+        } catch (e) {}
+      };
+      return true;
     };
 
-    audio.addEventListener("timeupdate", onTime);
-    audio.addEventListener("loadedmetadata", onLoaded);
-    audio.addEventListener("ended", onEnded);
+    // Try to attach immediately; if audio element isn't ready yet, poll for it
+    // for a short period so listeners are attached reliably after navigation/reload.
+    if (!attach()) {
+      const start = Date.now();
+      const interval = setInterval(() => {
+        if (attach()) {
+          clearInterval(interval);
+          return;
+        }
+        if (Date.now() - start > 2000) {
+          clearInterval(interval);
+        }
+      }, 50);
+      cleanup = () => clearInterval(interval);
+    }
 
     return () => {
-      audio.removeEventListener("timeupdate", onTime);
-      audio.removeEventListener("loadedmetadata", onLoaded);
-      audio.removeEventListener("ended", onEnded);
+      mounted = false;
+      if (cleanup) cleanup();
     };
+    // re-run when src or dragging state changes so listeners/readers are fresh
   }, [isDragging, src]);
 
   useEffect(() => {

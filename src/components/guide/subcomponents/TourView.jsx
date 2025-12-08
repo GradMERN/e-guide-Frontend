@@ -183,16 +183,11 @@ const TourView = ({
 
         <audio
           ref={audioRef}
-          src={
-            selectedItem.audioUrl ||
-            selectedItem.audio?.url ||
-            selectedItem.audioFile ||
-            selectedItem.media?.audio ||
-            ""
-          }
+          src={audioSrc}
+          preload="metadata"
+          crossOrigin="anonymous"
         />
       </div>
-      <audio ref={audioRef} src={audioSrc} />
     </div>
   );
 };

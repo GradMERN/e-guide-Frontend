@@ -62,6 +62,11 @@ export default function TourPlay() {
     typeof window !== "undefined" ? window.innerWidth >= 1024 : false
   );
   const [selectedItem, setSelectedItem] = useState(null);
+  const selectedItemRef = React.useRef(selectedItem);
+
+  useEffect(() => {
+    selectedItemRef.current = selectedItem;
+  }, [selectedItem]);
   const [initialLoading, setInitialLoading] = useState(true);
   const [enrollments, setEnrollments] = useState([]);
   const [enrollmentLoading, setEnrollmentLoading] = useState(true);
@@ -107,8 +112,10 @@ export default function TourPlay() {
             String(user._id) === String(tour.guide._id || tour.guide);
           return isAdmin || isOwner;
         });
+        // set items but DO NOT auto-select the first item yet — wait until
+        // distance-based sorting finishes so the first selection reflects
+        // the sorted order.
         setItems(visible);
-        setSelectedItem((prev) => prev || (visible && visible[0]) || null);
         // compute distances immediately so switching to Nearby shows sorted results
         try {
           updateNearby(visible, false, false);
@@ -246,9 +253,18 @@ export default function TourPlay() {
           const needUpdate = allWithDistances.some(
             (it) => prevMap.get(it._id || it.id) !== it._rawDistance
           );
-          if (needUpdate) setItems(allWithDistances);
+          if (needUpdate) {
+            setItems(allWithDistances);
+            // If nothing was selected yet, pick the first item AFTER sorting
+            if (!selectedItemRef.current) {
+              setSelectedItem(allWithDistances[0] || null);
+            }
+          }
         } catch (e) {
           setItems(allWithDistances);
+          if (!selectedItemRef.current) {
+            setSelectedItem(allWithDistances[0] || null);
+          }
         }
         if (showLoading) setNearbyLoading(false);
       },
@@ -328,15 +344,11 @@ export default function TourPlay() {
     return isAdmin || isOwner;
   });
 
-  // Ensure selectedItem is visible; if not, pick first visible or null
+  // Do not change the current `selectedItem` when switching tabs. Only
+  // auto-select the first visible item if nothing is selected yet (initial load).
   useEffect(() => {
-    if (!selectedItem) return;
-    const selectedVisible = displayedItems.find(
-      (d) => (d._id || d.id) === (selectedItem._id || selectedItem.id)
-    );
-    if (!selectedVisible) {
-      setSelectedItem(displayedItems[0] || null);
-    }
+    if (selectedItem) return; // keep user's selection when changing tabs
+    setSelectedItem(displayedItems[0] || null);
     // intentionally depends on displayedItems and selectedItem
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayedItems]);
