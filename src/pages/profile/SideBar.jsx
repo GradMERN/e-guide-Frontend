@@ -1,33 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../store/hooks";
 
 const SideBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user, logout } = useAuth();
-  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const updateScroll = () => {
-      const currentScroll = window.scrollY;
-
-      if (currentScroll < lastScrollY - 10) {
-        setIsNavbarVisible(true);
-      } else if (currentScroll > lastScrollY + 10) {
-        setIsNavbarVisible(false);
-      }
-
-      lastScrollY = currentScroll;
-    };
-
-    window.addEventListener("scroll", updateScroll);
-    return () => window.removeEventListener("scroll", updateScroll);
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -166,13 +146,9 @@ const SideBar = () => {
   ];
 
   return (
-    <div
-      className={`fixed start-0 transition-all duration-500 z-40 ${
-        isNavbarVisible ? "top-28 h-[calc(100vh-7rem)]" : "top-0 h-screen"
-      }`}
-    >
+    <div className="sticky top-0 h-full">
       <aside
-        className="w-20 md:w-60 px-3 py-4 h-full box-border flex flex-col justify-between transition-all duration-300"
+        className="w-20 md:w-60 px-3 py-4 h-screen box-border flex flex-col justify-between transition-all duration-300"
         style={{ backgroundColor: "var(--surface)" }}
       >
         <nav>

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../store/hooks";
 
 const EmailUpdate = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+
   return (
     <div
       className="p-6 rounded-lg shadow-md"
@@ -18,6 +21,7 @@ const EmailUpdate = () => {
             type="email"
             id="email"
             name="email"
+            defaultValue={user?.email || ""}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               borderColor: "var(--border)",

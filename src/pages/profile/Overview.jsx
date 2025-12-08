@@ -1,8 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../store/hooks";
+import { useNavigate } from "react-router-dom";
 
 const UserProfileCard = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <div
       className="p-6 rounded-lg shadow-md flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6"
@@ -11,12 +16,15 @@ const UserProfileCard = () => {
       {/* Profile Info */}
       <div className="flex flex-col sm:flex-row items-center sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto text-center sm:text-left">
         <div className="relative mx-auto md:mx-0">
-          <img
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2"
-            style={{ borderColor: "var(--primary)" }}
-            src="https://images.unsplash.com/photo-1616197151166-93dc9b4528d8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHNxdWFyZXxlbnwwfHwwfHx8MA%3D%3D"
-            alt="Avatar"
-          />
+          <div
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2"
+            style={{
+              borderColor: "var(--primary)",
+              background: "linear-gradient(to right, #C7A15C, #E2C784)",
+            }}
+          >
+            {user?.firstName?.charAt(0) || "U"}
+          </div>
           <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 cursor-pointer hover:bg-gray-600">
             <svg
               className="w-4 h-4"
@@ -42,7 +50,11 @@ const UserProfileCard = () => {
           </div>
         </div>
         <div className="w-full mx-2 sm:w-auto">
-          <h3 className="text-xl font-bold">Ahmed Hassan</h3>
+          <h3 className="text-xl font-bold">
+            {user?.firstName && user?.lastName
+              ? `${user.firstName} ${user.lastName}`
+              : user?.name || "User"}
+          </h3>
           <div
             className="flex items-center justify-center sm:justify-start text-sm mt-1"
             style={{ color: "var(--text-muted)" }}
@@ -67,7 +79,11 @@ const UserProfileCard = () => {
                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
               ></path>
             </svg>
-            <span>Cairo, Egypt</span>
+            <span>
+              {user?.city && user?.country
+                ? `${user.city}, ${user.country}`
+                : user?.address || user?.email || ""}
+            </span>
           </div>
         </div>
       </div>
@@ -76,6 +92,7 @@ const UserProfileCard = () => {
       <div className="flex flex-col items-center w-full lg:w-auto gap-3">
         <button
           type="button"
+          onClick={() => navigate("/profile/info")}
           className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
           style={{
             background: "var(--button-bg)",
@@ -100,6 +117,7 @@ const UserProfileCard = () => {
         </button>
         <button
           type="button"
+          onClick={() => navigate("/profile/security")}
           className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
           style={{
             backgroundColor: "var(--secondary)",
@@ -118,8 +136,6 @@ const UserProfileCard = () => {
               strokeLinejoin="round"
               strokeWidth="2"
               d="M12.3212 10.6852L4 19L6 21M7 16L9 18M20 7.5C20 9.98528 17.9853 12 15.5 12C13.0147 12 11 9.98528 11 7.5C11 5.01472 13.0147 3 15.5 3C17.9853 3 20 5.01472 20 7.5Z"
-
-              //   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
             ></path>
           </svg>
           {t("changePassword")}
@@ -338,11 +354,18 @@ const RecentActivity = () => {
 
 export default function Overview() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   return (
     <div
       className="p-4 sm:p-6 md:p-8  rounded-2xl min-h-screen"
       style={{ backgroundColor: "var(--background)", color: "var(--text)" }}
     >
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">
+          {t("welcome")},{" "}
+          <span className="text-[#C7A15C]">{user?.firstName || "User"}</span>
+        </h1>
+      </div>
       <h2 className="text-2xl sm:text-3xl font-bold mb-6">
         {t("profileOverview")}
       </h2>
