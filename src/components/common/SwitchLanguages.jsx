@@ -21,7 +21,7 @@ const Switch = () => {
   };
 
   return (
-    <StyledWrapper theme={theme} isArabic={isArabic}>
+    <StyledWrapper $theme={theme} $isArabic={isArabic}>
       <label htmlFor="langSwitch" className="switch" aria-label="Toggle Language">
         <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle} />
           <span className={isArabic ? "label-inactive" : "label-active"}>English</span>
