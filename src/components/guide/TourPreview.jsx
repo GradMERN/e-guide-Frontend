@@ -10,7 +10,7 @@ import Review from "./subcomponents/Review";
 import useAudioPlayer from "../../hooks/useAudioPlayer";
 
 const TourPreview = ({ tourId, onClose }) => {
-  const { isDarkMode } = useAuth();
+  const { isDarkMode, user } = useAuth();
   const { t, i18n } = useTranslation();
   const safeT = (k, def) => t(k, { defaultValue: def });
 
@@ -32,7 +32,6 @@ const TourPreview = ({ tourId, onClose }) => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [nearbyLoading, setNearbyLoading] = useState(false);
 
-  // audio handled by useAudioPlayer hook
   const playTimeoutRef = useRef(null);
   const [enrollments, setEnrollments] = useState([]);
 
@@ -59,6 +58,11 @@ const TourPreview = ({ tourId, onClose }) => {
     let mounted = true;
     (async () => {
       try {
+        if (mounted) {
+          setItems([]);
+          setSelectedItem(null);
+          setInitialLoading(true);
+        }
         const res = await guideService.getTour(tourId);
         const payload = res?.data || res || null;
         if (!mounted) return;
@@ -66,16 +70,26 @@ const TourPreview = ({ tourId, onClose }) => {
         const its = await tourItemService.getTourItems(tourId);
         if (!mounted) return;
         const list = its || [];
-        setItems(list);
-        setSelectedItem((prev) => prev || list[0] || null);
-        // fetch user enrollments
+        const visible = (list || []).filter((it) => {
+          if (it?.isPublished) return true;
+          if (!user) return false;
+          const isAdmin = user.role === "admin";
+          const guideId = payload?.guide?._id || payload?.guide;
+          const userId = user._id || user.id;
+          const isOwner =
+            userId && guideId && String(userId) === String(guideId);
+          return isAdmin || isOwner;
+        });
+        setItems(visible);
+        setSelectedItem((prev) => prev || visible[0] || null);
+        try {
+          updateNearby(visible, false, false);
+        } catch (e) {}
         try {
           const enr = await enrollmentApi.getUserEnrollments();
           const data = enr?.data?.data || enr?.data || enr || [];
           if (mounted) setEnrollments(Array.isArray(data) ? data : []);
-        } catch (e) {
-          // ignore enrollment fetch failures
-        }
+        } catch (e) {}
         if (mounted) setInitialLoading(false);
       } catch (err) {
         console.error("Failed to load preview", err);
@@ -83,6 +97,12 @@ const TourPreview = ({ tourId, onClose }) => {
       }
     })();
     return () => (mounted = false);
+  }, [tourId, user]);
+
+  useEffect(() => {
+    setInitialLoading(true);
+    setItems([]);
+    setSelectedItem(null);
   }, [tourId]);
 
   const distanceMeters = (lat1, lon1, lat2, lon2) => {
@@ -118,53 +138,29 @@ const TourPreview = ({ tourId, onClose }) => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-
-        const found = (itemsSource || [])
-          .map((it) => {
-            const lat =
-              it.location?.coordinates?.[1] ||
-              it.location?.lat ||
-              it.location?.latitude;
-            const lng =
-              it.location?.coordinates?.[0] ||
-              it.location?.lng ||
-              it.location?.longitude;
-            if (!lat || !lng) return null;
-            const rawDist = distanceMeters(latitude, longitude, lat, lng);
-            const displayDist =
-              rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
-            return { ...it, distance: displayDist, _rawDistance: rawDist };
-          })
-          .filter(Boolean)
-          .filter((it) => it._rawDistance <= 25)
-          .sort((a, b) => a._rawDistance - b._rawDistance);
-
-        if (isLiveTab) setNearbyItems(found);
-
-        // Also update all items with distances, then conditionally set state
-        const allWithDistances = (itemsSource || []).map((it) => {
+        const mapDist = (it) => {
           const lat =
-            it.location?.coordinates?.[1] ||
-            it.location?.lat ||
+            it.location?.coordinates?.[1] ??
+            it.location?.lat ??
             it.location?.latitude;
           const lng =
-            it.location?.coordinates?.[0] ||
-            it.location?.lng ||
+            it.location?.coordinates?.[0] ??
+            it.location?.lng ??
             it.location?.longitude;
-          if (!lat || !lng) return it;
+          if (lat == null || lng == null) return null;
           const rawDist = distanceMeters(latitude, longitude, lat, lng);
           const displayDist = rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
           return { ...it, distance: displayDist, _rawDistance: rawDist };
-        });
-
-        allWithDistances.sort((a, b) => {
-          const aD =
-            a && a._rawDistance !== undefined ? a._rawDistance : Infinity;
-          const bD =
-            b && b._rawDistance !== undefined ? b._rawDistance : Infinity;
-          return aD - bD;
-        });
-
+        };
+        const allWithDistances = (itemsSource || []).map(mapDist);
+        const found = allWithDistances
+          .filter(Boolean)
+          .filter((it) => it._rawDistance <= 25)
+          .sort(
+            (a, b) =>
+              (a._rawDistance ?? Infinity) - (b._rawDistance ?? Infinity)
+          );
+        if (isLiveTab) setNearbyItems(found);
         try {
           const prevMap = new Map(
             (itemsRef.current || []).map((it) => [
@@ -172,14 +168,14 @@ const TourPreview = ({ tourId, onClose }) => {
               it._rawDistance,
             ])
           );
-          const needUpdate = allWithDistances.some(
-            (it) => prevMap.get(it._id || it.id) !== it._rawDistance
-          );
+          const needUpdate = allWithDistances.some((it) => {
+            const key = it?._id || it?.id;
+            return it && prevMap.get(key) !== it._rawDistance;
+          });
           if (needUpdate) setItems(allWithDistances);
         } catch (e) {
           setItems(allWithDistances);
         }
-
         if (showLoading) setNearbyLoading(false);
       },
       () => {
@@ -194,12 +190,11 @@ const TourPreview = ({ tourId, onClose }) => {
     const run = () =>
       updateNearby(itemsRef.current, tab === "live", tab === "live");
     run();
-    const id = setInterval(() => run(), 10000);
+    const id = setInterval(run, 10000);
     return () => clearInterval(id);
   }, [tab]);
 
   useEffect(() => {
-    // No-op: audio hook handles src changes/reset
     return () => {};
   }, [selectedItem]);
 
@@ -222,12 +217,23 @@ const TourPreview = ({ tourId, onClose }) => {
   } = useAudioPlayer(audioSrc);
 
   const currentItems = tab === "all" ? items : nearbyItems;
+  // Always hide unpublished items in the preview on the client side
+  const displayedItems = (currentItems || []).filter((it) => !!it?.isPublished);
+
+  useEffect(() => {
+    if (!selectedItem) return;
+    const selectedVisible = displayedItems.find(
+      (d) => (d._id || d.id) === (selectedItem._id || selectedItem.id)
+    );
+    if (!selectedVisible) {
+      setSelectedItem(displayedItems[0] || null);
+    }
+  }, [displayedItems]);
 
   return (
     <div
       className={`${isDarkMode ? "bg-[#0d0c0a]" : "bg-gray-50"} min-h-screen`}
     >
-      {/* header */}
       <div
         className={`mx-auto fixed start-20 end-0 top-16 z-10 ${
           isDarkMode ? "bg-[#1B1A17]/80" : "bg-white/80"
@@ -355,7 +361,6 @@ const TourPreview = ({ tourId, onClose }) => {
           </div>
         </div>
 
-        {/* Sidebar (desktop) */}
         <div
           className={`fixed top-32 end-0 h-[calc(100vh-8rem)] w-80 ${
             isDarkMode ? "bg-[#1B1A17]" : "bg-white"
@@ -456,14 +461,21 @@ const TourPreview = ({ tourId, onClose }) => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
-              {nearbyLoading ? (
+              {initialLoading ? (
+                <div className="p-6 text-center">
+                  <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
+                  <p className="mt-2 text-gray-400">
+                    {safeT("guide.loadingItems", "Loading items...")}
+                  </p>
+                </div>
+              ) : nearbyLoading ? (
                 <div className="p-6 text-center">
                   <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
                   <p className="mt-2 text-gray-400">
                     {safeT("guide.findingNearby", "Finding nearby items...")}
                   </p>
                 </div>
-              ) : currentItems.length === 0 ? (
+              ) : displayedItems.length === 0 ? (
                 <div className="p-6 text-center text-gray-400">
                   {tab === "live"
                     ? safeT("guide.liveNone", "No nearby items found")
@@ -471,7 +483,7 @@ const TourPreview = ({ tourId, onClose }) => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {currentItems.map((it, index) => {
+                  {displayedItems.map((it) => {
                     const isSel =
                       selectedItem &&
                       (selectedItem._id || selectedItem.id) ===

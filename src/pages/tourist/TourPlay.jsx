@@ -71,6 +71,12 @@ export default function TourPlay() {
     let mounted = true;
     (async () => {
       try {
+        // clear any stale items while we fetch to avoid showing unpublished data
+        if (mounted) {
+          setItems([]);
+          setSelectedItem(null);
+          setInitialLoading(true);
+        }
         console.log("Fetching tour with ID:", tourId);
         const tRes = await tourService.getTourById(tourId);
         console.log("Tour API response:", tRes);
@@ -87,8 +93,28 @@ export default function TourPlay() {
         const its = await tourItemService.getTourItems(tourId);
         console.log("Tour items response:", its);
         if (!mounted) return;
-        setItems(its || []);
-        setSelectedItem((prev) => prev || (its && its[0]) || null);
+        const list = its || [];
+        // Hide unpublished items for non-owner/non-admin clients; server
+        // usually already filters, but be defensive here.
+        const visible = (list || []).filter((it) => {
+          if (it?.isPublished) return true;
+          if (!user) return false;
+          const isAdmin = user.role === "admin";
+          const isOwner =
+            tour &&
+            user._id &&
+            tour.guide &&
+            String(user._id) === String(tour.guide._id || tour.guide);
+          return isAdmin || isOwner;
+        });
+        setItems(visible);
+        setSelectedItem((prev) => prev || (visible && visible[0]) || null);
+        // compute distances immediately so switching to Nearby shows sorted results
+        try {
+          updateNearby(visible, false, false);
+        } catch (e) {
+          // ignore
+        }
         // fetch user enrollments
         try {
           console.log("Fetching user enrollments...");
@@ -118,6 +144,14 @@ export default function TourPlay() {
       }
     })();
     return () => (mounted = false);
+  }, [tourId]);
+
+  // ensure items are cleared immediately when switching tours to avoid showing
+  // stale/unpublished items from previous tour while new data loads
+  useEffect(() => {
+    setInitialLoading(true);
+    setItems([]);
+    setSelectedItem(null);
   }, [tourId]);
 
   const distanceMeters = (lat1, lon1, lat2, lon2) => {
@@ -229,7 +263,13 @@ export default function TourPlay() {
   useEffect(() => {
     // read from ref to avoid re-running when `items` is updated by updateNearby
     const run = () =>
-      updateNearby(itemsRef.current, tab === "live", tab === "live");
+      updateNearby(
+        itemsRef.current,
+        // show spinner only if there are no items yet
+        tab === "live" &&
+          ((itemsRef.current && itemsRef.current.length) || 0) === 0,
+        tab === "live"
+      );
     run();
     const id = setInterval(() => run(), 10000);
     return () => clearInterval(id);
@@ -277,6 +317,29 @@ export default function TourPlay() {
   const audio = useAudioPlayer(audioSrc);
 
   const currentItems = tab === "all" ? items : nearbyItems;
+  // Final defensive filter: ensure unpublished items are hidden for non-guide/admin users
+  const displayedItems = (currentItems || []).filter((it) => {
+    if (it?.isPublished) return true;
+    if (!user) return false;
+    const isAdmin = user.role === "admin";
+    const guideId = tour?.guide?._id || tour?.guide;
+    const userId = user._id || user.id;
+    const isOwner = userId && guideId && String(userId) === String(guideId);
+    return isAdmin || isOwner;
+  });
+
+  // Ensure selectedItem is visible; if not, pick first visible or null
+  useEffect(() => {
+    if (!selectedItem) return;
+    const selectedVisible = displayedItems.find(
+      (d) => (d._id || d.id) === (selectedItem._id || selectedItem.id)
+    );
+    if (!selectedVisible) {
+      setSelectedItem(displayedItems[0] || null);
+    }
+    // intentionally depends on displayedItems and selectedItem
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayedItems]);
 
   if (initialLoading || enrollmentLoading) {
     return (
@@ -477,11 +540,15 @@ export default function TourPlay() {
                   </div>
                   {tab === "live" && (
                     <button
-                      onClick={() => updateNearby(items, true)}
+                      onClick={() =>
+                        updateNearby(items, (items || []).length === 0)
+                      }
                       disabled={nearbyLoading}
                       className="w-full mt-2 py-2 px-3 rounded-xl font-medium bg-surface text-text-secondary hover:bg-surface/80 border border-border disabled:opacity-50"
                     >
-                      {nearbyLoading ? "Refreshing..." : "Refresh Nearby"}
+                      {nearbyLoading && displayedItems.length === 0
+                        ? "Refreshing..."
+                        : "Refresh Nearby"}
                     </button>
                   )}
                 </div>
@@ -489,14 +556,19 @@ export default function TourPlay() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
-              {nearbyLoading ? (
+              {initialLoading ? (
+                <div className="p-6 text-center">
+                  <FaSpinner className="w-8 h-8 animate-spin text-primary mx-auto" />
+                  <p className="mt-2 text-text-secondary">Loading items...</p>
+                </div>
+              ) : nearbyLoading && displayedItems.length === 0 ? (
                 <div className="p-6 text-center">
                   <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
                   <p className="mt-2 text-text-secondary">
                     Finding nearby items...
                   </p>
                 </div>
-              ) : currentItems.length === 0 ? (
+              ) : displayedItems.length === 0 ? (
                 <div className="p-6 text-center text-text-secondary">
                   {tab === "live"
                     ? "No nearby items found"
@@ -504,7 +576,7 @@ export default function TourPlay() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {currentItems.map((it) => {
+                  {displayedItems.map((it) => {
                     const isSel =
                       selectedItem &&
                       (selectedItem._id || selectedItem.id) ===
@@ -665,14 +737,14 @@ export default function TourPlay() {
               </div>
             </div>
             <div className="flex-1 overflow-y-auto p-2">
-              {nearbyLoading ? (
+              {nearbyLoading && displayedItems.length === 0 ? (
                 <div className="p-6 text-center">
                   <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
                   <p className="mt-2 text-text-secondary">
                     Finding nearby items...
                   </p>
                 </div>
-              ) : currentItems.length === 0 ? (
+              ) : displayedItems.length === 0 ? (
                 <div className="p-6 text-center text-text-secondary">
                   {tab === "live"
                     ? "No nearby items found"
@@ -680,7 +752,7 @@ export default function TourPlay() {
                 </div>
               ) : (
                 <div className="space-y-1 p-1">
-                  {currentItems.map((it) => {
+                  {displayedItems.map((it) => {
                     const isSel =
                       selectedItem &&
                       (selectedItem._id || selectedItem.id) ===
