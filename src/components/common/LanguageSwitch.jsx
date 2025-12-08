@@ -1,31 +1,22 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const Switch = () => {
   const { i18n } = useTranslation();
-  const [isArabic, setIsArabic] = useState(false);
-  const [theme, setTheme] = useState("dark");
 
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(storedTheme);
-    setIsArabic(i18n.language === "ar");
-  }, [i18n.language]);
+  const isArabic = i18n.language.startsWith("ar");
 
   const handleToggle = () => {
     const newLang = isArabic ? "en" : "ar";
     i18n.changeLanguage(newLang);
-    document.documentElement.dir = newLang === "ar" ? "rtl" : "ltr";
-    setIsArabic(!isArabic);
   };
 
   return (
-    <StyledWrapper theme={theme} isArabic={isArabic}>
+    <StyledWrapper $isArabic={isArabic}>
       <label htmlFor="langSwitch" className="switch" aria-label="Toggle Language">
-        <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle} />
-          <span className={isArabic ? "label-inactive" : "label-active"}>English</span>
-          <span className={isArabic ? "label-active" : "label-inactive"}>العربية</span>
+        <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle}/>
+        <span className={isArabic ? "label-inactive" : "label-active"}>English</span>
+        <span className={isArabic ? "label-active" : "label-inactive"}>العربية</span>
         <span className="slider" />
       </label>
     </StyledWrapper>

@@ -1,9 +1,11 @@
-// import React from "react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../store/hooks";
 
 const ProfilePhoto = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+
   return (
     <div
       className="p-6 rounded-lg shadow-md"
@@ -14,11 +16,15 @@ const ProfilePhoto = () => {
       </h3>
       <div className="flex items-center space-x-4 space-y-5 flex-col sm:flex-row">
         <div className="relative">
-          <img
-            className="w-20 h-20 rounded-full object-cover"
-            src="https://images.unsplash.com/photo-1616197151166-93dc9b4528d8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHNxdWFyZXxlbnwwfHwwfHx8MA%3D%3D" // Placeholder image
-            alt="Avatar"
-          />
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2"
+            style={{
+              borderColor: "var(--primary)",
+              background: "linear-gradient(to right, #C7A15C, #E2C784)",
+            }}
+          >
+            {user?.firstName?.charAt(0) || "U"}
+          </div>
           <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 cursor-pointer hover:bg-gray-600">
             <svg
               className="w-4 h-4"
@@ -68,6 +74,8 @@ const ProfilePhoto = () => {
 
 const BasicDetails = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+
   return (
     <div
       className="p-6 rounded-lg shadow-md"
@@ -83,6 +91,7 @@ const BasicDetails = () => {
             type="text"
             id="firstName"
             name="firstName"
+            defaultValue={user?.firstName || ""}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -99,6 +108,7 @@ const BasicDetails = () => {
             type="text"
             id="lastName"
             name="lastName"
+            defaultValue={user?.lastName || ""}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -131,6 +141,7 @@ const BasicDetails = () => {
             type="tel"
             id="number"
             name="number"
+            defaultValue={user?.phone || ""}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -155,9 +166,20 @@ const countryCities = {
 
 const LocationInfo = () => {
   const { t } = useTranslation();
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
+  const { user } = useAuth();
+  const [country, setCountry] = useState(user?.country || "");
+  const [city, setCity] = useState(user?.city || "");
   const [availableCities, setAvailableCities] = useState([]);
+
+  useEffect(() => {
+    if (user?.country) {
+      setCountry(user.country);
+      setAvailableCities(countryCities[user.country] || []);
+    }
+    if (user?.city) {
+      setCity(user.city);
+    }
+  }, [user]);
 
   const handleCountryChange = (e) => {
     const selectedCountry = e.target.value;

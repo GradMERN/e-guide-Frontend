@@ -5,8 +5,10 @@ import guide3 from '../../assets/images/guide3.avif';
 import SectionWrapperFull from '../common/SectionWrapper.jsx';
 import TitlesHome from '../common/TitlesHome.jsx';
 import { TbUserCheck } from 'react-icons/tb';
+import { useTranslation } from "react-i18next";
 
 export default function TourGuidesSection() {
+  const { t } = useTranslation();
 
   const tourGuides = [
     {
@@ -33,11 +35,11 @@ export default function TourGuidesSection() {
   return (
     <SectionWrapperFull className=" py-20 px-5 font-bold text-white text-center ">
 
-      <TitlesHome icon={TbUserCheck} title="Meet Our Experts" paragraph="Guided by history, our certified tour guides will make your journey through Egypt unforgettable."/>
+      <TitlesHome icon={TbUserCheck} title={t("tourGuide.homeSection.title")} paragraph={t("tourGuide.homeSection.subtitle")}/>
 
 
 
-      <div className='cards'>
+      <div className='cards' dir='ltr'>
 
         <TourGuidesSlider tourGuides={tourGuides} autoplay={false} />
 

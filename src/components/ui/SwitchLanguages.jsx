@@ -3,18 +3,21 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const Switch = () => {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || "dark";
+    }
+    return "dark";
+  });
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(storedTheme);
-  }, []);
+    document.dir = i18n.language.startsWith("ar") ? "rtl" : "ltr";
+  }, [i18n.language]);
 
   const toggleLanguage = (e) => {
     const newLang = e.target.checked ? "ar" : "en";
     i18n.changeLanguage(newLang);
-    document.dir = newLang === "ar" ? "rtl" : "ltr";
   };
 
   return (
@@ -28,7 +31,7 @@ const Switch = () => {
           type="checkbox"
           id="language-toggle"
           onChange={toggleLanguage}
-          checked={i18n.language === "ar"}
+          checked={i18n.language.startsWith("ar")}
         />
         <span>EN</span>
         <span>AR</span>

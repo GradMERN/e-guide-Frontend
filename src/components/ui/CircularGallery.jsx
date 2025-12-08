@@ -29,10 +29,7 @@ import photo27 from "../../assets/images/views/photo-27.avif";
 import photo28 from "../../assets/images/views/photo-28.avif";
 import photo29 from "../../assets/images/views/photo-29.avif";
 
-
-
 import { useEffect, useRef } from 'react';
-
 import '../../styles/CircularGallery.css';
 
 function debounce(func, wait) {
@@ -56,75 +53,6 @@ function autoBind(instance) {
   });
 }
 
-function createTextTexture(gl, text, font = 'bold 30px monospace', color = 'black') {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  context.font = font;
-  const metrics = context.measureText(text);
-  const textWidth = Math.ceil(metrics.width);
-  const textHeight = Math.ceil(parseInt(font, 10) * 1.2);
-  canvas.width = textWidth + 20;
-  canvas.height = textHeight + 20;
-  context.font = font;
-  context.fillStyle = color;
-  context.textBaseline = 'middle';
-  context.textAlign = 'center';
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillText(text, canvas.width / 2, canvas.height / 2);
-  const texture = new Texture(gl, { generateMipmaps: false });
-  texture.image = canvas;
-  return { texture, width: canvas.width, height: canvas.height };
-}
-
-class Title {
-  constructor({ gl, plane, renderer, text, textColor = '#545050', font = '30px sans-serif' }) {
-    autoBind(this);
-    this.gl = gl;
-    this.plane = plane;
-    this.renderer = renderer;
-    this.text = text;
-    this.textColor = textColor;
-    this.font = font;
-    this.createMesh();
-  }
-  createMesh() {
-    const { texture, width, height } = createTextTexture(this.gl, this.text, this.font, this.textColor);
-    const geometry = new Plane(this.gl);
-    const program = new Program(this.gl, {
-      vertex: `
-        attribute vec3 position;
-        attribute vec2 uv;
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragment: `
-        precision highp float;
-        uniform sampler2D tMap;
-        varying vec2 vUv;
-        void main() {
-          vec4 color = texture2D(tMap, vUv);
-          if (color.a < 0.1) discard;
-          gl_FragColor = color;
-        }
-      `,
-      uniforms: { tMap: { value: texture } },
-      transparent: true
-    });
-    this.mesh = new Mesh(this.gl, { geometry, program });
-    const aspect = width / height;
-    const textHeight = this.plane.scale.y * 0.15;
-    const textWidth = textHeight * aspect;
-    this.mesh.scale.set(textWidth, textHeight, 1);
-    this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeight * 0.5 - 0.05;
-    this.mesh.setParent(this.plane);
-  }
-}
-
 class Media {
   constructor({
     geometry,
@@ -135,12 +63,9 @@ class Media {
     renderer,
     scene,
     screen,
-    text,
     viewport,
     bend,
-    textColor,
     borderRadius = 0,
-    font
   }) {
     this.extra = 0;
     this.geometry = geometry;
@@ -151,21 +76,16 @@ class Media {
     this.renderer = renderer;
     this.scene = scene;
     this.screen = screen;
-    this.text = text;
     this.viewport = viewport;
     this.bend = bend;
-    this.textColor = textColor;
     this.borderRadius = borderRadius;
-    this.font = font;
     this.createShader();
     this.createMesh();
-    this.createTitle();
     this.onResize();
   }
+
   createShader() {
-    const texture = new Texture(this.gl, {
-      generateMipmaps: true
-    });
+    const texture = new Texture(this.gl, { generateMipmaps: true });
     this.program = new Program(this.gl, {
       depthTest: false,
       depthWrite: false,
@@ -208,13 +128,9 @@ class Media {
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
           vec4 color = texture2D(tMap, uv);
-          
           float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-          
-          // Smooth antialiasing for edges
           float edgeSmooth = 0.002;
           float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
-          
           gl_FragColor = vec4(color.rgb, alpha);
         }
       `,
@@ -228,6 +144,7 @@ class Media {
       },
       transparent: true
     });
+
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = this.image;
@@ -236,6 +153,7 @@ class Media {
       this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
     };
   }
+
   createMesh() {
     this.plane = new Mesh(this.gl, {
       geometry: this.geometry,
@@ -243,16 +161,7 @@ class Media {
     });
     this.plane.setParent(this.scene);
   }
-  createTitle() {
-    this.title = new Title({
-      gl: this.gl,
-      plane: this.plane,
-      renderer: this.renderer,
-      text: this.text,
-      textColor: this.textColor,
-      fontFamily: this.font
-    });
-  }
+
   update(scroll, direction) {
     this.plane.position.x = this.x - scroll.current - this.extra;
 
@@ -294,18 +203,16 @@ class Media {
       this.isBefore = this.isAfter = false;
     }
   }
+
   onResize({ screen, viewport } = {}) {
     if (screen) this.screen = screen;
-    if (viewport) {
-      this.viewport = viewport;
-      if (this.plane.program.uniforms.uViewportSizes) {
-        this.plane.program.uniforms.uViewportSizes.value = [this.viewport.width, this.viewport.height];
-      }
-    }
+    if (viewport) this.viewport = viewport;
+
     this.scale = this.screen.height / 1500;
     this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
     this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
     this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
+
     this.padding = 2;
     this.width = this.plane.scale.x + this.padding;
     this.widthTotal = this.width * this.length;
@@ -314,18 +221,7 @@ class Media {
 }
 
 class App {
-  constructor(
-    container,
-    {
-      items,
-      bend,
-      textColor = '#ffffff',
-      borderRadius = 0,
-      font = 'bold 30px Figtree',
-      scrollSpeed = 2,
-      scrollEase = 0.05
-    } = {}
-  ) {
+  constructor(container, { items, bend, borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 } = {}) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
     this.scrollSpeed = scrollSpeed;
@@ -336,65 +232,40 @@ class App {
     this.createScene();
     this.onResize();
     this.createGeometry();
-    this.createMedias(items, bend, textColor, borderRadius, font);
+    this.createMedias(items, bend, borderRadius);
     this.update();
     this.addEventListeners();
   }
+
   createRenderer() {
-    this.renderer = new Renderer({
-      alpha: true,
-      antialias: true,
-      dpr: Math.min(window.devicePixelRatio || 1, 2)
-    });
+    this.renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
     this.gl = this.renderer.gl;
     this.gl.clearColor(0, 0, 0, 0);
     this.container.appendChild(this.gl.canvas);
   }
+
   createCamera() {
     this.camera = new Camera(this.gl);
     this.camera.fov = 45;
     this.camera.position.z = 20;
   }
+
   createScene() {
     this.scene = new Transform();
   }
+
   createGeometry() {
-    this.planeGeometry = new Plane(this.gl, {
-      heightSegments: 50,
-      widthSegments: 100
-    });
+    this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 });
   }
-  createMedias(items, bend = 1, textColor, borderRadius, font) {
+
+  createMedias(items, bend = 1, borderRadius) {
     const defaultItems = [
-      { image: photo1, text: "Tomp" },
-      { image: photo2, text: "Desk Setup" },
-      { image: photo3, text: "Waterfall" },
-      { image: photo4, text: "Strawberries" },
-      { image: photo5, text: "Strawberries" },
-      { image: photo6, text: "Strawberries" },
-      { image: photo7, text: "Strawberries" },
-      { image: photo8, text: "Strawberries" },
-      { image: photo9, text: "Strawberries" },
-      { image: photo10, text: "Strawberries" },
-      { image: photo11, text: "Strawberries" },
-      { image: photo12, text: "Strawberries" },
-      { image: photo13, text: "Strawberries" },
-      { image: photo14, text: "Strawberries" },
-      { image: photo15, text: "Strawberries" },
-      { image: photo16, text: "Strawberries" },
-      { image: photo17, text: "Strawberries" },
-      { image: photo18, text: "Strawberries" },
-      { image: photo19, text: "Strawberries" },
-      { image: photo20, text: "Strawberries" },
-      { image: photo21, text: "Strawberries" },
-      { image: photo22, text: "Strawberries" },
-      { image: photo23, text: "Strawberries" },
-      { image: photo24, text: "Strawberries" },
-      { image: photo25, text: "Strawberries" },
-      { image: photo26, text: "Strawberries" },
-      { image: photo27, text: "Strawberries" },
-      { image: photo28, text: "Strawberries" },
-      { image: photo29, text: "Strawberries" },
+      { image: photo1 }, { image: photo2 }, { image: photo3 }, { image: photo4 }, { image: photo5 },
+      { image: photo6 }, { image: photo7 }, { image: photo8 }, { image: photo9 }, { image: photo10 },
+      { image: photo11 }, { image: photo12 }, { image: photo13 }, { image: photo14 }, { image: photo15 },
+      { image: photo16 }, { image: photo17 }, { image: photo18 }, { image: photo19 }, { image: photo20 },
+      { image: photo21 }, { image: photo22 }, { image: photo23 }, { image: photo24 }, { image: photo25 },
+      { image: photo26 }, { image: photo27 }, { image: photo28 }, { image: photo29 }
     ];
     const galleryItems = items && items.length ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);
@@ -408,35 +279,37 @@ class App {
         renderer: this.renderer,
         scene: this.scene,
         screen: this.screen,
-        text: data.text,
         viewport: this.viewport,
         bend,
-        textColor,
-        borderRadius,
-        font
+        borderRadius
       });
     });
   }
+
   onTouchDown(e) {
     this.isDown = true;
     this.scroll.position = this.scroll.current;
     this.start = e.touches ? e.touches[0].clientX : e.clientX;
   }
+
   onTouchMove(e) {
     if (!this.isDown) return;
     const x = e.touches ? e.touches[0].clientX : e.clientX;
     const distance = (this.start - x) * (this.scrollSpeed * 0.025);
     this.scroll.target = this.scroll.position + distance;
   }
+
   onTouchUp() {
     this.isDown = false;
     this.onCheck();
   }
+
   onWheel(e) {
     const delta = e.deltaY || e.wheelDelta || e.detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
   }
+
   onCheck() {
     if (!this.medias || !this.medias[0]) return;
     const width = this.medias[0].width;
@@ -444,33 +317,27 @@ class App {
     const item = width * itemIndex;
     this.scroll.target = this.scroll.target < 0 ? -item : item;
   }
+
   onResize() {
-    this.screen = {
-      width: this.container.clientWidth,
-      height: this.container.clientHeight
-    };
+    this.screen = { width: this.container.clientWidth, height: this.container.clientHeight };
     this.renderer.setSize(this.screen.width, this.screen.height);
-    this.camera.perspective({
-      aspect: this.screen.width / this.screen.height
-    });
+    this.camera.perspective({ aspect: this.screen.width / this.screen.height });
     const fov = (this.camera.fov * Math.PI) / 180;
     const height = 2 * Math.tan(fov / 2) * this.camera.position.z;
     const width = height * this.camera.aspect;
     this.viewport = { width, height };
-    if (this.medias) {
-      this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport }));
-    }
+    if (this.medias) this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport }));
   }
+
   update() {
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     const direction = this.scroll.current > this.scroll.last ? 'right' : 'left';
-    if (this.medias) {
-      this.medias.forEach(media => media.update(this.scroll, direction));
-    }
+    if (this.medias) this.medias.forEach(media => media.update(this.scroll, direction));
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
     this.raf = window.requestAnimationFrame(this.update.bind(this));
   }
+
   addEventListeners() {
     this.boundOnResize = this.onResize.bind(this);
     this.boundOnWheel = this.onWheel.bind(this);
@@ -487,6 +354,7 @@ class App {
     window.addEventListener('touchmove', this.boundOnTouchMove);
     window.addEventListener('touchend', this.boundOnTouchUp);
   }
+
   destroy() {
     window.cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.boundOnResize);
@@ -504,21 +372,11 @@ class App {
   }
 }
 
-export default function CircularGallery({
-  items,
-  bend = 3,
-  textColor = '#ffffff',
-  borderRadius = 0.05,
-  font = 'bold 30px Figtree',
-  scrollSpeed = 2,
-  scrollEase = 0.05
-}) {
+export default function CircularGallery({ items, bend = 3, borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 }) {
   const containerRef = useRef(null);
   useEffect(() => {
-    const app = new App(containerRef.current, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase });
-    return () => {
-      app.destroy();
-    };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+    const app = new App(containerRef.current, { items, bend, borderRadius, scrollSpeed, scrollEase });
+    return () => app.destroy();
+  }, [items, bend, borderRadius, scrollSpeed, scrollEase]);
   return <div className="circular-gallery" ref={containerRef} />;
 }
