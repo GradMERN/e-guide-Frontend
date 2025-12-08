@@ -18,8 +18,8 @@ import {
   FaInfoCircle,
   FaAddressCard,
 } from "react-icons/fa";
-import ThemeToggle from "../components/ThemeToggle";
-import Switch from "./common/SwitchLanguages";
+import ThemeToggle from "./common/ThemeToggle";
+import Switch from "./common/LanguageSwitch";
 import { useTranslation } from "react-i18next";
 import { useAuth as useReduxAuth } from "../store/hooks";
 import { useDispatch, useSelector } from "react-redux";
