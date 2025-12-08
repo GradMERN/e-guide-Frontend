@@ -150,8 +150,8 @@ export default function TourGuideProfile() {
 
 
                 <div className="sticky top-0 z-40 backdrop-blur-xl border-b border-white/5  pt-2 mb-8">
-                    <div className="flex w-full overflow-x-auto no-scrollbar gap-2 sm:gap-0 ">
-                        <TabButton className="" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" />
+                    <div className="flex w-full overflow-x-auto no-scrollbar gap-2 sm:gap-0">
+                        <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" />
                         <TabButton active={activeTab === "reviews"} onClick={() => setActiveTab("reviews")} label={`Reviews (${guide.reviews})`} />
                     </div>
                 </div>
