@@ -161,6 +161,39 @@
     color: var(--text-button);
   }
 
+  .btn-split {
+      display: inline-flex;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+  .btn-split-main {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 600;
+      border: none;
+      transition: all 0.3s;
+    }
+
+  .btn-split-icon {
+      padding: 0.75rem 1rem;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+
+  .btn-split:hover .btn-split-main {
+      background: var(--secondary);
+    }
+
+  .btn-split:hover .btn-split-icon {
+      background: var(--primary);
+    }
+
   .text-gradient-title {
     background-color: var(--color-secondary);
     -webkit-background-clip: text;

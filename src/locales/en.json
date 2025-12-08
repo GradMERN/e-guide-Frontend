@@ -555,6 +555,20 @@
       }
     }
   },
+  "about": {
+    "hero": {
+      "title": "About Us",
+      "subtitle": "We share Egypt's heritage with travelers worldwide through authentic experiences and expert local guidance.",
+      "description": "Explore ancient temples, Nile adventures, desert expeditions, and culinary journeys with our expert guides.",
+      "typewriter": [
+        "Authentic Egyptian Experiences",
+        "Expert Local Guides",
+        "Sustainable & Responsible Tourism"
+      ],
+      "exploreTours": "Explore Tours",
+      "ourStory": "Our Story"
+    }
+  },
   "beforeAfter": {
     "subtitle": "Compare & Contrast",
     "title": {

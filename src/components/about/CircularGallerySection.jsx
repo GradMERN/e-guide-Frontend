@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 
 export default function CircularGallerySection() {
   return (
-    <section className="relative py-16 lg:py-24 overflow-hidden">
+    <section className="relative py-6 lg:py-12 overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
         <Particles
           particleColors={[ "var(--gradient-via)", "var(--gradient-to)"]}
@@ -23,11 +23,11 @@ export default function CircularGallerySection() {
       </div>
 
       <motion.div className="max-w-7xl mx-auto px-6 lg:px-12 text-center mb-8 relative z-10" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-80px" }}>
-        <motion.span className="inline-block text-xl tracking-[0.3em] text-text uppercase font-medium mb-4 smooth-text" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} viewport={{ once: true }}>
+        <motion.span className="inline-block text-xl tracking-[0.3em] text-text uppercase font-medium mb-6 smooth-text" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} viewport={{ once: true }}>
           Traveler Highlights
         </motion.span>
 
-        <motion.h2 className="text-4xl sm:text-5xl lg:text-6xl font-light mb-4 smooth-tex text-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
+        <motion.h2 className="text-4xl sm:text-5xl lg:text-6xl font-light mb-6 smooth-tex text-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
           Explore Egypt Through<span className="font-semibold text-gradient-title bg-clip-text text-transparent"> Our Travelers' Stories</span>
         </motion.h2>
 
@@ -36,7 +36,7 @@ export default function CircularGallerySection() {
         </motion.p>
       </motion.div>
 
-      <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] z-10">
+      <div className="relative h-[350px] sm:h-[500px] md:h-[600px] lg:h-[700px] z-10">
         <CircularGallery
           bend={2}
           textColor= "text-text"
