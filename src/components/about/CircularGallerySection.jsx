@@ -39,7 +39,6 @@ export default function CircularGallerySection() {
       <div className="relative h-[350px] sm:h-[500px] md:h-[600px] lg:h-[700px] z-10">
         <CircularGallery
           bend={2}
-          textColor= "text-text"
           borderRadius={0.05}
           scrollEase={0.05}
           scrollSpeed={1.5}

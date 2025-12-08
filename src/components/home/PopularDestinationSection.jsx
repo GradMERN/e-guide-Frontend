@@ -167,11 +167,10 @@ export default function PopularDestinationSection() {
             ))}
           </motion.div>
         </div>
-
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.2 }} className="text-center mt-8 sm:mt-12 lg:mt-16 px-4">
-          <motion.button onClick={handleViewAllDestinations} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}  className="btn-primary-hero text-sm sm:text-base px-5 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-4 shadow-lg hover:shadow-xl transition-shadow duration-300 w-full sm:w-auto">
-            <span className="flex items-center justify-center gap-2"> 
-              {t("popularDestination.viewAll")}
+          <motion.button className="btn-split w-full sm:w-auto">
+            <span className="btn-split-main">{t("popularDestination.viewAll")}</span>
+            <span className="btn-split-icon">
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
