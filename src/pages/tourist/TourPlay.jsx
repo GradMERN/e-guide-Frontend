@@ -373,7 +373,7 @@ export default function TourPlay() {
             isRtl ? "left-0" : "right-0"
           } w-80 bg-background border-end ${
             isDarkMode ? "border-border" : "border-border"
-          } shadow-2xl transform transition-all duration-500 z-[110] ${
+          } shadow-2xl transform transition-all duration-500 z-40 ${
             sidebarOpen
               ? "translate-x-0 opacity-100"
               : isRtl

@@ -19,6 +19,7 @@ const MyTours = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reEnrollingId, setReEnrollingId] = useState(null);
 
   const fetchEnrollments = async () => {
     try {
@@ -96,6 +97,37 @@ const MyTours = () => {
       window.location.href = checkoutUrl;
     } catch (err) {
       toast.error(err.message || "Could not initialize payment");
+    }
+  };
+
+  const reEnroll = async (tourId) => {
+    try {
+      setReEnrollingId(tourId);
+      const enrollRes = await enrollmentApi.enrollTour(tourId);
+      const enrollmentId =
+        enrollRes?.data?.data?.enrollmentId || enrollRes?.data?.enrollmentId;
+      if (!enrollmentId) throw new Error("Could not create enrollment");
+
+      const initRes = await paymentApi.initializePayment(enrollmentId);
+      const checkoutUrl =
+        initRes?.data?.checkoutUrl || initRes?.data?.data?.checkoutUrl;
+      if (!checkoutUrl) throw new Error("Payment initialization failed");
+      // Redirect to payment
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      console.error(err);
+      const apiMsg = err?.response?.data?.message;
+      const status = err?.response?.status;
+      const msg = apiMsg || err?.message || "Re-enrollment failed";
+      // If backend says already enrolled, navigate to My Tours
+      if (status === 400 && /already enrolled/i.test(msg)) {
+        toast.info("You are already enrolled in this tour.");
+        setTimeout(() => navigate("/my-tours"), 800);
+      } else {
+        toast.error(msg);
+      }
+    } finally {
+      setReEnrollingId(null);
     }
   };
 
@@ -448,6 +480,40 @@ const MyTours = () => {
                           <FaCheckCircle className="text-sm" />
                           <span className="font-medium">Completed</span>
                         </div>
+                      )}
+                      {isExpired && (
+                        <button
+                          onClick={() => reEnroll(e.tour?._id)}
+                          disabled={reEnrollingId === e.tour?._id}
+                          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-opacity shadow-lg h-10 flex items-center justify-center"
+                        >
+                          {reEnrollingId === e.tour?._id ? (
+                            <span className="flex items-center gap-2">
+                              <svg
+                                className="animate-spin h-4 w-4"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                  fill="none"
+                                />
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                />
+                              </svg>
+                              Re-enrolling...
+                            </span>
+                          ) : (
+                            "Re-enroll"
+                          )}
+                        </button>
                       )}
                     </div>
                   </div>
