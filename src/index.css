@@ -315,6 +315,21 @@
     color: var(--icon-card);
   }
   
+  .label-active {
+    color: #ffffff; 
+  }
+
+  .label-inactive {
+    color: var(--text); 
+  }
+
+  .dark .label-active {
+    color: #050505;
+  }
+
+  .dark .label-inactive {
+    color: #ffffff;
+  }
   
   .guide-img-active {
     transform: scale(1); 
