@@ -18,6 +18,7 @@ import { login as loginApi } from "../../apis/Auth/login.api";
 import { useDispatch } from "react-redux";
 import { useAuth as useReduxAuth } from "../../store/hooks";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -26,40 +27,30 @@ export default function LoginPage() {
   const [animate, setAnimate] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => setAnimate(true), []);
   const togglePassword = () => setShowPassword((s) => !s);
 
   const schema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Email is required"),
+    email: Yup.string().email(t("auth.login.errors.emailInvalid")).required(t("auth.login.errors.emailRequired")),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
+      .min(12, t("auth.login.errors.passwordMin"))
+      .required(t("auth.login.errors.passwordRequired")),
   });
 
-  const LeftCards = [
-    {
-      icon: GiEgyptianTemple,
-      title: "Ancient Wonders",
-      text: "Explore the magnificent pyramids, temples, and tombs that have stood for thousands of years.",
-    },
-    {
-      icon: FaScroll,
-      title: "Expert Guides",
-      text: "Learn from Egyptologists who bring ancient history to life with captivating stories.",
-    },
-    {
-      icon: FaShip,
-      title: "Nile Cruises",
-      text: "Sail the legendary Nile River in luxury while visiting historical sites along the way.",
-    },
-  ];
+ const LeftCardsData = [
+  { icon: GiEgyptianTemple, key: "ancientWonders" },
+  { icon: FaScroll, key: "expertGuides" },
+  { icon: FaShip, key: "nileCruises" },
+];
 
-  const Stats = [
-    { num: "5k+", label: "Travelers" },
-    { num: "150+", label: "Packages" },
-    { num: "25+", label: "Years Exp" },
-  ];
+const LeftCards = LeftCardsData.map(item => {
+  const translations = t(`auth.leftCards.${item.key}`, { returnObjects: true });
+  return { ...translations, icon: item.icon };
+});
+const Stats = t("auth.stats", { returnObjects: true });
+
 
   return (
     <>
@@ -71,14 +62,14 @@ export default function LoginPage() {
           className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
             }`}
         >
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5" >
             <GiEgyptianProfile className="max-[1212px]:w-20 max-[1212px]:h-20 w-24 h-24 text-primary drop-shadow-[0_0_15px_rgba(247,201,95,0.5)]" />
             <div className="flex flex-col text-center">
               <h1 className="bg-linear-to-r from-primary via-secondary to-primary bg-clip-text text-transparent max-[1212px]:text-3xl text-5xl font-extrabold tracking-tighter">
                 MYSTIC EGYPT
               </h1>
               <p className="mt-2 pt-1 border-t border-primary/30 max-[1212px]:text-xs text-md uppercase tracking-widest text-text-muted">
-                Journey Through Millennia
+                {t("auth.subtitle")}
               </p>
             </div>
           </div>
@@ -138,7 +129,7 @@ export default function LoginPage() {
                 <GiEgyptianProfile className="h-8 w-8 sm:h-15 sm:w-15 text-primary" />
               </div>
               <h2 className="text-gradient-title bg-clip-text text-transparent text-2xl sm:text-3xl md:text-4xl xl:text-5xl text-center font-extrabold tracking-wide">
-                Welcome Back
+                {t("auth.login.welcome")}
               </h2>
             </div>
 
@@ -230,20 +221,20 @@ export default function LoginPage() {
             >
               {({ isSubmitting, isValid, dirty }) => (
                 <Form className="flex flex-col gap-4 sm:gap-5 md:gap-6">
-                  <Field name="email">
+                  <Field name="email" >
                     {({ field, meta }) => (
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <MdEmail
                             className={`absolute left-4  transition-colors duration-300 ${focusedInput === "email"
-                                ? "text-primary"
-                                : "text-text-muted"
+                              ? "text-primary"
+                              : "text-text-muted"
                               }`}
                           />
                           <input
                             {...field}
                             type="email"
-                            placeholder="Enter your email"
+                            placeholder={t("auth.login.emailPlaceholder")}
                             onFocus={() => setFocusedInput("email")}
                             onBlur={(e) => {
                               field.onBlur(e);
@@ -267,14 +258,14 @@ export default function LoginPage() {
                         <div className="relative flex items-center">
                           <FaLock
                             className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password"
-                                ? "text-primary"
-                                : "text-text-muted"
+                              ? "text-primary"
+                              : "text-text-muted"
                               }`}
                           />
                           <input
                             {...field}
                             type={showPassword ? "text" : "password"}
-                            placeholder="Password"
+                            placeholder={t("auth.login.passwordPlaceholder")}
                             onFocus={() => setFocusedInput("password")}
                             onBlur={(e) => {
                               field.onBlur(e);
@@ -308,7 +299,7 @@ export default function LoginPage() {
                       to="#"
                       className="text-xs text-text-muted transition-colors hover:text-primary"
                     >
-                      Forgot Password?
+                      {t("auth.login.forgot")}
                     </Link>
                   </div>
 
@@ -322,7 +313,7 @@ export default function LoginPage() {
                     ) : (
                       <>
                         {" "}
-                        <FaSignInAlt /> <span>Sign In</span>{" "}
+                        <FaSignInAlt /> <span>{t("auth.login.signIn")}</span>{" "}
                       </>
                     )}
                   </button>
@@ -330,7 +321,7 @@ export default function LoginPage() {
                   <div className="relative flex items-center gap-4 py-2">
                     <div className="flex-1 h-px bg-border" />
                     <span className="text-xs uppercase text-text-muted">
-                      Or continue with{" "}
+                      {t("auth.login.or")}{" "}
                     </span>
                     <div className="flex-1 h-px bg-border" />
                   </div>
@@ -346,7 +337,7 @@ export default function LoginPage() {
                     <FaGoogle className="text-text-muted transition-colors group-hover:text-current" />
                     <span className="text-sm font-medium text-text-muted group-hover:text-current">
                       {" "}
-                      Google Account{" "}
+                      {t("auth.login.google")}{" "}
                     </span>
                   </button>
                 </Form>
@@ -358,7 +349,7 @@ export default function LoginPage() {
               className="font-semibold text-text-muted transition-all hover:text-primary"
             >
               <p className="mt-6 text-center text-sm text-text-muted hover:text-primary cursor-pointer transition-all">
-                New to Mystic Egypt? Create Account
+                {t("auth.login.noAccount")}
               </p>
             </Link>
           </div>
