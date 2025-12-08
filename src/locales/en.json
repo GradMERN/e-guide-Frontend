@@ -570,6 +570,12 @@
       "ourStory": "Our Story"
     }
   },
+  "circularGallery":{
+    "title":"Traveler Highlights",
+    "subtitle1":"Explore Egypt Through",
+    "subtitle2":"Our Travelers' Stories",
+    "description":"A visual journey of the most memorable moments from our tours"
+  },
   "beforeAfter": {
     "subtitle": "Compare & Contrast",
     "title": {
