@@ -1,10 +1,38 @@
-import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../context/AuthContext";
 
 const SideBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user, logout } = useAuth();
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const updateScroll = () => {
+      const currentScroll = window.scrollY;
+
+      if (currentScroll < lastScrollY - 10) {
+        setIsNavbarVisible(true);
+      } else if (currentScroll > lastScrollY + 10) {
+        setIsNavbarVisible(false);
+      }
+
+      lastScrollY = currentScroll;
+    };
+
+    window.addEventListener("scroll", updateScroll);
+    return () => window.removeEventListener("scroll", updateScroll);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   // Define the sidebar navigation links to profile sub-pages
   const links = [
@@ -138,28 +166,39 @@ const SideBar = () => {
   ];
 
   return (
-    <div className="sticky top-0 h-full">
+    <div
+      className={`fixed start-0 transition-all duration-500 z-40 ${
+        isNavbarVisible ? "top-28 h-[calc(100vh-7rem)]" : "top-0 h-screen"
+      }`}
+    >
       <aside
-        className="w-20 md:w-60 px-3 py-4 h-screen box-border flex flex-col justify-between transition-all duration-300"
+        className="w-20 md:w-60 px-3 py-4 h-full box-border flex flex-col justify-between transition-all duration-300"
         style={{ backgroundColor: "var(--surface)" }}
       >
         <nav>
           <div className="flex items-center justify-center md:justify-start md:p-2 mb-6">
-            <img
-              className="w-12 h-12 rounded-full object-cover border-2 flex-shrink-0"
-              src="https://images.unsplash.com/photo-1616197151166-93dc9b4528d8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHNxdWFyZXxlbnwwfHwwfHx8MA%3D%3D"
-              alt="Avatar"
-              style={{ borderColor: "var(--primary)" }}
-            />
-            <div className="ml-3 hidden md:block">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center text-black font-bold text-lg flex-shrink-0 border-2"
+              style={{
+                borderColor: "var(--primary)",
+                background: "linear-gradient(to right, #C7A15C, #E2C784)",
+              }}
+            >
+              {user?.firstName?.charAt(0) || "U"}
+            </div>
+            <div className="mx-3 hidden md:block">
               <h3
                 className="text-md font-bold"
                 style={{ color: "var(--text)" }}
               >
-                Ahmed Hassan
+                {user?.firstName && user?.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user?.name || "User"}
               </h3>
               <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                Cairo, Egypt
+                {user?.city && user?.country
+                  ? `${user.city}, ${user.country}`
+                  : user?.address || user?.email || ""}
               </p>
             </div>
           </div>
@@ -205,6 +244,7 @@ const SideBar = () => {
         </nav>
         <div>
           <button
+            onClick={handleLogout}
             className="w-full hover:bg-red-700 hover:text-white text-text-muted flex items-center justify-center md:justify-start p-3 rounded-md transition-colors duration-200"
             // style={{ color: "var(--text-muted)" }}
           >

@@ -4,26 +4,37 @@ import { useTranslation } from "react-i18next";
 
 const Switch = () => {
   const { i18n } = useTranslation();
-  const [isArabic, setIsArabic] = useState(false);
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || "dark";
+    }
+    return "dark";
+  });
+
+  const isArabic = i18n.language.startsWith("ar");
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(storedTheme);
-    setIsArabic(i18n.language === "ar");
+    // document.dir is handled globally in App.jsx
   }, [i18n.language]);
 
   const handleToggle = () => {
     const newLang = isArabic ? "en" : "ar";
     i18n.changeLanguage(newLang);
-    document.documentElement.dir = newLang === "ar" ? "rtl" : "ltr";
-    setIsArabic(!isArabic);
   };
 
   return (
     <StyledWrapper theme={theme}>
-      <label htmlFor="langSwitch" className="switch" aria-label="Toggle Language">
-        <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle} />
+      <label
+        htmlFor="langSwitch"
+        className="switch"
+        aria-label="Toggle Language"
+      >
+        <input
+          type="checkbox"
+          id="langSwitch"
+          checked={isArabic}
+          onChange={handleToggle}
+        />
         <span className="label-en">English</span>
         <span className="label-ar">العربية</span>
         <span className="slider" />

@@ -1,23 +1,42 @@
 import React from "react";
 import SideBar from "./SideBar";
 import { Outlet } from "react-router-dom";
-import ThemeToggle from "../../components/ThemeToggle";
-import Switch from "../../components/ui/SwitchLanguages";
+import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
+import Navbar from "../../components/Navbar";
 
 const ProfileLayout = () => {
+  const { user, isDarkMode } = useAuth();
+  const { t } = useTranslation();
+
+  const textColor = isDarkMode ? "text-white" : "text-gray-900";
+
   return (
     <div
-      className="flex min-h-screen"
+      className="min-h-screen"
       style={{ backgroundColor: "var(--background)", color: "var(--text)" }}
     >
-      <SideBar />
-      <main className="flex-1 p-6">
-        <div className="flex justify-end mb-4 items-center gap-3">
-          <ThemeToggle />
-          <Switch />
+      <Navbar />
+
+      <div className="flex pt-28">
+        <SideBar />
+
+        <div className="flex-1 flex flex-col transition-all duration-300 ms-20 md:ms-60">
+          {/* Welcome Message */}
+          <div className="px-8 py-6">
+            <h1 className={`text-3xl font-bold ${textColor}`}>
+              {t("welcome")},{" "}
+              <span className="text-[#C7A15C]">
+                {user?.firstName || "User"}
+              </span>
+            </h1>
+          </div>
+
+          <main className="flex-1 p-6 overflow-auto">
+            <Outlet />
+          </main>
         </div>
-        <Outlet />
-      </main>
+      </div>
     </div>
   );
 };
