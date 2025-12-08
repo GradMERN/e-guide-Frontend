@@ -1,12 +1,10 @@
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { ImagesSlider } from "../ui/images-slider.js";
 import { CiCalendarDate } from "react-icons/ci";
 import { LuMapPin } from "react-icons/lu";
 import { LuUsers } from "react-icons/lu";
 import { IoChevronDown } from "react-icons/io5";
-
-import { useTranslation } from "react-i18next";
-
 
 import hero1 from "../../assets/images/hero/hero1.avif";
 import hero2 from "../../assets/images/hero/hero2.avif";
@@ -41,7 +39,7 @@ return (
           </motion.p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }} className="flex flex-wrap gap-2 sm:gap-4 justify-center mb-6 md:mb-12 max-w-4xl">
+        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }} className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 justify-center max-w-4xl mb-8">
           {icons.map((Icon, index) => {
             return (
               <div key={index} className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20">
@@ -52,9 +50,9 @@ return (
         })}
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-col sm:flex-row gap-3 md:gap-6">
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-row sm:flex-row gap-3 md:gap-4">
           <button className="btn-primary-hero">{t("homepage.exploreBtn")}</button>
-          <button className="btn-primary-hero">{t("homepage.watchBtn")}</button>
+          <button className="btn-watch-hero">{t("homepage.watchBtn")}</button>
         </motion.div>
 
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20">
