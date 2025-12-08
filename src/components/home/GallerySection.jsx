@@ -1,10 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import TitlesHome from "../common/TitlesHome";
 import { GrGallery } from "react-icons/gr";
 import { TbSquareRoundedChevronRight as ChevronRight } from "react-icons/tb";
 import { TbSquareRoundedChevronLeft as ChevronLeft } from "react-icons/tb";
-import SectionWrapperFull from "../common/SectionWrapper";
 
 import photo1 from "../../assets/images/views/photo-1.avif";
 import photo2 from "../../assets/images/views/photo-2.avif";
@@ -37,6 +37,7 @@ import photo28 from "../../assets/images/views/photo-28.avif";
 import photo29 from "../../assets/images/views/photo-29.avif";
 
 export default function GallerySection() {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -94,11 +95,7 @@ const handleNext = () => {
 
   return (
     <div className="pb-10 sm:pb-10 md:pb-28 ">
-      <TitlesHome
-        icon={GrGallery}
-        title="Gallery"
-        paragraph="Explore a curated collection of stunning moments captured across Egypt — showcasing its rich heritage, vibrant culture, and unforgettable landscapes."
-      />
+      <TitlesHome icon={GrGallery} title={t("gallery.title")} paragraph= {t("gallery.paragraph")}/>
 
       <div className="overflow-hidden">
         <div className="relative h-[250px] sm:h-[500px] md:h-[600px] flex items-center justify-center [--space:180px] sm:[--space:260px] md:[--space:320px] ">

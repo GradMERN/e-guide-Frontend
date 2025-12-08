@@ -1,7 +1,9 @@
 import { cn } from "../utils/cn"; 
 import React, { useEffect, useState } from "react"; 
 import { FaStar } from "react-icons/fa";
-import "../../styles/InfiniteMovingCards.css"; 
+import "../../styles/InfiniteMovingCards.css";
+import { useTranslation } from "react-i18next";
+
 
 export const InfiniteMovingCards = ({ 
   items, 
@@ -10,6 +12,8 @@ export const InfiniteMovingCards = ({
   pauseOnHover = true, 
   className, 
 }) => { 
+  const { i18n } = useTranslation();
+  const isRTL = i18n.dir() === "rtl";
   const containerRef = React.useRef(null); 
   const scrollerRef = React.useRef(null); 
   const [start, setStart] = useState(false); 
@@ -17,14 +21,20 @@ export const InfiniteMovingCards = ({
   useEffect(() => { 
     if (!containerRef.current || !scrollerRef.current) return; 
 
-    const scrollerContent = Array.from(scrollerRef.current.children); 
-    scrollerContent.forEach((item) => { 
-      const clone = item.cloneNode(true); 
-      scrollerRef.current?.appendChild(clone); 
-    }); 
+    const currentChildren = Array.from(scrollerRef.current.children);
+    const hasClones = scrollerRef.current.children.length > items.length;
+    
+    if (!hasClones) {
+      currentChildren.forEach((item) => { 
+        const clone = item.cloneNode(true); 
+        scrollerRef.current?.appendChild(clone); 
+      }); 
+    }
 
-    const dir = direction === "left" ? "normal" : "reverse"; 
-    containerRef.current.style.setProperty("--animation-direction", dir); 
+    const finalDirection = isRTL ? (direction === "left" ? "right" : "left") : direction;
+    const dir = finalDirection === "left" ? "normal" : "reverse";
+    
+    containerRef.current.style.setProperty("--animation-direction", dir);
 
     const totalWidth = scrollerRef.current.scrollWidth / 2; 
     const speedMultiplier = speed === "fast" ? 0.6 : speed === "normal" ? 1 : 1.5; 
@@ -32,7 +42,8 @@ export const InfiniteMovingCards = ({
     containerRef.current.style.setProperty("--animation-duration", duration); 
 
     setStart(true); 
-  }, [direction, speed]); 
+  }, [direction, speed, items.length, isRTL]); 
+
 
   const getDisplayName = (fullName) => {
     if (!fullName) return "U";
@@ -47,10 +58,10 @@ export const InfiniteMovingCards = ({
 
   return (
     <div ref={containerRef}
-      className={cn("scroller relative w-full overflow-hidden",pauseOnHover && "pause-on-hover")}>
+      className={cn("scroller relative w-full overflow-hidden",pauseOnHover && "pause-on-hover")} dir={isRTL ? "rtl" : "ltr"}>
       <ul ref={scrollerRef} className={cn("flex w-max gap-6", start && "animate-scroll", className)}>
         {items.map((item, idx) => (
-          <li key={item.name + idx} className="shrink-0 w-[250px] md:w-[300px] rounded-xl border border-border bg-surface backdrop-blur-md p-4 flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-300">
+          <li key={item.name + idx} className="shrink-0 w-[250px] md:w-[300px] rounded-xl border border-border bg-surface backdrop-blur-md p-4 flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-300" dir={isRTL ? "rtl" : "ltr"}>
             <div className="flex items-center justify-end mb-3">
               {[...Array(5)].map((_, i) => (
                 <FaStar key={i} className={`w-3 h-3 ${ i < (item.rating || 5) ? "text-yellow-300" : "text-gray-300"}`}/>

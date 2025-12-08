@@ -1,7 +1,6 @@
 import { motion } from "motion/react";
 
 export default function StatCard({ stat, index }) {
-
   const Icon = stat.icon;
 
   return (
@@ -21,4 +20,4 @@ export default function StatCard({ stat, index }) {
       </div>
     </motion.div>
   );
-}
+};

@@ -57,6 +57,29 @@
   "spanish": "Spanish",
   "french": "French",
   "german": "German",
+  "language": "Language",
+  "common": {
+    "loading": "Loading...",
+    "back": "Back",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "date": "Date",
+    "amount": "Amount",
+    "status": "Status",
+    "statuses": {
+      "pending": "Pending",
+      "active": "Active",
+      "started": "Started",
+      "completed": "Completed",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    }
+  },
+  "theme": {
+    "light": "Switch to Light Mode",
+    "dark": "Switch to Dark Mode"
+  },
   "admin": {
     "dashboard": "Dashboard",
     "toursMenu": "Tours",
@@ -91,6 +114,47 @@
       "edit": "Edit Tour",
       "addNew": "Add New Tour",
       "name": "Tour Name",
+      "manageAndTrack": "Manage and track all your tours",
+      "addPlace": "Add Place",
+      "status": {
+        "published": "Published",
+        "empty": "Empty",
+        "notPublished": "Not Published"
+      },
+      "errors": {
+        "noPublishedItems": "There are no published items",
+        "loadFailed": "Failed to load tour"
+      },
+      "titles": {
+        "noItems": "No items yet",
+        "noPublishedItems": "No published items",
+        "updating": "Updating...",
+        "unpublish": "Unpublish tour",
+        "publish": "Publish tour",
+        "manageWaypoints": "Manage Waypoints",
+        "updateGalleryImages": "Update Gallery Images"
+      },
+      "waypointsTitle": "Waypoints — {{name}}",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDeleteMessage": "Are you sure you want to delete the tour \"{{name}}\"? This action cannot be undone.",
+      "messages": {
+        "added": "Tour added successfully!",
+        "updated": "Tour updated successfully!",
+        "deleted": "Tour deleted successfully!",
+        "galleryUpdated": "Gallery images updated successfully!"
+      },
+      "validation": {
+        "nameLength": "Tour name must be between 3 and 100 characters",
+        "descriptionLength": "Description must be between 10 and 2000 characters",
+        "priceMin": "Price must be at least 0.99",
+        "selectPlace": "Please select a place/location"
+      },
+      "errors": {
+        "noPublishedItems": "There are no published items",
+        "galleryUpdateFailed": "Failed to update gallery images.",
+        "deleteFailed": "Failed to delete tour"
+      },
       "city": "City",
       "price": "Price",
       "duration": "Duration (hours)",
@@ -109,6 +173,7 @@
       "deleteError": "Failed to delete tour",
       "confirmDelete": "Are you sure you want to delete this tour?"
     },
+    "currency": "EGP",
     "users": {
       "title": "Manage Users",
       "name": "Name",
@@ -156,25 +221,59 @@
     "settingsMenu": "Settings",
     "guidePanel": "Guide Panel",
     "manageTours": "Manage your tours and track performance",
+    "noImage": "No Image",
+    "openFull": "Open full page",
+    "showAll": "Show All",
+    "liveMode": "Live Mode",
+    "liveNone": "No nearby items",
     "myOverview": "My Overview",
     "totalTours": "Total Tours",
     "activeTours": "Active Tours",
     "totalBookings": "Total Bookings",
+    "totalEnrollments": "Total Enrollments",
     "totalEarnings": "Total Earnings (EGP)",
     "totalRating": "Average Rating",
     "bookingsTrend": "Bookings Trend",
+    "enrollmentsTrend": "Enrollments Trend",
     "earningsTrend": "Earnings Trend",
     "tourPerformance": "Tour Performance",
     "recentBookings": "Recent Bookings",
+    "recentEnrollments": "Recent Enrollments",
     "refreshData": "Refresh Data",
     "loadingDashboard": "Loading dashboard...",
     "tours": {
       "title": "My Tours",
-      "add": "Create Tour",
-      "edit": "Edit Tour",
+      "addItem": "Add Item",
+      "addTour": "Create Tour",
+      "edit": "Edit",
+      "editTour": "Edit Tour",
       "addNew": "Add New Tour",
       "name": "Tour Name",
+      "manageAndTrack": "Manage and track all your tours",
+      "addPlace": "Add Place",
+      "states": {
+        "published": "Published",
+        "empty": "Empty",
+        "notPublished": "Not Published"
+      },
+      "errors": {
+        "noPublishedItems": "There are no published items"
+      },
+      "titles": {
+        "noItems": "No items yet",
+        "noPublishedItems": "No published items",
+        "updating": "Updating...",
+        "unpublish": "Unpublish tour",
+        "publish": "Publish tour",
+        "manageWaypoints": "Manage Waypoints",
+        "updateGalleryImages": "Update Gallery Images"
+      },
+      "delete": "Delete",
+      "city": "City",
       "place": "Place/Location",
+      "noPlacesAvailable": "No places available",
+      "categories": "Categories",
+      "languages": "Languages",
       "price": "Price",
       "duration": "Duration (hours)",
       "groupSize": "Max Group Size",
@@ -202,6 +301,13 @@
       "views": "Views",
       "revenue": "Revenue"
     },
+    "places": {
+      "validation": {
+        "missingCountryCity": "Please provide both country and city"
+      },
+      "added": "Place added successfully!",
+      "addFailed": "Failed to add place. Check console for details."
+    },
     "analytics": {
       "title": "Analytics",
       "overview": "Overview",
@@ -209,6 +315,17 @@
       "revenueAnalysis": "Revenue Analysis",
       "tourPerformance": "Tour Performance",
       "ratingTrend": "Rating Trend",
+      "subtitle": "Track your tours performance and growth",
+      "dailyViews": "Daily Views & Enrollments",
+      "monthlyComparison": "Monthly Comparison",
+      "trafficSource": "Traffic Source Distribution",
+      "columns": {
+        "tourName": "Tour Name",
+        "views": "Views",
+        "enrollments": "Enrollments",
+        "conversion": "Conversion",
+        "revenue": "Revenue"
+      },
       "totalViews": "Total Views",
       "conversionRate": "Conversion Rate",
       "averageBookingValue": "Average Booking Value",
@@ -225,6 +342,231 @@
       "joinDate": "Member since",
       "accountStatus": "Status",
       "verificationStatus": "Email Verification"
+    },
+    "tourName": "Tour Name",
+    "guestName": "Guest Name"
+  },
+  "navbar": {
+    "user": "User",
+    "guide": "Guide",
+    "greeting": "Hello, {{name}}!",
+    "login": "Login",
+    "logout": "Logout",
+    "links": {
+      "home": "Home",
+      "tours": "Tours",
+      "destinations": "Destinations",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "contact": {
+      "phone": "+20 123 456 7890",
+      "email": "info@mysticegypttours.com",
+      "support": "24/7 Support"
+    },
+    "dropdown": {
+      "guideDashboard": "Guide Dashboard",
+      "myTours": "My Tours",
+      "profile": "Profile",
+      "saved": "Saved"
+    }
+  },
+  "homepage": {
+    "title": "Discover Egypt",
+    "subtitle": "Where history comes alive and adventures begin",
+    "exploreBtn": "Explore Egypt",
+    "watchBtn": "Watch Video",
+    "labels": [
+      "50+ Destinations",
+      "Flexible Booking",
+      "Expert Guides"
+    ]
+  },
+  "popularDestination": {
+    "title": "Popular Destination",
+    "description": "Discover essential insights to guide your adventure across the timeless land of PEACE, where history, culture, and breathtaking beauty meet.",
+    "viewAll": "View All Destinations"
+  },
+  "tourPackages": {
+    "title": "Featured Tour Packages",
+    "description": "Discover curated tour packages designed to help you explore Egypt's iconic landmarks, hidden gems, and unforgettable cultural experiences with ease and comfort.",
+    "loadError": "Unable to Load Tour Packages",
+    "noTours": "No Tour Packages Available",
+    "noToursMessage": "We're currently updating our tour packages. Check back soon for exciting new adventures, or reach out to us for custom tour options!",
+    "contactForCustom": "Contact Us for Custom Tours",
+    "refresh": "Refresh",
+    "viewAll": "View All Packages"
+  },
+  "reasonsToVisit": {
+    "title": "Top Reasons To Visit Egypt",
+    "subtitle": "Discover what makes Egypt an unforgettable destination for travelers worldwide",
+    "reasons": [
+      {
+        "title": "Timeless Ancient History",
+        "description": "Walk among 5,000-year-old pyramids, temples, and tombs that tell stories of pharaohs and ancient civilizations."
+      },
+      {
+        "title": "World-Class Diving",
+        "description": "Explore vibrant coral reefs and marine life in the crystal-clear waters of the Red Sea, ranked among the world's best dive sites."
+      },
+      {
+        "title": "Warm Hospitality",
+        "description": "Experience genuine Egyptian kindness and welcoming culture that makes every visitor feel like family."
+      },
+      {
+        "title": "Year-Round Sunshine",
+        "description": "Enjoy over 300 days of sunshine annually with pleasant weather perfect for exploring any time of year."
+      },
+      {
+        "title": "Affordable Experiences",
+        "description": "Discover luxury and adventure at incredible value, with world-class experiences that won't break the bank."
+      },
+      {
+        "title": "Delicious Cuisine",
+        "description": "Savor authentic Egyptian flavors from koshari and falafel to fresh seafood and traditional sweets that delight every palate."
+      }
+    ]
+  },
+  "reviewsSection": {
+    "title": "Traveler Reviews",
+    "description": "Real experiences shared by travelers who explored the wonders of Egypt — stories that bring each destination to life with authentic insights and memorable moments."
+  },
+  "whyChooseUs": {
+    "title": "Why Choose Us",
+    "description": "We provide exceptional travel experiences through trusted service, professional guidance, and tailored journeys designed to make your exploration of Egypt smooth, memorable, and truly unique.",
+    "features": [
+      {
+        "title": "Trusted Service",
+        "description": "100% secure bookings with verified guides and accommodations for your peace of mind."
+      },
+      {
+        "title": "Expert Guides",
+        "description": "Licensed Egyptologists and local experts bring history to life with fascinating stories."
+      },
+      {
+        "title": "Custom Itineraries",
+        "description": "Personalized tours tailored to your interests, pace, and travel style."
+      },
+      {
+        "title": "24/7 Support",
+        "description": "Round-the-clock assistance ensuring you're never alone on your journey."
+      },
+      {
+        "title": "Best Value",
+        "description": "Premium experiences at competitive prices with no hidden fees or surprises."
+      },
+      {
+        "title": "Memorable Moments",
+        "description": "We create unforgettable experiences that go beyond typical tourist attractions."
+      }
+    ]
+  },
+  "gallery": {
+    "title": "Gallery",
+    "paragraph": "Explore a curated collection of stunning moments captured across Egypt — showcasing its rich heritage, vibrant culture, and unforgettable landscapes."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about your journey to the land of PEACE",
+
+    "categories": {
+      "0": {
+        "title": "About E-Tour Guide",
+        "questions": {
+          "0": {
+            "question": "What is E-Tour Guide?",
+            "answer": "E-Tour Guide is your comprehensive digital companion for exploring Egypt's wonders. We provide virtual tours, interactive maps, historical information, booking services, and personalized itineraries to make your Egyptian adventure seamless and unforgettable."
+          },
+          "1": {
+            "question": "How does the E-Tour Guide platform work?",
+            "answer": "Simply create an account, browse our extensive collection of tours and destinations, and book experiences directly through our platform. Access audio guides and real-time information during your visit."
+          }
+        }
+      },
+
+      "1": {
+        "title": "Tours & Experiences",
+        "questions": {
+          "0": {
+            "question": "What types of tours does E-Tour Guide offer?",
+            "answer": "We offer virtual tours, self-guided audio tours, private guided experiences, group tours, Nile cruises, desert safaris, cultural experiences, and customized itineraries. From the Pyramids of Giza to hidden gems in Aswan, we cover all of Egypt's treasures."
+          }
+        }
+      },
+
+      "2": {
+        "title": "Website Features & Access",
+        "questions": {
+          "0": {
+            "question": "Can I access E-Tour Guide on my mobile device?",
+            "answer": "Yes! Our website is fully responsive and optimized for mobile devices. Access all features directly through your mobile browser. We're also developing a Progressive Web App (PWA) for an even better mobile experience in the future."
+          },
+          "1": {
+            "question": "Do I need to download anything to use E-Tour Guide?",
+            "answer": "No downloads required! Simply visit our website from any device with a browser. In the future, our PWA will allow you to add E-Tour Guide to your home screen for quick access, even with limited internet connectivity."
+          },
+          "2": {
+            "question": "Can I save tours for offline viewing?",
+            "answer": "Currently, you need an internet connection to browse tours and access content. However, you can bookmark pages and save tour details. Our upcoming PWA feature will enable offline access to downloaded tours and guides."
+          }
+        }
+      },
+
+      "3": {
+        "title": "Account & Membership",
+        "questions": {
+          "0": {
+            "question": "Is creating an account free?",
+            "answer": "Yes! Creating an E-Tour Guide account is completely free. Enjoy benefits like saved itineraries, booking history, personalized recommendations, exclusive deals, and loyalty rewards."
+          }
+        }
+      },
+
+      "4": {
+        "title": "Destinations & Planning",
+        "questions": {
+          "0": {
+            "question": "Which Egyptian cities do you cover?",
+            "answer": "We cover all major tourist destinations including Cairo, Giza, Luxor, Aswan, Alexandria, Hurghada, Sharm El-Sheikh, Dahab, and the Western Desert oases. We're constantly adding new destinations and hidden gems."
+          },
+          "1": {
+            "question": "What's the best time to visit Egypt?",
+            "answer": "October to April offers pleasant weather (20-25°C) and is ideal for sightseeing. Summer is hot but less crowded with better prices. Red Sea resorts are great year-round."
+          },
+          "2": {
+            "question": "Can I visit lesser-known destinations?",
+            "answer": "Absolutely! Beyond famous sites, we offer tours to Siwa Oasis, White Desert, Fayoum, Abydos, Dendera and many hidden treasures."
+          }
+        }
+      },
+
+      "5": {
+        "title": "Travel Tips & Information",
+        "questions": {
+          "0": {
+            "question": "Do I need a visa to visit Egypt?",
+            "answer": "Most nationalities can obtain a visa on arrival for $25 USD. E-visas are also available online. Some require advance arrangements."
+          },
+          "1": {
+            "question": "What currency is used in Egypt?",
+            "answer": "The Egyptian Pound (EGP). USD and EUR are widely accepted in tourist areas. ATMs are common. Keep small bills for tips."
+          }
+        }
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "About Us",
+      "subtitle": "We share Egypt's heritage with travelers worldwide through authentic experiences and expert local guidance.",
+      "description": "Explore ancient temples, Nile adventures, desert expeditions, and culinary journeys with our expert guides.",
+      "typewriter": [
+        "Authentic Egyptian Experiences",
+        "Expert Local Guides",
+        "Sustainable & Responsible Tourism"
+      ],
+      "exploreTours": "Explore Tours",
+      "ourStory": "Our Story"
     }
   },
   "beforeAfter": {
@@ -239,52 +581,129 @@
     "comparisons": [
       {
         "before": {
-          "icon": "FaRegFrown",
           "title": "Overwhelmed by planning",
           "text": "Spending hours researching attractions, transportation, and best times to visit"
         },
         "after": {
-          "icon": "FaRegSmile",
           "title": "Pre-planned itineraries",
           "text": "Detailed day-by-day guides with optimal routes and timing for each destination"
         }
       },
       {
         "before": {
-          "icon": "FaCamera",
           "title": "Missing key information",
           "text": "Arriving at sites without context or historical background"
         },
         "after": {
-          "icon": "FaSun",
           "title": "Rich audio commentary",
           "text": "Professional narration at every stop revealing fascinating stories and secrets"
         }
       },
       {
         "before": {
-          "icon": "FaUsers",
           "title": "Getting lost easily",
           "text": "Struggling with confusing maps and language barriers in unfamiliar places"
         },
         "after": {
-          "icon": "FaUserFriends",
           "title": "GPS navigation built-in",
           "text": "Turn-by-turn directions that work offline, guiding you seamlessly between locations"
         }
       },
       {
         "before": {
-          "icon": "FaDollarSign",
           "title": "Expensive tour guides",
           "text": "Paying $100+ per day for group tours with fixed schedules"
         },
         "after": {
-          "icon": "FaGem",
           "title": "Affordable freedom",
           "text": "One-time purchase gives you a personal guide in your pocket, explore at your pace"
         }
       }
     ]
+  },
+  "guide": {
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of your tours and performance",
+      "totalTours": "Total Tours",
+      "publishedTours": "Published Tours",
+      "totalBookings": "Total Bookings",
+      "averageRating": "Average Rating"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Track your tours performance and growth",
+      "totalViews": "Total Views",
+      "conversionRate": "Conversion Rate",
+      "averageBookingValue": "Average Booking Value",
+      "topPerformingTour": "Top Performing Tour",
+      "dailyViews": "Daily Views & Enrollments",
+      "monthlyComparison": "Monthly Comparison",
+      "tourPerformance": "Tour Performance",
+      "trafficSource": "Traffic Source Distribution",
+      "noDataTitle": "No Analytics Data Yet",
+      "noDataMessage": "Start publishing tours and getting enrollments to see analytics here."
+    },
+    "sidebar": {
+      "title": "Guide Panel",
+      "dashboard": "Dashboard",
+      "myTours": "My Tours",
+      "analytics": "Analytics",
+      "logout": "Logout",
+      "confirmLogout": "Confirm Logout",
+      "confirmLogoutMessage": "Are you sure you want to logout?"
+    },
+    "tours": {
+      "title": "Manage Tours",
+      "manageAndTrack": "Manage and track all your tours",
+      "addPlace": "Add Place",
+      "searchPlaceholder": "Search tours...",
+      "name": "Name",
+      "city": "City",
+      "price": "Price",
+      "rating": "Rating",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "currency": "EGP",
+      "states": {
+        "published": "Published",
+        "notPublished": "Not Published",
+        "empty": "Empty"
+      },
+      "titles": {
+        "noItems": "No items yet",
+        "noPublishedItems": "No published items",
+        "updating": "Updating...",
+        "unpublish": "Unpublish tour",
+        "publish": "Publish tour",
+        "manageWaypoints": "Manage Waypoints"
+      },
+      "messages": {
+        "added": "Tour added successfully!",
+        "updated": "Tour updated successfully!",
+        "deleted": "Tour deleted successfully!",
+        "galleryUpdated": "Gallery images updated successfully!"
+      },
+      "errors": {
+        "deleteFailed": "Failed to delete tour",
+        "galleryUpdateFailed": "Failed to update gallery images.",
+        "noPublishedItems": "There is no published items"
+      },
+      "validation": {
+        "nameLength": "Tour name must be between 3 and 100 characters",
+        "descriptionLength": "Description must be between 10 and 2000 characters",
+        "priceMin": "Price must be at least 0.99",
+        "selectPlace": "Please select a place/location"
+      }
+    },
+    "places": {
+      "added": "Place added successfully!",
+      "addFailed": "Failed to add place. Check console for details.",
+      "validation": {
+        "missingCountryCity": "Please provide both country and city"
+      }
+    },
+    "currency": "EGP"
   }
 }

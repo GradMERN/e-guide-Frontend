@@ -1,125 +1,75 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTours } from "../../store/hooks";
 import TourDetailHero from "../../components/tourDetail/TourDetailHero";
 import TourOverview from "../../components/tourDetail/TourOverview";
 import TourGuide from "../../components/tourDetail/TourGuide";
 import TourInclusions from "../../components/tourDetail/TourInclusions";
-import TourBookingCard from "../../components/tourDetail/TourBookingCard";
 import TourReviews from "../../components/tourDetail/TourReviews";
-// import { tourService } from "../../services/tourService"; // Uncomment when ready
+import enrollmentApi from "../../apis/enrollment.api";
+import paymentApi from "../../apis/payment.api";
+import { FaArrowLeft } from "react-icons/fa";
 
 const TourDetail = () => {
   const { id } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [tour, setTour] = useState(null);
+  const navigate = useNavigate();
+  const { currentTour: tour, loading, error, fetchTourById } = useTours();
+
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollError, setEnrollError] = useState(null);
 
   useEffect(() => {
-    fetchTour();
-  }, [id]);
+    if (id) {
+      fetchTourById(id);
+    }
+  }, [fetchTourById, id]);
 
-  const fetchTour = async () => {
-    setLoading(true);
+  const handleBack = () => {
+    navigate(-1); // Go back one page in history
+  };
+
+  // modal removed: direct enrollment flow handled by `handleEnrollNow`
+
+  const handleEnrollNow = async () => {
+    if (!tour?._id) return;
     try {
-      // Replace with actual API call
-      // const response = await tourService.getTourById(id);
-      // setTour(response.data);
+      setEnrollError(null);
+      setEnrolling(true);
 
-      // Mock data matching your schema
-      setTour({
-        _id: "1",
-        name: "Pyramids of Giza Experience",
-        description:
-          "Embark on an unforgettable journey to the last remaining wonder of the ancient world. This comprehensive tour takes you deep into the history of ancient Egypt, exploring the magnificent Pyramids of Giza, the enigmatic Sphinx, and the fascinating Solar Boat Museum.",
-        price: 2500,
-        currency: "EGP",
-        mainImage: {
-          url: "",
-          public_id: "",
-        },
-        galleryImages: [
-          { url: "", public_id: "" },
-          { url: "", public_id: "" },
-          { url: "", public_id: "" },
-        ],
-        place: {
-          _id: "p1",
-          name: "Pyramids of Giza",
-          city: "Cairo",
-          country: "Egypt",
-        },
-        guide: {
-          _id: "g1",
-          firstName: "Ahmed",
-          lastName: "Hassan",
-          avatar: { url: "" },
-        },
-        difficulty: "moderate",
-        rating: 4.8,
-        ratingsCount: 342,
-        enrollmentsCount: 1240,
-        isPublished: true,
-        categories: ["Historical", "Cultural"],
-        tags: ["Pyramids", "Ancient Egypt", "Sphinx"],
-        languages: ["English", "Arabic", "French"],
-        // Additional fields for display (not in schema but needed)
-        duration: 8, // hours
-        maxGroupSize: 12,
-        summary:
-          "Our expert Egyptologists will guide you through millennia of history, sharing insights and stories that bring these ancient monuments to life. Experience the grandeur of the pyramids up close and discover the secrets of the pharaohs.",
-        included: [
-          "Professional Egyptologist guide",
-          "Hotel pickup and drop-off",
-          "Air-conditioned transportation",
-          "Traditional Egyptian lunch",
-          "Entrance fees to all sites",
-          "Camel ride experience",
-          "Bottled water",
-          "All taxes and service charges",
-        ],
-        excluded: [
-          "Gratuities (optional)",
-          "Entry inside the pyramids",
-          "Personal expenses",
-          "Travel insurance",
-        ],
-        // Mock reviews
-        reviews: [
-          {
-            _id: "1",
-            user: { name: "Sarah Johnson" },
-            rating: 5,
-            comment:
-              "Absolutely incredible experience! Our guide was so knowledgeable and passionate. The pyramids are even more impressive in person. Highly recommend this tour to anyone visiting Egypt!",
-            date: "2 weeks ago",
-          },
-          {
-            _id: "2",
-            user: { name: "Mohammed Ahmed" },
-            rating: 5,
-            comment:
-              "Perfect tour! Everything was well organized, the guide was excellent, and the lunch was delicious. The camel ride was a highlight! Dr. Hassan made the history come alive.",
-            date: "1 month ago",
-          },
-          {
-            _id: "3",
-            user: { name: "Emma Williams" },
-            rating: 4,
-            comment:
-              "Great tour overall. The pyramids are breathtaking and our guide was fantastic. Only minor complaint was it was quite hot, but that's expected. Bring sunscreen and water!",
-            date: "1 month ago",
-          },
-        ],
-      });
-    } catch (error) {
-      console.error("Failed to fetch tour:", error);
+      // 1) Create enrollment
+      const enrollRes = await enrollmentApi.enrollTour(tour._id);
+      const enrollmentId =
+        enrollRes?.data?.data?.enrollmentId || enrollRes?.data?.enrollmentId;
+      if (!enrollmentId) throw new Error("Could not create enrollment");
+
+      // 2) Initialize payment (get checkout URL)
+      const initRes = await paymentApi.initializePayment(enrollmentId);
+      const checkoutUrl =
+        initRes?.data?.checkoutUrl || initRes?.data?.data?.checkoutUrl;
+      if (!checkoutUrl) throw new Error("Payment initialization failed");
+
+      // 3) Redirect via spinner route
+      navigate(
+        `/payment-redirect?checkoutUrl=${encodeURIComponent(checkoutUrl)}`
+      );
+    } catch (err) {
+      console.error(err);
+      const apiMsg = err?.response?.data?.message;
+      const status = err?.response?.status;
+      const msg = apiMsg || err?.message || "Enrollment failed";
+      setEnrollError(msg);
+      // If user already enrolled and paid, redirect to My Tours
+      if (status === 400 && /already enrolled/i.test(msg)) {
+        setTimeout(() => navigate("/my-tours"), 900);
+      }
     } finally {
-      setLoading(false);
+      setEnrolling(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="relative">
           <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-primary"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse">
@@ -130,42 +80,190 @@ const TourDetail = () => {
     );
   }
 
-  if (!tour) {
+  if (error || !tour) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
+          <div className="text-red-500 text-4xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-text mb-3">Tour Not Found</h2>
-          <p className="text-text-secondary">
-            The tour you're looking for doesn't exist.
+          <p className="text-text-secondary mb-6">
+            {error || "The tour you're looking for doesn't exist."}
           </p>
+          <button
+            onClick={() => navigate("/tours")}
+            className="flex items-center gap-2 px-4 py-2.5 bg-surface/80 backdrop-blur-sm rounded-xl text-text-secondary hover:text-text transition-colors group border border-border/50 hover:border-border shadow-lg"
+          >
+            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-sm font-medium">Back to Tours</span>
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative bg-background min-h-screen">
-      <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20">
-        {/* Hero Section */}
-        <TourDetailHero tour={tour} />
+    <div className="min-h-screen bg-background mt-22">
+      {/* Enrollment handled directly via button (no modal) */}
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
-          {/* Left Column - Tour Details */}
-          <div className="lg:col-span-2 space-y-8">
-            <TourOverview tour={tour} />
-            <TourGuide guide={tour.guide} />
-            <TourReviews
-              reviews={tour.reviews}
-              ratingsAverage={tour.rating}
-              ratingsCount={tour.ratingsCount}
-            />
-          </div>
+      {/* Floating Back Button */}
+      <div className="absolute top-35 left-20 z-50">
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-2 px-4 py-2.5 bg-surface/80 backdrop-blur-sm rounded-xl text-text-secondary hover:text-text transition-colors group border border-border/50 hover:border-border shadow-lg"
+        >
+          <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+          <span className="text-sm font-medium">Back</span>
+        </button>
+      </div>
 
-          {/* Right Column - Booking & Inclusions */}
-          <div className="lg:col-span-1 space-y-8">
-            <TourBookingCard tour={tour} />
-            <TourInclusions included={tour.included} excluded={tour.excluded} />
+      {/* Hero with Enroll button - direct enroll flow */}
+      <TourDetailHero tour={tour} onEnrollClick={handleEnrollNow} />
+
+      {/* Main Content Container */}
+      <div className="relative bg-background">
+        <div className="max-w-7xl mx-auto px-6 pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Content */}
+            <div className="lg:col-span-2">
+              {/* Spacer for fixed back button */}
+              <div className="h-16 lg:hidden"></div>
+
+              {/* Overview Section */}
+              <div className="mb-12">
+                <TourOverview tour={tour} />
+              </div>
+
+              {/* Guide Section */}
+              <div className="mb-12">
+                <TourGuide guide={tour.guide} />
+              </div>
+
+              {/* Reviews Section */}
+              <div>
+                <TourReviews
+                  ratingsAverage={tour.rating}
+                  ratingsCount={tour.ratingsCount}
+                />
+              </div>
+            </div>
+
+            {/* Right Column - Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                {/* Spacer for fixed back button */}
+                <div className="h-16 lg:hidden"></div>
+
+                {/* Tour Information Card */}
+                <div className="bg-surface rounded-2xl p-6 mb-8">
+                  <h3 className="text-xl font-bold text-text mb-6">
+                    Tour Details
+                  </h3>
+
+                  <div className="space-y-6">
+                    {/* Price */}
+                    <div className="pb-6 border-b border-border/40">
+                      <p className="text-sm text-text-muted mb-2">
+                        Price per person
+                      </p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                          {tour.price}
+                        </span>
+                        <span className="text-lg text-text-secondary">
+                          {tour.currency}
+                        </span>
+                        <span className="text-sm text-text-muted ml-2">
+                          /person
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick Info Grid */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between py-3 border-b border-border/20">
+                        <span className="text-text-secondary">Duration</span>
+                        <span className="font-medium text-text">
+                          {tour.duration || 8} hours
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-border/20">
+                        <span className="text-text-secondary">Difficulty</span>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            tour.difficulty === "easy"
+                              ? "bg-green-500/10 text-green-600"
+                              : tour.difficulty === "moderate"
+                              ? "bg-yellow-500/10 text-yellow-600"
+                              : "bg-red-500/10 text-red-600"
+                          }`}
+                        >
+                          {tour.difficulty || "Moderate"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-border/20">
+                        <span className="text-text-secondary">Group Size</span>
+                        <span className="font-medium text-text">
+                          Max {tour.maxGroupSize || 12}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between py-3">
+                        <span className="text-text-secondary">Languages</span>
+                        <span className="font-medium text-text">
+                          {tour.languages?.length || 2}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Enroll Button */}
+                    <div className="pt-6">
+                      <button
+                        onClick={handleEnrollNow}
+                        disabled={enrolling}
+                        className="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg hover:shadow-xl disabled:opacity-60"
+                      >
+                        {enrolling ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <svg
+                              className="animate-spin h-5 w-5"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                                fill="none"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                              />
+                            </svg>
+                            Redirecting...
+                          </span>
+                        ) : (
+                          "Enroll Now"
+                        )}
+                      </button>
+                      {enrollError && (
+                        <p className="text-sm text-red-500 text-center mt-2">
+                          {enrollError}
+                        </p>
+                      )}
+                      <p className="text-sm text-text-muted text-center mt-3">
+                        {tour.enrollmentsCount || 0} travelers enrolled
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tour Inclusions Card */}
+                <TourInclusions tour={tour} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

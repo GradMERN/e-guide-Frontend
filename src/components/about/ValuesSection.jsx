@@ -3,14 +3,14 @@ import { motion } from "motion/react";
 
 export default function ValuesSection({ values }) {
   return (
-    <section className="py-16 lg:py-20 relative">
+    <section className="py-6 lg:py-12 relative">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-        <div className="text-center mb-24">
+        <div className="text-center mb-12">
           <motion.span className="inline-block text-sm tracking-[0.3em] text-primary uppercase font-medium mb-6 smooth-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
             What Sets Us Apart
           </motion.span>
 
-          <motion.h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light mb-8 smooth-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
+          <motion.h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light mb-6 smooth-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
             Our Core<span className="font-semibold text-gradient-title"> Values</span>
           </motion.h2>
 

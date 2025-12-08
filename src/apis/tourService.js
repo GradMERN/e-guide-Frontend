@@ -1,8 +1,8 @@
-import api from './api';
+import api from "./axiosClient";
 
 export const tourService = {
   async getAllTours(params = {}) {
-    const response = await api.get('/tours', { params });
+    const response = await api.get("/tours", { params });
     return response.data;
   },
 
@@ -12,7 +12,7 @@ export const tourService = {
   },
 
   async createTour(tourData) {
-    const response = await api.post('/tours', tourData);
+    const response = await api.post("/tours", tourData);
     return response.data;
   },
 

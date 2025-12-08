@@ -10,7 +10,7 @@ export default function TourGuidesSection() {
 
   const tourGuides = [
     {
-      name: "Yacin Samy",
+      name: "Yassen Samy",
       designation: "Egyptologist",
       quote: "I love guiding travelers through Egypt's greatest historical sites.",
       src: guide1

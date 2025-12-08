@@ -11,7 +11,7 @@ import { store, persistor } from "./store";
 // Ensure document direction (rtl/ltr) follows current language globally
 const setDocDirection = (lng) => {
   try {
-    const direction = lng === 'ar' ? 'rtl' : 'ltr';
+    const direction = lng === "ar" ? "rtl" : "ltr";
     document.documentElement.dir = direction;
     document.documentElement.lang = lng;
   } catch (e) {
@@ -19,8 +19,10 @@ const setDocDirection = (lng) => {
   }
 };
 
-setDocDirection(i18n.language || 'en');
-i18n.on('languageChanged', setDocDirection);
+setDocDirection(i18n.language || "en");
+i18n.on("languageChanged", setDocDirection);
+
+// Defensive: hide known unwanted modal messages that interrupt flow
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

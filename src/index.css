@@ -24,7 +24,7 @@
     --text-loop: #050505;
 
     --glass-bg: var(--color-surface);
-    --glass-bg-hover:#f0e6c9 ;
+    --glass-bg-hover: #f0e6c9;
     --glass-border: rgba(0, 0, 0, 0.08);
 
     --icon-card: #050505;
@@ -52,8 +52,8 @@
   .dark {
     /* Dark Theme */
     --primary: #cfaa65;
-    --secondary: #FFD97F;
-    --tertiary: #FFE6A0;
+    --secondary: #ffd97f;
+    --tertiary: #ffe6a0;
 
     --gradient-from: var(--color-primary);
     --gradient-via: var(--color-secondary);
@@ -70,27 +70,22 @@
     --text-muted: #7a7a7a;
     --text-loop: #050505;
 
-    --glass-bg: rgba(255, 255, 255, 0.03); 
+    --glass-bg: rgba(255, 255, 255, 0.03);
     --glass-bg-hover: rgba(255, 255, 255, 0.06);
     --glass-border: rgba(255, 255, 255, 0.1);
-
 
     --faq-title: #451901;
     --faq-icon: var(--faq-title);
     --faq-border: var(--faq-title);
 
-    --button-primary-bg: linear-gradient(
-      to right,
-      var(--gradient-from),
-      var(--gradient-via),
-      var(--gradient-to)
-    );
+    --button-primary-bg: linear-gradient(to right,
+        var(--gradient-from),
+        var(--gradient-via),
+        var(--gradient-to));
     --button-primary-text: #050505;
-    --button-primary-hover-bg: linear-gradient(
-      to right,
-      var(--gradient-from),
-      var(--gradient-to)
-    );
+    --button-primary-hover-bg: linear-gradient(to right,
+        var(--gradient-from),
+        var(--gradient-to));
     --button-primary-hover-text: #050505;
 
     --button-secondary-bg: transparent;
@@ -102,11 +97,20 @@
     --button-bg: var(--button-primary-bg);
     --text-button: var(--button-primary-text);
   }
+
   * {
     border-color: var(--border);
     transition-property: background-color, border-color, color, fill, stroke;
     transition-timing-function: ease-in;
     transition-duration: 300ms;
+  }
+
+  /* Ensure clickable controls show pointer */
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    cursor: pointer;
   }
 
   body {
@@ -157,6 +161,39 @@
     color: var(--text-button);
   }
 
+  .btn-split {
+      display: inline-flex;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+  .btn-split-main {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 600;
+      border: none;
+      transition: all 0.3s;
+    }
+
+  .btn-split-icon {
+      padding: 0.75rem 1rem;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+
+  .btn-split:hover .btn-split-main {
+      background: var(--secondary);
+    }
+
+  .btn-split:hover .btn-split-icon {
+      background: var(--primary);
+    }
+
   .text-gradient-title {
     background-color: var(--color-secondary);
     -webkit-background-clip: text;
@@ -190,12 +227,10 @@
   }
 
   .dark .button-gradient {
-    background: linear-gradient(
-      to right,
-      var(--gradient-from),
-      var(--gradient-via),
-      var(--gradient-to)
-    );
+    background: linear-gradient(to right,
+        var(--gradient-from),
+        var(--gradient-via),
+        var(--gradient-to));
   }
 
   .text-loop {
@@ -217,6 +252,132 @@
 
   .icon-card {
     color: var(--icon-card);
+  }
+
+  .label-active {
+    color: #ffffff; 
+  }
+
+  .label-inactive {
+    color: var(--text); 
+  }
+
+  .dark .label-active {
+    color: #050505;
+  }
+
+  .dark .label-inactive {
+    color: #ffffff;
+  }
+
+
+  .guide-img-active {
+    @apply scale-100 group-hover:scale-110;
+    @apply grayscale-0 group-hover:grayscale;
+  }
+
+  .dark .guide-img-active {
+    @apply grayscale group-hover:grayscale-0;
+  }
+
+  .guide-img-inactive {
+    @apply grayscale scale-110 blur-[2px];
+  }
+
+  .guide-content-card {
+    background-color: var(--surface);
+  }
+
+  .dark .guide-content-card {
+    @apply bg-neutral-800/60;
+  }
+
+  .guide-title,
+  .guide-profile-title,
+  .dark .guide-profile-title {
+    color: var(--text);
+  }
+
+  .dark .guide-title,
+  .dark .guide-profile-icon {
+    color: var(--secondary);
+  }
+
+  .guide-quote-word,
+  .guide-profile-icon,
+  .guide-profile-icon,
+  .dark .guide-profile-tab,
+  .guide-profile-line,
+  .guide-profile-tab {
+    color: var(--primary);
+  }
+
+  .dark .guide-quote-word,
+  .guide-profile-subtitle,
+  .guide-profile-tab {
+    color: var(--text-secondary);
+  }
+
+  .guide-profile-bg {
+    background: var(--background);
+  }
+
+  .dark .guide-profile-icon,
+  .dark .guide-profile-tab,
+  .dark .guide-profile-line {
+    @apply text-[#C7A15C];
+  }
+
+  .guide-profile-tab,
+  .dark .guide-profile-tab {
+    @apply hover:text-[primary];
+  }
+
+  .guide-profile-line {
+    border: 1px solid var(--primary);
+  }
+
+  .dark .guide-profile-line {
+    border: 1px solid #C7A15C;
+  }
+
+  .guide-content-card {
+    background-color: var(--surface);
+  }
+
+  .dark .guide-profile-subtitle {
+    color: var(--text-muted);
+  }
+
+  .bg-register-form {
+    background-color: var(--surface);
+  }
+
+  .dark .bg-register-form {
+    background-color: var(--background);
+  }
+
+  .input-register-border {
+    border: 1px solid #dcc9a1;
+  }
+
+  .dark .input-register-border {
+    border: 1px solid #2b2b2b;
+  }
+
+  .auth-login-overlay {
+    @apply absolute inset-0 bg-background;
+  }
+
+  .dark .auth-login-overlay {
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505];
+  }
+  .auth-register-overlay {
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-secondary/70 to-[#050505];;
+  }
+
+  .dark .auth-register-overlay {
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505];
   }
 }
 

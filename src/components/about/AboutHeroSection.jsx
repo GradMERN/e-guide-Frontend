@@ -1,9 +1,24 @@
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
 import Particles from "../ui/Particles.jsx";
 import TextType from "../ui/TextType.jsx";
 import { motion } from "motion/react";
 
 export default function AboutHeroSection() {
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleExploreTours = () => {
+    navigate("/tours");
+  };
+
+    const handleOurStory = () => {
+    const storySection = document.getElementById("our-story");
+    if (storySection) {
+      storySection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center text-text overflow-hidden px-6">
@@ -27,23 +42,22 @@ export default function AboutHeroSection() {
 
       <div className="relative z-10 text-center max-w-4xl mx-auto mt-16">
         <motion.h1 initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 drop-shadow-lg bg-linear-to-r from-(--gradient-from) via-(--gradient-via) to-(--gradient-to) bg-clip-text text-transparent">
-          About Us
+          {t("about.hero.title")}
         </motion.h1>
 
         <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3 }} className="text-lg md:text-xl text-text-secondary leading-relaxed drop-shadow mb-4">
-          We share Egypt's heritage with travelers worldwide through authentic
-          experiences and expert local guidance.
+          {t("about.hero.subtitle")}
         </motion.p>
 
         <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.9 }} className="text-secondary md:text-lg leading-relaxed ">
-          Explore ancient temples, Nile adventures, desert expeditions, and
-          culinary journeys with our expert guides.
+          {t("about.hero.description")}
         </motion.p>
 
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }} className="text-2xl md:text-3xl font-bold h-10 mb-12">
           <TextType
-            text={[ "Authentic Egyptian Experiences", "Expert Local Guides", "Sustainable & Responsible Tourism",]}
+            key={i18n.language}
+            text={t("about.hero.typewriter", { returnObjects: true })}
             typingSpeed={65}
             pauseDuration={3000}
             showCursor={true}
@@ -52,12 +66,12 @@ export default function AboutHeroSection() {
         </motion.div>
 
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 1.2 }} className="flex justify-center gap-4 ">
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary-hero">
-            Explore Tour
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleExploreTours} className="btn-primary-hero">
+            {t("about.hero.exploreTours")}
           </motion.button>
 
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary-hero">
-            Learn more
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleOurStory} className="btn-secondary-hero">
+            {t("about.hero.ourStory")}
           </motion.button>
         </motion.div>
       </div>
@@ -69,4 +83,4 @@ export default function AboutHeroSection() {
     </motion.div>
     </section>
   );
-}
+};

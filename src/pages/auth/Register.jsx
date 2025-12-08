@@ -8,90 +8,172 @@ import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import { register } from "../../apis/Auth/register.api";
+import { toast } from "react-toastify";
 
 const countries = [
-  "Egypt", "USA", "Canada", "UK", "Germany", "France", "Italy",
-  "Spain", "Australia", "Japan", "China", "India", "Brazil", "Mexico",
-  "South Africa", "Russia", "Turkey", "Netherlands", "Sweden", "Norway"
+  "Egypt",
+  "USA",
+  "Canada",
+  "UK",
+  "Germany",
+  "France",
+  "Italy",
+  "Spain",
+  "Australia",
+  "Japan",
+  "China",
+  "India",
+  "Brazil",
+  "Mexico",
+  "South Africa",
+  "Russia",
+  "Turkey",
+  "Netherlands",
+  "Sweden",
+  "Norway",
 ];
 
 const cities = [
-  "Cairo", "Alexandria", "Giza", "Luxor", "Aswan", "New York", "Los Angeles",
-  "Chicago", "Houston", "Toronto", "Vancouver", "London", "Manchester",
-  "Berlin", "Munich", "Paris", "Marseille", "Rome", "Milan", "Madrid",
-  "Barcelona", "Sydney", "Melbourne", "Tokyo", "Osaka", "Beijing", "Shanghai",
-  "Mumbai", "Delhi", "Rio de Janeiro", "Sao Paulo", "Mexico City", "Cape Town",
-  "Johannesburg", "Moscow", "Istanbul", "Amsterdam", "Stockholm", "Oslo"
+  "Cairo",
+  "Alexandria",
+  "Giza",
+  "Luxor",
+  "Aswan",
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Toronto",
+  "Vancouver",
+  "London",
+  "Manchester",
+  "Berlin",
+  "Munich",
+  "Paris",
+  "Marseille",
+  "Rome",
+  "Milan",
+  "Madrid",
+  "Barcelona",
+  "Sydney",
+  "Melbourne",
+  "Tokyo",
+  "Osaka",
+  "Beijing",
+  "Shanghai",
+  "Mumbai",
+  "Delhi",
+  "Rio de Janeiro",
+  "Sao Paulo",
+  "Mexico City",
+  "Cape Town",
+  "Johannesburg",
+  "Moscow",
+  "Istanbul",
+  "Amsterdam",
+  "Stockholm",
+  "Oslo",
 ];
 
-const InputField = ({ icon: Icon, placeholder, type = "text", focusedInput, setFocusedInput, extraClass = "", ...props }) => {
+const InputField = ({
+  icon: Icon,
+  placeholder,
+  type = "text",
+  focusedInput,
+  setFocusedInput,
+  extraClass = "",
+  ...props
+}) => {
   const [field, meta] = useField(props);
 
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === placeholder ? "text-[#f7c95f]" : "text-[#bfb191]"}`} />
+        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
         <input {...field} {...props} type={type} placeholder={placeholder}
           onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
-          className={`w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50 ${extraClass}`} />
+          className={`w-full rounded-xl  input-register-border bg-background py-3 pl-12 pr-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50 ${extraClass}`} />
       </div>
-      {meta.touched && meta.error && (<p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>)}
+      {meta.touched && meta.error && (
+        <p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>
+      )}
     </div>
   );
 };
 
-const PasswordField = ({ placeholder, show, setShow, focusedInput, setFocusedInput, ...props }) => {
+const PasswordField = ({
+  placeholder,
+  show,
+  setShow,
+  focusedInput,
+  setFocusedInput,
+  ...props
+}) => {
   const [field, meta] = useField(props);
 
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 ${focusedInput === placeholder ? "text-[#f7c95f]" : "text-[#bfb191]"}`} />
+        <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
         <input {...field} {...props} type={show ? "text" : "password"} placeholder={placeholder}
           onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
-          className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-12 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50" />
-        <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#f7c95f]">
+          className="w-full rounded-xl input-register-border bg-background py-3 pl-12 pr-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50" />
+        <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary">
           {show ? <FaEyeSlash /> : <FaEye />}
         </button>
       </div>
-      {meta.touched && meta.error && (<p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>)}
+      {meta.touched && meta.error && (
+        <p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>
+      )}
     </div>
   );
 };
 
-const DropdownField = ({ icon: Icon, options, placeholder, focusedInput, setFocusedInput, open, setOpen, ...props }) => {
+const DropdownField = ({
+  icon: Icon,
+  options,
+  placeholder,
+  focusedInput,
+  setFocusedInput,
+  open,
+  setOpen,
+  ...props
+}) => {
   const [field, meta, helpers] = useField(props);
 
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center" onClick={() => setOpen(!open)}>
-        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focusedInput === placeholder ? "text-[#f7c95f]" : "text-[#bfb191]"}`} />
+        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
 
-        <div className={`w-full rounded-xl border bg-[#0a0a0a] py-3 pl-12 pr-10 text-white cursor-pointer flex items-center transition-all duration-300 ${meta.touched && meta.error ? "border-red-500" : "border-[#2b2b2b] hover:border-[#f7c95f]"}`}>
-          <span className={`truncate ${!field.value && "text-gray-500"}`}>
+        <div className={`w-full rounded-xl  input-register-border bg-background py-3 pl-12 pr-10 text-text cursor-pointer flex items-center transition-all duration-300`}>
+          <span className={`truncate ${!field.value && "text-text-muted"}`}>
             {field.value || `Select ${placeholder}`}
           </span>
-          <span className="ml-auto text-gray-400">▼</span>
+          <span className="ml-auto text-text-muted">▼</span>
         </div>
 
         {open && (
-          <div className="absolute top-full left-0 w-full bg-[#1a1a1a] border border-[#2b2b2b] rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50 scrollbar-none">
+          <div className="absolute top-full left-0 w-full bg-surface  input-register-border rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50 scrollbar-none">
             {options.map((opt) => (
-              <div key={opt}
+              <div
+                key={opt}
                 onClick={(e) => {
                   e.stopPropagation();
                   helpers.setValue(opt);
                   helpers.setTouched(true);
                   setOpen(false);
                 }}
-                className="px-4 py-2 cursor-pointer text-white hover:bg-[#aa853c] hover:text-black transition">
+                className="px-4 py-2 cursor-pointer text-text hover:bg-primary hover:text-white transition">
                 {opt}
               </div>
             ))}
           </div>
         )}
       </div>
-      {meta.touched && meta.error && (<p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>)}
+      {meta.touched && meta.error && (
+        <p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>
+      )}
     </div>
   );
 };
@@ -112,8 +194,10 @@ export default function Register() {
   useEffect(() => setAnimate(true), []);
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (countryRef.current && !countryRef.current.contains(e.target)) setCountryOpen(false);
-      if (cityRef.current && !cityRef.current.contains(e.target)) setCityOpen(false);
+      if (countryRef.current && !countryRef.current.contains(e.target))
+        setCountryOpen(false);
+      if (cityRef.current && !cityRef.current.contains(e.target))
+        setCityOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -131,7 +215,10 @@ export default function Register() {
       firstname: Yup.string().required("First name is required"),
       lastname: Yup.string().required("Last name is required"),
       email: Yup.string().email("Invalid email").required("Email is required"),
-      age: Yup.number().min(13, "Must be at least 13").max(100, "Invalid age").required("Age is required"),
+      age: Yup.number()
+        .min(13, "Must be at least 13")
+        .max(100, "Invalid age")
+        .required("Age is required"),
     }),
 
     Yup.object({
@@ -140,10 +227,19 @@ export default function Register() {
         .matches(/(?=(.*[A-Z]){2})/, "Must contain 2 uppercase letters")
         .matches(/(?=(.*[a-z]){2})/, "Must contain 2 lowercase letters")
         .matches(/(?=(.*\d){2})/, "Must contain 2 numbers")
-        .matches(/(?=(.*[!@#$%^&*()\-__+.]){2})/, "Must contain 2 special characters")
-        .test('no-repeats', 'No more than 2 identical characters allowed', (val) => !/(.)\1\1/.test(val || ''))
+        .matches(
+          /(?=(.*[!@#$%^&*()\-__+.]){2})/,
+          "Must contain 2 special characters"
+        )
+        .test(
+          "no-repeats",
+          "No more than 2 identical characters allowed",
+          (val) => !/(.)\1\1/.test(val || "")
+        )
         .required("Password is required"),
-      confirmPassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match").required("Confirm password is required"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Confirm password is required"),
     }),
 
     Yup.object({
@@ -160,9 +256,15 @@ export default function Register() {
   ];
 
   const initialValues = {
-    firstname: "", lastname: "", email: "", age: "",
-    password: "", confirmPassword: "",
-    country: "", city: "", phone: "",
+    firstname: "",
+    lastname: "",
+    email: "",
+    age: "",
+    password: "",
+    confirmPassword: "",
+    country: "",
+    city: "",
+    phone: "",
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -183,43 +285,45 @@ export default function Register() {
       console.log("SENDING:", body);
 
       const res = await register(body);
-      alert(res.data.message);
+      toast.success(res.data.message);
       navigate("/login");
     } catch (err) {
       console.error("Registration error:", err);
-      const msg = err.response?.data?.errors?.[0]?.message ||
+      const msg =
+        err.response?.data?.errors?.[0]?.message ||
         err.response?.data?.message ||
         "Registration failed";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <section className="relative min-h-screen flex justify-center items-center bg-black overflow-hidden px-4 sm:px-6 lg:px-8 py-25">
+    <section className="relative min-h-screen flex justify-center items-center bg-background overflow-hidden px-4 sm:px-6 lg:px-8 py-25">
+
       <div className="absolute inset-0">
         <img src="src/assets/images/loginBg.webp" className="h-full w-full object-cover opacity-30" alt="bg-register" />
-        <div className="absolute inset-0 bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505]" />
+        <div className="absolute inset-0 auth-register-overlay" />
       </div>
 
-      <div className={`relative w-full max-w-md sm:max-w-lg lg:max-w-xl px-6 sm:px-8 md:px-10 lg:px-12 py-8 sm:py-10 md:py-12 rounded-2xl border border-[#f7c95f]/20 bg-[#0c0c0c] backdrop-blur-xl shadow-[0_0_50px_-10px_rgba(247,201,95,0.2)] overflow-hidden transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
-        <div className="absolute top-0 h-1 w-full bg-linear-to-r from-transparent via-[#f7c95f] to-transparent opacity-50" />
+      <div className={`relative w-full max-w-md sm:max-w-lg lg:max-w-xl px-6 sm:px-8 md:px-10 lg:px-12 py-8 sm:py-10 md:py-12 rounded-2xl border border-border bg-register-form backdrop-blur-xl shadow-[0_0_50px_-10px_rgba(247,201,95,0.2)] overflow-hidden transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
+        <div className="absolute top-0 h-1 w-full bg-linear-to-r from-transparent via-primary to-transparent opacity-50" />
 
         <div className="flex flex-col items-center mb-8 sm:mb-10">
-          <div className="mb-4 rounded-full border border-[#f7c95f]/40 bg-linear-to-br from-[#1a1a1a] to-[#0a0a0a] p-4 shadow-[0_0_20px_rgba(247,201,95,0.15)]">
-            <GiEgyptianProfile className="h-8 w-8 sm:h-12 sm:w-12 text-[#f7c95f]" />
+          <div className="mb-4 rounded-full border border-primary/40 bg-background p-4 shadow-[0_0_20px_rgba(247,201,95,0.15)]">
+            <GiEgyptianProfile className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
           </div>
-          <h2 className="bg-linear-to-r from-[#f7c95f] via-[#e9dcc0] to-[#f7c95f] bg-clip-text text-transparent text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center font-extrabold tracking-wide">
+          <h2 className="text-gradient-title bg-clip-text text-transparent text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center font-extrabold tracking-wide">
             Create Your Account
           </h2>
         </div>
 
         <div className="relative flex items-center justify-between mb-8">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-600 -z-10 rounded"></div>
-          <div className="absolute top-1/2 left-0 h-0.5 bg-[#f7c95f] -z-10 rounded transition-all duration-500" style={{ width: step === 1 ? "30%" : step === 2 ? "60%" : "100%" }}></div>
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-text-muted/30 -z-10 rounded"></div>
+          <div className="absolute top-1/2 left-0 h-0.5 bg-primary-z-10 rounded transition-all duration-500" style={{ width: step === 1 ? "30%" : step === 2 ? "60%" : "100%" }}></div>
           {[1, 2, 3].map((s) => (
-            <div key={s} className={`w-4 h-4 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${step >= s ? "bg-[#f7c95f] text-black scale-110 shadow-lg" : "bg-gray-600 text-white"}`}>{s}</div>
+            <div key={s} className={`w-4 h-4 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${step >= s ? "bg-primary text-button-text scale-110 shadow-lg" : "bg-surface border border-text-muted text-text-muted"}`}>{s}</div>
           ))}
         </div>
 
@@ -242,13 +346,39 @@ export default function Register() {
                 <>
                   <div className="flex flex-col gap-4">
                     <div className="flex gap-4">
-                      <InputField name="firstname" icon={IoPerson} placeholder="firstname" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
-                      <InputField name="lastname" icon={IoPerson} placeholder="lastname" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                      <InputField
+                        name="firstname"
+                        icon={IoPerson}
+                        placeholder="firstname"
+                        focusedInput={focusedInput}
+                        setFocusedInput={setFocusedInput}
+                      />
+                      <InputField
+                        name="lastname"
+                        icon={IoPerson}
+                        placeholder="lastname"
+                        focusedInput={focusedInput}
+                        setFocusedInput={setFocusedInput}
+                      />
                     </div>
-                    <InputField name="email" icon={MdEmail} placeholder="email" type="email" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
-                    <InputField name="age" icon={IoPerson} placeholder="age" type="number" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                    <InputField
+                      name="email"
+                      icon={MdEmail}
+                      placeholder="email"
+                      type="email"
+                      focusedInput={focusedInput}
+                      setFocusedInput={setFocusedInput}
+                    />
+                    <InputField
+                      name="age"
+                      icon={IoPerson}
+                      placeholder="age"
+                      type="number"
+                      focusedInput={focusedInput}
+                      setFocusedInput={setFocusedInput}
+                    />
                   </div>
-                  <button type="submit" className="w-full py-3 mt-2 bg-linear-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">
+                  <button type="submit" className="w-full py-3 mt-2 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">
                     Next
                   </button>
                 </>
@@ -257,12 +387,26 @@ export default function Register() {
               {step === 2 && (
                 <>
                   <div className="flex flex-col gap-4">
-                    <PasswordField name="password" placeholder="password" show={showPwd1} setShow={setShowPwd1} focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
-                    <PasswordField name="confirmPassword" placeholder="confirm password" show={showPwd2} setShow={setShowPwd2} focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                    <PasswordField
+                      name="password"
+                      placeholder="password"
+                      show={showPwd1}
+                      setShow={setShowPwd1}
+                      focusedInput={focusedInput}
+                      setFocusedInput={setFocusedInput}
+                    />
+                    <PasswordField
+                      name="confirmPassword"
+                      placeholder="confirm password"
+                      show={showPwd2}
+                      setShow={setShowPwd2}
+                      focusedInput={focusedInput}
+                      setFocusedInput={setFocusedInput}
+                    />
                   </div>
                   <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer">Back</button>
-                    <button type="submit" className="w-1/2 py-3 bg-linear-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Next</button>
+                    <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer">Back</button>
+                    <button type="submit" className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Next</button>
                   </div>
                 </>
               )}
@@ -271,23 +415,49 @@ export default function Register() {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div ref={countryRef}>
-                      <DropdownField name="country" icon={AiOutlineGlobal} options={countries} open={countryOpen} setOpen={setCountryOpen} placeholder="country" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                      <DropdownField
+                        name="country"
+                        icon={AiOutlineGlobal}
+                        options={countries}
+                        open={countryOpen}
+                        setOpen={setCountryOpen}
+                        placeholder="country"
+                        focusedInput={focusedInput}
+                        setFocusedInput={setFocusedInput}
+                      />
                     </div>
                     <div ref={cityRef}>
-                      <DropdownField name="city" icon={MdLocationCity} options={cities} open={cityOpen} setOpen={setCityOpen} placeholder="city" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                      <DropdownField
+                        name="city"
+                        icon={MdLocationCity}
+                        options={cities}
+                        open={cityOpen}
+                        setOpen={setCityOpen}
+                        placeholder="city"
+                        focusedInput={focusedInput}
+                        setFocusedInput={setFocusedInput}
+                      />
                     </div>
                   </div>
-                  <InputField name="phone" icon={FaPhoneAlt} placeholder="phone" focusedInput={focusedInput} setFocusedInput={setFocusedInput} />
+                  <InputField
+                    name="phone"
+                    icon={FaPhoneAlt}
+                    placeholder="phone"
+                    focusedInput={focusedInput}
+                    setFocusedInput={setFocusedInput}
+                  />
 
                   <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer">Back</button>
+                    <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Back</button>
                     <button
                       type="submit"
                       disabled={isSubmitting || !isValid}
                       className={`w-1/2 py-3 rounded-xl font-semibold transition-all duration-300 ease-out transform 
-                        ${isSubmitting || !isValid
-                          ? "bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
-                          : "bg-linear-to-r from-[#c9a45f] to-[#aa853c] text-black hover:-translate-y-1 cursor-pointer"}`}
+                        ${
+                          isSubmitting || !isValid
+                            ? "bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
+                            : "bg-linear-to-r from-[#c9a45f] to-[#aa853c] text-black hover:-translate-y-1 cursor-pointer"
+                        }`}
                     >
                       {isSubmitting ? "Loading..." : "Register"}
                     </button>
@@ -298,9 +468,9 @@ export default function Register() {
           )}
         </Formik>
 
-        <p className="text-gray-400 text-sm mt-4 text-center">
+        <p className="text-text-muted text-sm mt-4 text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-[#f7c95f] font-semibold hover:underline">
+          <Link to="/login" className="text-primary font-semibold hover:underline">
             Login
           </Link>
         </p>
@@ -308,4 +478,3 @@ export default function Register() {
     </section>
   );
 }
-

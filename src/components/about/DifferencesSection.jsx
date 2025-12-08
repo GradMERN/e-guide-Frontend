@@ -2,16 +2,21 @@ import { motion } from "motion/react";
 import {FaTimesCircle,FaCheckCircle,FaRegFrown,FaRegSmile,FaCamera,FaSun,FaUsers,FaUserFriends,FaDollarSign,FaGem,} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
-const iconMap = {FaRegFrown, FaRegSmile, FaCamera, FaSun, FaUsers, FaUserFriends, FaDollarSign, FaGem};
-
 export default function BeforeAfterSection() {
 
   const { t } = useTranslation();
+  const iconMap = [
+    { before: FaRegFrown, after: FaRegSmile }, 
+    { before: FaCamera, after: FaSun }, 
+    { before: FaUsers, after: FaUserFriends },
+    { before: FaDollarSign, after: FaGem }, 
+  ];
+
   const comparisons = t("beforeAfter.comparisons", { returnObjects: true });
 
   return (
-    <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-12">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-6 lg:py-12 px-4 sm:px-6 lg:px-12">
+      <div className="max-w-7xl mx-auto">
         <motion.div className="text-center mb-16 relative z-10" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-80px" }}>
           <motion.span className="inline-block text-xl tracking-[0.3em] text-text uppercase font-medium mb-4" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} viewport={{ once: true }}>
             {t("beforeAfter.subtitle")}
@@ -28,8 +33,8 @@ export default function BeforeAfterSection() {
 
         <div className="grid gap-8">
           {comparisons.map((comparison, index) => {
-            const BeforeIcon = iconMap[comparison.before.icon];
-            const AfterIcon = iconMap[comparison.after.icon];
+            const BeforeIcon = iconMap[index].before;
+            const AfterIcon = iconMap[index].after;
 
             return (
               <motion.div key={index} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="grid md:grid-cols-2 gap-6">

@@ -1,24 +1,41 @@
 .scroller {
-  --animation-duration: 50s;
-  --animation-direction: normal;
-  overflow: hidden;
+  max-width: 100%;
 }
 
-.animate-scroll {
-  animation: scroll var(--animation-duration) linear infinite;
-  animation-direction: var(--animation-direction);
-  will-change: transform;
+.scroller[dir="rtl"] {
+  direction: rtl;
+}
+
+.scroller[dir="ltr"] {
+  direction: ltr;
 }
 
 .pause-on-hover:hover .animate-scroll {
   animation-play-state: paused;
 }
 
+.animate-scroll {
+  animation: scroll var(--animation-duration) var(--animation-direction) linear infinite;
+}
+
 @keyframes scroll {
-  0% {
+  from {
     transform: translateX(0);
   }
-  100% {
-    transform: translateX(-50%);
+  to {
+    transform: translateX(calc(-50%));
+  }
+}
+
+[dir="rtl"] .animate-scroll {
+  animation-name: scroll-rtl;
+}
+
+@keyframes scroll-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(50%));
   }
 }
