@@ -1,9 +1,10 @@
-"use client";
+import { useTranslation } from "react-i18next";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { DirectionAwareHoverImage } from "./DirectionAwareHoverImage";
 import { motion } from "motion/react";
 
 export default function StorySection() {
+  const { t } = useTranslation();
 
   const features = [
     "Expert Local Guides",
@@ -61,4 +62,4 @@ export default function StorySection() {
       </div>
     </section>
   );
-}
+};

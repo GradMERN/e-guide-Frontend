@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import CircularGallery from "../ui/CircularGallery.jsx";
 import Particles from "../ui/Particles.jsx";
 import "../../styles/CircularGallery.css";
@@ -6,6 +7,8 @@ import { motion } from "motion/react";
 
 
 export default function CircularGallerySection() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative py-6 lg:py-12 overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
@@ -24,15 +27,15 @@ export default function CircularGallerySection() {
 
       <motion.div className="max-w-7xl mx-auto px-6 lg:px-12 text-center mb-8 relative z-10" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-80px" }}>
         <motion.span className="inline-block text-xl tracking-[0.3em] text-text uppercase font-medium mb-6 smooth-text" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} viewport={{ once: true }}>
-          Traveler Highlights
+          {t("circularGallery.title")}
         </motion.span>
 
         <motion.h2 className="text-4xl sm:text-5xl lg:text-6xl font-light mb-6 smooth-tex text-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
-          Explore Egypt Through<span className="font-semibold text-gradient-title bg-clip-text text-transparent"> Our Travelers' Stories</span>
+          {t("circularGallery.subtitle1")}<span className="font-semibold text-gradient-title bg-clip-text text-transparent"> {t("circularGallery.subtitle2")}</span>
         </motion.h2>
 
         <motion.p className="text-text text-base sm:text-lg max-w-3xl mx-auto smooth-text leading-relaxed" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6 }} viewport={{ once: true }}>
-          A visual journey of the most memorable moments from our tours
+          {t("circularGallery.description")}
         </motion.p>
       </motion.div>
 
