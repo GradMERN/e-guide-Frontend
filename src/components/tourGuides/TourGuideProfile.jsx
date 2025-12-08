@@ -113,7 +113,7 @@ export default function TourGuideProfile() {
 
     return (
 
-        <div className="min-h-screen  guide-profile-bg  font-sans pb-24 selection:bg-[#C7A15C] selection:text-black overflow-x-hidden">
+        <div dir='ltr' className="min-h-screen  guide-profile-bg  font-sans pb-24 selection:bg-[#C7A15C] selection:text-black overflow-x-hidden">
 
 
             <div className="relative h-[30vh] sm:h-[40vh] w-full guide-profile-bg">

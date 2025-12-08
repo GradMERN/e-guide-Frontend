@@ -9,6 +9,7 @@ import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import { register } from "../../apis/Auth/register.api";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const countries = [
   "Egypt",
@@ -140,15 +141,15 @@ const DropdownField = ({
   ...props
 }) => {
   const [field, meta, helpers] = useField(props);
-
+  const { t } = useTranslation();
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full" dir="ltr">
       <div className="relative flex items-center" onClick={() => setOpen(!open)}>
         <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
 
         <div className={`w-full rounded-xl  input-register-border bg-background py-3 pl-12 pr-10 text-text cursor-pointer flex items-center transition-all duration-300`}>
           <span className={`truncate ${!field.value && "text-text-muted"}`}>
-            {field.value || `Select ${placeholder}`}
+            {field.value || `${t("auth.register.select")} ${placeholder}`}
           </span>
           <span className="ml-auto text-text-muted">▼</span>
         </div>
@@ -190,6 +191,7 @@ export default function Register() {
   const countryRef = useRef(null);
   const cityRef = useRef(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => setAnimate(true), []);
   useEffect(() => {
@@ -212,46 +214,46 @@ export default function Register() {
 
   const validationSchema = [
     Yup.object({
-      firstname: Yup.string().required("First name is required"),
-      lastname: Yup.string().required("Last name is required"),
-      email: Yup.string().email("Invalid email").required("Email is required"),
+      firstname: Yup.string().required(t("auth.register.errors.firstName")),
+      lastname: Yup.string().required(t("auth.register.errors.lastName")),
+      email: Yup.string().email(t("auth.register.errors.emailInvalid")).required(t("auth.register.errors.lastName")),
       age: Yup.number()
-        .min(13, "Must be at least 13")
-        .max(100, "Invalid age")
-        .required("Age is required"),
+        .min(13, t("auth.register.errors.ageMin"))
+        .max(100, t("auth.register.errors.ageMax"))
+        .required(t("auth.register.errors.ageRequired")),
     }),
 
     Yup.object({
       password: Yup.string()
-        .min(12, "Must be at least 12 characters")
-        .matches(/(?=(.*[A-Z]){2})/, "Must contain 2 uppercase letters")
-        .matches(/(?=(.*[a-z]){2})/, "Must contain 2 lowercase letters")
-        .matches(/(?=(.*\d){2})/, "Must contain 2 numbers")
+        .min(12, t("auth.register.errors.passwordLength"))
+        .matches(/(?=(.*[A-Z]){2})/, t("auth.register.errors.passwordUppercase"))
+        .matches(/(?=(.*[a-z]){2})/, t("auth.register.errors.passwordLowercase"))
+        .matches(/(?=(.*\d){2})/, t("auth.register.errors.passwordNumber"))
         .matches(
           /(?=(.*[!@#$%^&*()\-__+.]){2})/,
-          "Must contain 2 special characters"
+          t("auth.register.errors.passwordSpecial")
         )
         .test(
           "no-repeats",
-          "No more than 2 identical characters allowed",
+          t("auth.register.errors.passwordNoRepeats"),
           (val) => !/(.)\1\1/.test(val || "")
         )
-        .required("Password is required"),
+        .required(t("auth.register.errors.password")),
       confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password"), null], "Passwords must match")
-        .required("Confirm password is required"),
+        .oneOf([Yup.ref("password"), null], t("auth.register.errors.confirmPasswordMatch"))
+        .required(t("auth.register.errors.confirmPassword")),
     }),
 
     Yup.object({
-      country: Yup.string().required("Country is required"),
-      city: Yup.string().required("City is required"),
+      country: Yup.string().required(t("auth.register.errors.country")),
+      city: Yup.string().required(t("auth.register.errors.city")),
       phone: Yup.string()
-        .test("is-egyptian", "Invalid phone number", (val) => {
+        .test("is-egyptian", t("auth.register.errors.phoneInvalid"), (val) => {
           if (!val) return false;
           const cleaned = formatPhoneNumber(val);
           return /^01[0125][0-9]{8}$/.test(cleaned);
         })
-        .required("Phone is required"),
+        .required(t("auth.register.errors.phone")),
     }),
   ];
 
@@ -315,7 +317,7 @@ export default function Register() {
             <GiEgyptianProfile className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
           </div>
           <h2 className="text-gradient-title bg-clip-text text-transparent text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center font-extrabold tracking-wide">
-            Create Your Account
+            {t("auth.register.title")}
           </h2>
         </div>
 
@@ -349,14 +351,14 @@ export default function Register() {
                       <InputField
                         name="firstname"
                         icon={IoPerson}
-                        placeholder="firstname"
+                        placeholder={t("auth.register.firstName")}
                         focusedInput={focusedInput}
                         setFocusedInput={setFocusedInput}
                       />
                       <InputField
                         name="lastname"
                         icon={IoPerson}
-                        placeholder="lastname"
+                        placeholder={t("auth.register.lastName")}
                         focusedInput={focusedInput}
                         setFocusedInput={setFocusedInput}
                       />
@@ -364,7 +366,7 @@ export default function Register() {
                     <InputField
                       name="email"
                       icon={MdEmail}
-                      placeholder="email"
+                      placeholder={t("auth.register.email")}
                       type="email"
                       focusedInput={focusedInput}
                       setFocusedInput={setFocusedInput}
@@ -372,14 +374,14 @@ export default function Register() {
                     <InputField
                       name="age"
                       icon={IoPerson}
-                      placeholder="age"
+                      placeholder={t("auth.register.age")}
                       type="number"
                       focusedInput={focusedInput}
                       setFocusedInput={setFocusedInput}
                     />
                   </div>
                   <button type="submit" className="w-full py-3 mt-2 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">
-                    Next
+                    {t("auth.register.next")}
                   </button>
                 </>
               )}
@@ -389,7 +391,7 @@ export default function Register() {
                   <div className="flex flex-col gap-4">
                     <PasswordField
                       name="password"
-                      placeholder="password"
+                      placeholder={t("auth.register.password")}
                       show={showPwd1}
                       setShow={setShowPwd1}
                       focusedInput={focusedInput}
@@ -397,7 +399,7 @@ export default function Register() {
                     />
                     <PasswordField
                       name="confirmPassword"
-                      placeholder="confirm password"
+                      placeholder={t("auth.register.confirmPassword")}
                       show={showPwd2}
                       setShow={setShowPwd2}
                       focusedInput={focusedInput}
@@ -405,8 +407,8 @@ export default function Register() {
                     />
                   </div>
                   <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer">Back</button>
-                    <button type="submit" className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Next</button>
+                    <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer">{t("auth.register.back")}</button>
+                    <button type="submit" className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.next")}</button>
                   </div>
                 </>
               )}
@@ -421,7 +423,7 @@ export default function Register() {
                         options={countries}
                         open={countryOpen}
                         setOpen={setCountryOpen}
-                        placeholder="country"
+                        placeholder={t("auth.register.country")}
                         focusedInput={focusedInput}
                         setFocusedInput={setFocusedInput}
                       />
@@ -433,7 +435,7 @@ export default function Register() {
                         options={cities}
                         open={cityOpen}
                         setOpen={setCityOpen}
-                        placeholder="city"
+                        placeholder={t("auth.register.city")}
                         focusedInput={focusedInput}
                         setFocusedInput={setFocusedInput}
                       />
@@ -442,24 +444,23 @@ export default function Register() {
                   <InputField
                     name="phone"
                     icon={FaPhoneAlt}
-                    placeholder="phone"
+                    placeholder={t("auth.register.phone")}
                     focusedInput={focusedInput}
                     setFocusedInput={setFocusedInput}
                   />
 
                   <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">Back</button>
+                    <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.back")}</button>
                     <button
                       type="submit"
                       disabled={isSubmitting || !isValid}
                       className={`w-1/2 py-3 rounded-xl font-semibold transition-all duration-300 ease-out transform 
-                        ${
-                          isSubmitting || !isValid
-                            ? "bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
-                            : "bg-linear-to-r from-[#c9a45f] to-[#aa853c] text-black hover:-translate-y-1 cursor-pointer"
+                        ${isSubmitting || !isValid
+                          ? "bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
+                          : "bg-linear-to-r from-[#c9a45f] to-[#aa853c] text-black hover:-translate-y-1 cursor-pointer"
                         }`}
                     >
-                      {isSubmitting ? "Loading..." : "Register"}
+                      {isSubmitting ? t("auth.register.loading") : t("auth.register.registerBtn")}
                     </button>
                   </div>
                 </>
@@ -469,9 +470,9 @@ export default function Register() {
         </Formik>
 
         <p className="text-text-muted text-sm mt-4 text-center">
-          Already have an account?{" "}
+          {t("auth.register.haveAccount")}{" "}
           <Link to="/login" className="text-primary font-semibold hover:underline">
-            Login
+            {t("auth.register.loginLink")}
           </Link>
         </p>
       </div>

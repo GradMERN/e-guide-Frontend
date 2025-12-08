@@ -712,5 +712,94 @@
       }
     },
     "currency": "EGP"
+  },
+   "auth": {
+    "register": {
+      "title": "Create Your Account",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "age":"Age",
+      "phone": "Phone Number",
+      "select":"Select",
+      "city": "City",
+      "country": "Country",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "loading":"Loading...",
+      "registerBtn": "Register",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Login",
+      "next": "Next",
+      "back": "Back",
+
+      "errors": {
+        "firstName": "First name is required",
+        "lastName": "Last name is required",
+        "email": "Email is required",
+        "emailInvalid": "Please enter a valid email",
+        "ageMin": "Must be at least 13",
+        "ageMax": "Invalid age",
+        "ageRequired": "Age is required",
+        "phone": "phone is required",
+        "phoneInvalid": "Please enter a valid phone number",
+        "password": "Password is required",
+        "passwordUppercase": "Password must contain at least 2 uppercase letters",
+        "passwordLowercase": "Password must contain at least 2 lowercase letters",
+        "passwordNumber": "Password must contain at least 2 numbers",
+        "passwordSpecial": "Password must contain at least 2 special characters",
+        "passwordNoRepeats": "No more than 2 identical characters allowed",
+        "passwordLength": "Password must be at least 12 characters",
+        "confirmPassword": "Confirm Password is required",
+        "confirmPasswordMatch": "Passwords don't match",
+        "city": "City is required",
+        "country": "Country is required"
+      }
+    },
+    "login": {
+       "welcome": "Welcome Back",
+       "emailPlaceholder": "Enter your email",
+       "passwordPlaceholder": "Enter your Password",
+       "forgot": "Forgot Password?",
+       "signIn": "Sign In",
+       "or": "Or continue with",
+       "google": "Google Account",
+       "noAccount": "New to Mystic Egypt? Create Account",
+  
+  "errors": {
+       "emailRequired": "Email is required",
+       "emailInvalid": "Invalid email",
+       "passwordRequired": "Password is required",
+       "passwordMin": "Password must be at least 6 characters"
+  }
+},
+  "subtitle": "Journey Through Millennia",
+
+"leftCards": {
+      "ancientWonders": {
+        "title": "Ancient Wonders",
+        "text": "Explore pyramids, temples, and tombs that have stood for thousands of years."
+      },
+      "expertGuides": {
+        "title": "Expert Guides",
+        "text": "Learn from Egyptologists who bring history alive with engaging stories."
+      },
+      "nileCruises": {
+        "title": "Nile Cruises",
+        "text": "Sail the legendary Nile in luxury while visiting historic sites along the way."
+      }
+    },
+    "stats": [
+      { "num": "5k+", "label": "Travelers" },
+      { "num": "150+", "label": "Packages" },
+      { "num": "25+", "label": "Years Exp" }
+    ]
+
+  },
+  "tourGuide":{
+    "homeSection": {
+      "title": "Meet Our Experts",
+      "subtitle": "Guided by history, our certified tour guides will make your journey through Egypt unforgettable."
+    }
   }
 }
