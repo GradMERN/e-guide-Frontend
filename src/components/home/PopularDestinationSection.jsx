@@ -94,7 +94,7 @@ export default function PopularDestinationSection() {
 
   return (
     <SectionWrapperFull>
-      <div className="mt-12">
+      <div className="mt-16">
         <TitlesHome icon={GiEgypt} title={t("popularDestination.title")} paragraph={t("popularDestination.description")}/>
 
         <div className="hidden lg:grid lg:grid-cols-3 gap-6 xl:gap-8 max-w-7xl mx-auto">

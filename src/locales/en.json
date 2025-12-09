@@ -565,65 +565,130 @@
       ],
       "exploreTours": "Explore Tours",
       "ourStory": "Our Story"
-    }
-  },
-  "circularGallery": {
-    "title": "Traveler Highlights",
-    "subtitle1": "Explore Egypt Through",
-    "subtitle2": "Our Travelers' Stories",
-    "description": "A visual journey of the most memorable moments from our tours"
-  },
-  "beforeAfter": {
-    "subtitle": "Compare & Contrast",
-    "title": {
-      "normal": "The E-Tour Guide",
-      "highlight": "Difference"
     },
-    "description": "See what changes when you travel with us",
-    "without": "Without Us",
-    "with": "With E-Tour Guide",
-    "comparisons": [
+    "story": {
+      "label": "Our Story",
+      "title": "Preserving Egypt's Past,",
+      "titleHighlight": "Crafting Unforgettable Journeys",
+      "paragraph1": "Since 2025, we've dedicated ourselves to showcasing Egypt's timeless history through immersive and responsible travel experiences.",
+      "paragraph2": "Our certified Egyptologists, passionate local guides, and commitment to sustainability ensure every journey feels authentic and memorable.",
+      "features": [
+        "Expert Local Guides",
+        "Authentic Experiences",
+        "Sustainable Tourism",
+        "Small Group Tours"
+      ]
+    },
+    "values": {
+    "label": "What Sets Us Apart",
+    "title": "Our Core",
+    "titleHighlight": "Values",
+    "subtitle": "Six principles that guide every expedition we create",
+    "items": [
       {
-        "before": {
-          "title": "Overwhelmed by planning",
-          "text": "Spending hours researching attractions, transportation, and best times to visit"
-        },
-        "after": {
-          "title": "Pre-planned itineraries",
-          "text": "Detailed day-by-day guides with optimal routes and timing for each destination"
-        }
+        "title": "Passion for Heritage",
+        "description": "Every journey is crafted with deep reverence for Egypt's 5,000-year legacy, bringing ancient wonders to life through expert storytelling."
       },
       {
-        "before": {
-          "title": "Missing key information",
-          "text": "Arriving at sites without context or historical background"
-        },
-        "after": {
-          "title": "Rich audio commentary",
-          "text": "Professional narration at every stop revealing fascinating stories and secrets"
-        }
+        "title": "Authentic Connections",
+        "description": "Experience Egypt beyond the guidebooks—intimate encounters with local artisans, hidden archaeological gems, and centuries-old traditions."
       },
       {
-        "before": {
-          "title": "Getting lost easily",
-          "text": "Struggling with confusing maps and language barriers in unfamiliar places"
-        },
-        "after": {
-          "title": "GPS navigation built-in",
-          "text": "Turn-by-turn directions that work offline, guiding you seamlessly between locations"
-        }
+        "title": "Cultural Stewardship",
+        "description": "We partner with local communities to ensure tourism preserves heritage sites and empowers Egyptian families for generations."
       },
       {
-        "before": {
-          "title": "Expensive tour guides",
-          "text": "Paying $100+ per day for group tours with fixed schedules"
-        },
-        "after": {
-          "title": "Affordable freedom",
-          "text": "One-time purchase gives you a personal guide in your pocket, explore at your pace"
-        }
+        "title": "Excellence Guaranteed",
+        "description": "From luxury accommodations to expert Egyptologists, every detail meets our uncompromising standards of quality and safety."
+      },
+      {
+        "title": "Your Journey, Your Way",
+        "description": "Flexible itineraries designed around your interests—whether ancient temples, desert adventures, or culinary discoveries."
+      },
+      {
+        "title": "Trust & Transparency",
+        "description": "Clear pricing with no hidden fees, comprehensive travel insurance, and 24/7 support throughout your Egyptian odyssey."
       }
     ]
+    },
+    "stats": {
+      "items": [
+        {
+          "value": "500+",
+          "label": "Happy Travelers"
+        },
+        {
+          "value": "2+",
+          "label": "Years Experience"
+        },
+        {
+          "value": "25+",
+          "label": "Destinations"
+        },
+        {
+          "value": "4.8",
+          "label": "Average Rating"
+        }
+      ]
+    },
+    "circularGallery":{
+      "title":"Traveler Highlights",
+      "subtitle1":"Explore Egypt Through",
+      "subtitle2":"Our Travelers' Stories",
+      "description":"A visual journey of the most memorable moments from our tours"
+    },
+    "beforeAfter": {
+      "subtitle": "Compare & Contrast",
+      "title": {
+        "normal": "The E-Tour Guide",
+        "highlight": "Difference"
+      },
+      "description": "See what changes when you travel with us",
+      "without": "Without Us",
+      "with": "With E-Tour Guide",
+      "comparisons": [
+        {
+          "before": {
+            "title": "Overwhelmed by planning",
+            "text": "Spending hours researching attractions, transportation, and best times to visit"
+          },
+          "after": {
+            "title": "Pre-planned itineraries",
+            "text": "Detailed day-by-day guides with optimal routes and timing for each destination"
+          }
+        },
+        {
+          "before": {
+            "title": "Missing key information",
+            "text": "Arriving at sites without context or historical background"
+          },
+          "after": {
+            "title": "Rich audio commentary",
+            "text": "Professional narration at every stop revealing fascinating stories and secrets"
+          }
+        },
+        {
+          "before": {
+            "title": "Getting lost easily",
+            "text": "Struggling with confusing maps and language barriers in unfamiliar places"
+          },
+          "after": {
+            "title": "GPS navigation built-in",
+            "text": "Turn-by-turn directions that work offline, guiding you seamlessly between locations"
+          }
+        },
+        {
+          "before": {
+            "title": "Expensive tour guides",
+            "text": "Paying $100+ per day for group tours with fixed schedules"
+          },
+          "after": {
+            "title": "Affordable freedom",
+            "text": "One-time purchase gives you a personal guide in your pocket, explore at your pace"
+          }
+        }
+      ]
+    }
   },
   "guide": {
     "dashboard": {

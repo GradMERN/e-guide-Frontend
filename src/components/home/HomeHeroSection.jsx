@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { ImagesSlider } from "../ui/images-slider.js";
 import { CiCalendarDate } from "react-icons/ci";
 import { LuMapPin } from "react-icons/lu";
@@ -14,6 +15,10 @@ import hero5 from "../../assets/images/hero/hero5.avif";
 
 export default function ImagesSliderDemo() {
 
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const icons = [LuMapPin, CiCalendarDate, LuUsers];
+
   const images = [
     { src: hero1, alt: "Photo 1" },
     { src: hero2, alt: "Photo 2" },
@@ -22,9 +27,9 @@ export default function ImagesSliderDemo() {
     { src: hero5, alt: "Photo 5" },
   ];
 
-  const { t } = useTranslation();
-  const icons = [LuMapPin, CiCalendarDate, LuUsers];
-
+  const handleExplore = () => {
+    navigate("/tours");
+  };
 
 return (
     <ImagesSlider images={images} className="h-screen md:h-[75vh] lg:h-[90vh] xl:h-screen w-full">
@@ -51,7 +56,7 @@ return (
         </motion.div>
 
         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-row sm:flex-row gap-3 md:gap-4">
-          <button className="btn-primary-hero">{t("homepage.exploreBtn")}</button>
+          <button onClick={handleExplore} className="btn-primary-hero">{t("homepage.exploreBtn")}</button>
           <button className="btn-watch-hero">{t("homepage.watchBtn")}</button>
         </motion.div>
 
