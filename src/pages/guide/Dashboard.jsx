@@ -7,6 +7,7 @@ import { guideService } from "../../apis/guideService";
 import { placeService } from "../../apis/placeService";
 import { tourItemService } from "../../apis/tourItemService";
 import { toast } from "react-toastify";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 import StatsOverview from "../../components/analytics/StatsOverview";
 import ChartComponent from "../../components/analytics/ChartComponent";
 import {
@@ -301,8 +302,10 @@ const GuideDashboard = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className={`text-center ${textColor}`}>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D5B36A] mx-auto mb-4"></div>
-          <p>{t("common.loading") || "Loading..."}</p>
+          <GoldenSpinner
+            size={56}
+            label={t("common.loading") || "Loading..."}
+          />
         </div>
       </div>
     );

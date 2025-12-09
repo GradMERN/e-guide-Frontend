@@ -258,7 +258,8 @@
         "notPublished": "Not Published"
       },
       "errors": {
-        "noPublishedItems": "There are no published items"
+        "noPublishedItems": "There are no published items",
+        "loadFailed": "Failed to load tour"
       },
       "titles": {
         "noItems": "No items yet",
@@ -377,11 +378,7 @@
     "subtitle": "Where history comes alive and adventures begin",
     "exploreBtn": "Explore Egypt",
     "watchBtn": "Watch Video",
-    "labels": [
-      "50+ Destinations",
-      "Flexible Booking",
-      "Expert Guides"
-    ]
+    "labels": ["50+ Destinations", "Flexible Booking", "Expert Guides"]
   },
   "popularDestination": {
     "title": "Popular Destination",
@@ -570,11 +567,11 @@
       "ourStory": "Our Story"
     }
   },
-  "circularGallery":{
-    "title":"Traveler Highlights",
-    "subtitle1":"Explore Egypt Through",
-    "subtitle2":"Our Travelers' Stories",
-    "description":"A visual journey of the most memorable moments from our tours"
+  "circularGallery": {
+    "title": "Traveler Highlights",
+    "subtitle1": "Explore Egypt Through",
+    "subtitle2": "Our Travelers' Stories",
+    "description": "A visual journey of the most memorable moments from our tours"
   },
   "beforeAfter": {
     "subtitle": "Compare & Contrast",
@@ -713,20 +710,20 @@
     },
     "currency": "EGP"
   },
-   "auth": {
+  "auth": {
     "register": {
       "title": "Create Your Account",
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
-      "age":"Age",
+      "age": "Age",
       "phone": "Phone Number",
-      "select":"Select",
+      "select": "Select",
       "city": "City",
       "country": "Country",
       "password": "Password",
       "confirmPassword": "Confirm Password",
-      "loading":"Loading...",
+      "loading": "Loading...",
       "registerBtn": "Register",
       "haveAccount": "Already have an account?",
       "loginLink": "Login",
@@ -757,25 +754,25 @@
       }
     },
     "login": {
-       "welcome": "Welcome Back",
-       "emailPlaceholder": "Enter your email",
-       "passwordPlaceholder": "Enter your Password",
-       "forgot": "Forgot Password?",
-       "signIn": "Sign In",
-       "or": "Or continue with",
-       "google": "Google Account",
-       "noAccount": "New to Mystic Egypt? Create Account",
-  
-  "errors": {
-       "emailRequired": "Email is required",
-       "emailInvalid": "Invalid email",
-       "passwordRequired": "Password is required",
-       "passwordMin": "Password must be at least 6 characters"
-  }
-},
-  "subtitle": "Journey Through Millennia",
+      "welcome": "Welcome Back",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your Password",
+      "forgot": "Forgot Password?",
+      "signIn": "Sign In",
+      "or": "Or continue with",
+      "google": "Google Account",
+      "noAccount": "New to Mystic Egypt? Create Account",
 
-"leftCards": {
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email",
+        "passwordRequired": "Password is required",
+        "passwordMin": "Password must be at least 6 characters"
+      }
+    },
+    "subtitle": "Journey Through Millennia",
+
+    "leftCards": {
       "ancientWonders": {
         "title": "Ancient Wonders",
         "text": "Explore pyramids, temples, and tombs that have stood for thousands of years."
@@ -794,9 +791,8 @@
       { "num": "150+", "label": "Packages" },
       { "num": "25+", "label": "Years Exp" }
     ]
-
   },
-  "tourGuide":{
+  "tourGuide": {
     "homeSection": {
       "title": "Meet Our Experts",
       "subtitle": "Guided by history, our certified tour guides will make your journey through Egypt unforgettable."

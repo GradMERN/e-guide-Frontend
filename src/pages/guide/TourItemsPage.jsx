@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 import TourItemsGrid from "../../components/guide/Tour/TourItemsGrid";
 import { guideService } from "../../apis/guideService";
 
@@ -39,7 +40,11 @@ const TourItemsPage = () => {
   }, [tourId]);
 
   if (loading)
-    return <div className="p-6">{t("common.loading") || "Loading..."}</div>;
+    return (
+      <div className="p-6 flex items-center justify-center">
+        <GoldenSpinner size={48} label={t("common.loading") || "Loading..."} />
+      </div>
+    );
   if (!tour)
     return (
       <div className="p-6">{t("guide.tours.empty") || "Tour not found"}</div>

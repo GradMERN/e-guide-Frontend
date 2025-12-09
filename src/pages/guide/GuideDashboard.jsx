@@ -12,6 +12,7 @@ import {
   FaArrowDown,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -37,9 +38,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="p-6 flex justify-center items-center">
-        <div className="text-[var(--text-secondary)]">
-          {t("common.loading") || "Loading..."}
-        </div>
+        <GoldenSpinner size={56} label={t("common.loading") || "Loading..."} />
       </div>
     );
   }
