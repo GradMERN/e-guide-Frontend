@@ -31,6 +31,13 @@ export default function ImagesSliderDemo() {
     navigate("/tours");
   };
 
+  const handleWatch = () => {
+    const videoSection = document.getElementById("video-section");
+    if (videoSection) {
+      videoSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
 return (
     <ImagesSlider images={images} className="h-screen md:h-[75vh] lg:h-[90vh] xl:h-screen w-full">
       <div className="z-50 flex flex-col justify-center items-center px-4 py-8 sm:py-12">
@@ -57,7 +64,7 @@ return (
 
         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-row sm:flex-row gap-3 md:gap-4">
           <button onClick={handleExplore} className="btn-primary-hero">{t("homepage.exploreBtn")}</button>
-          <button className="btn-watch-hero">{t("homepage.watchBtn")}</button>
+          <button onClick={handleWatch} className="btn-watch-hero">{t("homepage.watchBtn")}</button>
         </motion.div>
 
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20">

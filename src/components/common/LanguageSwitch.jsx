@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 const Switch = () => {
   const { i18n } = useTranslation();
-
   const isArabic = i18n.language.startsWith("ar");
 
   const handleToggle = () => {
@@ -11,10 +11,15 @@ const Switch = () => {
     i18n.changeLanguage(newLang);
   };
 
+  useEffect(() => {
+    document.dir = i18n.language.startsWith("ar") ? "rtl" : "ltr";
+  }, [i18n.language]);
+
+
   return (
     <StyledWrapper $isArabic={isArabic}>
       <label htmlFor="langSwitch" className="switch" aria-label="Toggle Language">
-        <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle}/>
+        <input type="checkbox" id="langSwitch" checked={isArabic} onChange={handleToggle} />
         <span className={isArabic ? "label-inactive" : "label-active"}>English</span>
         <span className={isArabic ? "label-active" : "label-inactive"}>العربية</span>
         <span className="slider" />
