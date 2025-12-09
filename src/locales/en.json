@@ -466,7 +466,6 @@
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Everything you need to know about your journey to the land of PEACE",
-
     "categories": {
       "0": {
         "title": "About E-Tour Guide",
@@ -552,6 +551,11 @@
         }
       }
     }
+  },
+  "video": {
+    "title": "Experience Egypt",
+    "description": "Watch our journey through the timeless wonders of Egypt and discover what makes our tours unforgettable.",
+    "duration": "3:45 Overview"
   },
   "about": {
     "hero": {

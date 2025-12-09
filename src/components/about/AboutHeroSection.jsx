@@ -13,7 +13,7 @@ export default function AboutHeroSection() {
     navigate("/tours");
   };
 
-    const handleOurStory = () => {
+  const handleOurStory = () => {
     const storySection = document.getElementById("our-story");
     if (storySection) {
       storySection.scrollIntoView({ behavior: "smooth" });
