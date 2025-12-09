@@ -424,6 +424,45 @@
     border: 1px solid #2b2b2b;
   }
 
+  .guide-title,
+  .guide-profile-title,
+  .dark .guide-profile-title {
+    color: var(--text);
+  }
+
+  .dark .guide-title,
+  .dark .guide-profile-icon {
+    color: var(--secondary);
+  }
+
+  .guide-quote-word,
+  .guide-profile-icon,
+  .dark .guide-profile-tab,
+  .guide-profile-line,
+  .guide-profile-tab {
+    color: var(--primary);
+  }
+
+  .dark .guide-quote-word,
+  .guide-profile-subtitle,
+  .guide-profile-tab {
+    color: var(--text-secondary);
+  }
+
+  .guide-profile-bg {
+    background: var(--background);
+  }
+
+  .guide-profile-line {
+    border: 1px solid var(--primary);
+  }
+
+  .dark .guide-profile-line {
+    border: 1px solid #C7A15C;
+  }
+  .dark .guide-profile-subtitle {
+    color: var(--text-muted);
+  }
 }
 
 @theme {
