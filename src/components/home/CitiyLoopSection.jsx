@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from "react";
-
-const cities = ["Cairo","Alexandria","Giza","Luxor","Aswan", "Hurghada","Sharm El-Sheikh","Mansoura","Dahab","Fayoum"];
+import { useTranslation } from "react-i18next";
 
 export default function CityLoop() {
+  const { t } = useTranslation();
   const containerRef = useRef(null);
   const trackRef = useRef(null);
   const firstCopyRef = useRef(null);
@@ -12,6 +12,8 @@ export default function CityLoop() {
   
   const [seqWidth, setSeqWidth] = useState(0);
   const [copyCount, setCopyCount] = useState(3);
+
+  const cityKeys = ["cairo","alexandria","giza","luxor","aswan","hurghada","sharmElSheikh","mansoura","dahab","fayoum"];
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -51,13 +53,10 @@ export default function CityLoop() {
       const deltaTime = (timestamp - lastTimestamp) / 1000;
       lastTimestamp = timestamp;
 
-      const velocity = 50; // pixels per second
       offsetRef.current += velocity * deltaTime;
 
-      // wrap around to create seamless loop
       offsetRef.current = offsetRef.current % seqWidth;
 
-      // Force left-to-right scroll
       track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
 
       rafRef.current = requestAnimationFrame(animate);
@@ -75,9 +74,9 @@ export default function CityLoop() {
       <div ref={trackRef} className="flex gap-16 will-change-transform" style={{ direction: "ltr" }}>
         {Array.from({ length: copyCount }, (_, copyIndex) => (
           <div key={copyIndex} ref={copyIndex === 0 ? firstCopyRef : copyIndex === 1 ? secondCopyRef : null} className="flex gap-16 shrink-0">
-            {cities.map((city, i) => (
+            {cityKeys.map((cityKey, i) => ( 
               <span key={`${copyIndex}-${i}`} className="text-loop font-bold text-lg whitespace-nowrap">
-                {city}
+                {t(`cities.${cityKey}`)}
               </span>
             ))}
           </div>

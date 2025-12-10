@@ -594,6 +594,18 @@
     "description": "Watch our journey through the timeless wonders of Egypt and discover what makes our tours unforgettable.",
     "duration": "1:48 Overview"
   },
+  "cities": {
+    "cairo": "Cairo",
+    "alexandria": "Alexandria",
+    "giza": "Giza",
+    "luxor": "Luxor",
+    "aswan": "Aswan",
+    "hurghada": "Hurghada",
+    "sharmElSheikh": "Sharm El-Sheikh",
+    "mansoura": "Mansoura",
+    "dahab": "Dahab",
+    "fayoum": "Fayoum"
+  },
   "about": {
     "hero": {
       "title": "About Us",
