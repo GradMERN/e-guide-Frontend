@@ -42,6 +42,7 @@ import DestinationDetail from "./components/allDestinations/DestinationDetail";
 import SavedTours from "./pages/shared/SavedTours";
 import PaymentRedirect from "./pages/payment/PaymentRedirect";
 import PaymentSuccess from "./pages/payment/PaymentSuccess";
+import ContactUs from "./pages/shared/ContactUs";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,8 @@ const router = createBrowserRouter([
       { path: "/about", element: <About /> },
       { path: "/destinations", element: <AllDestinationPage /> },
       { path: "/destinations/:id", element: <DestinationDetail /> },
+      { path: "contact", element: <ContactUs /> },
+
     ],
   },
   {

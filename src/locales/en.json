@@ -1100,5 +1100,34 @@
       "title": "Meet Our Experts",
       "subtitle": "Guided by history, our certified tour guides will make your journey through Egypt unforgettable."
     }
+  },
+  "contact":{
+     "subtitle": "Contact Us",
+    "title": "Get in Touch",
+    "desc": "We’d love to hear from you! Reach out to us via any of the methods below.",
+    "addressTitle": "Address",
+    "address": "123 Main Street, Cairo, Egypt",
+    "phoneTitle": "Phone",
+    "phone": "+20 123 456 7890",
+    "emailTitle": "Email",
+    "email": "info@example.com",
+
+    "contactForm": {
+  "formTitle": "Get in Touch",
+  "labelName": "Your Name",
+  "labelEmail": "Email Address",
+  "labelMsg": "Message",
+  "phName": "Enter your name",
+  "phEmail": "Enter your email",
+  "phMsg": "Write your message...",
+  "btnSend": "Send Message",
+  "successTitle": "Message Sent!",
+  "successMsg": "Thank you for reaching out. We will get back to you shortly.",
+  "btnAnother": "Send Another Message",
+
+  "failureTitle": "Failed to send message",
+  "failureMsg": "Something went wrong. Please try again later.",
+  "btnTryAgain": "Try Again"
+}
   }
 }
