@@ -8,7 +8,7 @@
     --secondary: #a55d16;
     --tertiary: #ca9a5a;
 
-    --gradient-from: var(--primary); 
+    --gradient-from: var(--primary);
     --gradient-via: var(--secondary);
     --gradient-to: var(--tertiary);
 
@@ -23,7 +23,7 @@
     --text-muted: #8e6a3f;
     --text-loop: #050505;
 
-    --glass-bg: var(--surface); 
+    --glass-bg: var(--surface);
     --glass-bg-hover: #f0e6c9;
     --glass-border: rgba(0, 0, 0, 0.08);
 
@@ -55,7 +55,7 @@
     --secondary: #ffd97f;
     --tertiary: #ffe6a0;
 
-    --gradient-from: var(--primary); 
+    --gradient-from: var(--primary);
     --gradient-via: var(--secondary);
     --gradient-to: var(--tertiary);
 
@@ -113,12 +113,18 @@
 
 @layer components {
   .btn-primary-hero {
-    padding: 0.75rem 1.5rem;          /* px-6 py-3 */
-    border-radius: 0.75rem;           /* rounded-xl */
-    font-weight: 600;                 /* font-semibold */
-    transition: all 300ms;            /* transition-all duration-300 */
-    position: relative;               /* relative */
-    overflow: hidden;                 /* overflow-hidden */
+    padding: 0.75rem 1.5rem;
+    /* px-6 py-3 */
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    font-weight: 600;
+    /* font-semibold */
+    transition: all 300ms;
+    /* transition-all duration-300 */
+    position: relative;
+    /* relative */
+    overflow: hidden;
+    /* overflow-hidden */
     background: var(--button-primary-bg);
     color: var(--button-primary-text);
     border: var(--button-primary-border);
@@ -132,10 +138,14 @@
   }
 
   .btn-secondary-hero {
-    padding: 0.75rem 1.5rem;          /* px-6 py-3 */
-    border-radius: 0.75rem;           /* rounded-xl */
-    font-weight: 600;                 /* font-semibold */
-    transition: all 300ms;            /* transition-all duration-300 */
+    padding: 0.75rem 1.5rem;
+    /* px-6 py-3 */
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    font-weight: 600;
+    /* font-semibold */
+    transition: all 300ms;
+    /* transition-all duration-300 */
     background: var(--button-secondary-bg);
     color: var(--button-secondary-text);
     border: 1px solid var(--button-secondary-border);
@@ -149,104 +159,107 @@
   }
 
   .btn-watch-hero {
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.75rem; 
-      font-weight: 600; 
-      transition: all 300ms; 
-      
-      -webkit-backdrop-filter: blur(4px); 
-      backdrop-filter: blur(4px); 
-      
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: white;
-    }
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 300ms;
+
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+  }
 
   .btn-watch-hero:hover {
-      background: var(--button-primary-hover-bg);
-      color: var(--button-primary-hover-text);
-      border-color: transparent;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
+    background: var(--button-primary-hover-bg);
+    color: var(--button-primary-hover-text);
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 
   .btn-split {
-      display: inline-flex;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-family: inherit;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: inline-flex;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .btn-split-main {
-      flex: 1 1 0%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1.5rem;
-      font-weight: 600;
-      background: var(--button-primary-bg);
-      color: var(--button-primary-text);
-      position: relative;
-      overflow: hidden;
+    flex: 1 1 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+    position: relative;
+    overflow: hidden;
   }
 
   .btn-split-main::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -50%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.3),
-          transparent
-      );
-      transform: skewX(-20deg);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent);
+    transform: skewX(-20deg);
   }
 
   .btn-split:hover .btn-split-main::before {
-      animation: shimmer 1.5s linear infinite;
+    animation: shimmer 1.5s linear infinite;
   }
 
   @keyframes shimmer {
-      0% { left: -50%; }
-      100% { left: 100%; }
+    0% {
+      left: -50%;
+    }
+
+    100% {
+      left: 100%;
+    }
   }
 
   .btn-split-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1rem;
-      background: var(--button-primary-bg); 
-      color: var(--button-primary-text);
-      position: relative;
-      transition: background 0.3s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+    position: relative;
+    transition: background 0.3s ease, color 0.2s ease;
   }
 
   .btn-split-icon svg {
-      stroke: currentColor;
-      width: 1.25rem;
-      height: 1.25rem;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke: currentColor;
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-split:hover {
-      box-shadow: 
-          0 15px 30px -8px rgba(0, 0, 0, 0.25), 
-          0 6px 15px -4px rgba(0, 0, 0, 0.15),
-          0 0 30px rgba(176, 100, 25, 0.3); 
-      transform: translateY(-2px);
+    box-shadow:
+      0 15px 30px -8px rgba(0, 0, 0, 0.25),
+      0 6px 15px -4px rgba(0, 0, 0, 0.15),
+      0 0 30px rgba(176, 100, 25, 0.3);
+    transform: translateY(-2px);
   }
 
   .btn-split:hover .btn-split-main,
   .btn-split:hover .btn-split-icon {
-      background: var(--button-primary-hover-bg);
-      color: var(--button-primary-hover-text);
+    background: var(--button-primary-hover-bg);
+    color: var(--button-primary-hover-text);
   }
 
   .text-gradient-title {
@@ -286,16 +299,18 @@
   }
 
   .faq-icon {
-    width: 1.25rem; 
+    width: 1.25rem;
     height: 1.25rem;
     color: var(--faq-title);
   }
+
   @media (min-width: 640px) {
     .faq-icon {
       width: 1.5rem;
       height: 1.5rem;
     }
   }
+
   @media (min-width: 768px) {
     .faq-icon {
       width: 1.75rem;
@@ -314,13 +329,13 @@
   .icon-card {
     color: var(--icon-card);
   }
-  
+
   .label-active {
-    color: #ffffff; 
+    color: #ffffff;
   }
 
   .label-inactive {
-    color: var(--text); 
+    color: var(--text);
   }
 
   .dark .label-active {
@@ -330,26 +345,28 @@
   .dark .label-inactive {
     color: #ffffff;
   }
-  
+
   .guide-img-active {
-    transform: scale(1); 
-    filter: grayscale(0);  
+    transform: scale(1);
+    filter: grayscale(0);
   }
+
   .guide-img-active:hover {
     transform: scale(1.1);
     filter: grayscale(100%);
   }
 
   .dark .guide-img-active {
-    filter: grayscale(100%);  
+    filter: grayscale(100%);
   }
+
   .dark .guide-img-active:hover {
     filter: grayscale(0);
   }
 
   .guide-img-inactive {
-    filter: grayscale(100%) blur(2px); 
-    transform: scale(1.1); 
+    filter: grayscale(100%) blur(2px);
+    transform: scale(1.1);
   }
 
   .guide-content-card {
@@ -357,7 +374,7 @@
   }
 
   .dark .guide-content-card {
-    background-color: rgba(41, 41, 46, 0.6); 
+    background-color: rgba(41, 41, 46, 0.6);
   }
 
   .dark .guide-profile-icon,
@@ -372,24 +389,79 @@
   }
 
   .auth-login-overlay {
-    position: absolute; 
-    top: 0; right: 0; bottom: 0; left: 0;
-    background-color: var(--background); 
+    @apply absolute inset-0 backdrop-blur-[1px];
+    background-image: radial-gradient(circle at center, rgba(247, 237, 206, 0.1) 0%, rgba(68, 45, 22, 0.7) 50%, rgba(30, 20, 10, 0.95) 100%);
+    mix-blend-mode: normal;
   }
 
   .dark .auth-login-overlay {
-    background-color: transparent; 
-    background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.7), #050505);
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505];
   }
 
   .auth-register-overlay {
-    background-color: transparent; 
-    background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.95), var(--secondary), #050505);
+    @apply absolute inset-0 backdrop-blur-[1px];
+    background-image: radial-gradient(circle at center, rgba(152, 82, 12, 0.4) 0%, rgba(68, 45, 22, 0.8) 60%, rgba(79, 30, 6, 0.98) 100%);
+    mix-blend-mode: normal;
   }
 
   .dark .auth-register-overlay {
-    background-color: transparent;
-    background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.7), #050505);
+    @apply bg-transparent bg-linear-to-b from-[#050505]/95 via-[#050505]/70 to-[#050505];
+  }
+
+  .bg-register-form {
+    background-color: var(--surface);
+  }
+
+  .dark .bg-register-form {
+    background-color: var(--background);
+  }
+
+  .input-register-border {
+    border: 1px solid #dcc9a1;
+  }
+
+  .dark .input-register-border {
+    border: 1px solid #2b2b2b;
+  }
+
+  .guide-title,
+  .guide-profile-title,
+  .dark .guide-profile-title {
+    color: var(--text);
+  }
+
+  .dark .guide-title,
+  .dark .guide-profile-icon {
+    color: var(--secondary);
+  }
+
+  .guide-quote-word,
+  .guide-profile-icon,
+  .dark .guide-profile-tab,
+  .guide-profile-line,
+  .guide-profile-tab {
+    color: var(--primary);
+  }
+
+  .dark .guide-quote-word,
+  .guide-profile-subtitle,
+  .guide-profile-tab {
+    color: var(--text-secondary);
+  }
+
+  .guide-profile-bg {
+    background: var(--background);
+  }
+
+  .guide-profile-line {
+    border: 1px solid var(--primary);
+  }
+
+  .dark .guide-profile-line {
+    border: 1px solid #C7A15C;
+  }
+  .dark .guide-profile-subtitle {
+    color: var(--text-muted);
   }
 }
 

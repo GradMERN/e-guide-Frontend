@@ -56,7 +56,7 @@ const Stats = t("auth.stats", { returnObjects: true });
     <>
       <Navbar />
 
-      <section className="flex flex-row bg-background text-slate-200 overflow-hidden">
+      <section className="flex flex-row bg-background text-slate-200 overflow-hidden" dir="ltr">
         {/* LEFT SECTION */}
         <div
           className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"

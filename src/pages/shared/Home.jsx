@@ -9,15 +9,16 @@ import GallerySection from "../../components/home/GallerySection.jsx";
 import HomeFAQSection from "../../components/home/HomeFAQSection.jsx";
 import CityLoopSection from "../../components/home/CitiyLoopSection.jsx";
 import VisitEgyptSection from "../../components/home/VisitEgyptSection.jsx";
+import VideoSection from "../../components/home/VideoSection.jsx";
 
 
 const Home = () => {
-  const { t } = useTranslation();
   return (
     <>
       <div>
         <ImageSliderDemo />
         <CityLoopSection />
+        <VideoSection/>
         <PopularDestinationSection />
         <TourPackagesSection />
         <TourGuidesSection></TourGuidesSection>

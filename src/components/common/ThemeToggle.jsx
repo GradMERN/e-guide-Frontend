@@ -1,77 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const StyledWrapper = styled.label`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 2rem;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: all 0.4s ease;
-
-  &:hover {
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  .input {
-    cursor: pointer;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    opacity: 0;
-  }
-
-  .icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 1.5rem;
-    height: 1.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .icon-moon {
-    fill: var(--tertiary);
-    display: block;
-  }
-
-  .icon-sun {
-    stroke: var(--primary);
-    display: none;
-  }
-
-  .input:checked ~ .icon-sun {
-    display: block;
-    animation: rotate 0.5s ease-in-out;
-  }
-
-  .input:checked ~ .icon-moon {
-    display: none;
-  }
-
-  @keyframes rotate {
-    0% {
-      transform: translate(-50%, -50%) rotate(0deg) scale(0);
-    }
-    50% {
-      transform: translate(-50%, -50%) rotate(180deg) scale(1.2);
-    }
-    100% {
-      transform: translate(-50%, -50%) rotate(360deg) scale(1);
-    }
-  }
-`;
-
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== "undefined") {
@@ -116,4 +45,81 @@ export default function ThemeToggle() {
       </svg>
     </StyledWrapper>
   );
-}
+};
+
+const StyledWrapper = styled.label`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.4s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .input {
+    cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    opacity: 0;
+  }
+
+  .icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.5rem;
+    transition: all 0.5s ease;
+  }
+
+  .icon-moon {
+    fill: var(--tertiary);
+    display: block;
+    transform-origin: center center; 
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 1;
+  }
+
+  .input:checked ~ .icon-moon {
+    transform: translate(-50%, -50%) scaleX(-1);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .icon-sun {
+    stroke: var(--primary);
+    display: block; /* keep block for animation */
+    opacity: 0;     /* start hidden */
+    transition: opacity 0.5s ease;
+  }
+
+  .input:checked ~ .icon-sun {
+    opacity: 1;
+    animation: rotate 0.5s ease-in-out;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg) scale(0);
+    }
+    50% {
+      transform: translate(-50%, -50%) rotate(180deg) scale(1.2);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg) scale(1);
+    }
+  }
+`;
