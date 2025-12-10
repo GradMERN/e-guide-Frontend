@@ -66,7 +66,28 @@
     "retry": "إعادة المحاولة",
     "date": "التاريخ",
     "amount": "المبلغ",
-    "status": "الحالة"
+    "status": "الحالة",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "confirm": "تأكيد",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "country": "الدولة",
+    "city": "المدينة",
+    "statuses": {
+      "pending": "قيد الانتظار",
+      "active": "نشط",
+      "started": "بدأ",
+      "completed": "مكتمل",
+      "paid": "مدفوع",
+      "failed": "فشل",
+      "refunded": "تم الاسترداد"
+    }
   },
   "theme": {
     "light": "التبديل إلى الوضع الفاتح",
@@ -177,7 +198,7 @@
     "showAll": "عرض الكل",
     "liveMode": "الوضع المباشر",
     "liveNone": "لا توجد عناصر قريبة",
-    "myOverview": "نظرة عام عليّ",
+    "myOverview": "نظرة عامة عليّ",
     "totalTours": "إجمالي الجولات",
     "activeTours": "الجولات النشطة",
     "totalBookings": "إجمالي الحجوزات",
@@ -192,55 +213,76 @@
     "recentEnrollments": "المشتركين الأخيرين",
     "refreshData": "تحديث البيانات",
     "loadingDashboard": "جاري تحميل لوحة التحكم...",
+    "noTours": "لا توجد جولات بعد",
+    "noItems": "لا توجد عناصر متاحة",
+    "preview": "معاينة الجولة",
+    "refreshing": "جاري التحديث...",
+    "refreshNearby": "تحديث القريبة",
+    "loadingItems": "جاري تحميل العناصر...",
+    "findingNearby": "جاري البحث عن العناصر القريبة...",
+    "script": "النص",
+    "currency": "جنيه مصري",
+    "sidebar": {
+      "title": "لوحة المرشد",
+      "dashboard": "لوحة التحكم",
+      "myTours": "جولاتي",
+      "analytics": "التحليلات",
+      "logout": "تسجيل الخروج",
+      "confirmLogout": "تأكيد تسجيل الخروج",
+      "confirmLogoutMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
+    },
+    "analytics": {
+      "title": "التحليلات",
+      "subtitle": "تتبع أداء جولاتك ونموها",
+      "overview": "نظرة عامة",
+      "bookingAnalysis": "تحليل الحجوزات",
+      "revenueAnalysis": "تحليل الإيرادات",
+      "tourPerformance": "أداء الجولة",
+      "ratingTrend": "اتجاه التقييم",
+      "dailyViews": "المشاهدات اليومية والمشتركين",
+      "monthlyComparison": "مقارنة شهرية",
+      "trafficSource": "توزيع مصادر الحركة",
+      "totalViews": "إجمالي المشاهدات",
+      "conversionRate": "معدل التحويل",
+      "averageBookingValue": "متوسط قيمة الحجز",
+      "topPerformingTour": "أفضل جولة أداء",
+      "noData": "لا توجد بيانات متاحة",
+      "noDataTitle": "لا توجد بيانات تحليلية بعد",
+      "noDataMessage": "ابدأ في نشر الجولات والحصول على التسجيلات لرؤية التحليلات هنا.",
+      "columns": {
+        "tourName": "اسم الجولة",
+        "views": "المشاهدات",
+        "enrollments": "المشتركين",
+        "conversion": "التحويل",
+        "revenue": "الإيرادات"
+      }
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "description": "إدارة ملفك الشخصي وإعدادات حسابك",
+      "personalInfo": "المعلومات الشخصية",
+      "contactInfo": "معلومات الاتصال",
+      "emailReadOnly": "لا يمكن تغيير البريد الإلكتروني",
+      "accountInfo": "معلومات الحساب",
+      "joinDate": "عضو منذ",
+      "accountStatus": "الحالة",
+      "verificationStatus": "التحقق من البريد الإلكتروني",
+      "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+      "profileUpdateFailed": "فشل في تحديث الملف الشخصي",
+      "loadingProfile": "جاري تحميل الملف الشخصي..."
+    },
     "tours": {
-      "title": "جولاتي",
+      "title": "إدارة الجولات",
+      "add": "إضافة جولة",
       "addItem": "إضافة عنصر",
       "addTour": "إنشاء جولة",
-      "edit": "تعديل الجولة",
-      "addNew": "إضافة جولة جديدة",
-      "name": "اسم الجولة",
-      "manageAndTrack": "إدارة جولاتك وتتبع الأداء",
-      "addPlace": "إضافة مكان",
-      "states": {
-        "published": "منشور",
-        "empty": "فارغ",
-        "notPublished": "غير منشور"
-      },
-      "errors": {
-        "noPublishedItems": "لا توجد عناصر منشورة",
-        "loadFailed": "فشل تحميل الجولة"
-      },
-      "titles": {
-        "edit": "تعديل",
-        "delete": "حذف",
-        "confirmDeleteMessage": "هل تريد فعلاً حذف الجولة \"{{name}}\"؟ هذا الإجراء لا يمكن التراجع عنه.",
-        "messages": {
-          "added": "تم إضافة الجولة بنجاح!",
-          "updated": "تم تحديث الجولة بنجاح!",
-          "deleted": "تم حذف الجولة بنجاح!",
-          "galleryUpdated": "تم تحديث صور المعرض بنجاح!"
-        },
-        "validation": {
-          "nameLength": "يجب أن يكون اسم الجولة بين 3 و 100 حرفًا",
-          "descriptionLength": "يجب أن تكون الوصف بين 10 و 2000 حرفًا",
-          "priceMin": "يجب أن تكون أقل قيمة للسعر هي 0.99",
-          "selectPlace": "يرجى اختيار مكان/موقع"
-        },
-        "errors": {
-          "noPublishedItems": "لا توجد عناصر منشورة",
-          "galleryUpdateFailed": "فشل تحديث صور المعرض.",
-          "deleteFailed": "فشل حذف الجولة"
-        },
-        "updating": "جارٍ التحديث...",
-        "unpublish": "إلغاء نشر الجولة",
-        "publish": "نشر الجولة",
-        "manageWaypoints": "إدارة مسارات الجولة",
-        "updateGalleryImages": "تحديث صور المعرض"
-      },
-      "waypointsTitle": "المسارات — {{name}}",
       "edit": "تعديل",
       "editTour": "تعديل الجولة",
-      "delete": "حذف",
+      "addNew": "إضافة جولة جديدة",
+      "name": "اسم الجولة",
+      "manageAndTrack": "إدارة وتتبع جميع جولاتك",
+      "addPlace": "إضافة مكان",
+      "searchPlaceholder": "البحث في الجولات...",
       "city": "المدينة",
       "place": "المكان/الموقع",
       "noPlacesAvailable": "لا تتوفر أماكن",
@@ -257,7 +299,6 @@
       "highlights": "الميزات",
       "itinerary": "البرنامج الزمني",
       "availability": "التوفر",
-      "searchPlaceholder": "البحث عن جولات حسب الاسم أو المكان...",
       "notFound": "لم يتم العثور على جولات تطابق البحث",
       "empty": "لا توجد جولات بعد",
       "create": "إنشاء جولة",
@@ -267,56 +308,100 @@
       "deleteError": "فشل حذف الجولة",
       "confirmDelete": "هل تريد فعلاً حذف هذه الجولة؟",
       "status": "الحالة",
-      "places": {
-        "validation": {
-          "missingCountryCity": "يرجى توفير كل من الدولة والمدينة"
-        },
-        "added": "تم إضافة المكان بنجاح!",
-        "addFailed": "فشل إضافة المكان. تحقق من وحدة التحكم للمزيد من التفاصيل."
-      },
       "active": "نشطة",
       "inactive": "غير نشطة",
       "bookings": "الحجوزات",
       "views": "المشاهدات",
-      "revenue": "الإيرادات"
-    },
-    "analytics": {
-      "title": "التحليلات",
-      "overview": "نظرة عامة",
-      "bookingAnalysis": "تحليل الحجوزات",
-      "revenueAnalysis": "تحليل الإيرادات",
-      "tourPerformance": "أداء الجولة",
-      "ratingTrend": "اتجاه التقييم",
-      "subtitle": "تتبع أداء وج نمو جولاتك",
-      "dailyViews": "المشاهدات اليومية والمشتركين",
-      "monthlyComparison": "مقارنة شهرية",
-      "trafficSource": "توزيع مصادر الحركة",
-      "columns": {
-        "tourName": "اسم الجولة",
-        "views": "المشاهدات",
-        "enrollments": "المشتركين",
-        "conversion": "التحويل",
-        "revenue": "الإيرادات"
+      "revenue": "الإيرادات",
+      "waypointsTitle": "المسارات — {{name}}",
+      "delete": "حذف",
+      "states": {
+        "published": "منشور",
+        "notPublished": "غير منشور",
+        "empty": "فارغ"
       },
-      "totalViews": "إجمالي المشاهدات",
-      "conversionRate": "معدل التحويل",
-      "averageBookingValue": "متوسط قيمة الحجز",
-      "topPerformingTour": "أفضل جولة أداء",
-      "noData": "لا توجد بيانات متاحة"
+      "titles": {
+        "noItems": "لا توجد عناصر بعد",
+        "noPublishedItems": "لا توجد عناصر منشورة",
+        "updating": "جاري التحديث...",
+        "unpublish": "إلغاء نشر الجولة",
+        "publish": "نشر الجولة",
+        "manageWaypoints": "إدارة النقاط الطريق",
+        "updateGalleryImages": "تحديث صور المعرض"
+      },
+      "messages": {
+        "added": "تم إضافة الجولة بنجاح!",
+        "updated": "تم تحديث الجولة بنجاح!",
+        "deleted": "تم حذف الجولة بنجاح!",
+        "galleryUpdated": "تم تحديث صور المعرض بنجاح!"
+      },
+      "errors": {
+        "deleteFailed": "فشل في حذف الجولة",
+        "loadFailed": "فشل تحميل الجولة",
+        "galleryUpdateFailed": "فشل في تحديث صور المعرض.",
+        "noPublishedItems": "لا توجد عناصر منشورة"
+      },
+      "validation": {
+        "nameLength": "يجب أن يكون اسم الجولة بين 3 و 100 حرف",
+        "descriptionLength": "يجب أن يكون الوصف بين 10 و 2000 حرف",
+        "priceMin": "يجب أن يكون السعر على الأقل 0.99",
+        "selectPlace": "يرجى اختيار مكان/موقع"
+      }
     },
-    "settings": {
-      "title": "الإعدادات",
-      "description": "إدارة ملفك الشخصي وإعدادات حسابك",
-      "personalInfo": "المعلومات الشخصية",
-      "contactInfo": "معلومات الاتصال",
-      "emailReadOnly": "لا يمكن تغيير البريد الإلكتروني",
-      "accountInfo": "معلومات الحساب",
-      "joinDate": "عضو منذ",
-      "accountStatus": "الحالة",
-      "verificationStatus": "التحقق من البريد الإلكتروني"
+    "places": {
+      "added": "تم إضافة المكان بنجاح!",
+      "addFailed": "فشل في إضافة المكان. تحقق من وحدة التحكم للتفاصيل.",
+      "validation": {
+        "missingCountryCity": "يرجى تقديم الدولة والمدينة"
+      }
+    },
+    "tourItems": {
+      "title": "إضافة عنصر جولة",
+      "edit": "تعديل عنصر الجولة",
+      "itemTitle": "عنوان عنصر الجولة",
+      "titlePlaceholder": "أدخل عنوان العنصر",
+      "script": "النص",
+      "scriptPlaceholder": "أدخل النص/المحتوى (5000 حرف كحد أقصى)",
+      "contentType": "نوع المحتوى",
+      "location": "الموقع (الإحداثيات)",
+      "longitude": "خط الطول",
+      "latitude": "خط العرض",
+      "detectLocation": "تحديد موقعي",
+      "currentLocation": "الموقع الحالي",
+      "cancel": "إلغاء",
+      "create": "إنشاء عنصر الجولة",
+      "update": "تحديث عنصر الجولة",
+      "creating": "جاري الإنشاء...",
+      "updating": "جاري التحديث...",
+      "created": "تم إنشاء عنصر الجولة بنجاح!",
+      "updated": "تم تحديث عنصر الجولة بنجاح!",
+      "deleted": "تم حذف النقطة",
+      "deleteFailed": "فشل في حذف النقطة",
+      "loadFailed": "فشل تحميل النقاط",
+      "confirmDelete": "هل أنت متأكد أنك تريد حذف هذه النقطة؟",
+      "validation": {
+        "titleMin": "يجب أن يكون العنوان 3 أحرف على الأقل",
+        "scriptRequired": "النص لا يمكن أن يكون فارغاً",
+        "scriptMax": "يجب أن يكون النص 5000 حرف كحد أقصى",
+        "locationRequired": "إحداثيات الموقع مطلوبة"
+      },
+      "errors": {
+        "geolocationNotSupported": "تحديد الموقع الجغرافي غير مدعوم في متصفحك",
+        "locationDetectionFailed": "تعذر تحديد الموقع",
+        "createFailed": "حدث خطأ أثناء إنشاء عنصر الجولة"
+      },
+      "messages": {
+        "locationDetected": "تم تحديد الموقع"
+      }
     },
     "tourName": "اسم الجولة",
     "guestName": "اسم الضيف"
+  },
+  "user": {
+    "role": "مرشد سياحي",
+    "roleUser": "مستخدم",
+    "roleGuide": "مرشد سياحي",
+    "roleAdmin": "مسؤول"
   },
   "navbar": {
     "user": "مستخدم",
@@ -589,91 +674,6 @@
         }
       }
     ]
-  },
-  "guide": {
-    "dashboard": {
-      "title": "لوحة التحكم",
-      "subtitle": "نظرة عامة على جولاتك وأدائك",
-      "totalTours": "إجمالي الجولات",
-      "publishedTours": "الجولات المنشورة",
-      "totalBookings": "إجمالي الحجوزات",
-      "averageRating": "متوسط التقييم"
-    },
-    "analytics": {
-      "title": "التحليلات",
-      "subtitle": "تتبع أداء جولاتك ونموها",
-      "totalViews": "إجمالي المشاهدات",
-      "conversionRate": "معدل التحويل",
-      "averageBookingValue": "متوسط قيمة الحجز",
-      "topPerformingTour": "أفضل جولة أداء",
-      "dailyViews": "المشاهدات والتسجيلات اليومية",
-      "monthlyComparison": "المقارنة الشهرية",
-      "tourPerformance": "أداء الجولات",
-      "trafficSource": "توزيع مصادر الزيارات",
-      "noDataTitle": "لا توجد بيانات تحليلية بعد",
-      "noDataMessage": "ابدأ في نشر الجولات والحصول على التسجيلات لرؤية التحليلات هنا."
-    },
-    "sidebar": {
-      "title": "لوحة الدليل",
-      "dashboard": "لوحة التحكم",
-      "myTours": "جولاتي",
-      "analytics": "التحليلات",
-      "logout": "تسجيل الخروج",
-      "confirmLogout": "تأكيد تسجيل الخروج",
-      "confirmLogoutMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
-    },
-    "tours": {
-      "title": "إدارة الجولات",
-      "manageAndTrack": "إدارة وتتبع جميع جولاتك",
-      "addPlace": "إضافة مكان",
-      "searchPlaceholder": "البحث في الجولات...",
-      "name": "الاسم",
-      "city": "المدينة",
-      "price": "السعر",
-      "rating": "التقييم",
-      "actions": "الإجراءات",
-      "edit": "تعديل",
-      "delete": "حذف",
-      "currency": "جنيه مصري",
-      "states": {
-        "published": "منشور",
-        "notPublished": "غير منشور",
-        "empty": "فارغ"
-      },
-      "titles": {
-        "noItems": "لا توجد عناصر بعد",
-        "noPublishedItems": "لا توجد عناصر منشورة",
-        "updating": "جاري التحديث...",
-        "unpublish": "إلغاء نشر الجولة",
-        "publish": "نشر الجولة",
-        "manageWaypoints": "إدارة النقاط الطريق"
-      },
-      "messages": {
-        "added": "تم إضافة الجولة بنجاح!",
-        "updated": "تم تحديث الجولة بنجاح!",
-        "deleted": "تم حذف الجولة بنجاح!",
-        "galleryUpdated": "تم تحديث صور المعرض بنجاح!"
-      },
-      "errors": {
-        "deleteFailed": "فشل في حذف الجولة",
-        "galleryUpdateFailed": "فشل في تحديث صور المعرض.",
-        "noPublishedItems": "لا توجد عناصر منشورة"
-      },
-      "validation": {
-        "nameLength": "يجب أن يكون اسم الجولة بين 3 و 100 حرف",
-        "descriptionLength": "يجب أن يكون الوصف بين 10 و 2000 حرف",
-        "priceMin": "يجب أن يكون السعر على الأقل 0.99",
-        "selectPlace": "يرجى اختيار مكان/موقع"
-      }
-    },
-    "places": {
-      "added": "تم إضافة المكان بنجاح!",
-      "addFailed": "فشل في إضافة المكان. تحقق من وحدة التحكم للتفاصيل.",
-      "validation": {
-        "missingCountryCity": "يرجى تقديم الدولة والمدينة"
-      }
-    },
-    "currency": "جنيه مصري"
   },
   "auth": {
     "register": {

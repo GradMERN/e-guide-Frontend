@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FaPlus,
   FaEdit,
@@ -14,6 +15,7 @@ import { tourItemService } from "../../../apis/tourItemService";
 import ConfirmModal from "../../common/ConfirmModal";
 
 const TourItemsGrid = ({ tour, isDarkMode }) => {
+  const { t } = useTranslation();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -56,7 +58,7 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
       const data = await tourItemService.getTourItems(tour._id || tour);
       setItems(data || []);
     } catch (err) {
-      if (!silent) toast.error("Failed to load waypoints");
+      if (!silent) toast.error(t("guide.tourItems.loadFailed") || "Failed to load waypoints");
     } finally {
       if (!silent) setLoading(false);
     }
@@ -82,11 +84,11 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
     try {
       setDeletingIds((p) => [...p, item._id]);
       await tourItemService.deleteTourItem(tour._id || tour, item._id);
-      toast.success("Waypoint deleted");
+      toast.success(t("guide.tourItems.deleted") || "Waypoint deleted");
       // refresh silently to avoid flicker
       await fetchItems(true);
     } catch (err) {
-      toast.error("Failed to delete waypoint");
+      toast.error(t("guide.tourItems.deleteFailed") || "Failed to delete waypoint");
     } finally {
       setDeletingIds((p) => p.filter((id) => id !== item._id));
     }
@@ -108,7 +110,9 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
         isPublished: !item.isPublished,
       });
       toast.success(
-        `Waypoint ${updated.isPublished ? "published" : "unpublished"}`
+        updated.isPublished 
+          ? (t("guide.tours.states.published") || "Published")
+          : (t("guide.tours.states.notPublished") || "Unpublished")
       );
       // refresh silently (keep showing old data until new arrives)
       await fetchItems(true);
@@ -131,7 +135,7 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
       </div>
 
       {loading ? (
-        <div className={`p-4 ${secondaryText}`}>Loading...</div>
+        <div className={`p-4 ${secondaryText}`}>{t("common.loading") || "Loading..."}</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.map((it) => {
@@ -161,10 +165,10 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                     }`}
                     title={
                       publishingIds.includes(it._id)
-                        ? "Publishing..."
+                        ? (t("guide.tours.titles.updating") || "Publishing...")
                         : it.isPublished
-                        ? "Unpublish waypoint"
-                        : "Publish waypoint"
+                        ? (t("guide.tours.titles.unpublish") || "Unpublish waypoint")
+                        : (t("guide.tours.titles.publish") || "Publish waypoint")
                     }
                   >
                     {publishingIds.includes(it._id) ? (
@@ -189,7 +193,7 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300">
-                      No image
+                      {t("guide.noImage") || "No image"}
                     </div>
                   )}
 
@@ -218,8 +222,8 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                         }`}
                         title={
                           deletingIds.includes(it._id)
-                            ? "Deleting..."
-                            : "Delete"
+                            ? (t("guide.tourItems.updating") || "Deleting...")
+                            : (t("guide.tours.delete") || "Delete")
                         }
                       >
                         {deletingIds.includes(it._id) ? (
@@ -247,10 +251,10 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                             it.title
                         );
                         const label = hasPublished
-                          ? "Published"
+                          ? (t("guide.tours.states.published") || "Published")
                           : hasContent
-                          ? "Not Published"
-                          : "Empty";
+                          ? (t("guide.tours.states.notPublished") || "Not Published")
+                          : (t("guide.tours.states.empty") || "Empty");
                         const cls = hasPublished
                           ? "bg-green-600 text-white"
                           : hasContent
@@ -289,7 +293,7 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
               <div
                 className={`text-sm font-medium ${secondaryText} group-hover:${textColor} transition-colors duration-300`}
               >
-                Add Waypoint
+                {t("guide.tours.addItem") || "Add Waypoint"}
               </div>
             </div>
           </div>
@@ -311,10 +315,10 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
       {confirmModal.open && (
         <ConfirmModal
           isOpen={confirmModal.open}
-          title="Confirm Deletion"
-          message="Are you sure you want to delete this waypoint?"
-          confirmText="Delete"
-          cancelText="Cancel"
+          title={t("guide.tours.confirmDelete") || "Confirm Deletion"}
+          message={t("guide.tourItems.confirmDelete") || "Are you sure you want to delete this waypoint?"}
+          confirmText={t("guide.tours.delete") || "Delete"}
+          cancelText={t("common.cancel") || "Cancel"}
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
           type="danger"

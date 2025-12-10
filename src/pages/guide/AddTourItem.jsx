@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { IoArrowBack } from "react-icons/io5";
 import { MdTitle, MdLocationOn, MdMovie, MdMyLocation } from "react-icons/md";
 import { FaList } from "react-icons/fa";
@@ -9,6 +10,7 @@ import { tourItemService } from "../../apis/tourItemService";
 export default function AddTourItem() {
   const { tourId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState("");
@@ -64,7 +66,7 @@ export default function AddTourItem() {
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser");
+      setError(t("guide.tourItems.errors.geolocationNotSupported") || "Geolocation is not supported by your browser");
       return;
     }
     setError("");
@@ -78,12 +80,12 @@ export default function AddTourItem() {
           coordinateLong: lng,
           coordinateLat: lat,
         }));
-        setSuccess("Location detected");
+        setSuccess(t("guide.tourItems.messages.locationDetected") || "Location detected");
         setTimeout(() => setSuccess(""), 2000);
       },
       (err) => {
         console.error("Geolocation error", err);
-        setError("Unable to detect location");
+        setError(t("guide.tourItems.errors.locationDetectionFailed") || "Unable to detect location");
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -114,19 +116,19 @@ export default function AddTourItem() {
 
   const validateForm = () => {
     if (!formData.title || formData.title.length < 3) {
-      setError("Title must be at least 3 characters long");
+      setError(t("guide.tourItems.validation.titleMin") || "Title must be at least 3 characters long");
       return false;
     }
     if (!formData.script || formData.script.length === 0) {
-      setError("Script cannot be empty");
+      setError(t("guide.tourItems.validation.scriptRequired") || "Script cannot be empty");
       return false;
     }
     if (formData.script.length > 5000) {
-      setError("Script must be at most 5000 characters");
+      setError(t("guide.tourItems.validation.scriptMax") || "Script must be at most 5000 characters");
       return false;
     }
     if (!coordinates.longitude || !coordinates.latitude) {
-      setError("Location coordinates are required");
+      setError(t("guide.tourItems.validation.locationRequired") || "Location coordinates are required");
       return false;
     }
     return true;
@@ -169,7 +171,7 @@ export default function AddTourItem() {
       }
 
       const result = await response.json();
-      setSuccess("Tour item created successfully!");
+      setSuccess(t("guide.tourItems.created") || "Tour item created successfully!");
 
       // Reset form
       setFormData({
@@ -187,7 +189,7 @@ export default function AddTourItem() {
       }, 2000);
     } catch (err) {
       console.error("Error creating tour item:", err);
-      setError(err.message || "An error occurred while creating the tour item");
+      setError(err.message || t("guide.tourItems.errors.createFailed") || "An error occurred while creating the tour item");
     } finally {
       setLoading(false);
     }
@@ -216,7 +218,7 @@ export default function AddTourItem() {
             <IoArrowBack className="h-6 w-6" />
           </button>
           <h2 className="bg-gradient-to-r from-[#f7c95f] via-[#e9dcc0] to-[#f7c95f] bg-clip-text text-transparent text-2xl md:text-3xl font-extrabold">
-            Add Tour Item
+            {t("guide.tourItems.title") || "Add Tour Item"}
           </h2>
         </div>
 
@@ -245,7 +247,7 @@ export default function AddTourItem() {
             <input
               type="text"
               name="title"
-              placeholder="Tour Item Title"
+              placeholder={t("guide.tourItems.titlePlaceholder") || "Tour Item Title"}
               value={formData.title}
               onChange={handleChange}
               onFocus={() => setFocusedInput("title")}
@@ -294,7 +296,7 @@ export default function AddTourItem() {
             <div className="flex items-center gap-2 mb-4">
               <FaMapLocationDot className="text-[#f7c95f]" />
               <h3 className="text-[#f7c95f] font-semibold">
-                Location (Coordinates)
+                {t("guide.tourItems.location") || "Location (Coordinates)"}
               </h3>
             </div>
 
@@ -310,7 +312,7 @@ export default function AddTourItem() {
                 />
                 <input
                   type="number"
-                  placeholder="Longitude"
+                  placeholder={t("guide.tourItems.longitude") || "Longitude"}
                   value={coordinates.longitude}
                   onChange={(e) =>
                     handleCoordinateChange("longitude", e.target.value)
@@ -332,7 +334,7 @@ export default function AddTourItem() {
                 />
                 <input
                   type="number"
-                  placeholder="Latitude"
+                  placeholder={t("guide.tourItems.latitude") || "Latitude"}
                   value={coordinates.latitude}
                   onChange={(e) =>
                     handleCoordinateChange("latitude", e.target.value)
@@ -348,7 +350,7 @@ export default function AddTourItem() {
                 <button
                   type="button"
                   onClick={detectLocation}
-                  title="Detect my location"
+                  title={t("guide.tourItems.detectLocation") || "Detect my location"}
                   className="p-2 rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 text-[#f7c95f] hover:bg-[#1a1a1a] transition-colors w-full sm:w-12 flex items-center justify-center"
                 >
                   <MdMyLocation className="w-5 h-5" />
@@ -357,7 +359,7 @@ export default function AddTourItem() {
             </div>
 
             <p className="text-xs text-gray-400">
-              Current location: [{coordinates.longitude.toFixed(4)},{" "}
+              {t("guide.tourItems.currentLocation") || "Current location"}: [{coordinates.longitude.toFixed(4)},{" "}
               {coordinates.latitude.toFixed(4)}]
             </p>
           </div>
@@ -371,7 +373,7 @@ export default function AddTourItem() {
             />
             <textarea
               name="script"
-              placeholder="Enter script/content (max 5000 characters)"
+              placeholder={t("guide.tourItems.scriptPlaceholder") || "Enter script/content (max 5000 characters)"}
               value={formData.script}
               onChange={handleChange}
               onFocus={() => setFocusedInput("script")}
@@ -393,14 +395,14 @@ export default function AddTourItem() {
               onClick={() => navigate("/guide/dashboard")}
               className="w-1/2 py-3 border border-[#f7c95f] rounded-xl text-[#f7c95f] font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 hover:bg-[#1a1a1a] cursor-pointer"
             >
-              Cancel
+              {t("guide.tourItems.cancel") || "Cancel"}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="w-1/2 py-3 bg-gradient-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Creating..." : "Create Tour Item"}
+              {loading ? (t("guide.tourItems.creating") || "Creating...") : (t("guide.tourItems.create") || "Create Tour Item")}
             </button>
           </div>
         </form>
