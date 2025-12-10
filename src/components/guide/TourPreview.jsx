@@ -1,6 +1,13 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { FaTimes, FaBars, FaThLarge, FaList, FaSpinner } from "react-icons/fa";
+import {
+  FaTimes,
+  FaBars,
+  FaThLarge,
+  FaList,
+  FaSpinner,
+  FaLanguage,
+} from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { guideService } from "../../apis/guideService";
 import { tourItemService } from "../../apis/tourItemService";
@@ -8,6 +15,11 @@ import enrollmentApi from "../../apis/enrollment.api";
 import TourView from "./subcomponents/TourView";
 import Review from "./subcomponents/Review";
 import useAudioPlayer from "../../hooks/useAudioPlayer";
+import {
+  translateText,
+  detectLanguage,
+  SUPPORTED_LANGUAGES,
+} from "../../services/aiService";
 
 const TourPreview = ({ tourId, onClose }) => {
   const { isDarkMode, user } = useAuth();
@@ -34,6 +46,12 @@ const TourPreview = ({ tourId, onClose }) => {
 
   const playTimeoutRef = useRef(null);
   const [enrollments, setEnrollments] = useState([]);
+
+  // Translation state
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [translatedScript, setTranslatedScript] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [originalScript, setOriginalScript] = useState(null);
 
   const currentEnrollment = useMemo(() => {
     if (!enrollments || !tour) return null;
@@ -103,7 +121,110 @@ const TourPreview = ({ tourId, onClose }) => {
     setInitialLoading(true);
     setItems([]);
     setSelectedItem(null);
+    // Reset translation state when tour changes
+    setTranslatedScript(null);
+    setOriginalScript(null);
   }, [tourId]);
+
+  // Stop audio and TTS when selected item changes
+  useEffect(() => {
+    // Stop any playing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    // Stop any TTS
+    window.speechSynthesis?.cancel();
+  }, [selectedItem?._id]);
+
+  // Stop audio and TTS when language changes
+  useEffect(() => {
+    // Stop any playing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    // Stop any TTS
+    window.speechSynthesis?.cancel();
+  }, [selectedLanguage]);
+
+  // Auto-translate when selected item changes (if a language is already selected)
+  useEffect(() => {
+    const autoTranslate = async () => {
+      // Reset first
+      setTranslatedScript(null);
+      setOriginalScript(null);
+
+      // If a language is selected and item has script, auto-translate
+      if (selectedLanguage && selectedItem?.script) {
+        const scriptLang = await detectLanguage(selectedItem.script);
+
+        // Only translate if different from original
+        if (selectedLanguage !== scriptLang) {
+          setIsTranslating(true);
+          setOriginalScript(selectedItem.script);
+
+          try {
+            const result = await translateText(
+              selectedItem.script,
+              scriptLang,
+              selectedLanguage
+            );
+            setTranslatedScript(result.translatedText);
+          } catch (err) {
+            console.error("Auto-translation failed:", err);
+            setTranslatedScript(null);
+          } finally {
+            setIsTranslating(false);
+          }
+        }
+      }
+    };
+
+    autoTranslate();
+  }, [selectedItem?._id, selectedLanguage]);
+
+  // Handle translation when language changes
+  const handleLanguageChange = async (newLang) => {
+    setSelectedLanguage(newLang);
+
+    if (!newLang || !selectedItem?.script) {
+      setTranslatedScript(null);
+      setOriginalScript(null);
+      return;
+    }
+
+    // Detect original language
+    const scriptLang = await detectLanguage(selectedItem.script);
+
+    // If same language, show original
+    if (newLang === scriptLang) {
+      setTranslatedScript(null);
+      setOriginalScript(null);
+      return;
+    }
+
+    // Translate on-demand
+    setIsTranslating(true);
+    setOriginalScript(selectedItem.script);
+
+    try {
+      const result = await translateText(
+        selectedItem.script,
+        scriptLang,
+        newLang
+      );
+      setTranslatedScript(result.translatedText);
+    } catch (err) {
+      console.error("Translation failed:", err);
+      setTranslatedScript(null);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  // Get the display script (translated or original)
+  const displayScript = translatedScript || selectedItem?.script;
 
   const distanceMeters = (lat1, lon1, lat2, lon2) => {
     const toRad = (v) => (v * Math.PI) / 180;
@@ -296,6 +417,17 @@ const TourPreview = ({ tourId, onClose }) => {
                     setIsDragging={setIsDragging}
                     toggle={toggle}
                     seekPercent={seekPercent}
+                    translatedScript={translatedScript}
+                    isTranslating={isTranslating}
+                    isRtl={isRtl}
+                    selectedLanguage={selectedLanguage}
+                    stopAudio={() => {
+                      if (audioRef.current) {
+                        audioRef.current.pause();
+                        audioRef.current.currentTime = 0;
+                      }
+                      window.speechSynthesis?.cancel();
+                    }}
                   />
                   <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <Review
@@ -456,6 +588,80 @@ const TourPreview = ({ tourId, onClose }) => {
                         : safeT("guide.refreshNearby", "Refresh Nearby")}
                     </button>
                   )}
+
+                  {/* Language Selector for Translation */}
+                  <div className="mt-3 pt-3 border-t border-[#2b2b2b]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FaLanguage
+                        className={`${
+                          isDarkMode ? "text-[#D5B36A]" : "text-amber-600"
+                        }`}
+                      />
+                      <span
+                        className={`text-sm font-medium ${
+                          isDarkMode ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      >
+                        {safeT(
+                          "guide.translation.selectLanguage",
+                          "Translate Script"
+                        )}
+                      </span>
+                    </div>
+                    <select
+                      value={selectedLanguage}
+                      onChange={(e) => handleLanguageChange(e.target.value)}
+                      disabled={isTranslating}
+                      className={`w-full py-2 px-3 rounded-xl text-sm font-medium ${
+                        isDarkMode
+                          ? "bg-[#2c1b0f] text-gray-300 border border-gray-600"
+                          : "bg-gray-100 text-gray-700 border border-gray-300"
+                      } disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#D5B36A]`}
+                    >
+                      <option value="" disabled>
+                        {safeT(
+                          "guide.translation.selectLanguage",
+                          "Select your language..."
+                        )}
+                      </option>
+                      {SUPPORTED_LANGUAGES.map((lang) => (
+                        <option key={lang.code} value={lang.code}>
+                          {lang.nativeName} ({lang.name})
+                        </option>
+                      ))}
+                    </select>
+                    {isTranslating && (
+                      <div className="flex items-center gap-2 mt-2 text-sm text-[#D5B36A]">
+                        <FaSpinner className="w-3 h-3 animate-spin" />
+                        <span>
+                          {safeT(
+                            "guide.translation.translating",
+                            "Translating..."
+                          )}
+                        </span>
+                      </div>
+                    )}
+                    {translatedScript && !isTranslating && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs text-green-500">
+                          ✓{" "}
+                          {safeT("guide.translation.translated", "Translated")}
+                        </span>
+                        <button
+                          onClick={() => {
+                            setTranslatedScript(null);
+                            setSelectedLanguage("");
+                          }}
+                          className="text-xs text-[#D5B36A] hover:underline"
+                        >
+                          {safeT(
+                            "guide.translation.showOriginal",
+                            "Show Original"
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

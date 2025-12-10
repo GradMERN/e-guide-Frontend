@@ -58,7 +58,10 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
       const data = await tourItemService.getTourItems(tour._id || tour);
       setItems(data || []);
     } catch (err) {
-      if (!silent) toast.error(t("guide.tourItems.loadFailed") || "Failed to load waypoints");
+      if (!silent)
+        toast.error(
+          t("guide.tourItems.loadFailed") || "Failed to load waypoints"
+        );
     } finally {
       if (!silent) setLoading(false);
     }
@@ -88,7 +91,9 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
       // refresh silently to avoid flicker
       await fetchItems(true);
     } catch (err) {
-      toast.error(t("guide.tourItems.deleteFailed") || "Failed to delete waypoint");
+      toast.error(
+        t("guide.tourItems.deleteFailed") || "Failed to delete waypoint"
+      );
     } finally {
       setDeletingIds((p) => p.filter((id) => id !== item._id));
     }
@@ -110,9 +115,9 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
         isPublished: !item.isPublished,
       });
       toast.success(
-        updated.isPublished 
-          ? (t("guide.tours.states.published") || "Published")
-          : (t("guide.tours.states.notPublished") || "Unpublished")
+        updated.isPublished
+          ? t("guide.tours.states.published") || "Published"
+          : t("guide.tours.states.notPublished") || "Unpublished"
       );
       // refresh silently (keep showing old data until new arrives)
       await fetchItems(true);
@@ -135,7 +140,9 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
       </div>
 
       {loading ? (
-        <div className={`p-4 ${secondaryText}`}>{t("common.loading") || "Loading..."}</div>
+        <div className={`p-4 ${secondaryText}`}>
+          {t("common.loading") || "Loading..."}
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.map((it) => {
@@ -165,10 +172,11 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                     }`}
                     title={
                       publishingIds.includes(it._id)
-                        ? (t("guide.tours.titles.updating") || "Publishing...")
+                        ? t("guide.tours.titles.updating") || "Publishing..."
                         : it.isPublished
-                        ? (t("guide.tours.titles.unpublish") || "Unpublish waypoint")
-                        : (t("guide.tours.titles.publish") || "Publish waypoint")
+                        ? t("guide.tours.titles.unpublish") ||
+                          "Unpublish waypoint"
+                        : t("guide.tours.titles.publish") || "Publish waypoint"
                     }
                   >
                     {publishingIds.includes(it._id) ? (
@@ -222,8 +230,8 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                         }`}
                         title={
                           deletingIds.includes(it._id)
-                            ? (t("guide.tourItems.updating") || "Deleting...")
-                            : (t("guide.tours.delete") || "Delete")
+                            ? t("guide.tourItems.updating") || "Deleting..."
+                            : t("guide.tours.delete") || "Delete"
                         }
                       >
                         {deletingIds.includes(it._id) ? (
@@ -251,10 +259,11 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
                             it.title
                         );
                         const label = hasPublished
-                          ? (t("guide.tours.states.published") || "Published")
+                          ? t("guide.tours.states.published") || "Published"
                           : hasContent
-                          ? (t("guide.tours.states.notPublished") || "Not Published")
-                          : (t("guide.tours.states.empty") || "Empty");
+                          ? t("guide.tours.states.notPublished") ||
+                            "Not Published"
+                          : t("guide.tours.states.empty") || "Empty";
                         const cls = hasPublished
                           ? "bg-green-600 text-white"
                           : hasContent
@@ -316,7 +325,10 @@ const TourItemsGrid = ({ tour, isDarkMode }) => {
         <ConfirmModal
           isOpen={confirmModal.open}
           title={t("guide.tours.confirmDelete") || "Confirm Deletion"}
-          message={t("guide.tourItems.confirmDelete") || "Are you sure you want to delete this waypoint?"}
+          message={
+            t("guide.tourItems.confirmDelete") ||
+            "Are you sure you want to delete this waypoint?"
+          }
           confirmText={t("guide.tours.delete") || "Delete"}
           cancelText={t("common.cancel") || "Cancel"}
           onConfirm={confirmDelete}

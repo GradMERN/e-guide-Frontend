@@ -1,16 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { IoArrowBack } from "react-icons/io5";
-import { MdTitle, MdLocationOn, MdMovie, MdMyLocation } from "react-icons/md";
-import { FaList } from "react-icons/fa";
+import {
+  MdTitle,
+  MdLocationOn,
+  MdMovie,
+  MdMyLocation,
+  MdMic,
+  MdStop,
+  MdVolumeUp,
+  MdSwapHoriz,
+} from "react-icons/md";
+import { FaList, FaSpinner } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { tourItemService } from "../../apis/tourItemService";
+import {
+  createSpeechRecognizer,
+  speakText,
+  stopSpeech,
+} from "../../services/aiService";
 
 export default function AddTourItem() {
   const { tourId } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,6 +37,12 @@ export default function AddTourItem() {
   }); // Default: Cairo
   const [showCoordinatesInput, setShowCoordinatesInput] = useState(false);
   const [availableContentTypes, setAvailableContentTypes] = useState([]);
+
+  // Speech recognition states
+  const [isRecording, setIsRecording] = useState(false);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const recognizerRef = useRef(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -56,6 +76,16 @@ export default function AddTourItem() {
     fetchContentTypes();
   }, []);
 
+  // Cleanup speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognizerRef.current) {
+        recognizerRef.current.abort();
+      }
+      stopSpeech();
+    };
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -66,7 +96,10 @@ export default function AddTourItem() {
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      setError(t("guide.tourItems.errors.geolocationNotSupported") || "Geolocation is not supported by your browser");
+      setError(
+        t("guide.tourItems.errors.geolocationNotSupported") ||
+          "Geolocation is not supported by your browser"
+      );
       return;
     }
     setError("");
@@ -80,15 +113,110 @@ export default function AddTourItem() {
           coordinateLong: lng,
           coordinateLat: lat,
         }));
-        setSuccess(t("guide.tourItems.messages.locationDetected") || "Location detected");
+        setSuccess(
+          t("guide.tourItems.messages.locationDetected") || "Location detected"
+        );
         setTimeout(() => setSuccess(""), 2000);
       },
       (err) => {
         console.error("Geolocation error", err);
-        setError(t("guide.tourItems.errors.locationDetectionFailed") || "Unable to detect location");
+        setError(
+          t("guide.tourItems.errors.locationDetectionFailed") ||
+            "Unable to detect location"
+        );
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  };
+
+  // Speech-to-Text: Start recording and transcribe to script
+  const startRecording = () => {
+    if (
+      !("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+    ) {
+      setError(
+        t("guide.tourItems.speechNotSupported") ||
+          "Speech recognition is not supported"
+      );
+      return;
+    }
+
+    setError("");
+    setIsRecording(true);
+
+    try {
+      const lang = i18n.language === "ar" ? "ar" : "en";
+      recognizerRef.current = createSpeechRecognizer(
+        lang,
+        (transcript) => {
+          setFormData((prev) => ({ ...prev, script: transcript }));
+        },
+        (finalTranscript) => {
+          setFormData((prev) => ({ ...prev, script: finalTranscript }));
+          setIsRecording(false);
+          setSuccess(
+            t("guide.tourItems.scriptGenerated") ||
+              "Script generated from recording"
+          );
+          setTimeout(() => setSuccess(""), 3000);
+        },
+        (error) => {
+          console.error("Speech recognition error:", error);
+          setIsRecording(false);
+          if (error !== "no-speech") {
+            setError(`Speech recognition error: ${error}`);
+          }
+        }
+      );
+      recognizerRef.current.start();
+    } catch (err) {
+      setError(err.message);
+      setIsRecording(false);
+    }
+  };
+
+  const stopRecording = () => {
+    if (recognizerRef.current) {
+      recognizerRef.current.stop();
+      recognizerRef.current = null;
+    }
+    setIsRecording(false);
+  };
+
+  // Text-to-Speech: Preview script as audio
+  const previewScriptAsAudio = async () => {
+    if (!formData.script || formData.script.trim() === "") {
+      setError(
+        t("guide.tourItems.noScriptToConvert") || "Please enter a script first"
+      );
+      return;
+    }
+
+    if (!("speechSynthesis" in window)) {
+      setError(
+        t("guide.tourItems.ttsNotSupported") ||
+          "Text-to-speech is not supported"
+      );
+      return;
+    }
+
+    if (isSpeaking) {
+      stopSpeech();
+      setIsSpeaking(false);
+      return;
+    }
+
+    setError("");
+    setIsSpeaking(true);
+
+    try {
+      const lang = i18n.language === "ar" ? "ar" : "en";
+      await speakText(formData.script, lang);
+      setIsSpeaking(false);
+    } catch (err) {
+      console.error("TTS error:", err);
+      setIsSpeaking(false);
+    }
   };
 
   const handleCoordinateChange = (type, value) => {
@@ -116,19 +244,31 @@ export default function AddTourItem() {
 
   const validateForm = () => {
     if (!formData.title || formData.title.length < 3) {
-      setError(t("guide.tourItems.validation.titleMin") || "Title must be at least 3 characters long");
+      setError(
+        t("guide.tourItems.validation.titleMin") ||
+          "Title must be at least 3 characters long"
+      );
       return false;
     }
     if (!formData.script || formData.script.length === 0) {
-      setError(t("guide.tourItems.validation.scriptRequired") || "Script cannot be empty");
+      setError(
+        t("guide.tourItems.validation.scriptRequired") ||
+          "Script cannot be empty"
+      );
       return false;
     }
     if (formData.script.length > 5000) {
-      setError(t("guide.tourItems.validation.scriptMax") || "Script must be at most 5000 characters");
+      setError(
+        t("guide.tourItems.validation.scriptMax") ||
+          "Script must be at most 5000 characters"
+      );
       return false;
     }
     if (!coordinates.longitude || !coordinates.latitude) {
-      setError(t("guide.tourItems.validation.locationRequired") || "Location coordinates are required");
+      setError(
+        t("guide.tourItems.validation.locationRequired") ||
+          "Location coordinates are required"
+      );
       return false;
     }
     return true;
@@ -171,7 +311,9 @@ export default function AddTourItem() {
       }
 
       const result = await response.json();
-      setSuccess(t("guide.tourItems.created") || "Tour item created successfully!");
+      setSuccess(
+        t("guide.tourItems.created") || "Tour item created successfully!"
+      );
 
       // Reset form
       setFormData({
@@ -189,7 +331,11 @@ export default function AddTourItem() {
       }, 2000);
     } catch (err) {
       console.error("Error creating tour item:", err);
-      setError(err.message || t("guide.tourItems.errors.createFailed") || "An error occurred while creating the tour item");
+      setError(
+        err.message ||
+          t("guide.tourItems.errors.createFailed") ||
+          "An error occurred while creating the tour item"
+      );
     } finally {
       setLoading(false);
     }
@@ -247,7 +393,9 @@ export default function AddTourItem() {
             <input
               type="text"
               name="title"
-              placeholder={t("guide.tourItems.titlePlaceholder") || "Tour Item Title"}
+              placeholder={
+                t("guide.tourItems.titlePlaceholder") || "Tour Item Title"
+              }
               value={formData.title}
               onChange={handleChange}
               onFocus={() => setFocusedInput("title")}
@@ -350,7 +498,9 @@ export default function AddTourItem() {
                 <button
                   type="button"
                   onClick={detectLocation}
-                  title={t("guide.tourItems.detectLocation") || "Detect my location"}
+                  title={
+                    t("guide.tourItems.detectLocation") || "Detect my location"
+                  }
                   className="p-2 rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 text-[#f7c95f] hover:bg-[#1a1a1a] transition-colors w-full sm:w-12 flex items-center justify-center"
                 >
                   <MdMyLocation className="w-5 h-5" />
@@ -359,33 +509,111 @@ export default function AddTourItem() {
             </div>
 
             <p className="text-xs text-gray-400">
-              {t("guide.tourItems.currentLocation") || "Current location"}: [{coordinates.longitude.toFixed(4)},{" "}
+              {t("guide.tourItems.currentLocation") || "Current location"}: [
+              {coordinates.longitude.toFixed(4)},{" "}
               {coordinates.latitude.toFixed(4)}]
             </p>
           </div>
 
-          {/* Script */}
-          <div className="relative">
-            <FaList
-              className={`absolute left-4 top-4 transition-colors duration-300 ${
-                focusedInput === "script" ? "text-[#f7c95f]" : "text-[#bfb191]"
-              }`}
-            />
-            <textarea
-              name="script"
-              placeholder={t("guide.tourItems.scriptPlaceholder") || "Enter script/content (max 5000 characters)"}
-              value={formData.script}
-              onChange={handleChange}
-              onFocus={() => setFocusedInput("script")}
-              onBlur={() => setFocusedInput(null)}
-              maxLength={5000}
-              rows={6}
-              required
-              className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50 resize-none"
-            />
-            <span className="text-xs text-gray-400 mt-1">
-              {formData.script.length}/5000
-            </span>
+          {/* Script Section with AI Conversion Buttons */}
+          <div className="border border-[#2b2b2b] rounded-xl p-4 space-y-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <FaList className="text-[#f7c95f]" />
+                <h3 className="text-[#f7c95f] font-semibold">
+                  {t("guide.tourItems.script") || "Script"}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                {/* Record Speech to Text Button */}
+                <button
+                  type="button"
+                  onClick={isRecording ? stopRecording : startRecording}
+                  title={
+                    isRecording
+                      ? t("guide.tourItems.stopRecording") || "Stop recording"
+                      : t("guide.tourItems.startRecording") || "Start recording"
+                  }
+                  className={`p-2 rounded-lg border transition-all duration-300 flex items-center gap-2 ${
+                    isRecording
+                      ? "border-red-500 bg-red-500/20 text-red-400 animate-pulse"
+                      : "border-[#2b2b2b] bg-[#0a0a0a]/50 text-[#bfb191] hover:text-[#f7c95f] hover:border-[#f7c95f]"
+                  }`}
+                >
+                  {isRecording ? (
+                    <>
+                      <MdStop className="w-5 h-5" />
+                      <span className="text-xs hidden sm:inline">
+                        {t("guide.tourItems.recording") || "Recording..."}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <MdMic className="w-5 h-5" />
+                      <span className="text-xs hidden sm:inline">
+                        {t("guide.tourItems.generateScript") || "Voice to Text"}
+                      </span>
+                    </>
+                  )}
+                </button>
+
+                {/* Preview Script as Audio Button */}
+                <button
+                  type="button"
+                  onClick={previewScriptAsAudio}
+                  disabled={!formData.script || formData.script.trim() === ""}
+                  title={
+                    isSpeaking
+                      ? t("guide.tourItems.stopRecording") || "Stop"
+                      : t("guide.tourItems.previewAudio") || "Preview as audio"
+                  }
+                  className={`p-2 rounded-lg border transition-all duration-300 flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
+                    isSpeaking
+                      ? "border-green-500 bg-green-500/20 text-green-400"
+                      : "border-[#2b2b2b] bg-[#0a0a0a]/50 text-[#bfb191] hover:text-[#f7c95f] hover:border-[#f7c95f]"
+                  }`}
+                >
+                  {isSpeaking ? (
+                    <FaSpinner className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <MdVolumeUp className="w-5 h-5" />
+                  )}
+                  <span className="text-xs hidden sm:inline">
+                    {isSpeaking
+                      ? t("guide.tourItems.generating") || "Speaking..."
+                      : t("guide.tourItems.previewAudio") || "Preview Audio"}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div className="relative">
+              <textarea
+                name="script"
+                placeholder={
+                  t("guide.tourItems.scriptPlaceholder") ||
+                  "Enter script/content (max 5000 characters)"
+                }
+                value={formData.script}
+                onChange={handleChange}
+                onFocus={() => setFocusedInput("script")}
+                onBlur={() => setFocusedInput(null)}
+                maxLength={5000}
+                rows={6}
+                required
+                className="w-full rounded-xl border border-[#2b2b2b] bg-[#0a0a0a]/50 py-3 px-4 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-[#f7c95f] focus:ring-1 focus:ring-[#f7c95f]/50 resize-none"
+              />
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-xs text-gray-400">
+                  {formData.script.length}/5000
+                </span>
+                {isRecording && (
+                  <span className="text-xs text-red-400 animate-pulse">
+                    🎙️ {t("guide.tourItems.recording") || "Recording..."}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Buttons */}
@@ -402,7 +630,9 @@ export default function AddTourItem() {
               disabled={loading}
               className="w-1/2 py-3 bg-gradient-to-r from-[#c9a45f] to-[#aa853c] rounded-xl text-black font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? (t("guide.tourItems.creating") || "Creating...") : (t("guide.tourItems.create") || "Create Tour Item")}
+              {loading
+                ? t("guide.tourItems.creating") || "Creating..."
+                : t("guide.tourItems.create") || "Create Tour Item"}
             </button>
           </div>
         </form>

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import reviewService from "../../../apis/reviewService";
 import { useAuth } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
@@ -34,6 +35,7 @@ const Star = ({ filled, onClick, size = 18, ariaLabel }) => (
 );
 
 const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const currentUserId = user?._id || user?.id || null;
 
@@ -44,6 +46,7 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
 
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
 
@@ -108,18 +111,28 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
 
   const submitReview = async () => {
     if (!canPost) {
-      toast.error("You don't have permission to post a review");
+      toast.error(
+        t("reviews.noPermission", "You don't have permission to post a review")
+      );
       return;
     }
     if (userReview) {
-      toast.error("You have already posted a review for this tour");
+      toast.error(
+        t(
+          "reviews.alreadyReviewed",
+          "You have already posted a review for this tour"
+        )
+      );
       return;
     }
     if (!comment.trim()) {
-      toast.error("Please write a comment before posting");
+      toast.error(
+        t("reviews.emptyComment", "Please write a comment before posting")
+      );
       return;
     }
 
+    setSubmitting(true);
     try {
       const payload = { rating, comment };
       const response = await reviewService.createReview(tourId, payload);
@@ -129,12 +142,15 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
       setComment("");
       setRating(5);
       setPage(1);
-      toast.success("Review posted successfully!");
+      toast.success(t("reviews.posted", "Review posted successfully!"));
     } catch (err) {
       console.error("Failed to post review", err);
       const errorMessage =
-        err.response?.data?.message || "Failed to post review";
+        err.response?.data?.message ||
+        t("reviews.postFailed", "Failed to post review");
       toast.error(errorMessage);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -152,18 +168,23 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
             className="text-lg font-semibold mb-0"
             style={{ color: "var(--text)" }}
           >
-            Reviews
+            {t("reviews.title", "Reviews")}
           </h3>
           <div style={{ color: "var(--text-muted)", fontSize: 14 }}>
-            {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+            {reviews.length} {t("reviews.count", "review")}
+            {reviews.length !== 1 ? "s" : ""}
           </div>
         </div>
 
         <div className="mt-4 space-y-3">
           {loading ? (
-            <div style={{ color: "var(--text-muted)" }}>Loading reviews...</div>
+            <div style={{ color: "var(--text-muted)" }}>
+              {t("reviews.loading", "Loading reviews...")}
+            </div>
           ) : reviews.length === 0 ? (
-            <div style={{ color: "var(--text-muted)" }}>No reviews yet.</div>
+            <div style={{ color: "var(--text-muted)" }}>
+              {t("reviews.noReviews", "No reviews yet.")}
+            </div>
           ) : (
             paginated.map((r) => (
               <div
@@ -273,7 +294,7 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
                 color: "var(--text)",
               }}
             >
-              Next
+              {t("common.next", "Next")}
             </button>
           </div>
         )}
@@ -282,7 +303,7 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
         {canPost && !userReview && !readOnly && (
           <div className="mt-4">
             <h4 className="font-medium" style={{ color: "var(--text)" }}>
-              Write a review
+              {t("reviews.writeReview", "Write a review")}
             </h4>
 
             <div className="mt-3">
@@ -290,13 +311,14 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 rows={4}
-                className="w-full p-2 rounded"
+                disabled={submitting}
+                className="w-full p-2 rounded disabled:opacity-50"
                 style={{
                   border: "1px solid var(--border)",
                   background: "transparent",
                   color: "var(--text)",
                 }}
-                placeholder="Write your review..."
+                placeholder={t("reviews.placeholder", "Write your review...")}
               />
               <div className="mt-3 flex items-center justify-between">
                 <div style={{ display: "flex", gap: 6 }}>
@@ -307,25 +329,46 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
                         key={i}
                         size={22}
                         filled={starIndex < rating}
-                        onClick={() => setRating(starIndex + 1)}
-                        ariaLabel={`Set rating ${starIndex + 1}`}
+                        onClick={() => !submitting && setRating(starIndex + 1)}
+                        ariaLabel={`${t("reviews.setRating", "Set rating")} ${
+                          starIndex + 1
+                        }`}
                       />
                     );
                   })}
                 </div>
                 <button
                   onClick={submitReview}
-                  className="px-4 py-2 rounded btn-primary-hero"
+                  disabled={submitting || !comment.trim()}
+                  className="px-4 py-2 rounded btn-primary-hero disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ border: "none" }}
                 >
-                  Post Review
+                  {submitting
+                    ? t("reviews.posting", "Posting...")
+                    : t("reviews.post", "Post Review")}
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* If posting not allowed or user already reviewed, hide controls (no text) */}
+        {/* Show message if user is not enrolled */}
+        {!canPost && !userReview && !readOnly && user && (
+          <div
+            className="mt-4 p-3 rounded-lg"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <p style={{ color: "var(--text-muted)", fontSize: 14 }}>
+              {t(
+                "reviews.enrollToReview",
+                "You need an active enrollment to leave a review."
+              )}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

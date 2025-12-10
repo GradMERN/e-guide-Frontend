@@ -73,6 +73,8 @@
     "create": "إنشاء",
     "update": "تحديث",
     "confirm": "تأكيد",
+    "next": "التالي",
+    "prev": "السابق",
     "firstName": "الاسم الأول",
     "lastName": "اسم العائلة",
     "email": "البريد الإلكتروني",
@@ -88,6 +90,23 @@
       "failed": "فشل",
       "refunded": "تم الاسترداد"
     }
+  },
+  "reviews": {
+    "title": "التقييمات",
+    "count": "تقييم",
+    "loading": "جاري تحميل التقييمات...",
+    "noReviews": "لا توجد تقييمات بعد.",
+    "writeReview": "اكتب تقييماً",
+    "placeholder": "اكتب تقييمك...",
+    "setRating": "تعيين التقييم",
+    "post": "نشر التقييم",
+    "posting": "جاري النشر...",
+    "posted": "تم نشر التقييم بنجاح!",
+    "postFailed": "فشل نشر التقييم",
+    "noPermission": "ليس لديك صلاحية لنشر تقييم",
+    "alreadyReviewed": "لقد قمت بتقييم هذه الجولة مسبقاً",
+    "emptyComment": "يرجى كتابة تعليق قبل النشر",
+    "enrollToReview": "تحتاج إلى اشتراك نشط لترك تقييم."
   },
   "theme": {
     "light": "التبديل إلى الوضع الفاتح",
@@ -222,6 +241,50 @@
     "findingNearby": "جاري البحث عن العناصر القريبة...",
     "script": "النص",
     "currency": "جنيه مصري",
+    "translation": {
+      "selectLanguage": "اختر لغتك...",
+      "translateTo": "ترجم إلى",
+      "translating": "جاري الترجمة...",
+      "translated": "مترجم",
+      "originalLanguage": "الأصلي",
+      "showOriginal": "عرض الأصل",
+      "translationFailed": "فشلت الترجمة",
+      "autoDetect": "اكتشاف تلقائي"
+    },
+    "ai": {
+      "voiceToText": "صوت إلى نص",
+      "textToSpeech": "معاينة الصوت",
+      "stopRecording": "إيقاف",
+      "stopSpeaking": "إيقاف",
+      "listening": "جاري الاستماع... تحدث الآن",
+      "noTextToSpeak": "لا يوجد نص للنطق",
+      "sttNotSupported": "التعرف على الكلام غير مدعوم في هذا المتصفح",
+      "sttError": "فشل التعرف على الكلام",
+      "ttsTooltip": "قراءة النص بصوت عالٍ",
+      "sttTooltip": "تحويل الصوت إلى نص",
+      "listenToScript": "استمع إلى النص",
+      "listen": "استمع",
+      "preview": "معاينة",
+      "generateAudio": "إنشاء صوت",
+      "generating": "جاري الإنشاء...",
+      "generateAudioTooltip": "إنشاء ملف صوتي من النص",
+      "audioGenerated": "تم إنشاء الصوت بنجاح!",
+      "audioGenerationFailed": "فشل في إنشاء الصوت. حاول مرة أخرى.",
+      "recordVoice": "تسجيل صوت",
+      "recordingStarted": "بدأ التسجيل. تحدث الآن...",
+      "recordingComplete": "اكتمل التسجيل! الصوت والنسخ جاهزان.",
+      "recordingError": "خطأ في حفظ التسجيل",
+      "microphoneError": "لا يمكن الوصول إلى الميكروفون",
+      "liveTranscription": "النسخ المباشر",
+      "selectAudio": "اختيار صوت",
+      "existingAudio": "الصوت الحالي",
+      "audioPreview": "معاينة الصوت",
+      "previewDescription": "معاينة ملف الصوت",
+      "translatedAudio": "الصوت المترجم",
+      "tts": "نص لصوت",
+      "playing": "جاري التشغيل...",
+      "ready": "جاهز"
+    },
     "sidebar": {
       "title": "لوحة المرشد",
       "dashboard": "لوحة التحكم",
@@ -392,7 +455,26 @@
       },
       "messages": {
         "locationDetected": "تم تحديد الموقع"
-      }
+      },
+      "audio": "الصوت",
+      "audioPlaceholder": "ملف صوتي (اختياري)",
+      "generateAudio": "توليد صوت من النص",
+      "generateScript": "توليد نص من الصوت",
+      "recording": "جاري التسجيل...",
+      "stopRecording": "إيقاف التسجيل",
+      "startRecording": "بدء التسجيل",
+      "transcribing": "جاري النسخ...",
+      "generating": "جاري التوليد...",
+      "audioGenerated": "تم توليد الصوت بنجاح",
+      "scriptGenerated": "تم توليد النص من التسجيل",
+      "noScriptToConvert": "يرجى إدخال نص أولاً",
+      "noAudioToConvert": "يرجى تسجيل أو رفع صوت أولاً",
+      "speechNotSupported": "التعرف على الكلام غير مدعوم في هذا المتصفح",
+      "ttsNotSupported": "تحويل النص إلى كلام غير مدعوم في هذا المتصفح",
+      "recordAudio": "تسجيل صوت",
+      "uploadAudio": "رفع صوت",
+      "previewAudio": "معاينة الصوت",
+      "removeAudio": "إزالة الصوت"
     },
     "tourName": "اسم الجولة",
     "guestName": "اسم الضيف"
@@ -604,9 +686,9 @@
     }
   },
   "video": {
-  "title": "اختبر مصر",
-  "description": "شاهد رحلتنا عبر عجائب مصر الخالدة واكتشف ما يجعل جولاتنا لا تُنسى.",
-  "duration": "نظرة عامة 1:48"
+    "title": "اختبر مصر",
+    "description": "شاهد رحلتنا عبر عجائب مصر الخالدة واكتشف ما يجعل جولاتنا لا تُنسى.",
+    "duration": "نظرة عامة 1:48"
   },
   "about": {
     "hero": {
@@ -748,68 +830,66 @@
   "auth": {
     "register": {
       "title": "إنشاء حساب",
-  "firstName": "الاسم الأول",
-  "lastName": "اسم العائلة",
-  "email": "البريد الإلكتروني",
-  "age": "العمر",
-  "phone": "رقم الهاتف",
-        "select":"اختر",
-  "city": "المدينة",
-  "country": "الدولة",
-  "password": "كلمة المرور",
-  "confirmPassword": "تأكيد كلمة المرور",
-  "loading": "جارٍ التحميل...",
-  "registerBtn": "تسجيل",
-  "haveAccount": "لديك حساب بالفعل؟",
-  "loginLink": "تسجيل الدخول",
-"next": "التالي",
-"back": "رجوع",
-
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "age": "العمر",
+      "phone": "رقم الهاتف",
+      "select": "اختر",
+      "city": "المدينة",
+      "country": "الدولة",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "loading": "جارٍ التحميل...",
+      "registerBtn": "تسجيل",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "loginLink": "تسجيل الدخول",
+      "next": "التالي",
+      "back": "رجوع",
 
       "errors": {
-      "firstName": "الاسم الأول مطلوب",
-"lastName": "اسم العائلة مطلوب",
-"email": "البريد الإلكتروني مطلوب",
-"emailInvalid": "الرجاء إدخال بريد إلكتروني صالح",
-"ageMin": "يجب ألا يقل العمر عن 13",
-"ageMax": "عمر غير صالح",
-"ageRequired": "العمر مطلوب",
-"phone": "رقم الهاتف مطلوب",
-"phoneInvalid": "الرجاء إدخال رقم هاتف صالح",
-"password": "كلمة المرور مطلوبة",
-"passwordUppercase": "يجب أن تحتوي كلمة المرور على حرفين كبيرين على الأقل",
-"passwordLowercase": "يجب أن تحتوي كلمة المرور على حرفين صغيرين على الأقل",
-"passwordNumber": "يجب أن تحتوي كلمة المرور على رقمين على الأقل",
-"passwordSpecial": "يجب أن تحتوي كلمة المرور على رمزين خاصين على الأقل",
-"passwordNoRepeats": "لا يُسمح بأكثر من حرفين متكررين متتاليين",
-"passwordLength": "يجب أن تكون كلمة المرور 12 حرفًا على الأقل",
-"confirmPassword": "تأكيد كلمة المرور مطلوب",
-"confirmPasswordMatch": "كلمتا المرور غير متطابقتين",
-"city": "المدينة مطلوبة",
-"country": "الدولة مطلوبة"
-
+        "firstName": "الاسم الأول مطلوب",
+        "lastName": "اسم العائلة مطلوب",
+        "email": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "الرجاء إدخال بريد إلكتروني صالح",
+        "ageMin": "يجب ألا يقل العمر عن 13",
+        "ageMax": "عمر غير صالح",
+        "ageRequired": "العمر مطلوب",
+        "phone": "رقم الهاتف مطلوب",
+        "phoneInvalid": "الرجاء إدخال رقم هاتف صالح",
+        "password": "كلمة المرور مطلوبة",
+        "passwordUppercase": "يجب أن تحتوي كلمة المرور على حرفين كبيرين على الأقل",
+        "passwordLowercase": "يجب أن تحتوي كلمة المرور على حرفين صغيرين على الأقل",
+        "passwordNumber": "يجب أن تحتوي كلمة المرور على رقمين على الأقل",
+        "passwordSpecial": "يجب أن تحتوي كلمة المرور على رمزين خاصين على الأقل",
+        "passwordNoRepeats": "لا يُسمح بأكثر من حرفين متكررين متتاليين",
+        "passwordLength": "يجب أن تكون كلمة المرور 12 حرفًا على الأقل",
+        "confirmPassword": "تأكيد كلمة المرور مطلوب",
+        "confirmPasswordMatch": "كلمتا المرور غير متطابقتين",
+        "city": "المدينة مطلوبة",
+        "country": "الدولة مطلوبة"
       }
     },
     "login": {
-  "welcome": "مرحبًا بعودتك",
-  "emailPlaceholder": "أدخل بريدك الإلكتروني",
-  "passwordPlaceholder": "أدخل كلمة المرور",
-  "forgot": "هل نسيت كلمة المرور؟",
-  "signIn": "تسجيل الدخول",
-  "or": "أو المتابعة عبر",
-  "google": "حساب جوجل",
-  "noAccount": "جديد على Mystic Egypt؟ أنشئ حسابًا",
-  
-  "errors": {
-    "emailRequired": "البريد الإلكتروني مطلوب",
-    "emailInvalid": "البريد الإلكتروني غير صالح",
-    "passwordRequired": "كلمة المرور مطلوبة",
-    "passwordMin": "يجب أن تكون كلمة المرور 12 أحرف على الأقل"
-  }
-}, 
+      "welcome": "مرحبًا بعودتك",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "forgot": "هل نسيت كلمة المرور؟",
+      "signIn": "تسجيل الدخول",
+      "or": "أو المتابعة عبر",
+      "google": "حساب جوجل",
+      "noAccount": "جديد على Mystic Egypt؟ أنشئ حسابًا",
+
+      "errors": {
+        "emailRequired": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "البريد الإلكتروني غير صالح",
+        "passwordRequired": "كلمة المرور مطلوبة",
+        "passwordMin": "يجب أن تكون كلمة المرور 12 أحرف على الأقل"
+      }
+    },
     "subtitle": "رحلة عبر الألفية",
 
- "leftCards": {
+    "leftCards": {
       "ancientWonders": {
         "title": "عجائب قديمة",
         "text": "استكشف الأهرامات والمعابد والمقابر الرائعة التي صمدت لآلاف السنين."
@@ -828,9 +908,8 @@
       { "num": "١٥٠+", "label": "باقة" },
       { "num": "٢٥+", "label": "سنوات خبرة" }
     ]
-
   },
-  "tourGuide":{
+  "tourGuide": {
     "homeSection": {
       "title": "تعرف على خبرائنا",
       "subtitle": "بتوجيه من التاريخ، سيجعل مرشدونا السياحيون المعتمدون رحلتك عبر مصر لا تُنسى."

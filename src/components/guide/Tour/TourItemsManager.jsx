@@ -6,10 +6,25 @@ import {
   FaMusic,
   FaSpinner,
   FaMapMarkerAlt,
+  FaMicrophone,
+  FaStop,
+  FaVolumeUp,
+  FaMagic,
+  FaFileAudio,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { tourItemService } from "../../../apis/tourItemService";
 import ConfirmModal from "../../common/ConfirmModal";
+import {
+  speakText,
+  createSpeechRecognizer,
+  SUPPORTED_LANGUAGES,
+  generateAudioFromText,
+  createVoiceRecorder,
+  createLiveTranscriber,
+  transcribeAudioFile,
+} from "../../../services/aiService";
 
 const defaultItemForm = () => ({
   title: "",
@@ -38,6 +53,9 @@ const TourItemsManager = ({
   initialEditing = null,
   initialFormMode = "create",
 }) => {
+  const { t } = useTranslation();
+  const safeT = (k, def) => t(k, { defaultValue: def });
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -48,6 +66,21 @@ const TourItemsManager = ({
   const [submitting, setSubmitting] = useState(false);
   const [deletingIds, setDeletingIds] = useState([]);
   const [confirmModal, setConfirmModal] = useState({ open: false, item: null });
+
+  // TTS/STT state
+  const [isRecording, setIsRecording] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speechLang, setSpeechLang] = useState("en");
+  const recognizerRef = useRef(null);
+
+  // Audio generation state
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [isVoiceRecording, setIsVoiceRecording] = useState(false);
+  const [isTranscribingAudio, setIsTranscribingAudio] = useState(false);
+  const [liveTranscript, setLiveTranscript] = useState("");
+  const voiceRecorderRef = useRef(null);
+  const liveTranscriberRef = useRef(null);
+
   const mainImageRef = useRef(null);
   const galleryRef = useRef(null);
   const audioRef = useRef(null);
@@ -59,6 +92,288 @@ const TourItemsManager = ({
   const textColor = "text-[var(--text)]";
   const secondaryText = "text-[var(--text-secondary)]";
   const cardBg = "bg-[var(--surface)]";
+
+  // TTS: Read script aloud
+  const handleTextToSpeech = () => {
+    if (!form.script?.trim()) {
+      toast.warning(safeT("guide.ai.noTextToSpeak", "No text to speak"));
+      return;
+    }
+
+    if (isSpeaking) {
+      window.speechSynthesis?.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    setIsSpeaking(true);
+    speakText(form.script, speechLang, () => setIsSpeaking(false));
+  };
+
+  // STT: Voice-to-text for script
+  const handleSpeechToText = () => {
+    if (isRecording) {
+      // Stop recording
+      if (recognizerRef.current) {
+        recognizerRef.current.stop();
+        recognizerRef.current = null;
+      }
+      setIsRecording(false);
+      return;
+    }
+
+    // Start recording
+    try {
+      const recognizer = createSpeechRecognizer(speechLang);
+      if (!recognizer) {
+        toast.error(
+          safeT(
+            "guide.ai.sttNotSupported",
+            "Speech recognition is not supported in this browser"
+          )
+        );
+        return;
+      }
+
+      recognizer.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map((result) => result[0].transcript)
+          .join("");
+
+        setForm((prev) => ({
+          ...prev,
+          script: prev.script ? `${prev.script} ${transcript}` : transcript,
+        }));
+      };
+
+      recognizer.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        if (event.error !== "no-speech") {
+          toast.error(safeT("guide.ai.sttError", "Speech recognition failed"));
+        }
+        setIsRecording(false);
+      };
+
+      recognizer.onend = () => {
+        setIsRecording(false);
+        recognizerRef.current = null;
+      };
+
+      recognizerRef.current = recognizer;
+      recognizer.start();
+      setIsRecording(true);
+      toast.info(safeT("guide.ai.listening", "Listening... Speak now"));
+    } catch (error) {
+      console.error("Failed to start speech recognition:", error);
+      toast.error(
+        safeT("guide.ai.sttError", "Failed to start speech recognition")
+      );
+    }
+  };
+
+  // Cleanup speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognizerRef.current) {
+        recognizerRef.current.stop();
+        recognizerRef.current = null;
+      }
+      if (voiceRecorderRef.current) {
+        voiceRecorderRef.current.stop();
+        voiceRecorderRef.current = null;
+      }
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+
+  // Generate audio from script - plays TTS through speakers and records via microphone
+  const handleGenerateAudioFromScript = async () => {
+    if (!form.script?.trim()) {
+      toast.warning(
+        safeT("guide.ai.noTextToSpeak", "No text to generate audio from")
+      );
+      return;
+    }
+
+    setIsGeneratingAudio(true);
+    setLiveTranscript(
+      "Generating audio... Please ensure your speakers are on and microphone is enabled."
+    );
+    toast.info(
+      safeT(
+        "guide.ai.generatingAudio",
+        "Generating audio... The script will be read aloud and recorded."
+      )
+    );
+
+    try {
+      const result = await generateAudioFromText(
+        form.script,
+        speechLang,
+        (progress) => {
+          setLiveTranscript(progress);
+        }
+      );
+
+      if (result.file) {
+        setForm((prev) => ({
+          ...prev,
+          audio: result.file,
+          audioPreview: result.url,
+          existingAudio: null,
+        }));
+        toast.success(
+          safeT("guide.ai.audioGenerated", "Audio generated successfully!")
+        );
+      } else {
+        toast.warning(
+          safeT(
+            "guide.ai.audioGenerationFailed",
+            "Could not generate audio. Please try recording instead."
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to generate audio:", error);
+      toast.error(
+        error.message ||
+          safeT(
+            "guide.ai.audioGenerationFailed",
+            "Failed to generate audio. Please allow microphone access."
+          )
+      );
+    } finally {
+      setIsGeneratingAudio(false);
+      setLiveTranscript("");
+    }
+  };
+
+  // Transcribe audio file to script - plays audio and uses speech recognition
+  const handleAudioTranscription = useCallback(
+    async (file) => {
+      if (!file) return;
+
+      setIsTranscribingAudio(true);
+      setLiveTranscript(
+        "Playing audio and transcribing... Please ensure your speakers are on."
+      );
+      toast.info(
+        safeT(
+          "guide.ai.transcribingAudio",
+          "Transcribing audio... The audio will play through your speakers."
+        )
+      );
+
+      try {
+        const transcript = await transcribeAudioFile(
+          file,
+          speechLang,
+          (progress) => {
+            setLiveTranscript(progress);
+          }
+        );
+
+        if (transcript) {
+          setForm((p) => ({
+            ...p,
+            script: transcript, // Replace script with transcript
+          }));
+          toast.success(
+            safeT(
+              "guide.ai.transcriptionComplete",
+              "Audio transcribed successfully!"
+            )
+          );
+        } else {
+          toast.warning(
+            safeT(
+              "guide.ai.noSpeechDetected",
+              "No speech detected. You can add the script manually."
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Transcription failed:", error);
+        toast.error(
+          safeT(
+            "guide.ai.transcriptionFailed",
+            "Could not transcribe audio. Please add the script manually."
+          )
+        );
+      } finally {
+        setIsTranscribingAudio(false);
+        setLiveTranscript("");
+      }
+    },
+    [speechLang, safeT]
+  );
+
+  // Start/Stop voice recording with live transcription
+  const handleVoiceRecording = async () => {
+    if (isVoiceRecording) {
+      // Stop recording
+      try {
+        const audioResult = await voiceRecorderRef.current?.stop();
+        const transcript = liveTranscriberRef.current?.stop();
+
+        if (audioResult) {
+          // Set recorded audio to form
+          setForm((prev) => ({
+            ...prev,
+            audio: audioResult.file,
+            audioPreview: audioResult.url,
+            existingAudio: null,
+            // Add transcript to script if we got one
+            script: transcript || prev.script,
+          }));
+
+          toast.success(
+            safeT(
+              "guide.ai.recordingComplete",
+              "Recording complete! Audio and transcription ready."
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Error stopping recording:", error);
+        toast.error(safeT("guide.ai.recordingError", "Error saving recording"));
+      }
+
+      setIsVoiceRecording(false);
+      setLiveTranscript("");
+      voiceRecorderRef.current = null;
+      liveTranscriberRef.current = null;
+      return;
+    }
+
+    // Start recording
+    try {
+      // Initialize voice recorder
+      voiceRecorderRef.current = createVoiceRecorder();
+      await voiceRecorderRef.current.start();
+
+      // Initialize live transcriber
+      liveTranscriberRef.current = createLiveTranscriber(speechLang);
+      if (liveTranscriberRef.current) {
+        liveTranscriberRef.current.start((interim, final) => {
+          setLiveTranscript(interim);
+        });
+      }
+
+      setIsVoiceRecording(true);
+      toast.info(
+        safeT("guide.ai.recordingStarted", "Recording started. Speak now...")
+      );
+    } catch (error) {
+      console.error("Failed to start recording:", error);
+      toast.error(
+        safeT(
+          "guide.ai.microphoneError",
+          error.message || "Could not access microphone"
+        )
+      );
+    }
+  };
 
   useEffect(() => {
     if (!tour) return;
@@ -194,39 +509,46 @@ const TourItemsManager = ({
     setConfirmModal({ open: false, item: null });
   }, []);
 
-  const handleFileChange = useCallback((e, key, multiple = false) => {
-    const files = Array.from(e.target.files || []);
-    if (key === "mainImage" && !multiple) {
-      const file = files[0] || null;
-      setForm((p) => {
-        revokePreview(p.mainImagePreview);
-        return {
+  const handleFileChange = useCallback(
+    (e, key, multiple = false) => {
+      const files = Array.from(e.target.files || []);
+      if (key === "mainImage" && !multiple) {
+        const file = files[0] || null;
+        setForm((p) => {
+          revokePreview(p.mainImagePreview);
+          return {
+            ...p,
+            mainImage: file,
+            mainImagePreview: file ? URL.createObjectURL(file) : null,
+          };
+        });
+      } else if (key === "audio" && !multiple) {
+        const file = files[0] || null;
+        setForm((p) => {
+          revokePreview(p.audioPreview);
+          return {
+            ...p,
+            audio: file,
+            audioPreview: file ? URL.createObjectURL(file) : null,
+          };
+        });
+        // Auto-transcribe the audio file to generate script
+        if (file) {
+          handleAudioTranscription(file);
+        }
+      } else if (key === "galleryImages" && multiple) {
+        const mapped = files.map((f) => ({
+          file: f,
+          preview: URL.createObjectURL(f),
+        }));
+        setForm((p) => ({
           ...p,
-          mainImage: file,
-          mainImagePreview: file ? URL.createObjectURL(file) : null,
-        };
-      });
-    } else if (key === "audio" && !multiple) {
-      const file = files[0] || null;
-      setForm((p) => {
-        revokePreview(p.audioPreview);
-        return {
-          ...p,
-          audio: file,
-          audioPreview: file ? URL.createObjectURL(file) : null,
-        };
-      });
-    } else if (key === "galleryImages" && multiple) {
-      const mapped = files.map((f) => ({
-        file: f,
-        preview: URL.createObjectURL(f),
-      }));
-      setForm((p) => ({
-        ...p,
-        galleryImages: [...(p.galleryImages || []), ...mapped],
-      }));
-    }
-  }, []);
+          galleryImages: [...(p.galleryImages || []), ...mapped],
+        }));
+      }
+    },
+    [handleAudioTranscription]
+  );
 
   const detectLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -578,22 +900,307 @@ const TourItemsManager = ({
                     </button>{" "}
                   </div>{" "}
                 </div>{" "}
-                <div>
-                  <label
-                    className={`block text-sm font-medium ${secondaryText} mb-1`}
-                  >
-                    Script
-                  </label>
-                  <textarea
-                    value={form.script}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, script: e.target.value }))
-                    }
-                    className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor}`}
-                    rows={3}
-                    required
-                  />{" "}
-                </div>{" "}
+                {/* Combined Script & Audio Section */}
+                <div className="border-2 border-[#D5B36A]/40 rounded-xl p-4 bg-gradient-to-b from-[#1a0f08]/30 to-transparent">
+                  {/* Language Selector - Prominent 3-button layout */}
+                  <div className="mb-4">
+                    <label
+                      className={`block text-sm font-medium ${secondaryText} mb-2`}
+                    >
+                      {safeT("guide.ai.language", "Language")}
+                    </label>
+                    <div className="flex gap-2 flex-wrap">
+                      {[
+                        { code: "en", label: "English", flag: "🇬🇧" },
+                        { code: "ar", label: "العربية", flag: "🇪🇬" },
+                        { code: "es", label: "Español", flag: "🇪🇸" },
+                      ].map((lang) => (
+                        <button
+                          key={lang.code}
+                          type="button"
+                          onClick={() => setSpeechLang(lang.code)}
+                          className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                            speechLang === lang.code
+                              ? "bg-[#D5B36A] text-black shadow-lg shadow-[#D5B36A]/30"
+                              : `border ${borderColor} ${inputBg} ${textColor} hover:border-[#D5B36A] hover:bg-[#D5B36A]/10`
+                          }`}
+                        >
+                          <span className="text-lg">{lang.flag}</span>
+                          <span>{lang.label}</span>
+                        </button>
+                      ))}
+                      {/* More languages dropdown */}
+                      <select
+                        value={
+                          !["en", "ar", "es"].includes(speechLang)
+                            ? speechLang
+                            : ""
+                        }
+                        onChange={(e) =>
+                          e.target.value && setSpeechLang(e.target.value)
+                        }
+                        className={`px-3 py-2.5 rounded-lg text-sm font-medium border ${borderColor} ${inputBg} ${textColor} cursor-pointer`}
+                      >
+                        <option value="">+ More...</option>
+                        {SUPPORTED_LANGUAGES.filter(
+                          (l) => !["en", "ar", "es"].includes(l.code)
+                        ).map((lang) => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.nativeName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Script Section */}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <label
+                        className={`block text-sm font-medium ${secondaryText}`}
+                      >
+                        {safeT("guide.script", "Script")}
+                      </label>
+                      {/* Voice to Text & Preview buttons */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleSpeechToText}
+                          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            isRecording
+                              ? "bg-red-500 text-white animate-pulse"
+                              : `border ${borderColor} ${textColor} hover:border-[#D5B36A]`
+                          }`}
+                          title={safeT("guide.ai.sttTooltip", "Voice to text")}
+                        >
+                          {isRecording ? (
+                            <FaStop className="w-3 h-3" />
+                          ) : (
+                            <FaMicrophone className="w-3 h-3" />
+                          )}
+                          <span>{isRecording ? "Stop" : "Dictate"}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleTextToSpeech}
+                          disabled={!form.script?.trim()}
+                          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            isSpeaking
+                              ? "bg-green-500 text-white"
+                              : `border ${borderColor} ${textColor} hover:border-[#D5B36A] disabled:opacity-50`
+                          }`}
+                          title={safeT("guide.ai.ttsTooltip", "Read aloud")}
+                        >
+                          {isSpeaking ? (
+                            <FaStop className="w-3 h-3" />
+                          ) : (
+                            <FaVolumeUp className="w-3 h-3" />
+                          )}
+                          <span>{isSpeaking ? "Stop" : "Preview"}</span>
+                        </button>
+                      </div>
+                    </div>
+                    <textarea
+                      value={form.script}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, script: e.target.value }))
+                      }
+                      className={`w-full px-3 py-2 rounded-lg border ${borderColor} ${inputBg} ${textColor}`}
+                      rows={3}
+                      required
+                      placeholder={safeT(
+                        "guide.scriptPlaceholder",
+                        "Enter the script for this waypoint..."
+                      )}
+                    />
+                  </div>
+
+                  {/* Audio Section - 3 Action Buttons */}
+                  <div>
+                    <label
+                      className={`block text-sm font-medium ${secondaryText} mb-2`}
+                    >
+                      {safeT("guide.audio", "Audio")}
+                    </label>
+                    <div className="flex gap-2 flex-wrap">
+                      {/* Select Audio */}
+                      <button
+                        type="button"
+                        onClick={() => audioRef.current?.click()}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-gradient-to-b from-[#2c1810] to-[#1a0f08] border-2 border-[#D5B36A] text-[#D5B36A] hover:shadow-lg hover:shadow-[#D5B36A]/20 transition-all"
+                      >
+                        <FaFileAudio className="w-4 h-4" />
+                        <span>
+                          {safeT("guide.ai.selectAudio", "Select Audio")}
+                        </span>
+                      </button>
+
+                      {/* Record Audio */}
+                      <button
+                        type="button"
+                        onClick={handleVoiceRecording}
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                          isVoiceRecording
+                            ? "bg-red-500 border-2 border-red-400 text-white animate-pulse"
+                            : "bg-gradient-to-b from-[#102c1a] to-[#081a0f] border-2 border-[#6AD5B3] text-[#6AD5B3] hover:shadow-lg hover:shadow-[#6AD5B3]/20"
+                        }`}
+                      >
+                        {isVoiceRecording ? (
+                          <>
+                            <FaStop className="w-4 h-4" />
+                            <span>
+                              {safeT(
+                                "guide.ai.stopRecording",
+                                "Stop Recording"
+                              )}
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <FaMicrophone className="w-4 h-4" />
+                            <span>
+                              {safeT("guide.ai.recordAudio", "Record Audio")}
+                            </span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* Generate Audio from Script */}
+                      <button
+                        type="button"
+                        onClick={handleGenerateAudioFromScript}
+                        disabled={
+                          !form.script?.trim() ||
+                          isGeneratingAudio ||
+                          isTranscribingAudio
+                        }
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                          isGeneratingAudio
+                            ? "bg-blue-500 text-white animate-pulse"
+                            : "bg-gradient-to-b from-[#1a1a2c] to-[#0f0f1a] border-2 border-[#6A8FD5] text-[#6A8FD5] hover:shadow-lg hover:shadow-[#6A8FD5]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                        }`}
+                        title={safeT(
+                          "guide.ai.generateAudioTooltip",
+                          "Generate audio by reading the script aloud"
+                        )}
+                      >
+                        {isGeneratingAudio ? (
+                          <>
+                            <FaSpinner className="w-4 h-4 animate-spin" />
+                            <span>
+                              {safeT("guide.ai.generating", "Generating...")}
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <FaMagic className="w-4 h-4" />
+                            <span>
+                              {safeT(
+                                "guide.ai.generateAudio",
+                                "Generate Audio"
+                              )}
+                            </span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Status message for audio operations */}
+                    {(isGeneratingAudio ||
+                      isTranscribingAudio ||
+                      (isVoiceRecording && liveTranscript)) && (
+                      <div
+                        className={`mt-3 p-3 rounded-lg border ${
+                          isVoiceRecording
+                            ? "bg-[#1a2c10]/50 border-[#6AD5B3]/30"
+                            : isTranscribingAudio
+                            ? "bg-[#1a1a2c]/50 border-[#6A8FD5]/30"
+                            : "bg-[#2c1810]/50 border-[#D5B36A]/30"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          {isVoiceRecording ? (
+                            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                          ) : (
+                            <FaSpinner className="w-4 h-4 animate-spin text-current" />
+                          )}
+                          <span
+                            className={`text-xs ${
+                              isVoiceRecording
+                                ? "text-[#6AD5B3]"
+                                : isTranscribingAudio
+                                ? "text-[#6A8FD5]"
+                                : "text-[#D5B36A]"
+                            }`}
+                          >
+                            {isVoiceRecording
+                              ? safeT(
+                                  "guide.ai.liveTranscription",
+                                  "Live Transcription"
+                                )
+                              : isTranscribingAudio
+                              ? safeT(
+                                  "guide.ai.transcribingAudio",
+                                  "Transcribing Audio..."
+                                )
+                              : safeT(
+                                  "guide.ai.generatingAudio",
+                                  "Generating Audio..."
+                                )}
+                          </span>
+                        </div>
+                        {liveTranscript && (
+                          <p className={`text-sm ${textColor}`}>
+                            {liveTranscript}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Hidden file input */}
+                    <input
+                      ref={audioRef}
+                      type="file"
+                      accept="audio/*"
+                      onChange={(e) => handleFileChange(e, "audio", false)}
+                      className="hidden"
+                    />
+
+                    {/* Existing audio preview */}
+                    {form.existingAudio?.url && !form.audioPreview && (
+                      <div className="mt-3 p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                        <div className={`text-xs ${secondaryText} mb-1`}>
+                          {safeT("guide.ai.existingAudio", "Current audio")}
+                        </div>
+                        <audio
+                          controls
+                          src={form.existingAudio.url}
+                          className="w-full h-10"
+                        />
+                      </div>
+                    )}
+
+                    {/* New/Generated audio preview */}
+                    {form.audioPreview && (
+                      <div className="mt-3 p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                        <div
+                          className={`text-xs ${secondaryText} mb-1 flex items-center gap-2`}
+                        >
+                          <FaMusic className="text-[#D5B36A]" />
+                          {safeT(
+                            "guide.ai.audioPreview",
+                            "New audio ready to upload"
+                          )}
+                        </div>
+                        <audio
+                          controls
+                          src={form.audioPreview}
+                          className="w-full h-10"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div>
                   <label
                     className={`block text-sm font-medium ${secondaryText} mb-1`}
@@ -762,72 +1369,6 @@ const TourItemsManager = ({
                           !form.deletedGalleryImages?.includes(img.public_id)
                       ).length + (form.galleryImages || []).length}{" "}
                       images in gallery{" "}
-                    </div>
-                  )}{" "}
-                </div>{" "}
-                <div>
-                  <label
-                    className={`block text-sm font-medium ${secondaryText} mb-1`}
-                  >
-                    Audio
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => audioRef.current?.click()}
-                    className="flex items-center gap-3 px-6 py-3 bg-gradient-to-b from-[#2c1810] to-[#1a0f08] border-2 border-[#D5B36A] text-[#D5B36A] rounded-lg shadow-lg hover:shadow-[#D5B36A]/30 hover:shadow-xl transition-all duration-300 font-semibold relative overflow-hidden group"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                      boxShadow:
-                        "0 4px 15px rgba(213, 179, 106, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-                    }}
-                  >
-                    {" "}
-                    <div className="absolute inset-0 bg-[#D5B36A]/0 group-hover:bg-[#D5B36A]/10 transition-colors duration-300"></div>{" "}
-                    <FaMusic className="text-[#D5B36A] group-hover:text-[#F5E6A3] transition-colors duration-300 z-10" />{" "}
-                    <span className="z-10">Select Audio</span>{" "}
-                  </button>
-                  <input
-                    ref={audioRef}
-                    type="file"
-                    accept="audio/*"
-                    onChange={(e) => handleFileChange(e, "audio", false)}
-                    className="hidden"
-                  />
-                  {form.existingAudio?.url && (
-                    <div className="mt-2">
-                      <div className={`text-xs ${secondaryText} mb-1`}>
-                        Existing audio
-                      </div>{" "}
-                      <audio
-                        controls
-                        src={form.existingAudio.url}
-                        className="w-full"
-                      />{" "}
-                    </div>
-                  )}
-                  {form.audioPreview && (
-                    <div className="mt-4 p-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-sm">
-                      <div
-                        className={`text-sm font-medium ${secondaryText} mb-2 flex items-center gap-2`}
-                      >
-                        {" "}
-                        <FaMusic className="text-[var(--primary)]" />
-                        Audio Preview{" "}
-                      </div>{" "}
-                      <div className="relative">
-                        <audio
-                          controls
-                          src={form.audioPreview}
-                          className="w-full h-10 rounded-md bg-[var(--background)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                          style={{ filter: "hue-rotate(25deg) saturate(1.2)" }}
-                        />{" "}
-                        <div className="absolute inset-0 pointer-events-none rounded-md bg-gradient-to-r from-[var(--primary)]/10 to-transparent opacity-50"></div>{" "}
-                      </div>
-                      <div
-                        className={`text-xs ${secondaryText} mt-2 text-center`}
-                      >
-                        Preview of uploaded audio file
-                      </div>{" "}
                     </div>
                   )}{" "}
                 </div>{" "}

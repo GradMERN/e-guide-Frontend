@@ -73,6 +73,8 @@
     "create": "Create",
     "update": "Update",
     "confirm": "Confirm",
+    "next": "Next",
+    "prev": "Prev",
     "firstName": "First Name",
     "lastName": "Last Name",
     "email": "Email",
@@ -88,6 +90,23 @@
       "failed": "Failed",
       "refunded": "Refunded"
     }
+  },
+  "reviews": {
+    "title": "Reviews",
+    "count": "review",
+    "loading": "Loading reviews...",
+    "noReviews": "No reviews yet.",
+    "writeReview": "Write a review",
+    "placeholder": "Write your review...",
+    "setRating": "Set rating",
+    "post": "Post Review",
+    "posting": "Posting...",
+    "posted": "Review posted successfully!",
+    "postFailed": "Failed to post review",
+    "noPermission": "You don't have permission to post a review",
+    "alreadyReviewed": "You have already posted a review for this tour",
+    "emptyComment": "Please write a comment before posting",
+    "enrollToReview": "You need an active enrollment to leave a review."
   },
   "theme": {
     "light": "Switch to Light Mode",
@@ -602,36 +621,36 @@
       ]
     },
     "values": {
-    "label": "What Sets Us Apart",
-    "title": "Our Core",
-    "titleHighlight": "Values",
-    "subtitle": "Six principles that guide every expedition we create",
-    "items": [
-      {
-        "title": "Passion for Heritage",
-        "description": "Every journey is crafted with deep reverence for Egypt's 5,000-year legacy, bringing ancient wonders to life through expert storytelling."
-      },
-      {
-        "title": "Authentic Connections",
-        "description": "Experience Egypt beyond the guidebooks—intimate encounters with local artisans, hidden archaeological gems, and centuries-old traditions."
-      },
-      {
-        "title": "Cultural Stewardship",
-        "description": "We partner with local communities to ensure tourism preserves heritage sites and empowers Egyptian families for generations."
-      },
-      {
-        "title": "Excellence Guaranteed",
-        "description": "From luxury accommodations to expert Egyptologists, every detail meets our uncompromising standards of quality and safety."
-      },
-      {
-        "title": "Your Journey, Your Way",
-        "description": "Flexible itineraries designed around your interests—whether ancient temples, desert adventures, or culinary discoveries."
-      },
-      {
-        "title": "Trust & Transparency",
-        "description": "Clear pricing with no hidden fees, comprehensive travel insurance, and 24/7 support throughout your Egyptian odyssey."
-      }
-    ]
+      "label": "What Sets Us Apart",
+      "title": "Our Core",
+      "titleHighlight": "Values",
+      "subtitle": "Six principles that guide every expedition we create",
+      "items": [
+        {
+          "title": "Passion for Heritage",
+          "description": "Every journey is crafted with deep reverence for Egypt's 5,000-year legacy, bringing ancient wonders to life through expert storytelling."
+        },
+        {
+          "title": "Authentic Connections",
+          "description": "Experience Egypt beyond the guidebooks—intimate encounters with local artisans, hidden archaeological gems, and centuries-old traditions."
+        },
+        {
+          "title": "Cultural Stewardship",
+          "description": "We partner with local communities to ensure tourism preserves heritage sites and empowers Egyptian families for generations."
+        },
+        {
+          "title": "Excellence Guaranteed",
+          "description": "From luxury accommodations to expert Egyptologists, every detail meets our uncompromising standards of quality and safety."
+        },
+        {
+          "title": "Your Journey, Your Way",
+          "description": "Flexible itineraries designed around your interests—whether ancient temples, desert adventures, or culinary discoveries."
+        },
+        {
+          "title": "Trust & Transparency",
+          "description": "Clear pricing with no hidden fees, comprehensive travel insurance, and 24/7 support throughout your Egyptian odyssey."
+        }
+      ]
     },
     "stats": {
       "items": [
@@ -653,11 +672,11 @@
         }
       ]
     },
-    "circularGallery":{
-      "title":"Traveler Highlights",
-      "subtitle1":"Explore Egypt Through",
-      "subtitle2":"Our Travelers' Stories",
-      "description":"A visual journey of the most memorable moments from our tours"
+    "circularGallery": {
+      "title": "Traveler Highlights",
+      "subtitle1": "Explore Egypt Through",
+      "subtitle2": "Our Travelers' Stories",
+      "description": "A visual journey of the most memorable moments from our tours"
     },
     "beforeAfter": {
       "subtitle": "Compare & Contrast",
@@ -748,6 +767,50 @@
     "findingNearby": "Finding nearby items...",
     "script": "Script",
     "currency": "EGP",
+    "translation": {
+      "selectLanguage": "Select your language...",
+      "translateTo": "Translate to",
+      "translating": "Translating...",
+      "translated": "Translated",
+      "originalLanguage": "Original",
+      "showOriginal": "Show Original",
+      "translationFailed": "Translation failed",
+      "autoDetect": "Auto-detect"
+    },
+    "ai": {
+      "voiceToText": "Voice to Text",
+      "textToSpeech": "Preview Audio",
+      "stopRecording": "Stop",
+      "stopSpeaking": "Stop",
+      "listening": "Listening... Speak now",
+      "noTextToSpeak": "No text to speak",
+      "sttNotSupported": "Speech recognition is not supported in this browser",
+      "sttError": "Speech recognition failed",
+      "ttsTooltip": "Read script aloud",
+      "sttTooltip": "Convert voice to text",
+      "listenToScript": "Listen to script",
+      "listen": "Listen",
+      "preview": "Preview",
+      "generateAudio": "Generate Audio",
+      "generating": "Generating...",
+      "generateAudioTooltip": "Generate audio file from script",
+      "audioGenerated": "Audio generated successfully!",
+      "audioGenerationFailed": "Failed to generate audio. Please try again.",
+      "recordVoice": "Record Voice",
+      "recordingStarted": "Recording started. Speak now...",
+      "recordingComplete": "Recording complete! Audio and transcription ready.",
+      "recordingError": "Error saving recording",
+      "microphoneError": "Could not access microphone",
+      "liveTranscription": "Live Transcription",
+      "selectAudio": "Select Audio",
+      "existingAudio": "Existing audio",
+      "audioPreview": "Audio Preview",
+      "previewDescription": "Preview of audio file",
+      "translatedAudio": "Translated Audio",
+      "tts": "TTS",
+      "playing": "Playing...",
+      "ready": "Ready"
+    },
     "sidebar": {
       "title": "Guide Panel",
       "dashboard": "Dashboard",
@@ -914,7 +977,26 @@
       },
       "messages": {
         "locationDetected": "Location detected"
-      }
+      },
+      "audio": "Audio",
+      "audioPlaceholder": "Audio file (optional)",
+      "generateAudio": "Generate audio from script",
+      "generateScript": "Generate script from audio",
+      "recording": "Recording...",
+      "stopRecording": "Stop recording",
+      "startRecording": "Start recording",
+      "transcribing": "Transcribing...",
+      "generating": "Generating...",
+      "audioGenerated": "Audio generated successfully",
+      "scriptGenerated": "Script generated from recording",
+      "noScriptToConvert": "Please enter a script first",
+      "noAudioToConvert": "Please record or upload audio first",
+      "speechNotSupported": "Speech recognition is not supported in this browser",
+      "ttsNotSupported": "Text-to-speech is not supported in this browser",
+      "recordAudio": "Record Audio",
+      "uploadAudio": "Upload Audio",
+      "previewAudio": "Preview Audio",
+      "removeAudio": "Remove Audio"
     },
     "tourName": "Tour Name",
     "guestName": "Guest Name"
