@@ -132,9 +132,9 @@ export default function ContactForm() {
     const formik = useFormik({
         initialValues: { name: '', email: '', message: '' },
         validationSchema: Yup.object({
-            name: Yup.string().required('Name is required'),
-            email: Yup.string().email('Invalid email').required('Email is required'),
-            message: Yup.string().required('Message is required'),
+            name: Yup.string().min(2, t('contact.contactForm.errMin')).required(t('contact.contactForm.errReq')),
+            email: Yup.string().email(t('contact.contactForm.errEmail')).required(t('contact.contactForm.errReq')),
+            message: Yup.string().required(t('contact.contactForm.errReq'))
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {
             const formData = new FormData();
