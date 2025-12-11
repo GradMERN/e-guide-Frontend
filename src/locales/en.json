@@ -1127,7 +1127,10 @@
 
   "failureTitle": "Failed to send message",
   "failureMsg": "Something went wrong. Please try again later.",
-  "btnTryAgain": "Try Again"
+  "btnTryAgain": "Try Again",
+  "errReq": "This field is required",
+"errMin": "The name is too short",
+"errEmail": "Invalid email format"
 }
   }
 }

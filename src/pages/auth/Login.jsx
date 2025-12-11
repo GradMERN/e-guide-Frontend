@@ -1,13 +1,5 @@
 import { GiEgyptianTemple, GiEgyptianProfile } from "react-icons/gi";
-import {
-  FaShip,
-  FaScroll,
-  FaLock,
-  FaEye,
-  FaEyeSlash,
-  FaSignInAlt,
-  FaGoogle,
-} from "react-icons/fa";
+import { FaShip, FaScroll, FaLock, FaEye, FaEyeSlash, FaSignInAlt, FaGoogle, } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -27,7 +19,7 @@ export default function LoginPage() {
   const [animate, setAnimate] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => setAnimate(true), []);
   const togglePassword = () => setShowPassword((s) => !s);
@@ -39,17 +31,17 @@ export default function LoginPage() {
       .required(t("auth.login.errors.passwordRequired")),
   });
 
- const LeftCardsData = [
-  { icon: GiEgyptianTemple, key: "ancientWonders" },
-  { icon: FaScroll, key: "expertGuides" },
-  { icon: FaShip, key: "nileCruises" },
-];
+  const LeftCardsData = [
+    { icon: GiEgyptianTemple, key: "ancientWonders" },
+    { icon: FaScroll, key: "expertGuides" },
+    { icon: FaShip, key: "nileCruises" },
+  ];
 
-const LeftCards = LeftCardsData.map(item => {
-  const translations = t(`auth.leftCards.${item.key}`, { returnObjects: true });
-  return { ...translations, icon: item.icon };
-});
-const Stats = t("auth.stats", { returnObjects: true });
+  const LeftCards = LeftCardsData.map(item => {
+    const translations = t(`auth.leftCards.${item.key}`, { returnObjects: true });
+    return { ...translations, icon: item.icon };
+  });
+  const Stats = t("auth.stats", { returnObjects: true });
 
 
   return (
@@ -61,7 +53,7 @@ const Stats = t("auth.stats", { returnObjects: true });
         <div
           className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
             }`}
-        >
+          dir={i18n.dir()} >
           <div className="flex items-center gap-5" >
             <GiEgyptianProfile className="max-[1212px]:w-20 max-[1212px]:h-20 w-24 h-24 text-primary drop-shadow-[0_0_15px_rgba(247,201,95,0.5)]" />
             <div className="flex flex-col text-center">
@@ -111,7 +103,7 @@ const Stats = t("auth.stats", { returnObjects: true });
         <div
           className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
             }`}
-        >
+          dir={i18n.dir()}>
           <div className="absolute inset-0">
             <img
               src="src/assets/images/loginBg.webp"
@@ -226,7 +218,7 @@ const Stats = t("auth.stats", { returnObjects: true });
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <MdEmail
-                            className={`absolute left-4  transition-colors duration-300 ${focusedInput === "email"
+                            className={`absolute start-4  transition-colors duration-300 ${focusedInput === "email"
                               ? "text-primary"
                               : "text-text-muted"
                               }`}
@@ -240,7 +232,7 @@ const Stats = t("auth.stats", { returnObjects: true });
                               field.onBlur(e);
                               setFocusedInput(null);
                             }}
-                            className="w-full rounded-xl input-register-border bg-background py-3.5 ps-12 pr-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50"
+                            className="w-full rounded-xl input-register-border bg-background py-3.5 ps-12 pe-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50"
                           />
                         </div>
                         {meta.touched && meta.error && (
@@ -257,7 +249,7 @@ const Stats = t("auth.stats", { returnObjects: true });
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <FaLock
-                            className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password"
+                            className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password"
                               ? "text-primary"
                               : "text-text-muted"
                               }`}
@@ -271,12 +263,12 @@ const Stats = t("auth.stats", { returnObjects: true });
                               field.onBlur(e);
                               setFocusedInput(null);
                             }}
-                            className="w-full rounded-xl input-register-border bg-background py-3.5 pl-12 pr-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50"
+                            className="w-full rounded-xl input-register-border bg-background py-3.5 ps-12 pe-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50"
                           />
                           <button
                             type="button"
                             onClick={togglePassword}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-primary"
+                            className="absolute end-4 top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-primary"
                           >
                             {showPassword ? (
                               <FaEyeSlash className="cursor-pointer" />

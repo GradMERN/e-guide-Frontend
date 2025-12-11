@@ -11,70 +11,30 @@ import { register } from "../../apis/Auth/register.api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
-const countries = [
-  "Egypt",
-  "USA",
-  "Canada",
-  "UK",
-  "Germany",
-  "France",
-  "Italy",
-  "Spain",
-  "Australia",
-  "Japan",
-  "China",
-  "India",
-  "Brazil",
-  "Mexico",
-  "South Africa",
-  "Russia",
-  "Turkey",
-  "Netherlands",
-  "Sweden",
-  "Norway",
-];
+const locationData = {
+  Egypt: ["Cairo", "Alexandria", "Giza", "Luxor", "Aswan", "Sharm El Sheikh", "Hurghada", "Port Said", "Suez", "Tanta", "Mansoura", "Zagazig", "Ismailia", "Faiyum", "Damanhur", "Beni Suef", "Minya", "Sohag", "Assiut", "Arish", "Al-Mahalla al-Kubra", "Kafr El Sheikh", "El-Minya", "Damietta", "Qena"],
+  USA: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio"],
+  Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
+  UK: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"],
+  Germany: ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
+  France: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
+  Italy: ["Rome", "Milan", "Naples", "Turin", "Palermo", "Florence"],
+  Spain: ["Madrid", "Barcelona", "Valencia", "Seville", "Zaragoza"],
+  Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
+  Japan: ["Tokyo", "Osaka", "Yokohama", "Nagoya", "Sapporo", "Kyoto"],
+  China: ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu"],
+  India: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Ahmedabad", "Chennai"],
+  Brazil: ["Sao Paulo", "Rio de Janeiro", "Brasilia", "Salvador", "Fortaleza"],
+  Mexico: ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana"],
+  "South Africa": ["Cape Town", "Johannesburg", "Durban", "Pretoria", "Port Elizabeth"],
+  Russia: ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg", "Kazan"],
+  Turkey: ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"],
+  Netherlands: ["Amsterdam", "Rotterdam", "The Hague", "Utrecht", "Eindhoven"],
+  Sweden: ["Stockholm", "Gothenburg", "Malmo", "Uppsala"],
+  Norway: ["Oslo", "Bergen", "Trondheim", "Stavanger"]
+};
 
-const cities = [
-  "Cairo",
-  "Alexandria",
-  "Giza",
-  "Luxor",
-  "Aswan",
-  "New York",
-  "Los Angeles",
-  "Chicago",
-  "Houston",
-  "Toronto",
-  "Vancouver",
-  "London",
-  "Manchester",
-  "Berlin",
-  "Munich",
-  "Paris",
-  "Marseille",
-  "Rome",
-  "Milan",
-  "Madrid",
-  "Barcelona",
-  "Sydney",
-  "Melbourne",
-  "Tokyo",
-  "Osaka",
-  "Beijing",
-  "Shanghai",
-  "Mumbai",
-  "Delhi",
-  "Rio de Janeiro",
-  "Sao Paulo",
-  "Mexico City",
-  "Cape Town",
-  "Johannesburg",
-  "Moscow",
-  "Istanbul",
-  "Amsterdam",
-  "Stockholm",
-  "Oslo",
-];
+const countryOptions = Object.keys(locationData);
 
 const InputField = ({
   icon: Icon,
@@ -90,10 +50,10 @@ const InputField = ({
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
+        <Icon className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
         <input {...field} {...props} type={type} placeholder={placeholder}
           onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
-          className={`w-full rounded-xl  input-register-border bg-background py-3 pl-12 pr-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50 ${extraClass}`} />
+          className={`w-full rounded-xl  input-register-border bg-background py-3 ps-12 pe-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50 ${extraClass}`} />
       </div>
       {meta.touched && meta.error && (
         <p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>
@@ -115,11 +75,11 @@ const PasswordField = ({
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
+        <FaLock className={`absolute start-4 top-1/2 -translate-y-1/2 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
         <input {...field} {...props} type={show ? "text" : "password"} placeholder={placeholder}
           onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
-          className="w-full rounded-xl input-register-border bg-background py-3 pl-12 pr-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50" />
-        <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary">
+          className="w-full rounded-xl input-register-border bg-background py-3 ps-12 pe-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50" />
+        <button type="button" onClick={() => setShow(!show)} className="absolute end-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary">
           {show ? <FaEyeSlash /> : <FaEye />}
         </button>
       </div>
@@ -138,31 +98,32 @@ const DropdownField = ({
   setFocusedInput,
   open,
   setOpen,
+  onOptionSelect,
   ...props
 }) => {
   const [field, meta, helpers] = useField(props);
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col w-full" dir="ltr">
+    <div className="flex flex-col w-full">
       <div className="relative flex items-center" onClick={() => setOpen(!open)}>
-        <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
+        <Icon className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
 
-        <div className={`w-full rounded-xl  input-register-border bg-background py-3 pl-12 pr-10 text-text cursor-pointer flex items-center transition-all duration-300`}>
+        <div className={`w-full rounded-xl  input-register-border bg-background py-3 ps-12 pe-10 text-text cursor-pointer flex items-center transition-all duration-300`}>
           <span className={`truncate ${!field.value && "text-text-muted"}`}>
             {field.value || `${t("auth.register.select")} ${placeholder}`}
           </span>
-          <span className="ml-auto text-text-muted">▼</span>
+          <span className="ms-auto text-sm text-text-muted">▼</span>
         </div>
 
         {open && (
-          <div className="absolute top-full left-0 w-full bg-surface  input-register-border rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50 scrollbar-none">
+          <div className="absolute top-full left-0 w-full bg-surface input-register-border rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {options.map((opt) => (
               <div
                 key={opt}
                 onClick={(e) => {
                   e.stopPropagation();
                   helpers.setValue(opt);
-                  helpers.setTouched(true);
+                  if (onOptionSelect) onOptionSelect(opt);
                   setOpen(false);
                 }}
                 className="px-4 py-2 cursor-pointer text-text hover:bg-primary hover:text-white transition">
@@ -342,131 +303,135 @@ export default function Register() {
             }
           }}
         >
-          {({ isSubmitting, isValid, errors }) => (
-            <Form className="flex flex-col gap-4 sm:gap-5 md:gap-6">
-              {step === 1 && (
-                <>
-                  <div className="flex flex-col gap-4">
-                    <div className="flex gap-4">
+          {({ isSubmitting, isValid, errors, values, setFieldValue, setFieldTouched }) => {
+            const availableCities = values.country ? locationData[values.country] || [] : [];
+            return (
+              <Form className="flex flex-col gap-4 sm:gap-5 md:gap-6">
+                {step === 1 && (
+                  <>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex gap-4">
+                        <InputField
+                          name="firstname"
+                          icon={IoPerson}
+                          placeholder={t("auth.register.firstName")}
+                          focusedInput={focusedInput}
+                          setFocusedInput={setFocusedInput}
+                        />
+                        <InputField
+                          name="lastname"
+                          icon={IoPerson}
+                          placeholder={t("auth.register.lastName")}
+                          focusedInput={focusedInput}
+                          setFocusedInput={setFocusedInput}
+                        />
+                      </div>
                       <InputField
-                        name="firstname"
-                        icon={IoPerson}
-                        placeholder={t("auth.register.firstName")}
+                        name="email"
+                        icon={MdEmail}
+                        placeholder={t("auth.register.email")}
+                        type="email"
                         focusedInput={focusedInput}
                         setFocusedInput={setFocusedInput}
                       />
                       <InputField
-                        name="lastname"
+                        name="age"
                         icon={IoPerson}
-                        placeholder={t("auth.register.lastName")}
+                        placeholder={t("auth.register.age")}
+                        type="number"
                         focusedInput={focusedInput}
                         setFocusedInput={setFocusedInput}
                       />
                     </div>
-                    <InputField
-                      name="email"
-                      icon={MdEmail}
-                      placeholder={t("auth.register.email")}
-                      type="email"
-                      focusedInput={focusedInput}
-                      setFocusedInput={setFocusedInput}
-                    />
-                    <InputField
-                      name="age"
-                      icon={IoPerson}
-                      placeholder={t("auth.register.age")}
-                      type="number"
-                      focusedInput={focusedInput}
-                      setFocusedInput={setFocusedInput}
-                    />
-                  </div>
-                  <button type="submit" className="w-full py-3 mt-2 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">
-                    {t("auth.register.next")}
-                  </button>
-                </>
-              )}
-
-              {step === 2 && (
-                <>
-                  <div className="flex flex-col gap-4">
-                    <PasswordField
-                      name="password"
-                      placeholder={t("auth.register.password")}
-                      show={showPwd1}
-                      setShow={setShowPwd1}
-                      focusedInput={focusedInput}
-                      setFocusedInput={setFocusedInput}
-                    />
-                    <PasswordField
-                      name="confirmPassword"
-                      placeholder={t("auth.register.confirmPassword")}
-                      show={showPwd2}
-                      setShow={setShowPwd2}
-                      focusedInput={focusedInput}
-                      setFocusedInput={setFocusedInput}
-                    />
-                  </div>
-                  <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer">{t("auth.register.back")}</button>
-                    <button type="submit" className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.next")}</button>
-                  </div>
-                </>
-              )}
-
-              {step === 3 && (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div ref={countryRef}>
-                      <DropdownField
-                        name="country"
-                        icon={AiOutlineGlobal}
-                        options={countries}
-                        open={countryOpen}
-                        setOpen={setCountryOpen}
-                        placeholder={t("auth.register.country")}
-                        focusedInput={focusedInput}
-                        setFocusedInput={setFocusedInput}
-                      />
-                    </div>
-                    <div ref={cityRef}>
-                      <DropdownField
-                        name="city"
-                        icon={MdLocationCity}
-                        options={cities}
-                        open={cityOpen}
-                        setOpen={setCityOpen}
-                        placeholder={t("auth.register.city")}
-                        focusedInput={focusedInput}
-                        setFocusedInput={setFocusedInput}
-                      />
-                    </div>
-                  </div>
-                  <InputField
-                    name="phone"
-                    icon={FaPhoneAlt}
-                    placeholder={t("auth.register.phone")}
-                    focusedInput={focusedInput}
-                    setFocusedInput={setFocusedInput}
-                  />
-
-                  <div className="flex gap-4 mt-4">
-                    <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.back")}</button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting || !isValid}
-                      className={`w-1/2 py-3 rounded-xl font-semibold transition-all duration-300 ease-out transform 
-                        ${isSubmitting || !isValid
-                          ? "bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
-                          : "bg-linear-to-r from-[#c9a45f] to-[#aa853c] text-black hover:-translate-y-1 cursor-pointer"
-                        }`}
-                    >
-                      {isSubmitting ? t("auth.register.loading") : t("auth.register.registerBtn")}
+                    <button type="submit" className="w-full py-3 mt-2 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">
+                      {t("auth.register.next")}
                     </button>
-                  </div>
-                </>
-              )}
-            </Form>
-          )}
+                  </>
+                )}
+
+                {step === 2 && (
+                  <>
+                    <div className="flex flex-col gap-4">
+                      <PasswordField
+                        name="password"
+                        placeholder={t("auth.register.password")}
+                        show={showPwd1}
+                        setShow={setShowPwd1}
+                        focusedInput={focusedInput}
+                        setFocusedInput={setFocusedInput}
+                      />
+                      <PasswordField
+                        name="confirmPassword"
+                        placeholder={t("auth.register.confirmPassword")}
+                        show={showPwd2}
+                        setShow={setShowPwd2}
+                        focusedInput={focusedInput}
+                        setFocusedInput={setFocusedInput}
+                      />
+                    </div>
+                    <div className="flex gap-4 mt-4">
+                      <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer">{t("auth.register.back")}</button>
+                      <button type="submit" className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.next")}</button>
+                    </div>
+                  </>
+                )}
+
+                {step === 3 && (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div ref={countryRef}>
+                        <DropdownField
+                          name="country"
+                          icon={AiOutlineGlobal}
+                          options={countryOptions}
+                          open={countryOpen}
+                          setOpen={setCountryOpen}
+                          placeholder={t("auth.register.country")}
+                          focusedInput={focusedInput}
+                          setFocusedInput={setFocusedInput}
+                          onOptionSelect={() => setTimeout(() => { setFieldValue("city", ""); setFieldTouched("city", false) }, 0)} />
+                      </div>
+                      <div ref={cityRef}>
+                        <DropdownField
+
+                          name="city"
+                          icon={MdLocationCity}
+                          options={availableCities}
+                          open={cityOpen}
+                          setOpen={setCityOpen}
+                          placeholder={t("auth.register.city")}
+                          focusedInput={focusedInput}
+                          setFocusedInput={setFocusedInput}
+                        />
+                      </div>
+                    </div>
+                    <InputField
+                      name="phone"
+                      icon={FaPhoneAlt}
+                      placeholder={t("auth.register.phone")}
+                      focusedInput={focusedInput}
+                      setFocusedInput={setFocusedInput}
+                    />
+
+                    <div className="flex gap-4 mt-4">
+                      <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.back")}</button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || !isValid}
+                        className={`w-1/2 py-3 rounded-xl font-semibold transition-all duration-300 ease-out transform 
+                        ${isSubmitting || !isValid
+                            ? "bg-linear-to-r from-[#c9a45f] to-[#aa853c] cursor-not-allowed opacity-80"
+                            : "bg-linear-to-r from-[#c9a45f] to-[#aa853c] text-black hover:-translate-y-1 cursor-pointer"
+                          }`}
+                      >
+                        {isSubmitting ? <GiEgyptianProfile className="h-5 w-5 animate-spin text-black mx-auto" /> : t("auth.register.registerBtn")}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </Form>
+            )
+          }}
         </Formik>
 
         <p className="text-text-muted text-sm mt-4 text-center">
