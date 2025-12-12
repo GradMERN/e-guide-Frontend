@@ -1,5 +1,13 @@
 import { GiEgyptianTemple, GiEgyptianProfile } from "react-icons/gi";
-import { FaShip, FaScroll, FaLock, FaEye, FaEyeSlash, FaSignInAlt, FaGoogle, } from "react-icons/fa";
+import {
+  FaShip,
+  FaScroll,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaSignInAlt,
+  FaGoogle,
+} from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -14,7 +22,25 @@ import { useTranslation } from "react-i18next";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useReduxAuth();
+  const { login, user, isAuthenticated, isLoading } = useReduxAuth();
+
+  // If auth state already loaded and user is authenticated, redirect based on role
+  useEffect(() => {
+    if (isLoading) return; // wait until auth finishes loading
+
+    if (isAuthenticated && user) {
+      const role = (user.role || "").toLowerCase();
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+        return;
+      }
+      if (role === "guide") {
+        navigate("/guide/dashboard");
+        return;
+      }
+      navigate("/");
+    }
+  }, [isAuthenticated, isLoading, user, navigate]);
 
   const [animate, setAnimate] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +51,9 @@ export default function LoginPage() {
   const togglePassword = () => setShowPassword((s) => !s);
 
   const schema = Yup.object({
-    email: Yup.string().email(t("auth.login.errors.emailInvalid")).required(t("auth.login.errors.emailRequired")),
+    email: Yup.string()
+      .email(t("auth.login.errors.emailInvalid"))
+      .required(t("auth.login.errors.emailRequired")),
     password: Yup.string()
       .min(12, t("auth.login.errors.passwordMin"))
       .required(t("auth.login.errors.passwordRequired")),
@@ -37,24 +65,30 @@ export default function LoginPage() {
     { icon: FaShip, key: "nileCruises" },
   ];
 
-  const LeftCards = LeftCardsData.map(item => {
-    const translations = t(`auth.leftCards.${item.key}`, { returnObjects: true });
+  const LeftCards = LeftCardsData.map((item) => {
+    const translations = t(`auth.leftCards.${item.key}`, {
+      returnObjects: true,
+    });
     return { ...translations, icon: item.icon };
   });
   const Stats = t("auth.stats", { returnObjects: true });
-
 
   return (
     <>
       <Navbar />
 
-      <section className="flex flex-row bg-background text-slate-200 overflow-hidden" dir="ltr">
+      <section
+        className="flex flex-row bg-background text-slate-200 overflow-hidden"
+        dir="ltr"
+      >
         {/* LEFT SECTION */}
         <div
-          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-            }`}
-          dir={i18n.dir()} >
-          <div className="flex items-center gap-5" >
+          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${
+            animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+          }`}
+          dir={i18n.dir()}
+        >
+          <div className="flex items-center gap-5">
             <GiEgyptianProfile className="max-[1212px]:w-20 max-[1212px]:h-20 w-24 h-24 text-primary drop-shadow-[0_0_15px_rgba(247,201,95,0.5)]" />
             <div className="flex flex-col text-center">
               <h1 className="bg-linear-to-r from-primary via-secondary to-primary bg-clip-text text-transparent max-[1212px]:text-3xl text-5xl font-extrabold tracking-tighter">
@@ -88,9 +122,7 @@ export default function LoginPage() {
           <div className="flex space-x-12">
             {Stats.map((stat, idx) => (
               <div key={idx} className="text-center">
-                <h4 className="text-3xl font-bold text-primary">
-                  {stat.num}
-                </h4>
+                <h4 className="text-3xl font-bold text-primary">{stat.num}</h4>
                 <p className="text-xs uppercase tracking-wider text-text-muted">
                   {stat.label}
                 </p>
@@ -101,9 +133,11 @@ export default function LoginPage() {
 
         {/* RIGHT SECTION */}
         <div
-          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-            }`}
-          dir={i18n.dir()}>
+          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${
+            animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
+          }`}
+          dir={i18n.dir()}
+        >
           <div className="absolute inset-0">
             <img
               src="src/assets/images/loginBg.webp"
@@ -213,15 +247,16 @@ export default function LoginPage() {
             >
               {({ isSubmitting, isValid, dirty }) => (
                 <Form className="flex flex-col gap-4 sm:gap-5 md:gap-6">
-                  <Field name="email" >
+                  <Field name="email">
                     {({ field, meta }) => (
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <MdEmail
-                            className={`absolute start-4  transition-colors duration-300 ${focusedInput === "email"
-                              ? "text-primary"
-                              : "text-text-muted"
-                              }`}
+                            className={`absolute start-4  transition-colors duration-300 ${
+                              focusedInput === "email"
+                                ? "text-primary"
+                                : "text-text-muted"
+                            }`}
                           />
                           <input
                             {...field}
@@ -249,10 +284,11 @@ export default function LoginPage() {
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <FaLock
-                            className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password"
-                              ? "text-primary"
-                              : "text-text-muted"
-                              }`}
+                            className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                              focusedInput === "password"
+                                ? "text-primary"
+                                : "text-text-muted"
+                            }`}
                           />
                           <input
                             {...field}
@@ -305,7 +341,9 @@ export default function LoginPage() {
                     ) : (
                       <>
                         {" "}
-                        <FaSignInAlt /> <span>{t("auth.login.signIn")}</span>{" "}
+                        <FaSignInAlt /> <span>
+                          {t("auth.login.signIn")}
+                        </span>{" "}
                       </>
                     )}
                   </button>
@@ -320,8 +358,10 @@ export default function LoginPage() {
 
                   <button
                     onClick={() =>
-                    (window.location.href =
-                      "http://localhost:3000/api/auth/google")
+                      (window.location.href = `${
+                        import.meta.env.VITE_API_URL ||
+                        "http://localhost:3000/api"
+                      }/auth/google`)
                     }
                     type="button"
                     className="group flex w-full items-center justify-center gap-3 rounded-xl py-3  cursor-pointer transition-all duration-300 btn-secondary-hero"

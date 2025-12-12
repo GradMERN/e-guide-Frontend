@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import reviewService from "../../../apis/reviewService";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../store/hooks";
 import { toast } from "react-toastify";
 
 const DEFAULT_PAGE_SIZE = 5;
@@ -68,7 +68,7 @@ const Review = ({ tourId, enrollment, tour, readOnly = false }) => {
     isGuide ||
     !!(
       enrollment &&
-      enrollment.status === "started" &&
+      (enrollment.status === "started" || enrollment.status === "active") &&
       (!enrollment.expiresAt || new Date(enrollment.expiresAt) > new Date())
     );
 

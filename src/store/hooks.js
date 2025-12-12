@@ -4,6 +4,7 @@ import {
   loginSuccess,
   logout,
   clearError,
+  setUser,
   selectUser,
   selectIsAuthenticated,
   selectIsLoading,
@@ -27,6 +28,13 @@ import {
   selectSavedError,
   selectIsTourSaved,
 } from "./slices/savedSlice";
+import {
+  toggleTheme,
+  setTheme,
+  setLanguage,
+  selectIsDarkMode,
+  selectLanguage,
+} from "./slices/themeSlice";
 
 // Custom hook for auth
 export const useAuth = () => {
@@ -38,11 +46,19 @@ export const useAuth = () => {
     isAuthenticated: useSelector(selectIsAuthenticated),
     isLoading: useSelector(selectIsLoading),
     error: useSelector(selectError),
+    isDarkMode: useSelector(selectIsDarkMode),
+    language: useSelector(selectLanguage),
 
     // Actions
     login: useCallback(
       (userData, token) => {
         dispatch(loginSuccess({ user: userData, token }));
+        try {
+          // Notify other parts of the app (AuthContext) that login happened
+          window.dispatchEvent(
+            new CustomEvent("auth:login", { detail: userData })
+          );
+        } catch (e) {}
       },
       [dispatch]
     ),
@@ -64,6 +80,31 @@ export const useAuth = () => {
     clearError: useCallback(() => {
       dispatch(clearError());
     }, [dispatch]),
+
+    setUser: useCallback(
+      (userData) => {
+        dispatch(setUser(userData));
+      },
+      [dispatch]
+    ),
+
+    toggleTheme: useCallback(() => {
+      dispatch(toggleTheme());
+    }, [dispatch]),
+
+    setTheme: useCallback(
+      (isDark) => {
+        dispatch(setTheme(isDark));
+      },
+      [dispatch]
+    ),
+
+    changeLanguage: useCallback(
+      (lang) => {
+        dispatch(setLanguage(lang));
+      },
+      [dispatch]
+    ),
   };
 };
 

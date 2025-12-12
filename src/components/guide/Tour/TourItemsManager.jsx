@@ -174,15 +174,41 @@ const TourItemsManager = ({
   // Cleanup speech recognition on unmount
   useEffect(() => {
     return () => {
-      if (recognizerRef.current) {
-        recognizerRef.current.stop();
+      try {
+        if (recognizerRef.current) {
+          if (typeof recognizerRef.current.destroy === "function") {
+            recognizerRef.current.destroy();
+          } else if (typeof recognizerRef.current.abort === "function") {
+            recognizerRef.current.abort();
+          } else if (typeof recognizerRef.current.stop === "function") {
+            recognizerRef.current.stop();
+          }
+          recognizerRef.current = null;
+        }
+      } catch (e) {
+        console.error("Error cleaning up recognizer:", e);
         recognizerRef.current = null;
       }
-      if (voiceRecorderRef.current) {
-        voiceRecorderRef.current.stop();
+
+      try {
+        if (voiceRecorderRef.current) {
+          if (typeof voiceRecorderRef.current.destroy === "function") {
+            voiceRecorderRef.current.destroy();
+          } else if (typeof voiceRecorderRef.current.stop === "function") {
+            voiceRecorderRef.current.stop();
+          }
+          voiceRecorderRef.current = null;
+        }
+      } catch (e) {
+        console.error("Error cleaning up voice recorder:", e);
         voiceRecorderRef.current = null;
       }
-      window.speechSynthesis?.cancel();
+
+      try {
+        window.speechSynthesis?.cancel();
+      } catch (e) {
+        console.error("Error canceling speech synthesis:", e);
+      }
     };
   }, []);
 

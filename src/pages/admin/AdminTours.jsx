@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa";
+import {
+  FaEye,
+  FaTrash,
+  FaSearch,
+  FaCheck,
+  FaTimes,
+  FaSpinner,
+  FaStar,
+  FaUsers,
+  FaMapMarkerAlt,
+  FaUser,
+  FaFilter,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import i18n from "../../i18n";
+import { useNavigate } from "react-router-dom";
 import axiosClient from "../../apis/axiosClient";
-import { placeService } from "../../apis/placeService";
 
 const AdminTours = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [editingTour, setEditingTour] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    currency: "EGP",
-    place: "",
-    categories: "",
-    tags: "",
-    languages: "",
-  });
-  const [places, setPlaces] = useState([]);
-  const [loadingPlaces, setLoadingPlaces] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all"); // all, published, draft
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [actionLoading, setActionLoading] = useState(null);
+  const toursPerPage = 10;
 
   // Theme detection
   useEffect(() => {
@@ -41,47 +46,34 @@ const AdminTours = () => {
     return () => window.removeEventListener("storage", handleThemeChange);
   }, []);
 
-  // Handle language/direction changes
-  useEffect(() => {
-    const handleLanguageChange = () => {
-      const currentLanguage = i18n.language;
-      const direction = currentLanguage === "ar" ? "rtl" : "ltr";
-      document.documentElement.dir = direction;
-      document.documentElement.lang = currentLanguage;
-    };
-
-    handleLanguageChange();
-    i18n.on("languageChanged", handleLanguageChange);
-
-    return () => {
-      i18n.off("languageChanged", handleLanguageChange);
-    };
-  }, []);
-
   useEffect(() => {
     fetchTours();
-    fetchPlaces();
-  }, []);
-
-  const fetchPlaces = async () => {
-    try {
-      setLoadingPlaces(true);
-      const placesData = await placeService.getAllPlaces();
-      setPlaces(placesData);
-    } catch (err) {
-      console.error("Error fetching places:", err);
-      setPlaces([]);
-    } finally {
-      setLoadingPlaces(false);
-    }
-  };
+  }, [currentPage, statusFilter]);
 
   const fetchTours = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axiosClient.get("/tours?limit=100");
-      setTours(response.data.data || []);
+
+      // Build query params
+      let url = `/tours?limit=${toursPerPage}&page=${currentPage}`;
+
+      // For admin, we need to fetch all tours including unpublished
+      // The backend should return all tours for admin role
+      if (statusFilter === "published") {
+        url += "&isPublished=true";
+      } else if (statusFilter === "draft") {
+        url += "&isPublished=false";
+      }
+
+      const response = await axiosClient.get(url);
+      const toursData = response.data.data || [];
+      setTours(toursData);
+
+      // Calculate total pages from response
+      const total =
+        response.data.count || response.data.total || toursData.length;
+      setTotalPages(Math.ceil(total / toursPerPage) || 1);
     } catch (err) {
       console.error("Error fetching tours:", err);
       setError(t("admin.tours.loadError") || "Failed to load tours");
@@ -90,127 +82,73 @@ const AdminTours = () => {
     }
   };
 
-  const handleAddTour = () => {
-    setEditingTour(null);
-    setFormData({
-      name: "",
-      description: "",
-      price: "",
-      currency: "EGP",
-      place: "",
-      categories: "",
-      tags: "",
-      languages: "",
-    });
-    setShowModal(true);
-  };
-
-  const handleEditTour = (tour) => {
-    setEditingTour(tour);
-    setFormData({
-      name: tour.name,
-      description: tour.description || "",
-      price: tour.price,
-      currency: tour.currency || "EGP",
-      place: tour.place?._id || tour.place || "",
-      categories: tour.categories?.join(", ") || "",
-      tags: tour.tags?.join(", ") || "",
-      languages: tour.languages?.join(", ") || "",
-    });
-    setShowModal(true);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleTogglePublish = async (tour) => {
     try {
-      // Create FormData for consistency with backend multipart/form-data expectation
-      const formDataToSend = new FormData();
+      setActionLoading(tour._id);
 
-      // Add all text fields
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("price", parseFloat(formData.price));
-      formDataToSend.append("place", formData.place);
-
-      // Add arrays as JSON strings
-      const categories = formData.categories
-        ? formData.categories
-            .split(",")
-            .map((c) => c.trim())
-            .filter((c) => c)
-        : [];
-      const tags = formData.tags
-        ? formData.tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter((t) => t)
-        : [];
-      const languages = formData.languages
-        ? formData.languages
-            .split(",")
-            .map((l) => l.trim())
-            .filter((l) => l)
-        : [];
-
-      formDataToSend.append("categories", JSON.stringify(categories));
-      formDataToSend.append("tags", JSON.stringify(tags));
-      formDataToSend.append("languages", JSON.stringify(languages));
-
-      if (editingTour) {
-        await axiosClient.patch(`/tours/${editingTour._id}`, formDataToSend);
-        setTours(
-          tours.map((t) =>
-            t._id === editingTour._id ? { ...editingTour, ...formData } : t
-          )
-        );
+      if (tour.isPublished) {
+        // Unpublish - update tour with isPublished: false
+        await axiosClient.patch(`/tours/${tour._id}`, { isPublished: false });
       } else {
-        const response = await axiosClient.post("/tours", formDataToSend);
-        setTours([...tours, response.data.data]);
+        // Publish tour
+        await axiosClient.put(`/tours/${tour._id}/publish`);
       }
-      setShowModal(false);
-      setEditingTour(null);
+
+      // Refresh tours
+      await fetchTours();
     } catch (err) {
-      console.error("Error saving tour:", err);
-      console.error("Full error response:", err.response?.data);
-
-      // Extract detailed error message
-      let errorMessage = t("admin.tours.saveError") || "Failed to save tour. ";
-
-      if (
-        err.response?.data?.errors &&
-        Array.isArray(err.response.data.errors)
-      ) {
-        // Format validation errors
-        const fieldErrors = err.response.data.errors
-          .map((e) => `${e.field}: ${e.message}`)
-          .join("\n");
-        errorMessage += "\n" + fieldErrors;
-      } else if (err.response?.data?.message) {
-        errorMessage += err.response.data.message;
-      }
-
-      setError(errorMessage);
+      console.error("Error toggling publish status:", err);
+      setError(err.response?.data?.message || "Failed to update tour status");
+    } finally {
+      setActionLoading(null);
     }
   };
 
-  const handleDeleteTour = async (id) => {
-    if (window.confirm(t("admin.tours.confirmDelete") || "Are you sure?")) {
+  const handleDeleteTour = async (id, tourName) => {
+    if (
+      window.confirm(
+        `${
+          t("admin.tours.confirmDelete") || "Are you sure you want to delete"
+        } "${tourName}"? ${
+          t("admin.tours.deleteWarning") || "This action cannot be undone."
+        }`
+      )
+    ) {
       try {
+        setActionLoading(id);
         await axiosClient.delete(`/tours/${id}`);
         setTours(tours.filter((t) => t._id !== id));
       } catch (err) {
         console.error("Error deleting tour:", err);
-        setError(err.response?.data?.message || t("admin.tours.deleteError"));
+        setError(
+          err.response?.data?.message ||
+            t("admin.tours.deleteError") ||
+            "Failed to delete tour"
+        );
+      } finally {
+        setActionLoading(null);
       }
     }
   };
 
-  const filteredTours = tours.filter(
-    (tour) =>
-      tour.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tour.city.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleViewTour = (tourId) => {
+    navigate(`/admin/tour/${tourId}`);
+  };
 
+  // Filter tours by search term
+  const filteredTours = tours.filter((tour) => {
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch =
+      tour.name?.toLowerCase().includes(searchLower) ||
+      tour.place?.name?.toLowerCase().includes(searchLower) ||
+      tour.place?.city?.toLowerCase().includes(searchLower) ||
+      tour.guide?.firstName?.toLowerCase().includes(searchLower) ||
+      tour.guide?.lastName?.toLowerCase().includes(searchLower);
+
+    return matchesSearch;
+  });
+
+  // Theme colors
   const bgColor = isDarkMode ? "bg-[#0F0E0C]" : "bg-gray-50";
   const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
   const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
@@ -219,12 +157,14 @@ const AdminTours = () => {
   const inputBg = isDarkMode ? "bg-[#0F0E0C]" : "bg-gray-50";
   const rowHover = isDarkMode ? "hover:bg-[#2c1b0f]/50" : "hover:bg-gray-50";
 
-  if (loading) {
+  if (loading && tours.length === 0) {
     return (
       <div className={`flex items-center justify-center h-64 ${bgColor}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D5B36A] mx-auto mb-4"></div>
-          <p className={textColor}>{t("admin.loadingDashboard")}</p>
+          <FaSpinner className="animate-spin h-12 w-12 text-[#D5B36A] mx-auto mb-4" />
+          <p className={textColor}>
+            {t("admin.loadingTours") || "Loading tours..."}
+          </p>
         </div>
       </div>
     );
@@ -233,33 +173,79 @@ const AdminTours = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className={`text-3xl font-bold ${textColor}`}>
-          {t("admin.tours.title")}
-        </h1>
-        <button
-          onClick={handleAddTour}
-          className="flex items-center gap-2 px-4 py-2 bg-[#D5B36A] text-black rounded-lg hover:bg-[#E2C784] transition-all font-medium"
-        >
-          <FaPlus /> {t("admin.tours.add")}
-        </button>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className={`text-3xl font-bold ${textColor}`}>
+            {t("admin.tours.title") || "Tours Management"}
+          </h1>
+          <p className={secondaryText}>
+            {t("admin.tours.subtitle") ||
+              "View and manage all tours on the platform"}
+          </p>
+        </div>
+        <div className={`px-4 py-2 rounded-lg ${cardBg} border ${borderColor}`}>
+          <span className={secondaryText}>
+            {t("admin.tours.total") || "Total"}:{" "}
+          </span>
+          <span className="text-[#D5B36A] font-bold">{tours.length}</span>
+        </div>
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg">
-          {error}
+        <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="hover:bg-red-500/20 p-1 rounded"
+          >
+            <FaTimes />
+          </button>
         </div>
       )}
 
-      {/* Search */}
+      {/* Filters */}
       <div className={`${cardBg} border ${borderColor} rounded-lg p-4`}>
-        <input
-          type="text"
-          placeholder={t("admin.tours.searchPlaceholder")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={`w-full px-4 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-        />
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <FaSearch
+              className={`absolute left-3 top-1/2 -translate-y-1/2 ${secondaryText}`}
+            />
+            <input
+              type="text"
+              placeholder={
+                t("admin.tours.searchPlaceholder") ||
+                "Search by name, location, or guide..."
+              }
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full pl-10 pr-4 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <FaFilter className={secondaryText} />
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
+            >
+              <option value="all">
+                {t("admin.tours.allTours") || "All Tours"}
+              </option>
+              <option value="published">
+                {t("admin.tours.published") || "Published"}
+              </option>
+              <option value="draft">
+                {t("admin.tours.drafts") || "Drafts"}
+              </option>
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* Tours Table */}
@@ -274,40 +260,26 @@ const AdminTours = () => {
                   isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
                 }`}
               >
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
-                  {t("admin.tours.name")}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
+                  {t("admin.tours.tour") || "Tour"}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
-                  {t("admin.tours.city")}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
+                  {t("admin.tours.guide") || "Guide"}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
-                  {t("admin.tours.price")}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
+                  {t("admin.tours.location") || "Location"}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
-                  {t("admin.tours.duration")}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
+                  {t("admin.tours.price") || "Price"}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
-                  {t("admin.tours.groupSize")}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
+                  {t("admin.tours.stats") || "Stats"}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
-                  {t("admin.tours.rating")}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
+                  {t("admin.tours.statusHeader") || "Status"}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
-                  {t("admin.tours.actions")}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
+                  {t("admin.tours.actions") || "Actions"}
                 </th>
               </tr>
             </thead>
@@ -318,41 +290,145 @@ const AdminTours = () => {
                     key={tour._id}
                     className={`border-b ${borderColor} ${rowHover} transition-all`}
                   >
-                    <td className={`px-6 py-3 ${textColor} font-medium`}>
-                      {tour.name}
+                    {/* Tour Info */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        {tour.mainImage?.url ? (
+                          <img
+                            src={tour.mainImage.url}
+                            alt={tour.name}
+                            className="w-12 h-12 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-lg bg-[#D5B36A]/20 flex items-center justify-center">
+                            <FaMapMarkerAlt className="text-[#D5B36A]" />
+                          </div>
+                        )}
+                        <div>
+                          <p className={`font-medium ${textColor}`}>
+                            {tour.name}
+                          </p>
+                          <p className={`text-xs ${secondaryText}`}>
+                            {tour.itemsCount || 0}{" "}
+                            {t("admin.tours.items") || "items"}
+                          </p>
+                        </div>
+                      </div>
                     </td>
-                    <td className={`px-6 py-3 ${secondaryText}`}>
-                      {tour.city}
+
+                    {/* Guide */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        {tour.guide?.avatar?.url ? (
+                          <img
+                            src={tour.guide.avatar.url}
+                            alt={tour.guide.firstName}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-[#D5B36A]/20 flex items-center justify-center">
+                            <FaUser className="text-[#D5B36A] text-xs" />
+                          </div>
+                        )}
+                        <span className={secondaryText}>
+                          {tour.guide?.firstName} {tour.guide?.lastName}
+                        </span>
+                      </div>
                     </td>
-                    <td className={`px-6 py-3 text-[#D5B36A] font-semibold`}>
+
+                    {/* Location */}
+                    <td className={`px-6 py-4 ${secondaryText}`}>
+                      <div className="flex items-center gap-1">
+                        <FaMapMarkerAlt className="text-[#D5B36A] text-xs" />
+                        <span>
+                          {tour.place?.name || tour.place?.city || "N/A"}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Price */}
+                    <td className="px-6 py-4 text-[#D5B36A] font-semibold">
                       {tour.price} {tour.currency}
                     </td>
-                    <td className={`px-6 py-3 ${secondaryText}`}>
-                      {tour.duration}h
+
+                    {/* Stats */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1 text-yellow-500">
+                          <FaStar className="text-xs" />
+                          <span className="text-sm">
+                            {tour.rating?.toFixed(1) || "N/A"}
+                          </span>
+                        </span>
+                        <span
+                          className={`flex items-center gap-1 ${secondaryText}`}
+                        >
+                          <FaUsers className="text-xs" />
+                          <span className="text-sm">
+                            {tour.enrollmentsCount || 0}
+                          </span>
+                        </span>
+                      </div>
                     </td>
-                    <td className={`px-6 py-3 ${secondaryText}`}>
-                      {tour.maxGroupSize}
-                    </td>
-                    <td className={`px-6 py-3`}>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-500">
-                        ★ {tour.ratingsAverage || "N/A"}
+
+                    {/* Status */}
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                          tour.isPublished
+                            ? "bg-green-500/20 text-green-500"
+                            : "bg-yellow-500/20 text-yellow-500"
+                        }`}
+                      >
+                        {tour.isPublished
+                          ? t("admin.tours.published") || "Published"
+                          : t("admin.tours.draft") || "Draft"}
                       </span>
                     </td>
-                    <td className={`px-6 py-3`}>
+
+                    {/* Actions */}
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleEditTour(tour)}
+                          onClick={() => handleViewTour(tour._id)}
                           className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all"
-                          title={t("admin.edit")}
+                          title={t("admin.view") || "View"}
                         >
-                          <FaEdit />
+                          <FaEye />
                         </button>
                         <button
-                          onClick={() => handleDeleteTour(tour._id)}
-                          className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
-                          title={t("admin.delete")}
+                          onClick={() => handleTogglePublish(tour)}
+                          disabled={actionLoading === tour._id}
+                          className={`p-2 rounded-lg transition-all ${
+                            tour.isPublished
+                              ? "text-yellow-500 hover:bg-yellow-500/10"
+                              : "text-green-500 hover:bg-green-500/10"
+                          }`}
+                          title={
+                            tour.isPublished
+                              ? t("admin.tours.unpublish") || "Unpublish"
+                              : t("admin.tours.publish") || "Publish"
+                          }
                         >
-                          <FaTrash />
+                          {actionLoading === tour._id ? (
+                            <FaSpinner className="animate-spin" />
+                          ) : tour.isPublished ? (
+                            <FaTimes />
+                          ) : (
+                            <FaCheck />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTour(tour._id, tour.name)}
+                          disabled={actionLoading === tour._id}
+                          className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                          title={t("admin.delete") || "Delete"}
+                        >
+                          {actionLoading === tour._id ? (
+                            <FaSpinner className="animate-spin" />
+                          ) : (
+                            <FaTrash />
+                          )}
                         </button>
                       </div>
                     </td>
@@ -362,211 +438,57 @@ const AdminTours = () => {
                 <tr>
                   <td
                     colSpan="7"
-                    className={`px-6 py-8 text-center ${secondaryText}`}
+                    className={`px-6 py-12 text-center ${secondaryText}`}
                   >
                     {searchTerm
-                      ? t("admin.tours.notFound")
-                      : t("admin.tours.empty")}
+                      ? t("admin.tours.notFound") ||
+                        "No tours found matching your search"
+                      : t("admin.tours.empty") || "No tours available"}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-      </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        {/* Pagination */}
+        {totalPages > 1 && (
           <div
-            className={`${cardBg} border ${borderColor} rounded-lg p-6 max-w-md w-full mx-4`}
+            className={`flex items-center justify-between px-6 py-4 border-t ${borderColor}`}
           >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className={`text-xl font-bold ${textColor}`}>
-                {editingTour ? t("admin.tours.edit") : t("admin.tours.addNew")}
-              </h2>
+            <p className={secondaryText}>
+              {t("admin.tours.page") || "Page"} {currentPage}{" "}
+              {t("admin.tours.of") || "of"} {totalPages}
+            </p>
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setShowModal(false)}
-                className={`${secondaryText} hover:${textColor}`}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1 || loading}
+                className={`p-2 rounded-lg ${
+                  currentPage === 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : `${rowHover}`
+                } ${textColor}`}
               >
-                <FaTimes />
+                <FaChevronLeft />
+              </button>
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages || loading}
+                className={`p-2 rounded-lg ${
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : `${rowHover}`
+                } ${textColor}`}
+              >
+                <FaChevronRight />
               </button>
             </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  {t("admin.tours.name")}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-                />
-              </div>
-
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  {t("admin.tours.description")}
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  rows="3"
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-                />
-              </div>
-
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  {t("admin.tours.price")}
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0.99"
-                  required
-                  value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-                />
-              </div>
-
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  Place/Location
-                </label>
-                <select
-                  required
-                  value={formData.place}
-                  onChange={(e) =>
-                    setFormData({ ...formData, place: e.target.value })
-                  }
-                  disabled={loadingPlaces || places.length === 0}
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A] ${
-                    loadingPlaces || places.length === 0
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                >
-                  <option value="">
-                    {loadingPlaces ? "Loading places..." : "Select a place"}
-                  </option>
-                  {places.map((place) => (
-                    <option key={place._id} value={place._id}>
-                      {place.name} ({place.city}, {place.country})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  {t("admin.tours.currency")}
-                </label>
-                <select
-                  value={formData.currency}
-                  onChange={(e) =>
-                    setFormData({ ...formData, currency: e.target.value })
-                  }
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-                >
-                  <option>EGP</option>
-                  <option>USD</option>
-                  <option>EUR</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  Categories (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.categories}
-                  onChange={(e) =>
-                    setFormData({ ...formData, categories: e.target.value })
-                  }
-                  placeholder="e.g., Adventure, Cultural, Historical"
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-                />
-              </div>
-
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  Tags (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.tags}
-                  onChange={(e) =>
-                    setFormData({ ...formData, tags: e.target.value })
-                  }
-                  placeholder="e.g., outdoor, guided, family-friendly"
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-                />
-              </div>
-
-              <div>
-                <label
-                  className={`block text-sm font-medium ${secondaryText} mb-1`}
-                >
-                  Languages (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.languages}
-                  onChange={(e) =>
-                    setFormData({ ...formData, languages: e.target.value })
-                  }
-                  placeholder="e.g., English, Arabic, French"
-                  className={`w-full px-3 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-                />
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-[#D5B36A] text-black rounded-lg hover:bg-[#E2C784] transition-all font-medium"
-                >
-                  {editingTour
-                    ? t("admin.tours.update")
-                    : t("admin.tours.create")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className={`flex-1 px-4 py-2 bg-gray-600 ${textColor} rounded-lg hover:bg-gray-700 transition-all`}
-                >
-                  {t("admin.cancel")}
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

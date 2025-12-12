@@ -8,7 +8,7 @@ import {
   FaSpinner,
   FaLanguage,
 } from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../store/hooks";
 import { guideService } from "../../apis/guideService";
 import { tourItemService } from "../../apis/tourItemService";
 import enrollmentApi from "../../apis/enrollment.api";

@@ -200,6 +200,24 @@ export default function Navbar() {
     return t("navbar.user");
   };
 
+  // Render user avatar - shows image if available, otherwise shows initials
+  const renderUserAvatar = (size = "w-10 h-10", textSize = "text-sm") => {
+    if (user?.avatar?.url) {
+      return (
+        <img
+          src={user.avatar.url}
+          alt={getDisplayName()}
+          className={`${size} rounded-full object-cover`}
+        />
+      );
+    }
+    return (
+      <span className={`text-background ${textSize} font-bold`}>
+        {getUserInitials()}
+      </span>
+    );
+  };
+
   const isGuide = user?.role && user.role.toLowerCase() === "guide";
 
   return (
@@ -243,9 +261,17 @@ export default function Navbar() {
             <div className="p-3 border-b border-border bg-linear-to-r from-gradient-from/5 via-gradient-via/5 to-gradient-to/5">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
-                    {getUserInitials()}
-                  </div>
+                  {user?.avatar?.url ? (
+                    <img
+                      src={user.avatar.url}
+                      alt={getDisplayName()}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
+                      {getUserInitials()}
+                    </div>
+                  )}
                   {isGuide && (
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface flex items-center justify-center">
                       <FaChalkboardTeacher className="text-background text-[8px]" />
@@ -474,10 +500,18 @@ export default function Navbar() {
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                       className="flex items-center gap-2 group"
                     >
-                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background hover:scale-105 transition-transform shadow-md relative">
-                        <span className="text-background text-sm font-bold">
-                          {getUserInitials()}
-                        </span>
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background hover:scale-105 transition-transform shadow-md relative overflow-hidden">
+                        {user?.avatar?.url ? (
+                          <img
+                            src={user.avatar.url}
+                            alt={getDisplayName()}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-background text-sm font-bold">
+                            {getUserInitials()}
+                          </span>
+                        )}
                         {isGuide && (
                           <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface flex items-center justify-center">
                             <FaChalkboardTeacher className="text-background text-[8px]" />
@@ -499,9 +533,17 @@ export default function Navbar() {
                         <div className="p-4 border-b border-border bg-linear-to-r from-gradient-from/5 via-gradient-via/5 to-gradient-to/5">
                           <div className="flex items-center gap-3">
                             <div className="relative">
-                              <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
-                                {getUserInitials()}
-                              </div>
+                              {user?.avatar?.url ? (
+                                <img
+                                  src={user.avatar.url}
+                                  alt={getDisplayName()}
+                                  className="w-10 h-10 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
+                                  {getUserInitials()}
+                                </div>
+                              )}
                               {isGuide && (
                                 <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface flex items-center justify-center">
                                   <FaChalkboardTeacher className="text-background text-[8px]" />

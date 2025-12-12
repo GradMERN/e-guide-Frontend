@@ -1,4 +1,6 @@
 import React from "react";
+import { useAuth } from "../store/hooks";
+import { useNavigate } from "react-router-dom";
 import {
   FaEye,
   FaFacebookF,
@@ -10,8 +12,26 @@ import {
   FaClock,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const handleBecomeGuide = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (user.role === "user") {
+      navigate("/become-guide");
+    }
+  };
+
+  // Show "Become a Guide" link only for non-guides or non-logged-in users
+  const showBecomeGuide = !user || user.role === "user";
+
   return (
     <>
       <footer className="bg-surface dark:bg-surface text-text dark:text-text pt-16 pb-10 border-t border-gray-500/10">
@@ -72,6 +92,14 @@ const Footer = () => {
               <li className="flex items-center gap-2 hover:text-primary transition cursor-pointer">
                 › Contact Us
               </li>
+              {showBecomeGuide && (
+                <li
+                  className="flex items-center gap-2 hover:text-primary transition cursor-pointer text-primary font-semibold"
+                  onClick={handleBecomeGuide}
+                >
+                  › {t("guide.becomeGuide", "Become a Guide")}
+                </li>
+              )}
             </ul>
           </div>
 

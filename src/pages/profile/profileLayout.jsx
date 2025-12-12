@@ -1,19 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideBar from "./SideBar";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAuth as useAuthStore } from "../../store/hooks";
-import { useAuth as useAuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import { FaHome, FaMoon, FaSun, FaGlobe } from "react-icons/fa";
 
 const ProfileLayout = () => {
-  const { user } = useAuthStore();
-  const { isDarkMode, toggleTheme } = useAuthContext();
+  const { user, isDarkMode, toggleTheme } = useAuth();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [showLangMenu, setShowLangMenu] = useState(false);
 
+  // Protect profile routes - redirect if not logged in
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
   const isRtl = i18n.language.startsWith("ar");
+
+  // Don't render if not authorized
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)]"></div>
+      </div>
+    );
+  }
 
   // Styles adapted from GuideDashboardLayout
   const headerBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
@@ -107,9 +121,17 @@ const ProfileLayout = () => {
                 isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
               } rounded-lg`}
             >
-              <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#C7A15C] to-[#E2C784] flex items-center justify-center text-black font-bold text-sm">
-                {user?.firstName?.charAt(0)}
-              </div>
+              {user?.avatar?.url ? (
+                <img
+                  src={user.avatar.url}
+                  alt={user?.firstName || "User"}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#C7A15C] to-[#E2C784] flex items-center justify-center text-black font-bold text-sm">
+                  {user?.firstName?.charAt(0)}
+                </div>
+              )}
               <span
                 className={`${textColor} text-sm font-medium hidden md:block`}
               >

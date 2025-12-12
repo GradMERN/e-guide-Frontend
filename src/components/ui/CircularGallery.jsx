@@ -1,4 +1,12 @@
-import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
+import {
+  Camera,
+  Mesh,
+  Plane,
+  Program,
+  Renderer,
+  Texture,
+  Transform,
+} from "ogl";
 import photo1 from "../../assets/images/views/photo-1.avif";
 import photo2 from "../../assets/images/views/photo-2.avif";
 import photo3 from "../../assets/images/views/photo-3.avif";
@@ -29,8 +37,8 @@ import photo27 from "../../assets/images/views/photo-27.avif";
 import photo28 from "../../assets/images/views/photo-28.avif";
 import photo29 from "../../assets/images/views/photo-29.avif";
 
-import { useEffect, useRef } from 'react';
-import '../../styles/CircularGallery.css';
+import { useEffect, useRef } from "react";
+import "../../styles/CircularGallery.css";
 
 function debounce(func, wait) {
   let timeout;
@@ -46,8 +54,8 @@ function lerp(p1, p2, t) {
 
 function autoBind(instance) {
   const proto = Object.getPrototypeOf(instance);
-  Object.getOwnPropertyNames(proto).forEach(key => {
-    if (key !== 'constructor' && typeof instance[key] === 'function') {
+  Object.getOwnPropertyNames(proto).forEach((key) => {
+    if (key !== "constructor" && typeof instance[key] === "function") {
       instance[key] = instance[key].bind(instance);
     }
   });
@@ -140,24 +148,27 @@ class Media {
         uImageSizes: { value: [0, 0] },
         uSpeed: { value: 0 },
         uTime: { value: 100 * Math.random() },
-        uBorderRadius: { value: this.borderRadius }
+        uBorderRadius: { value: this.borderRadius },
       },
-      transparent: true
+      transparent: true,
     });
 
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin = "anonymous";
     img.src = this.image;
     img.onload = () => {
       texture.image = img;
-      this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
+      this.program.uniforms.uImageSizes.value = [
+        img.naturalWidth,
+        img.naturalHeight,
+      ];
     };
   }
 
   createMesh() {
     this.plane = new Mesh(this.gl, {
       geometry: this.geometry,
-      program: this.program
+      program: this.program,
     });
     this.plane.setParent(this.scene);
   }
@@ -194,11 +205,11 @@ class Media {
     const viewportOffset = this.viewport.width / 2;
     this.isBefore = this.plane.position.x + planeOffset < -viewportOffset;
     this.isAfter = this.plane.position.x - planeOffset > viewportOffset;
-    if (direction === 'right' && this.isBefore) {
+    if (direction === "right" && this.isBefore) {
       this.extra -= this.widthTotal;
       this.isBefore = this.isAfter = false;
     }
-    if (direction === 'left' && this.isAfter) {
+    if (direction === "left" && this.isAfter) {
       this.extra += this.widthTotal;
       this.isBefore = this.isAfter = false;
     }
@@ -209,9 +220,14 @@ class Media {
     if (viewport) this.viewport = viewport;
 
     this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
-    this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
+    this.plane.scale.y =
+      (this.viewport.height * (900 * this.scale)) / this.screen.height;
+    this.plane.scale.x =
+      (this.viewport.width * (700 * this.scale)) / this.screen.width;
+    this.plane.program.uniforms.uPlaneSizes.value = [
+      this.plane.scale.x,
+      this.plane.scale.y,
+    ];
 
     this.padding = 2;
     this.width = this.plane.scale.x + this.padding;
@@ -221,8 +237,17 @@ class Media {
 }
 
 class App {
-  constructor(container, { items, bend, borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 } = {}) {
-    document.documentElement.classList.remove('no-js');
+  constructor(
+    container,
+    {
+      items,
+      bend,
+      borderRadius = 0.05,
+      scrollSpeed = 2,
+      scrollEase = 0.05,
+    } = {}
+  ) {
+    document.documentElement.classList.remove("no-js");
     this.container = container;
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
@@ -238,7 +263,11 @@ class App {
   }
 
   createRenderer() {
-    this.renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
+    this.renderer = new Renderer({
+      alpha: true,
+      antialias: true,
+      dpr: Math.min(window.devicePixelRatio || 1, 2),
+    });
     this.gl = this.renderer.gl;
     this.gl.clearColor(0, 0, 0, 0);
     this.container.appendChild(this.gl.canvas);
@@ -255,17 +284,43 @@ class App {
   }
 
   createGeometry() {
-    this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 });
+    this.planeGeometry = new Plane(this.gl, {
+      heightSegments: 50,
+      widthSegments: 100,
+    });
   }
 
   createMedias(items, bend = 1, borderRadius) {
     const defaultItems = [
-      { image: photo1 }, { image: photo2 }, { image: photo3 }, { image: photo4 }, { image: photo5 },
-      { image: photo6 }, { image: photo7 }, { image: photo8 }, { image: photo9 }, { image: photo10 },
-      { image: photo11 }, { image: photo12 }, { image: photo13 }, { image: photo14 }, { image: photo15 },
-      { image: photo16 }, { image: photo17 }, { image: photo18 }, { image: photo19 }, { image: photo20 },
-      { image: photo21 }, { image: photo22 }, { image: photo23 }, { image: photo24 }, { image: photo25 },
-      { image: photo26 }, { image: photo27 }, { image: photo28 }, { image: photo29 }
+      { image: photo1 },
+      { image: photo2 },
+      { image: photo3 },
+      { image: photo4 },
+      { image: photo5 },
+      { image: photo6 },
+      { image: photo7 },
+      { image: photo8 },
+      { image: photo9 },
+      { image: photo10 },
+      { image: photo11 },
+      { image: photo12 },
+      { image: photo13 },
+      { image: photo14 },
+      { image: photo15 },
+      { image: photo16 },
+      { image: photo17 },
+      { image: photo18 },
+      { image: photo19 },
+      { image: photo20 },
+      { image: photo21 },
+      { image: photo22 },
+      { image: photo23 },
+      { image: photo24 },
+      { image: photo25 },
+      { image: photo26 },
+      { image: photo27 },
+      { image: photo28 },
+      { image: photo29 },
     ];
     const galleryItems = items && items.length ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);
@@ -281,7 +336,7 @@ class App {
         screen: this.screen,
         viewport: this.viewport,
         bend,
-        borderRadius
+        borderRadius,
       });
     });
   }
@@ -306,7 +361,8 @@ class App {
 
   onWheel(e) {
     const delta = e.deltaY || e.wheelDelta || e.detail;
-    this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
+    this.scroll.target +=
+      (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
   }
 
@@ -319,20 +375,31 @@ class App {
   }
 
   onResize() {
-    this.screen = { width: this.container.clientWidth, height: this.container.clientHeight };
+    this.screen = {
+      width: this.container.clientWidth,
+      height: this.container.clientHeight,
+    };
     this.renderer.setSize(this.screen.width, this.screen.height);
     this.camera.perspective({ aspect: this.screen.width / this.screen.height });
     const fov = (this.camera.fov * Math.PI) / 180;
     const height = 2 * Math.tan(fov / 2) * this.camera.position.z;
     const width = height * this.camera.aspect;
     this.viewport = { width, height };
-    if (this.medias) this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport }));
+    if (this.medias)
+      this.medias.forEach((media) =>
+        media.onResize({ screen: this.screen, viewport: this.viewport })
+      );
   }
 
   update() {
-    this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
-    const direction = this.scroll.current > this.scroll.last ? 'right' : 'left';
-    if (this.medias) this.medias.forEach(media => media.update(this.scroll, direction));
+    this.scroll.current = lerp(
+      this.scroll.current,
+      this.scroll.target,
+      this.scroll.ease
+    );
+    const direction = this.scroll.current > this.scroll.last ? "right" : "left";
+    if (this.medias)
+      this.medias.forEach((media) => media.update(this.scroll, direction));
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
     this.raf = window.requestAnimationFrame(this.update.bind(this));
@@ -344,39 +411,71 @@ class App {
     this.boundOnTouchDown = this.onTouchDown.bind(this);
     this.boundOnTouchMove = this.onTouchMove.bind(this);
     this.boundOnTouchUp = this.onTouchUp.bind(this);
-    window.addEventListener('resize', this.boundOnResize);
-    window.addEventListener('mousewheel', this.boundOnWheel);
-    window.addEventListener('wheel', this.boundOnWheel);
-    window.addEventListener('mousedown', this.boundOnTouchDown);
-    window.addEventListener('mousemove', this.boundOnTouchMove);
-    window.addEventListener('mouseup', this.boundOnTouchUp);
-    window.addEventListener('touchstart', this.boundOnTouchDown);
-    window.addEventListener('touchmove', this.boundOnTouchMove);
-    window.addEventListener('touchend', this.boundOnTouchUp);
+    window.addEventListener("resize", this.boundOnResize);
+    window.addEventListener("mousewheel", this.boundOnWheel);
+    window.addEventListener("wheel", this.boundOnWheel);
+    window.addEventListener("mousedown", this.boundOnTouchDown);
+    window.addEventListener("mousemove", this.boundOnTouchMove);
+    window.addEventListener("mouseup", this.boundOnTouchUp);
+    window.addEventListener("touchstart", this.boundOnTouchDown);
+    window.addEventListener("touchmove", this.boundOnTouchMove);
+    window.addEventListener("touchend", this.boundOnTouchUp);
   }
 
   destroy() {
     window.cancelAnimationFrame(this.raf);
-    window.removeEventListener('resize', this.boundOnResize);
-    window.removeEventListener('mousewheel', this.boundOnWheel);
-    window.removeEventListener('wheel', this.boundOnWheel);
-    window.removeEventListener('mousedown', this.boundOnTouchDown);
-    window.removeEventListener('mousemove', this.boundOnTouchMove);
-    window.removeEventListener('mouseup', this.boundOnTouchUp);
-    window.removeEventListener('touchstart', this.boundOnTouchDown);
-    window.removeEventListener('touchmove', this.boundOnTouchMove);
-    window.removeEventListener('touchend', this.boundOnTouchUp);
-    if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
+    window.removeEventListener("resize", this.boundOnResize);
+    window.removeEventListener("mousewheel", this.boundOnWheel);
+    window.removeEventListener("wheel", this.boundOnWheel);
+    window.removeEventListener("mousedown", this.boundOnTouchDown);
+    window.removeEventListener("mousemove", this.boundOnTouchMove);
+    window.removeEventListener("mouseup", this.boundOnTouchUp);
+    window.removeEventListener("touchstart", this.boundOnTouchDown);
+    window.removeEventListener("touchmove", this.boundOnTouchMove);
+    window.removeEventListener("touchend", this.boundOnTouchUp);
+    if (
+      this.renderer &&
+      this.renderer.gl &&
+      this.renderer.gl.canvas.parentNode
+    ) {
       this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas);
     }
   }
 }
 
-export default function CircularGallery({ items, bend = 3, borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 }) {
+export default function CircularGallery({
+  items,
+  bend = 3,
+  borderRadius = 0.05,
+  scrollSpeed = 2,
+  scrollEase = 0.05,
+}) {
   const containerRef = useRef(null);
   useEffect(() => {
-    const app = new App(containerRef.current, { items, bend, borderRadius, scrollSpeed, scrollEase });
-    return () => app.destroy();
+    let app = null;
+    try {
+      if (containerRef.current) {
+        app = new App(containerRef.current, {
+          items,
+          bend,
+          borderRadius,
+          scrollSpeed,
+          scrollEase,
+        });
+      }
+    } catch (err) {
+      console.error("Error initializing CircularGallery App:", err);
+    }
+
+    return () => {
+      try {
+        if (app && typeof app.destroy === "function") {
+          app.destroy();
+        }
+      } catch (err) {
+        console.error("Error during CircularGallery cleanup:", err);
+      }
+    };
   }, [items, bend, borderRadius, scrollSpeed, scrollEase]);
   return <div className="circular-gallery" ref={containerRef} />;
 }

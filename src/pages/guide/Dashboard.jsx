@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import i18n from "../../i18n";
@@ -118,15 +118,35 @@ const GuideDashboard = () => {
       const response = await guideService.getDashboardStats();
       const data = response.data || {};
 
+      // Map enrollment trends to the format expected by charts
+      const enrollmentTrend = (data.enrollmentTrends || []).map((item) => ({
+        name: item.day,
+        enrollments: item.count || 0,
+      }));
+
+      // Map earnings trends to the format expected by charts
+      const earningsTrend = (data.earningsTrends || []).map((item) => ({
+        name: item.day,
+        earnings: item.amount || 0,
+      }));
+
+      // Map tour performance for charts
+      const tourPerformance = (data.tourPerformance || []).map((item) => ({
+        name: item.name,
+        enrollments: item.enrollments || 0,
+        value: item.enrollments || 0,
+        revenue: item.revenue || 0,
+      }));
+
       setDashboardData({
         totalTours: data.totalTours || data.toursCount || 0,
         activeTours: data.publishedTours || data.published || 0,
         totalEnrollments: data.totalEnrollments || data.enrollmentsCount || 0,
         totalEarnings: data.totalEarnings || data.totalRevenue || 0,
         averageRating: data.averageRating || 0,
-        enrollmentTrend: data.enrollmentTrends || data.enrollmentTrend || [],
-        earningsTrend: data.earningsTrends || data.earningsTrend || [],
-        tourPerformance: data.tourPerformance || [],
+        enrollmentTrend,
+        earningsTrend,
+        tourPerformance,
         recentEnrollments: data.recentEnrollments || [],
       });
     } catch (err) {
@@ -352,6 +372,13 @@ const GuideDashboard = () => {
       icon: FaMoneyBillWave,
       unit: t("guide.currency") || "EGP",
       bgColor: "from-emerald-500 to-emerald-600",
+    },
+    {
+      title: t("guide.totalRating") || "Average Rating",
+      value: dashboardData.averageRating.toFixed(1),
+      icon: FaStar,
+      unit: "/ 5",
+      bgColor: "from-yellow-500 to-orange-500",
     },
   ];
 
@@ -606,67 +633,81 @@ const GuideDashboard = () => {
         <h3 className={`text-lg font-semibold ${textColor} mb-4`}>
           {t("guide.recentEnrollments")}
         </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className={`border-b ${borderColor}`}>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
-                  Tour Name
-                </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
-                  Guest Name
-                </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
-                  Date
-                </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
-                  Amount
-                </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {dashboardData.recentEnrollments.map((item) => (
-                <tr
-                  key={item.id}
-                  className={`border-b ${borderColor} hover:${
-                    isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"
-                  } transition-colors`}
-                >
-                  <td className={`py-3 px-4 ${textColor}`}>{item.tourName}</td>
-                  <td className={`py-3 px-4 ${textColor}`}>{item.guestName}</td>
-                  <td className={`py-3 px-4 ${secondaryText}`}>{item.date}</td>
-                  <td className={`py-3 px-4 ${textColor}`}>
-                    {item.amount} EGP
-                  </td>
-                  <td className={`py-3 px-4`}>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        item.status === "Completed"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-yellow-500/20 text-yellow-400"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
-                  </td>
+        {dashboardData.recentEnrollments.length === 0 ? (
+          <p className={`${secondaryText} text-center py-8`}>
+            {t("guide.noEnrollments") || "No enrollments yet"}
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className={`border-b ${borderColor}`}>
+                  <th
+                    className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
+                  >
+                    {t("guide.tourName") || "Tour Name"}
+                  </th>
+                  <th
+                    className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
+                  >
+                    {t("guide.guestName") || "Guest Name"}
+                  </th>
+                  <th
+                    className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
+                  >
+                    {t("common.date") || "Date"}
+                  </th>
+                  <th
+                    className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
+                  >
+                    {t("common.amount") || "Amount"}
+                  </th>
+                  <th
+                    className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
+                  >
+                    {t("common.status") || "Status"}
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {dashboardData.recentEnrollments.map((item, index) => (
+                  <tr
+                    key={item.id || index}
+                    className={`border-b ${borderColor} hover:${
+                      isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"
+                    } transition-colors`}
+                  >
+                    <td className={`py-3 px-4 ${textColor}`}>
+                      {item.tourName}
+                    </td>
+                    <td className={`py-3 px-4 ${textColor}`}>
+                      {item.guestName}
+                    </td>
+                    <td className={`py-3 px-4 ${secondaryText}`}>
+                      {item.date}
+                    </td>
+                    <td className={`py-3 px-4 ${textColor}`}>
+                      {item.amount} {t("guide.currency") || "EGP"}
+                    </td>
+                    <td className={`py-3 px-4`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          item.status === "started" || item.status === "active"
+                            ? "bg-green-500/20 text-green-400"
+                            : item.status === "pending"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : "bg-gray-500/20 text-gray-400"
+                        }`}
+                      >
+                        {t(`common.statuses.${item.status}`) || item.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Add Tour Modal */}

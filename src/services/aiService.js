@@ -560,53 +560,99 @@ export const createSpeechRecognizer = (
     throw new Error("Speech recognition is not supported in this browser");
   }
 
-  const recognition = new SpeechRecognition();
+  let recognition = null;
+  let isActive = false;
 
-  const langMap = {
-    en: "en-US",
-    ar: "ar-SA",
-    es: "es-ES",
-    fr: "fr-FR",
-    de: "de-DE",
-  };
+  try {
+    recognition = new SpeechRecognition();
 
-  recognition.lang = langMap[lang] || lang;
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 1;
+    const langMap = {
+      en: "en-US",
+      ar: "ar-SA",
+      es: "es-ES",
+      fr: "fr-FR",
+      de: "de-DE",
+    };
 
-  let fullTranscript = "";
+    recognition.lang = langMap[lang] || lang;
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
 
-  recognition.onresult = (event) => {
-    let interimTranscript = "";
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        fullTranscript += transcript + " ";
-      } else {
-        interimTranscript += transcript;
+    let fullTranscript = "";
+
+    recognition.onresult = (event) => {
+      if (!isActive) return;
+      let interimTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          fullTranscript += transcript + " ";
+        } else {
+          interimTranscript += transcript;
+        }
       }
-    }
-    if (onResult) {
-      onResult(fullTranscript + interimTranscript, fullTranscript);
-    }
-  };
+      if (onResult) {
+        onResult(fullTranscript + interimTranscript, fullTranscript);
+      }
+    };
 
-  recognition.onend = () => {
-    if (onEnd) onEnd(fullTranscript.trim());
-  };
+    recognition.onend = () => {
+      isActive = false;
+      if (onEnd) onEnd(fullTranscript.trim());
+    };
 
-  recognition.onerror = (event) => {
-    if (onError) onError(event.error);
-  };
+    recognition.onerror = (event) => {
+      isActive = false;
+      if (onError) onError(event.error);
+    };
+  } catch (error) {
+    console.error("Failed to create speech recognizer:", error);
+    throw error;
+  }
 
   return {
     start: () => {
-      fullTranscript = "";
-      recognition.start();
+      try {
+        if (recognition && isActive === false) {
+          isActive = true;
+          recognition.start();
+        }
+      } catch (e) {
+        console.error("Error starting recognition:", e);
+      }
     },
-    stop: () => recognition.stop(),
-    abort: () => recognition.abort(),
+    stop: () => {
+      try {
+        if (recognition && isActive) {
+          isActive = false;
+          recognition.stop();
+        }
+      } catch (e) {
+        console.error("Error stopping recognition:", e);
+      }
+    },
+    abort: () => {
+      try {
+        if (recognition && isActive) {
+          isActive = false;
+          recognition.abort();
+        }
+      } catch (e) {
+        console.error("Error aborting recognition:", e);
+      }
+    },
+    destroy: () => {
+      try {
+        if (recognition && isActive) {
+          isActive = false;
+          recognition.abort();
+        }
+        recognition = null;
+      } catch (e) {
+        console.error("Error destroying recognizer:", e);
+      }
+    },
   };
 };
 
@@ -725,6 +771,7 @@ export const createVoiceRecorder = () => {
   let mediaRecorder = null;
   let audioChunks = [];
   let stream = null;
+  let isActive = false;
 
   return {
     start: async () => {
@@ -734,6 +781,7 @@ export const createVoiceRecorder = () => {
           mimeType: "audio/webm;codecs=opus",
         });
         audioChunks = [];
+        isActive = true;
 
         mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
@@ -745,6 +793,7 @@ export const createVoiceRecorder = () => {
         return true;
       } catch (error) {
         console.error("Failed to start recording:", error);
+        isActive = false;
         throw new Error(
           "Could not access microphone. Please ensure microphone permissions are granted."
         );
@@ -753,34 +802,77 @@ export const createVoiceRecorder = () => {
 
     stop: () => {
       return new Promise((resolve) => {
-        if (!mediaRecorder || mediaRecorder.state === "inactive") {
-          resolve(null);
-          return;
-        }
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunks, { type: "audio/webm" });
-          const url = URL.createObjectURL(blob);
-
-          // Convert to File for upload
-          const file = new File([blob], `recording-${Date.now()}.webm`, {
-            type: "audio/webm",
-          });
-
-          // Stop all tracks
-          if (stream) {
-            stream.getTracks().forEach((track) => track.stop());
+        try {
+          if (!mediaRecorder || mediaRecorder.state === "inactive") {
+            isActive = false;
+            resolve(null);
+            return;
           }
 
-          resolve({ blob, url, file });
-        };
+          mediaRecorder.onstop = () => {
+            try {
+              const blob = new Blob(audioChunks, { type: "audio/webm" });
+              const url = URL.createObjectURL(blob);
 
-        mediaRecorder.stop();
+              // Convert to File for upload
+              const file = new File([blob], `recording-${Date.now()}.webm`, {
+                type: "audio/webm",
+              });
+
+              // Stop all tracks
+              if (stream) {
+                stream.getTracks().forEach((track) => {
+                  try {
+                    track.stop();
+                  } catch (e) {
+                    console.error("Error stopping track:", e);
+                  }
+                });
+              }
+
+              isActive = false;
+              resolve({ blob, url, file });
+            } catch (e) {
+              console.error("Error in mediaRecorder onstop:", e);
+              isActive = false;
+              resolve(null);
+            }
+          };
+
+          mediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recording:", e);
+          isActive = false;
+          resolve(null);
+        }
       });
     },
 
     isRecording: () => {
-      return mediaRecorder && mediaRecorder.state === "recording";
+      return isActive && mediaRecorder && mediaRecorder.state === "recording";
+    },
+
+    destroy: () => {
+      try {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+        }
+        if (stream) {
+          stream.getTracks().forEach((track) => {
+            try {
+              track.stop();
+            } catch (e) {
+              console.error("Error stopping stream track:", e);
+            }
+          });
+        }
+        mediaRecorder = null;
+        stream = null;
+        audioChunks = [];
+        isActive = false;
+      } catch (e) {
+        console.error("Error destroying voice recorder:", e);
+      }
     },
   };
 };
@@ -799,49 +891,93 @@ export const createLiveTranscriber = (lang = "en") => {
     return null;
   }
 
-  const recognition = new SpeechRecognition();
-  const langMap = {
-    en: "en-US",
-    ar: "ar-SA",
-    es: "es-ES",
-    fr: "fr-FR",
-    de: "de-DE",
-  };
+  let recognition = null;
+  let isActive = false;
 
-  recognition.lang = langMap[lang] || lang;
-  recognition.continuous = true;
-  recognition.interimResults = true;
+  try {
+    recognition = new SpeechRecognition();
+    const langMap = {
+      en: "en-US",
+      ar: "ar-SA",
+      es: "es-ES",
+      fr: "fr-FR",
+      de: "de-DE",
+    };
 
-  let finalTranscript = "";
-  let onUpdate = null;
+    recognition.lang = langMap[lang] || lang;
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
-  recognition.onresult = (event) => {
-    let interimTranscript = "";
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        finalTranscript += transcript + " ";
-      } else {
-        interimTranscript += transcript;
+    let finalTranscript = "";
+    let onUpdate = null;
+
+    recognition.onresult = (event) => {
+      if (!isActive) return;
+      let interimTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + " ";
+        } else {
+          interimTranscript += transcript;
+        }
       }
-    }
-    if (onUpdate) {
-      onUpdate(finalTranscript + interimTranscript, finalTranscript);
-    }
-  };
+      if (onUpdate) {
+        onUpdate(finalTranscript + interimTranscript, finalTranscript);
+      }
+    };
 
-  return {
-    start: (callback) => {
-      onUpdate = callback;
-      finalTranscript = "";
-      recognition.start();
-    },
-    stop: () => {
-      recognition.stop();
-      return finalTranscript.trim();
-    },
-    getTranscript: () => finalTranscript.trim(),
-  };
+    recognition.onend = () => {
+      isActive = false;
+    };
+
+    recognition.onerror = (event) => {
+      isActive = false;
+      console.error("Transcriber error:", event.error);
+    };
+
+    return {
+      start: (callback) => {
+        try {
+          onUpdate = callback;
+          finalTranscript = "";
+          if (recognition && isActive === false) {
+            isActive = true;
+            recognition.start();
+          }
+        } catch (e) {
+          console.error("Error starting transcriber:", e);
+        }
+      },
+      stop: () => {
+        try {
+          if (recognition && isActive) {
+            isActive = false;
+            recognition.stop();
+          }
+          return finalTranscript.trim();
+        } catch (e) {
+          console.error("Error stopping transcriber:", e);
+          return finalTranscript.trim();
+        }
+      },
+      getTranscript: () => finalTranscript.trim(),
+      destroy: () => {
+        try {
+          if (recognition && isActive) {
+            isActive = false;
+            recognition.abort();
+          }
+          recognition = null;
+        } catch (e) {
+          console.error("Error destroying transcriber:", e);
+        }
+      },
+    };
+  } catch (error) {
+    console.error("Failed to create live transcriber:", error);
+    return null;
+  }
 };
 
 // ==================== SUPPORTED LANGUAGES ====================

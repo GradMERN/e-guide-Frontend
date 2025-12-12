@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../store/hooks";
 import { useTranslation } from "react-i18next";
 import GuideSidebar from "../components/guide/GuideSidebar";
 import { FaBell, FaMoon, FaSun, FaGlobe } from "react-icons/fa";
@@ -14,6 +14,18 @@ const GuideDashboardLayout = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
 
+  // Protect guide routes - redirect if not logged in or not a guide
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (user.role !== "guide" && user.role !== "admin") {
+      navigate("/");
+      return;
+    }
+  }, [user, navigate]);
+
   const handleLogout = () => {
     if (window.confirm(t("admin.confirmLogout"))) {
       logout();
@@ -24,6 +36,15 @@ const GuideDashboardLayout = () => {
   useEffect(() => {
     if (language && i18n?.changeLanguage) i18n.changeLanguage(language);
   }, [language, i18n]);
+
+  // Don't render if not authorized
+  if (!user || (user.role !== "guide" && user.role !== "admin")) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)]"></div>
+      </div>
+    );
+  }
 
   const mainBg = isDarkMode ? "bg-[#0F0E0C]" : "bg-gray-50";
   const headerBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";

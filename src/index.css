@@ -47,6 +47,16 @@
     --button-secondary-hover-border: var(--secondary);
     --button-bg: var(--button-primary-bg);
     --text-button: var(--button-primary-text);
+    /* Semantic status colors */
+    --success: #16a34a;
+    --success-bg: #ecfdf5;
+    --info: #0ea5e9;
+    --info-bg: #eff6ff;
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --danger: #ef4444;
+    --danger-bg: #fff1f2;
+    --button-text: var(--button-primary-text);
   }
 
   .dark {
@@ -78,14 +88,18 @@
     --faq-icon: var(--faq-title);
     --faq-border: var(--faq-title);
 
-    --button-primary-bg: linear-gradient(to right,
-        var(--gradient-from),
-        var(--gradient-via),
-        var(--gradient-to));
+    --button-primary-bg: linear-gradient(
+      to right,
+      var(--gradient-from),
+      var(--gradient-via),
+      var(--gradient-to)
+    );
     --button-primary-text: #050505;
-    --button-primary-hover-bg: linear-gradient(to right,
-        var(--gradient-from),
-        var(--gradient-to));
+    --button-primary-hover-bg: linear-gradient(
+      to right,
+      var(--gradient-from),
+      var(--gradient-to)
+    );
     --button-primary-hover-text: #050505;
 
     --button-secondary-bg: transparent;
@@ -96,6 +110,16 @@
     --button-secondary-hover-border: var(--secondary);
     --button-bg: var(--button-primary-bg);
     --text-button: var(--button-primary-text);
+    /* Semantic status colors - dark theme variants */
+    --success: #059669;
+    --success-bg: rgba(16, 185, 129, 0.08);
+    --info: #38bdf8;
+    --info-bg: rgba(14, 165, 233, 0.08);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.08);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.08);
+    --button-text: var(--button-primary-text);
   }
 
   button,
@@ -203,16 +227,18 @@
   }
 
   .btn-split-main::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -50%;
     width: 50%;
     height: 100%;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.3),
-        transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
     transform: skewX(-20deg);
   }
 
@@ -249,10 +275,8 @@
   }
 
   .btn-split:hover {
-    box-shadow:
-      0 15px 30px -8px rgba(0, 0, 0, 0.25),
-      0 6px 15px -4px rgba(0, 0, 0, 0.15),
-      0 0 30px rgba(176, 100, 25, 0.3);
+    box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.25),
+      0 6px 15px -4px rgba(0, 0, 0, 0.15), 0 0 30px rgba(176, 100, 25, 0.3);
     transform: translateY(-2px);
   }
 
@@ -380,7 +404,7 @@
   .dark .guide-profile-icon,
   .dark .guide-profile-tab,
   .dark .guide-profile-line {
-    color: #C7A15C;
+    color: #c7a15c;
   }
 
   .guide-profile-tab:hover,
@@ -390,7 +414,12 @@
 
   .auth-login-overlay {
     @apply absolute inset-0 backdrop-blur-[1px];
-    background-image: radial-gradient(circle at center, rgba(247, 237, 206, 0.1) 0%, rgba(68, 45, 22, 0.7) 50%, rgba(30, 20, 10, 0.95) 100%);
+    background-image: radial-gradient(
+      circle at center,
+      rgba(247, 237, 206, 0.1) 0%,
+      rgba(68, 45, 22, 0.7) 50%,
+      rgba(30, 20, 10, 0.95) 100%
+    );
     mix-blend-mode: normal;
   }
 
@@ -400,7 +429,12 @@
 
   .auth-register-overlay {
     @apply absolute inset-0 backdrop-blur-[1px];
-    background-image: radial-gradient(circle at center, rgba(152, 82, 12, 0.4) 0%, rgba(68, 45, 22, 0.8) 60%, rgba(79, 30, 6, 0.98) 100%);
+    background-image: radial-gradient(
+      circle at center,
+      rgba(152, 82, 12, 0.4) 0%,
+      rgba(68, 45, 22, 0.8) 60%,
+      rgba(79, 30, 6, 0.98) 100%
+    );
     mix-blend-mode: normal;
   }
 
@@ -458,7 +492,7 @@
   }
 
   .dark .guide-profile-line {
-    border: 1px solid #C7A15C;
+    border: 1px solid #c7a15c;
   }
   .dark .guide-profile-subtitle {
     color: var(--text-muted);

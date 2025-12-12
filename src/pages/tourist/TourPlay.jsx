@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -10,6 +10,8 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaArrowRight,
+  FaLanguage,
+  FaGlobe,
 } from "react-icons/fa";
 import tourService from "../../apis/tourService";
 import { tourItemService } from "../../apis/tourItemService";
@@ -17,8 +19,9 @@ import enrollmentApi from "../../apis/enrollment.api";
 import TourView from "../../components/guide/subcomponents/TourView";
 import Review from "../../components/guide/subcomponents/Review";
 import useAudioPlayer from "../../hooks/useAudioPlayer";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../store/hooks";
 import { useSelector } from "react-redux";
+import { translateText } from "../../services/aiService";
 
 export default function TourPlay() {
   const { tourId } = useParams();
@@ -71,6 +74,62 @@ export default function TourPlay() {
   const [enrollments, setEnrollments] = useState([]);
   const [enrollmentLoading, setEnrollmentLoading] = useState(true);
   const [nearbyLoading, setNearbyLoading] = useState(false);
+
+  // Translation state
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [translatedScript, setTranslatedScript] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  // Available languages for translation
+  const availableLanguages = [
+    { code: "en", name: "English", flag: "🇬🇧" },
+    { code: "ar", name: "العربية", flag: "🇪🇬" },
+    { code: "fr", name: "Français", flag: "🇫🇷" },
+    { code: "de", name: "Deutsch", flag: "🇩🇪" },
+    { code: "es", name: "Español", flag: "🇪🇸" },
+    { code: "it", name: "Italiano", flag: "🇮🇹" },
+    { code: "zh", name: "中文", flag: "🇨🇳" },
+    { code: "ja", name: "日本語", flag: "🇯🇵" },
+    { code: "ru", name: "Русский", flag: "🇷🇺" },
+  ];
+
+  // Handle language change and translation
+  const handleLanguageChange = useCallback(
+    async (langCode) => {
+      setSelectedLanguage(langCode);
+
+      // If selecting English (original), clear translation
+      if (langCode === "en") {
+        setTranslatedScript(null);
+        return;
+      }
+
+      // Translate the script if available
+      const script = selectedItem?.script;
+      if (!script) return;
+
+      setIsTranslating(true);
+      try {
+        const result = await translateText(script, "en", langCode);
+        setTranslatedScript(result?.translatedText || result);
+      } catch (error) {
+        console.error("Translation error:", error);
+        setTranslatedScript(null);
+      } finally {
+        setIsTranslating(false);
+      }
+    },
+    [selectedItem]
+  );
+
+  // Reset translation when selected item changes
+  useEffect(() => {
+    if (selectedLanguage !== "en" && selectedItem?.script) {
+      handleLanguageChange(selectedLanguage);
+    } else {
+      setTranslatedScript(null);
+    }
+  }, [selectedItem?._id]);
 
   useEffect(() => {
     let mounted = true;
@@ -456,6 +515,16 @@ export default function TourPlay() {
                     setIsDragging={audio.setIsDragging}
                     toggle={audio.toggle}
                     seekPercent={audio.seekPercent}
+                    translatedScript={translatedScript}
+                    isTranslating={isTranslating}
+                    isRtl={isRtl}
+                    selectedLanguage={selectedLanguage}
+                    stopAudio={() => {
+                      if (audio.audioRef?.current) {
+                        audio.audioRef.current.pause();
+                        audio.audioRef.current.currentTime = 0;
+                      }
+                    }}
                   />
                 </>
               )}
@@ -466,7 +535,7 @@ export default function TourPlay() {
                   tourId={tourId}
                   enrollment={currentEnrollment}
                   tour={tour}
-                  readOnly={true}
+                  readOnly={!currentEnrollment}
                 />
               </div>
             </div>
@@ -502,6 +571,38 @@ export default function TourPlay() {
                 }}
               >
                 <div className="flex flex-col gap-2">
+                  {/* Language Selector */}
+                  <div className="mb-3">
+                    <label className="flex items-center gap-2 text-sm font-medium text-text-secondary mb-2">
+                      <FaGlobe className="w-4 h-4" />
+                      <span>Translation Language</span>
+                    </label>
+                    <select
+                      value={selectedLanguage}
+                      onChange={(e) => handleLanguageChange(e.target.value)}
+                      disabled={isTranslating}
+                      className={`w-full px-3 py-2 rounded-lg border transition-all ${
+                        isDarkMode
+                          ? "bg-surface border-border text-text"
+                          : "bg-white border-gray-300 text-gray-900"
+                      } ${
+                        isTranslating ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      {availableLanguages.map((lang) => (
+                        <option key={lang.code} value={lang.code}>
+                          {lang.flag} {lang.name}
+                        </option>
+                      ))}
+                    </select>
+                    {isTranslating && (
+                      <div className="flex items-center gap-2 mt-2 text-sm text-primary">
+                        <FaSpinner className="w-3 h-3 animate-spin" />
+                        <span>Translating...</span>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="flex gap-2">
                     <button
                       onClick={() => setTab("all")}
@@ -724,6 +825,37 @@ export default function TourPlay() {
                 Navigation
               </h2>
             </div>
+
+            {/* Language Selector for Mobile */}
+            <div className="p-4 border-b border-border">
+              <label className="flex items-center gap-2 text-sm font-medium text-text-secondary mb-2">
+                <FaGlobe className="w-4 h-4" />
+                <span>Translation Language</span>
+              </label>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                disabled={isTranslating}
+                className={`w-full px-3 py-2 rounded-lg border transition-all ${
+                  isDarkMode
+                    ? "bg-surface border-border text-text"
+                    : "bg-white border-gray-300 text-gray-900"
+                } ${isTranslating ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {availableLanguages.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.flag} {lang.name}
+                  </option>
+                ))}
+              </select>
+              {isTranslating && (
+                <div className="flex items-center gap-2 mt-2 text-sm text-primary">
+                  <FaSpinner className="w-3 h-3 animate-spin" />
+                  <span>Translating...</span>
+                </div>
+              )}
+            </div>
+
             <div className="p-4 border-b">
               <div className="flex space-x-2">
                 <button

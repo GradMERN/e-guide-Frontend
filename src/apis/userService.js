@@ -6,8 +6,13 @@ export const userService = {
     return response.data;
   },
 
+  async getUserStats() {
+    const response = await api.get("/user/stats");
+    return response.data;
+  },
+
   async updateProfile(userData) {
-    const response = await api.put("/user/profile", userData);
+    const response = await api.patch("/user/profile", userData);
     return response.data;
   },
 
@@ -16,8 +21,13 @@ export const userService = {
     return response.data;
   },
 
-  async deleteAccount() {
-    const response = await api.delete("/user/delete-account");
+  async setPassword(passwordData) {
+    const response = await api.put("/user/set-password", passwordData);
+    return response.data;
+  },
+
+  async deactivateAccount() {
+    const response = await api.put("/user/deactivate-account");
     return response.data;
   },
 

@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./styles/ToastTheme.css";
 import DashboardLayout from "./layout/DashboardLayout";
 import AdminLayout from "./components/admin/AdminLayout";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Home from "./pages/shared/Home";
 import Profile from "./pages/shared/Profile";
 import Login from "./pages/auth/Login";
@@ -16,14 +17,17 @@ import GuideDashboard from "./pages/guide/Dashboard";
 import ManageTours from "./pages/guide/ManageTours";
 import Analytics from "./pages/guide/Analytics";
 import GuidSettings from "./pages/guide/Settings";
+import GuideProfileSettings from "./pages/guide/GuideProfileSettings";
 import AddTourItem from "./pages/guide/AddTourItem";
 import TourItemsPage from "./pages/guide/TourItemsPage";
 import GuideTourPreview from "./pages/guide/GuideTourPreview";
+import BecomeGuidePage from "./pages/guide/BecomeGuidePage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminTours from "./pages/admin/AdminTours";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminGuides from "./pages/admin/AdminGuides";
-import AdminSettings from "./pages/admin/AdminSettings";
+// import AdminSettings from "./pages/admin/AdminSettings"; // Commented out - page not ready
+import AdminGuideApplications from "./components/admin/AdminGuideApplications";
 import Cart from "./pages/tourist/Cart";
 import MyTours from "./pages/tourist/MyTours";
 import About from "./pages/shared/About";
@@ -35,7 +39,6 @@ import TourGuideProfile from "./components/tourGuides/TourGuideProfile";
 import ProfileLayout from "./pages/profile/profileLayout";
 import Overview from "./pages/profile/Overview";
 import Info from "./pages/profile/info";
-import Preferences from "./pages/profile/Preferences";
 import Security from "./pages/profile/Security";
 import AllDestinationPage from "./pages/shared/AllDestinationPage";
 import DestinationDetail from "./components/allDestinations/DestinationDetail";
@@ -54,7 +57,7 @@ const router = createBrowserRouter([
       { path: "/tours", element: <TourPackages /> },
       { path: "/tours/:id", element: <TourDetail /> },
       { path: "/tour/play/:tourId", element: <TourPlay /> },
-      { path: "/TourGuideProfile/:name", element: <TourGuideProfile /> },
+      { path: "/TourGuideProfile/:id", element: <TourGuideProfile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/my-tours", element: <MyTours /> },
       { path: "/saved", element: <SavedTours /> },
@@ -62,7 +65,7 @@ const router = createBrowserRouter([
       { path: "/destinations", element: <AllDestinationPage /> },
       { path: "/destinations/:id", element: <DestinationDetail /> },
       { path: "contact", element: <ContactUs /> },
-
+      { path: "/become-guide", element: <BecomeGuidePage /> },
     ],
   },
   {
@@ -71,7 +74,6 @@ const router = createBrowserRouter([
       { path: "/profile/", element: <Overview /> },
       { path: "/profile/overview", element: <Overview /> },
       { path: "/profile/info", element: <Info /> },
-      { path: "/profile/preferences", element: <Preferences /> },
       { path: "/profile/security", element: <Security /> },
     ],
   },
@@ -85,9 +87,13 @@ const router = createBrowserRouter([
   },
   { path: "/auth/google-redirect", element: <GoogleRedirect /> },
   { path: "/oauth-success", element: <OAuthSuccess /> },
-  // Guide Dashboard Routes
+  // Guide Dashboard Routes (protected)
   {
-    element: <GuideDashboardLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={["guide"]}>
+        <GuideDashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: "/guide/dashboard", element: <GuideDashboard /> },
       { path: "/guide/tours", element: <ManageTours /> },
@@ -95,17 +101,28 @@ const router = createBrowserRouter([
       { path: "/guide/tours/:tourId/items", element: <TourItemsPage /> },
       { path: "/guide/analytics", element: <Analytics /> },
       { path: "/guide/settings", element: <GuidSettings /> },
+      { path: "/guide/profile", element: <GuideProfileSettings /> },
       { path: "/guide/tour/:tourId/add-item", element: <AddTourItem /> },
     ],
   },
   {
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: "/admin/dashboard", element: <AdminDashboard /> },
       { path: "/admin/tours", element: <AdminTours /> },
       { path: "/admin/users", element: <AdminUsers /> },
       { path: "/admin/guides", element: <AdminGuides /> },
-      { path: "/admin/settings", element: <AdminSettings /> },
+      {
+        path: "/admin/guide-applications",
+        element: <AdminGuideApplications />,
+      },
+      // { path: "/admin/settings", element: <AdminSettings /> }, // Commented out - page not ready
+      // Admin tour preview: reuse the same TourPreview used by guides
+      { path: "/admin/tour/:tourId", element: <GuideTourPreview /> },
     ],
   },
   {
@@ -115,7 +132,6 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-
   return (
     <>
       <RouterProvider router={router} />

@@ -302,26 +302,20 @@ const TourView = ({
             {/* Audio Waveform Indicator (Visual Enhancement) */}
             {isPlaying && (
               <div
-                className={`flex items-center gap-0.5 mt-2 ${
+                className={`flex items-center gap-2 mt-2 ${
                   isRtl ? "justify-end" : "justify-start"
                 }`}
               >
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-1 bg-[#D5B36A] rounded-full animate-pulse"
-                    style={{
-                      height: `${8 + Math.random() * 12}px`,
-                      animationDelay: `${i * 0.1}s`,
-                      animationDuration: "0.5s",
-                    }}
-                  />
-                ))}
-                <FaVolumeUp
-                  className={`w-3 h-3 text-[#D5B36A] ${
-                    isRtl ? "mr-2" : "ml-2"
-                  }`}
-                />
+                <FaVolumeUp className="w-4 h-4 text-[#D5B36A]" />
+                <span
+                  className={
+                    isDarkMode
+                      ? "text-[#D5B36A] text-sm"
+                      : "text-amber-600 text-sm"
+                  }
+                >
+                  {safeT("guide.ai.playing", "Playing...")}
+                </span>
               </div>
             )}
           </div>

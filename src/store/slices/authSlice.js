@@ -91,11 +91,25 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    setUser: (state, { payload }) => {
+      state.user = payload;
+      try {
+        localStorage.setItem("user", JSON.stringify(payload || {}));
+      } catch (e) {
+        console.warn("Failed to persist user to localStorage", e);
+      }
+    },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, clearError } =
-  authSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+  clearError,
+  setUser,
+} = authSlice.actions;
 
 export const selectAuth = (state) => state.auth;
 export const selectUser = (state) => state.auth.user;
