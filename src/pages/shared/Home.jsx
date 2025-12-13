@@ -7,7 +7,7 @@ import TourPackagesSection from "../../components/home/TourPackagesSection.jsx";
 import WhyChooseUsSection from "../../components/home/WhyChooseUsSection.jsx";
 import GallerySection from "../../components/home/GallerySection.jsx";
 import HomeFAQSection from "../../components/home/HomeFAQSection.jsx";
-import CityLoopSection from "../../components/home/CitiyLoopSection.jsx";
+import CitiesLoopSection from "../../components/home/CitiesLoopSection.jsx";
 import VisitEgyptSection from "../../components/home/VisitEgyptSection.jsx";
 import VideoSection from "../../components/home/VideoSection.jsx";
 
@@ -17,7 +17,7 @@ const Home = () => {
     <>
       <div>
         <ImageSliderDemo />
-        <CityLoopSection />
+        <CitiesLoopSection />
         <VideoSection/>
         <PopularDestinationSection />
         <TourPackagesSection />
