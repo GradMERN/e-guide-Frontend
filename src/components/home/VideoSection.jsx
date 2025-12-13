@@ -19,11 +19,11 @@ export default function VideoSection() {
 
   return (
     <SectionWrapperFull>
-      <div className="py-12" id="video-section">
+      <div className="py-8 sm:py-12" id="video-section">
         <TitlesHome title={t("video.title")}  paragraph={t("video.description")} />
-        <div className="relative max-w-6xl mx-auto mt-16 px-4">
+        <div className="relative max-w-[1200px] w-full mx-auto mt-12 sm:mt-16 px-4 md:px-6">
 
-          <div className="absolute -top-6 -left-6 w-20 h-20 sm:w-28 sm:h-28 z-20 pointer-events-none">
+          <div className="absolute -top-4 -left-2 sm:-top-6 sm:-left-6 w-20 h-20 sm:w-28 sm:h-28 z-20 pointer-events-none">
             <svg viewBox="0 0 100 100" className="w-full h-full">
                 <path d="M0,20 Q0,0 20,0 L50,0 M0,20 L0,50" stroke="url(#goldGradient)" strokeWidth="3" fill="none" strokeLinecap="round"/>
                 <circle cx="20" cy="20" r="4" fill="url(#goldGradient)" />
@@ -37,7 +37,7 @@ export default function VideoSection() {
             </svg>
           </div>
 
-          <div className="absolute -top-6 -right-6 w-20 h-20 sm:w-28 sm:h-28 z-20 rotate-90 pointer-events-none">
+          <div className="absolute -top-4 -right-2 sm:-top-6 sm:-right-6 w-20 h-20 sm:w-28 sm:h-28 z-20 rotate-90 pointer-events-none">
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path d="M0,20 Q0,0 20,0 L50,0 M0,20 L0,50" stroke="url(#goldGradient2)" strokeWidth="3" fill="none" strokeLinecap="round"/>
               <circle cx="20" cy="20" r="4" fill="url(#goldGradient2)" />
@@ -51,7 +51,7 @@ export default function VideoSection() {
             </svg>
           </div>
 
-          <div className="absolute -bottom-6 -left-6 w-20 h-20 sm:w-28 sm:h-28 z-20 -rotate-90 pointer-events-none">
+          <div className="absolute -bottom-4 -left-2 sm:-bottom-6 sm:-left-6 w-20 h-20 sm:w-28 sm:h-28 z-20 -rotate-90 pointer-events-none">
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path d="M0,20 Q0,0 20,0 L50,0 M0,20 L0,50" stroke="url(#goldGradient3)" strokeWidth="3" fill="none" strokeLinecap="round"/>
               <circle cx="20" cy="20" r="4" fill="url(#goldGradient3)" />
@@ -65,7 +65,7 @@ export default function VideoSection() {
             </svg>
           </div>
 
-          <div className="absolute -bottom-6 -right-6 w-20 h-20 sm:w-28 sm:h-28 z-20 rotate-180 pointer-events-none">
+          <div className="absolute -bottom-4 -right-2 sm:-bottom-6 sm:-right-6 w-20 h-20 sm:w-28 sm:h-28 z-20 rotate-180 pointer-events-none">
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path d="M0,20 Q0,0 20,0 L50,0 M0,20 L0,50" stroke="url(#goldGradient4)" strokeWidth="3" fill="none" strokeLinecap="round"/>
               <circle cx="20" cy="20" r="4" fill="url(#goldGradient4)" />
@@ -79,9 +79,9 @@ export default function VideoSection() {
             </svg>
           </div>
 
-          <motion.div className="relative" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}viewport={{ once: true }}>
+          <motion.div className="relative " initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}viewport={{ once: true }}>
 
-          <div className="absolute -inset-2 rounded-xl p-[3px] bg-[linear-gradient(to_right,var(--primary),var(--secondary),var(--tertiary))]">
+          <div className="absolute -inset-0.5 md:-inset-2 rounded-xl p-[3px] bg-[linear-gradient(to_right,var(--primary),var(--secondary),var(--tertiary))]">
             <div className="absolute inset-0 rounded-xl bg-[linear-gradient(to_bottom_right, color-mix(in_srgb,var(--primary)_20%,transparent), transparent, color-mix(in_srgb,var(--tertiary)_20%,transparent))]"/>
           </div>
 
@@ -97,14 +97,12 @@ export default function VideoSection() {
 
                   <motion.div key="cover" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handlePlay} className="relative w-full h-full bg-cover bg-center cursor-pointer group" style={{ backgroundImage: `url(${cover})` }}>
                     <div className="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition-all duration-300" />
-                    <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.95 }}  className="absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-full shadow-2xl z-20 bg-[linear-gradient(135deg,var(--primary),var(--secondary),var(--tertiary))] [box-shadow:0_0_40px_color-mix(in_srgb,var(--secondary)_60%,transparent),0_0_60px_color-mix(in_srgb,var(--primary)_40%,transparent)]">
-                      <FaPlay className="w-8 h-8 ml-1 text-black/90" />
+                    <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.95 }}  className="absolute inset-0 m-auto w-16 h-16 md:w-24 md:h-24 flex items-center justify-center rounded-full shadow-2xl z-20 bg-[linear-gradient(135deg,var(--primary),var(--secondary),var(--tertiary))] [box-shadow:0_0_40px_color-mix(in_srgb,var(--secondary)_60%,transparent),0_0_60px_color-mix(in_srgb,var(--primary)_40%,transparent)]">
+                      <FaPlay className="w-6 h-6 ml-1 md:w-8 md:h-8 text-black/90" />
                     </motion.button>
 
-                    <motion.div className="absolute inset-0 m-auto pointer-events-none" style={{ width: "160px", height: "160px", borderRadius: "9999px", border: "3px solid color-mix(in srgb, var(--primary) 60%, transparent)",}} animate={{ scale: [1, 1.6], opacity: [0.8, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }}/>
-
-                    <div className="absolute bottom-4 right-4 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-lg text-(--text-loop) bg-[linear-gradient(to_right,color-mix(in_srgb,var(--primary)_90%,transparent),color-mix(in_srgb,var(--secondary)_90%,transparent))]">{t('video.duration')}
-                    </div>
+                    <motion.div className="absolute inset-0 m-auto pointer-events-none w-20 h-20 md:w-40 md:h-40 lg:w-48 lg:h-48" style={{ borderRadius: "9999px", border: "2px solid color-mix(in srgb, var(--primary) 60%, transparent)",}} animate={{ scale: [1, 1.6], opacity: [0.8, 0] }}  transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }}/>
+                    <div className="absolute bottom-2 right-2 px-2 py-0.5 sm:bottom-4 sm:right-4 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-lg text-(--text-loop) bg-[linear-gradient(to_right,color-mix(in_srgb,var(--primary)_90%,transparent),color-mix(in_srgb,var(--secondary)_90%,transparent))]">{t('video.duration')}</div>
 
                     <motion.div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent" animate={{ x: ["-100%", "200%"] }} transition={{duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut",}}/>
                   </motion.div>
