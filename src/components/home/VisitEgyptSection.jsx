@@ -23,8 +23,8 @@ export default function VisitEgyptSection() {
               <Icon className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 icon-card" strokeWidth={1}/>
             </motion.div>
 
-            <h3 className="text-2xl font-bold text-text mb-4 relative z-10">{t(`reasonsToVisit.reasons.${index}.title`)}</h3>
-            <p className="text-text-secondary leading-relaxed relative z-10">{t(`reasonsToVisit.reasons.${index}.description`)}</p>
+            <h3 className="relative text-sm xs:text-base sm:text-lg lg:text-xl font-bold mb-1 xs:mb-1 sm:mb-2 text-text group-hover:text-tertiary duration-300">{t(`reasonsToVisit.reasons.${index}.title`)}</h3>
+            <p className="relative text-xs xs:text-sm sm:text-base lg:text-base text-text-secondary leading-relaxed">{t(`reasonsToVisit.reasons.${index}.description`)}</p>
 
             <div className={`left-0 h-1 w-0 rounded-5xl bg-linear-to-r from-(--gradient-from) via-(--gradient-via) to-(--gradient-to) transition-all duration-500 group-hover:w-full`}/>
             </motion.div>
