@@ -46,6 +46,7 @@ export default function CityLoop() {
     if (!track || seqWidth === 0) return;
 
     let lastTimestamp = null;
+    const velocity = 50; 
 
     const animate = (timestamp) => {
       if (lastTimestamp === null) lastTimestamp = timestamp;
@@ -84,4 +85,4 @@ export default function CityLoop() {
       </div>
     </div>
   );
-};
+}

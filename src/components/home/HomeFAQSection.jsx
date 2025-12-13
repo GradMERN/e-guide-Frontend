@@ -25,8 +25,7 @@ const FAQSection = () => {
 
   return (
     <SectionWrapperFull>
-      <TitlesHome icon={BsQuestionSquare} title={t('faq.title')} paragraph={t('faq.subtitle')}
-      />
+      <TitlesHome icon={BsQuestionSquare} title={t('faq.title')} paragraph={t('faq.subtitle')}/>
       <FAQGlobal categories={parsedCategories} />
     </SectionWrapperFull>
   );
