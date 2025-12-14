@@ -4,6 +4,7 @@ import { LuUsers } from "react-icons/lu";
 import { FaAward } from "react-icons/fa";
 import { LuMapPin } from "react-icons/lu";
 import { IoStarOutline } from "react-icons/io5";
+import SectionWrapperFull from "../common/SectionWrapper";
 
 export default function StatsSection() {
   const { t } = useTranslation();
@@ -18,7 +19,7 @@ export default function StatsSection() {
   }));
 
   return (
-    <section className="py-6 lg:py-12 relative border-y border-white/4 mb-6">
+    <SectionWrapperFull className="relative border-y border-white/4" py="py-6 lg:py-12">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           {stats.map((stat, i) => (
@@ -26,6 +27,6 @@ export default function StatsSection() {
           ))}
         </div>
       </div>
-    </section>
+    </SectionWrapperFull>
   );
 }
