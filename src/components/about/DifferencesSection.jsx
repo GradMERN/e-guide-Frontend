@@ -16,7 +16,7 @@ export default function BeforeAfterSection() {
   const comparisons = t("about.beforeAfter.comparisons", { returnObjects: true });
 
   return (
-    <SectionWrapperFull py="py-6 lg:py-12" px="px-4 sm:px-6 lg:px-12">
+    <SectionWrapperFull py="py-10 sm:py-12 md:py-18 lg:py-18" px="px-4 sm:px-6 md:px-12 lg:px-12">
       <div className="max-w-7xl mx-auto">
         <motion.div className="text-center mb-10 sm:mb-14 lg:mb-16 relative z-10 px-4 sm:px-0" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-80px" }}>
           <motion.span className="inline-block text-sm xs:text-base sm:text-lg tracking-[0.25em] sm:tracking-[0.3em] text-text uppercase font-medium mb-3 sm:mb-4" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} viewport={{ once: true }}>

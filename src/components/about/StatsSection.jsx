@@ -19,8 +19,8 @@ export default function StatsSection() {
   }));
 
   return (
-    <SectionWrapperFull className="relative border-y border-white/4" py="py-6 lg:py-12">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <SectionWrapperFull className="relative border-y border-white/4" py="py-10 sm:py-12 md:py-18 lg:py-18" px="px-4 sm:px-6 md:px-12 lg:px-12">
+      <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           {stats.map((stat, i) => (
             <StatCard key={i} stat={stat} index={i} />

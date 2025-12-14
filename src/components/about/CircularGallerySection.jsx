@@ -10,7 +10,7 @@ export default function CircularGallerySection() {
   const { t } = useTranslation();
 
   return (
-    <section className="relative py-6 lg:py-12 overflow-hidden">
+    <section className="relative py-10 sm:py-12 md:py-18 lg:py-18 overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
         <Particles
           particleColors={[ "var(--gradient-via)", "var(--gradient-to)"]}
