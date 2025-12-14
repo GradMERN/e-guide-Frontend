@@ -21,7 +21,7 @@ export default function AboutHeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center text-text overflow-hidden px-6">
+    <section className="relative min-h-screen flex flex-col items-center justify-center text-text overflow-hidden px-4 sm:px-6 lg:px-8">
       <div className="absolute inset-0 w-full h-full">
         <Particles
           particleColors={[
@@ -40,12 +40,12 @@ export default function AboutHeroSection() {
         />
       </div>
 
-      <div className="relative z-10 text-center max-w-4xl mx-auto mt-16">
-        <motion.h1 initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 drop-shadow-lg bg-linear-to-r from-(--gradient-from) via-(--gradient-via) to-(--gradient-to) bg-clip-text text-transparent">
+      <div className="relative z-10 text-center max-w-4xl mx-auto mt-12 sm:mt-16 px-2">
+        <motion.h1 initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-3 md:mb-4 leading-normal sm:leading-[1.15] md:leading-normal bg-tertiary bg-clip-text text-transparent [text-shadow:0_0_60px_rgba(199,161,92,0.5)]">
           {t("about.hero.title")}
         </motion.h1>
 
-        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3 }} className="text-lg md:text-xl text-text-secondary leading-relaxed drop-shadow mb-4">
+        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3 }} className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide mx-auto max-w-3xl px-2">
           {t("about.hero.subtitle")}
         </motion.p>
 
@@ -54,7 +54,7 @@ export default function AboutHeroSection() {
         </motion.p>
 
 
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }} className="text-2xl md:text-3xl font-bold h-10 mb-12">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }} className="text-xl pt-4 sm:text-2xl md:text-3xl font-bold h-10 sm:h-12 mb-10 sm:mb-12">
           <TextType
             key={i18n.language}
             text={t("about.hero.typewriter", { returnObjects: true })}
