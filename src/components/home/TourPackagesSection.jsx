@@ -38,7 +38,7 @@ export default function TourPackagesSection() {
     };
 
   return (
-    <SectionWrapperFull py="py-10 sm:py-10 lg:py-18" px="px-4 sm:px-6 lg:px-12" className="relative">
+    <SectionWrapperFull py="py-10 sm:py-12 md:py-18 lg:py-18" px="px-4 sm:px-6 md:px-12 lg:px-12" className="relative">
       <div className="max-w-7xl mx-auto">
 
         <TitlesHome icon={MdOutlineTour} title={t("tourPackages.title")} paragraph={t("tourPackages.description")}/>

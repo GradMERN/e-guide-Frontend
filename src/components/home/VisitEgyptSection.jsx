@@ -12,7 +12,7 @@ export default function VisitEgyptSection() {
   const reasons = [ GiGreatPyramid, FaSwimmer, FaHeart, FaSun, FaWallet, FaUtensils];
 
   return (
-    <SectionWrapperFull py="py-10 sm:py-10 lg:py-18" px="px-4 sm:px-6 lg:px-12">
+    <SectionWrapperFull py="py-10 sm:py-12 md:py-18 lg:py-18" px="px-4 sm:px-6 md:px-12 lg:px-12">
       <div className="max-w-7xl mx-auto">
         <TitlesHome icon={RiLandscapeAiLine} title={t("reasonsToVisit.title")} paragraph={t("reasonsToVisit.subtitle")}/>
         <motion.div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 lg:gap-8 max-w-7xl mx-auto" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}>

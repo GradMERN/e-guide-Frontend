@@ -18,7 +18,7 @@ export default function VideoSection() {
   const handleClose = () => setIsPlaying(false);
 
   return (
-    <SectionWrapperFull id="video-section" py="py-6 sm:py-6 lg:py-6" px="px-4 sm:px-6 lg:px-12" className="relative mt-12">
+    <SectionWrapperFull id="video-section" py="py-10 sm:py-12 md:py-18 lg:py-18" px="px-4 sm:px-6 md:px-12 lg:px-12" className="relative mt-12">
         <TitlesHome title={t("video.title")}  paragraph={t("video.description")} />
         <div className="relative max-w-[1200px] w-full mx-auto mt-10 sm:mt-14 px-4 md:px-6">
 
