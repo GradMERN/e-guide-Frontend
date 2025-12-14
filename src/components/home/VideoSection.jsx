@@ -18,10 +18,9 @@ export default function VideoSection() {
   const handleClose = () => setIsPlaying(false);
 
   return (
-    <SectionWrapperFull>
-      <div className="py-8 sm:py-12" id="video-section">
+    <SectionWrapperFull id="video-section" py="py-6 sm:py-6 lg:py-6" px="px-4 sm:px-6 lg:px-12" className="relative mt-12">
         <TitlesHome title={t("video.title")}  paragraph={t("video.description")} />
-        <div className="relative max-w-[1200px] w-full mx-auto mt-12 sm:mt-16 px-4 md:px-6">
+        <div className="relative max-w-[1200px] w-full mx-auto mt-10 sm:mt-14 px-4 md:px-6">
 
           <div className="absolute -top-4 -left-2 sm:-top-6 sm:-left-6 w-20 h-20 sm:w-28 sm:h-28 z-20 pointer-events-none">
             <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -111,7 +110,6 @@ export default function VideoSection() {
             </div>
           </motion.div>
         </div>
-      </div>
     </SectionWrapperFull>
   );
 }
