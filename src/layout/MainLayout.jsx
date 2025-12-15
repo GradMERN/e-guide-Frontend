@@ -10,7 +10,7 @@ export default function MainLayout() {
       <ScrollToTop />
       <Navbar />
 
-      <main className="flex-1">
+      <main className="flex-1 pt-(--navbar-height)">
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>

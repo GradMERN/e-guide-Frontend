@@ -125,16 +125,11 @@ export default function Navbar() {
 
   // Update navbar height
   useEffect(() => {
-    const updateHeight = () => {
-      if (navbarRef.current) {
-        const height = navbarRef.current.offsetHeight;
-        dispatch(setNavbarHeight(height));
-      }
-    };
-
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
+    if (navbarRef.current) {
+      const height = navbarRef.current.offsetHeight;
+      document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      dispatch(setNavbarHeight(height));
+    }
   }, [dispatch]);
 
   const handleLogout = (redirect = "/login") => {
@@ -414,14 +409,8 @@ export default function Navbar() {
         dir="ltr"
         ref={navbarRef}
         className={`
-          fixed top-0 left-0 right-0 z-[100] text-left!
-          ${
-            isMobile
-              ? "translate-y-0"
-              : showNavbar
-              ? "translate-y-0"
-              : "-translate-y-full"
-          }
+          fixed top-0 left-0 right-0 z-100 text-left
+          ${isMobile ? "translate-y-0" : showNavbar ? "translate-y-0" : "-translate-y-full"}
           transition-transform duration-500 ease-out
         `}
       >
