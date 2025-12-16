@@ -11,6 +11,15 @@ export const userService = {
     return response.data;
   },
 
+  async uploadProfilePicture(formData) {
+    const response = await api.post("/user/upload-avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
   async changePassword(passwordData) {
     const response = await api.put("/user/change-password", passwordData);
     return response.data;

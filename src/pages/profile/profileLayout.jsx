@@ -5,6 +5,7 @@ import { useAuth as useAuthStore } from "../../store/hooks";
 import { useAuth as useAuthContext } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { FaHome, FaMoon, FaSun, FaGlobe } from "react-icons/fa";
+import { getImageUrl } from "../../utils/imageUtils";
 
 const ProfileLayout = () => {
   const { user } = useAuthStore();
@@ -107,8 +108,21 @@ const ProfileLayout = () => {
                 isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
               } rounded-lg`}
             >
-              <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#C7A15C] to-[#E2C784] flex items-center justify-center text-black font-bold text-sm">
-                {user?.firstName?.charAt(0)}
+              <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#C7A15C] to-[#E2C784] flex items-center justify-center text-black font-bold text-sm overflow-hidden">
+                {getImageUrl(user?.avatar) ? (
+                  <img
+                    src={getImageUrl(user.avatar)}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src =
+                        "https://via.placeholder.com/150?text=Error";
+                    }}
+                  />
+                ) : (
+                  user?.firstName?.charAt(0)
+                )}
               </div>
               <span
                 className={`${textColor} text-sm font-medium hidden md:block`}

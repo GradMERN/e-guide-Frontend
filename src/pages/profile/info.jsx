@@ -1,10 +1,66 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../store/hooks";
+import { useAuth as useAuthContext } from "../../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../store/slices/authSlice";
+import userService from "../../apis/userService";
+import { toast } from "react-toastify";
+import { getImageUrl } from "../../utils/imageUtils";
+
+const countryCities = {
+  USA: ["New York", "Los Angeles", "Chicago", "Houston"],
+  Canada: ["Toronto", "Vancouver", "Montreal", "Calgary"],
+  Egypt: ["Cairo", "Alexandria", "Giza", "Luxor"],
+  UK: ["London", "Manchester", "Birmingham", "Liverpool"],
+};
 
 const ProfilePhoto = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuthContext();
+  const dispatch = useDispatch();
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type and size (e.g., max 5MB, images only)
+    if (!file.type.startsWith("image/")) {
+      toast.error(t("invalidFileType") || "Please upload an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(t("fileTooLarge") || "File size should be less than 5MB");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      setUploading(true);
+      const response = await userService.uploadProfilePicture(formData);
+
+      // Update user in context and redux
+      // Assuming response.data contains the updated user object or the avatar url
+      // Adjust based on actual API response structure.
+      // If response is the user object:
+      const updatedUser = response.data || response;
+
+      updateUser(updatedUser);
+      const token = localStorage.getItem("token");
+      dispatch(loginSuccess({ user: updatedUser, token }));
+
+      toast.success(
+        t("photoUpdatedSuccessfully") || "Profile photo updated successfully"
+      );
+    } catch (error) {
+      console.error("Failed to upload photo:", error);
+      toast.error(error.response?.data?.message || "Failed to upload photo");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div
@@ -17,20 +73,38 @@ const ProfilePhoto = () => {
       <div className="flex items-center space-x-4 space-y-5 flex-col sm:flex-row">
         <div className="relative">
           <div
-            className="w-20 h-20 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2"
+            className="w-20 h-20 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2 overflow-hidden"
             style={{
               borderColor: "var(--primary)",
-              background: "linear-gradient(to right, #C7A15C, #E2C784)",
+              background: getImageUrl(user?.avatar)
+                ? "transparent"
+                : "linear-gradient(to right, #C7A15C, #E2C784)",
             }}
           >
-            {user?.firstName?.charAt(0) || "U"}
+            {getImageUrl(user?.avatar) ? (
+              <img
+                src={getImageUrl(user.avatar)}
+                alt="Profile"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://via.placeholder.com/150?text=Error"; // Fallback
+                }}
+              />
+            ) : (
+              user?.firstName?.charAt(0) || "U"
+            )}
           </div>
-          <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 cursor-pointer hover:bg-gray-600">
+          {/* Edit Icon Overlay */}
+          <label
+            htmlFor="photo-upload"
+            className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 cursor-pointer hover:bg-gray-600 transition-colors"
+          >
             <svg
               className="w-4 h-4"
               fill="none"
               stroke="currentColor"
-              style={{ color: "var(--text)" }}
+              style={{ color: "white" }}
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -47,19 +121,29 @@ const ProfilePhoto = () => {
                 d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
               ></path>
             </svg>
-          </div>
+          </label>
+          <input
+            type="file"
+            id="photo-upload"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
         </div>
         <div>
-          <button
-            type="button"
-            className="py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
+          <label
+            htmlFor="photo-upload"
+            className={`py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out cursor-pointer inline-block ${
+              uploading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             style={{
               background: "var(--button-bg)",
               color: "var(--text-button)",
             }}
           >
-            {t("uploadNewPhoto")}
-          </button>
+            {uploading ? "Uploading..." : t("uploadNewPhoto")}
+          </label>
           <p
             className="text-xs text-center mt-2"
             style={{ color: "var(--text-muted)" }}
@@ -72,9 +156,8 @@ const ProfilePhoto = () => {
   );
 };
 
-const BasicDetails = () => {
+const BasicDetails = ({ formData, handleChange }) => {
   const { t } = useTranslation();
-  const { user } = useAuth();
 
   return (
     <div
@@ -91,7 +174,8 @@ const BasicDetails = () => {
             type="text"
             id="firstName"
             name="firstName"
-            defaultValue={user?.firstName || ""}
+            value={formData.firstName || ""}
+            onChange={handleChange}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -108,7 +192,8 @@ const BasicDetails = () => {
             type="text"
             id="lastName"
             name="lastName"
-            defaultValue={user?.lastName || ""}
+            value={formData.lastName || ""}
+            onChange={handleChange}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -125,6 +210,8 @@ const BasicDetails = () => {
             type="number"
             id="age"
             name="age"
+            value={formData.age || ""}
+            onChange={handleChange}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -134,14 +221,15 @@ const BasicDetails = () => {
           />
         </div>
         <div>
-          <label htmlFor="number" className="block text-sm font-medium mb-2">
+          <label htmlFor="phone" className="block text-sm font-medium mb-2">
             {t("number")}
           </label>
           <input
             type="tel"
-            id="number"
-            name="number"
-            defaultValue={user?.phone || ""}
+            id="phone"
+            name="phone"
+            value={formData.phone || ""}
+            onChange={handleChange}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -155,38 +243,16 @@ const BasicDetails = () => {
   );
 };
 
-///////////
-
-const countryCities = {
-  USA: ["New York", "Los Angeles", "Chicago", "Houston"],
-  Canada: ["Toronto", "Vancouver", "Montreal", "Calgary"],
-  Egypt: ["Cairo", "Alexandria", "Giza", "Luxor"],
-  UK: ["London", "Manchester", "Birmingham", "Liverpool"],
-};
-
-const LocationInfo = () => {
+const LocationInfo = ({ formData, handleChange }) => {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const [country, setCountry] = useState(user?.country || "");
-  const [city, setCity] = useState(user?.city || "");
   const [availableCities, setAvailableCities] = useState([]);
 
   useEffect(() => {
-    if (user?.country) {
-      setCountry(user.country);
-      setAvailableCities(countryCities[user.country] || []);
+    if (formData.country) {
+      setAvailableCities(countryCities[formData.country] || []);
     }
-    if (user?.city) {
-      setCity(user.city);
-    }
-  }, [user]);
+  }, [formData.country]);
 
-  const handleCountryChange = (e) => {
-    const selectedCountry = e.target.value;
-    setCountry(selectedCountry);
-    setCity(""); // Reset city when country changes
-    setAvailableCities(countryCities[selectedCountry] || []);
-  };
   return (
     <div
       className="p-6 rounded-lg shadow-md"
@@ -201,8 +267,8 @@ const LocationInfo = () => {
           <select
             id="country"
             name="country"
-            value={country}
-            onChange={handleCountryChange}
+            value={formData.country || ""}
+            onChange={handleChange}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
@@ -240,15 +306,15 @@ const LocationInfo = () => {
           <select
             id="city"
             name="city"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            value={formData.city || ""}
+            onChange={handleChange}
             className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 disabled:opacity-50"
             style={{
               backgroundColor: "var(--surface)",
               color: "var(--text)",
               "--tw-ring-color": "var(--primary)",
             }}
-            disabled={!country}
+            disabled={!formData.country}
           >
             <option
               value=""
@@ -278,18 +344,77 @@ const LocationInfo = () => {
   );
 };
 
-function Address() {
+function Address({ formData, handleChange }) {
   return (
-    // <div className="p-4 sm:p-6 md:p-8  rounded-2xl min-h-screen">
     <div className="space-y-8">
-      <LocationInfo />
+      <LocationInfo formData={formData} handleChange={handleChange} />
     </div>
-    // </div>
   );
 }
 
 export default function Info() {
   const { t } = useTranslation();
+  const { user, updateUser } = useAuthContext();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    age: "",
+    phone: "",
+    country: "",
+    city: "",
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        age: user.age || "",
+        phone: user.phone || "",
+        country: user.country || "",
+        city: user.city || "",
+      });
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const newData = { ...prev, [name]: value };
+      if (name === "country") {
+        newData.city = ""; // Reset city when country changes
+      }
+      return newData;
+    });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const updatedUser = await userService.updateProfile(formData);
+
+      // Update AuthContext
+      updateUser(updatedUser.data || updatedUser);
+
+      // Update Redux Store
+      // Assuming we have the token stored or we can get it
+      const token = localStorage.getItem("token");
+      dispatch(loginSuccess({ user: updatedUser.data || updatedUser, token }));
+
+      toast.success(
+        t("profileUpdatedSuccessfully") || "Profile updated successfully"
+      );
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      toast.error(error.response?.data?.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       className="p-4 sm:p-6 md:p-8  rounded-2xl min-h-screen"
@@ -299,21 +424,23 @@ export default function Info() {
         {t("personalInformation")}
       </h2>
       <div className="space-y-8">
-        <ProfilePhoto />
-        <BasicDetails />
-        <Address />
+        <ProfilePhoto user={user} />
+        <BasicDetails formData={formData} handleChange={handleChange} />
+        <Address formData={formData} handleChange={handleChange} />
       </div>
 
       <div className="mt-8">
         <button
           type="button"
-          className="w-full py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
+          onClick={handleSubmit}
+          disabled={loading}
+          className="w-full py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             background: "var(--button-bg)",
             color: "var(--text-button)",
           }}
         >
-          {t("saveChanges")}
+          {loading ? "Saving..." : t("saveChanges")}
         </button>
       </div>
     </div>

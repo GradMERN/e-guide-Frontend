@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../store/hooks";
+import { getImageUrl } from "../../utils/imageUtils";
 
 const SideBar = () => {
   const location = useLocation();
@@ -154,13 +155,27 @@ const SideBar = () => {
         <nav>
           <div className="flex items-center justify-center md:justify-start md:p-2 mb-6">
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-black font-bold text-lg flex-shrink-0 border-2"
+              className="w-12 h-12 rounded-full flex items-center justify-center text-black font-bold text-lg flex-shrink-0 border-2 overflow-hidden"
               style={{
                 borderColor: "var(--primary)",
-                background: "linear-gradient(to right, #C7A15C, #E2C784)",
+                background: getImageUrl(user?.avatar)
+                  ? "transparent"
+                  : "linear-gradient(to right, #C7A15C, #E2C784)",
               }}
             >
-              {user?.firstName?.charAt(0) || "U"}
+              {getImageUrl(user?.avatar) ? (
+                <img
+                  src={getImageUrl(user.avatar)}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150?text=Error";
+                  }}
+                />
+              ) : (
+                user?.firstName?.charAt(0) || "U"
+              )}
             </div>
             <div className="mx-3 hidden md:block">
               <h3

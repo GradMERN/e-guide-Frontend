@@ -2,65 +2,170 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "../../utils/imageUtils";
+
+const ImageModal = ({ isOpen, onClose, imageUrl }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-4xl max-h-[90vh] w-full flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+        >
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+        <img
+          src={imageUrl}
+          alt="Profile Fullscreen"
+          className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+        />
+      </div>
+    </div>
+  );
+};
 
 const UserProfileCard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const avatarUrl = getImageUrl(user?.avatar);
 
   return (
-    <div
-      className="p-6 rounded-lg shadow-md flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6"
-      style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}
-    >
-      {/* Profile Info */}
-      <div className="flex flex-col sm:flex-row items-center sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto text-center sm:text-left">
-        <div className="relative mx-auto md:mx-0">
-          <div
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2"
+    <>
+      <div
+        className="p-6 rounded-lg shadow-md flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6"
+        style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}
+      >
+        {/* Profile Info */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto text-center sm:text-left">
+          <div className="relative mx-auto md:mx-0">
+            <div
+              className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2 overflow-hidden ${
+                avatarUrl
+                  ? "cursor-pointer hover:opacity-90 transition-opacity"
+                  : ""
+              }`}
+              style={{
+                borderColor: "var(--primary)",
+                background: avatarUrl
+                  ? "transparent"
+                  : "linear-gradient(to right, #C7A15C, #E2C784)",
+              }}
+              onClick={() => avatarUrl && setIsModalOpen(true)}
+            >
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150?text=Error";
+                  }}
+                />
+              ) : (
+                user?.firstName?.charAt(0) || "U"
+              )}
+            </div>
+            <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 cursor-pointer hover:bg-gray-600">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                style={{ color: "var(--text)" }}
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                ></path>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <div className="w-full mx-2 sm:w-auto">
+            <h3 className="text-xl font-bold">
+              {user?.firstName && user?.lastName
+                ? `${user.firstName} ${user.lastName}`
+                : user?.name || "User"}
+            </h3>
+            <div
+              className="flex items-center justify-center sm:justify-start text-sm mt-1"
+              style={{ color: "var(--text-muted)" }}
+            >
+              <svg
+                className="w-4 h-4 mr-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                ></path>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              <span>
+                {user?.city && user?.country
+                  ? `${user.city}, ${user.country}`
+                  : user?.address || user?.email || ""}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col items-center w-full lg:w-auto gap-3">
+          <button
+            type="button"
+            onClick={() => navigate("/profile/info")}
+            className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
             style={{
-              borderColor: "var(--primary)",
-              background: "linear-gradient(to right, #C7A15C, #E2C784)",
+              background: "var(--button-bg)",
+              color: "var(--text-button)",
             }}
           >
-            {user?.firstName?.charAt(0) || "U"}
-          </div>
-          <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 cursor-pointer hover:bg-gray-600">
             <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              style={{ color: "var(--text)" }}
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-              ></path>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-              ></path>
-            </svg>
-          </div>
-        </div>
-        <div className="w-full mx-2 sm:w-auto">
-          <h3 className="text-xl font-bold">
-            {user?.firstName && user?.lastName
-              ? `${user.firstName} ${user.lastName}`
-              : user?.name || "User"}
-          </h3>
-          <div
-            className="flex items-center justify-center sm:justify-start text-sm mt-1"
-            style={{ color: "var(--text-muted)" }}
-          >
-            <svg
-              className="w-4 h-4 mr-1"
+              className="w-4 h-4 mr-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -70,78 +175,44 @@ const UserProfileCard = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"
               ></path>
+            </svg>
+            {t("editProfile")}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/profile/security")}
+            className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
+            style={{
+              backgroundColor: "var(--secondary)",
+              color: "var(--text-button)",
+            }}
+          >
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                d="M12.3212 10.6852L4 19L6 21M7 16L9 18M20 7.5C20 9.98528 17.9853 12 15.5 12C13.0147 12 11 9.98528 11 7.5C11 5.01472 13.0147 3 15.5 3C17.9853 3 20 5.01472 20 7.5Z"
               ></path>
             </svg>
-            <span>
-              {user?.city && user?.country
-                ? `${user.city}, ${user.country}`
-                : user?.address || user?.email || ""}
-            </span>
-          </div>
+            {t("changePassword")}
+          </button>
         </div>
       </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-col items-center w-full lg:w-auto gap-3">
-        <button
-          type="button"
-          onClick={() => navigate("/profile/info")}
-          className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
-          style={{
-            background: "var(--button-bg)",
-            color: "var(--text-button)",
-          }}
-        >
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"
-            ></path>
-          </svg>
-          {t("editProfile")}
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("/profile/security")}
-          className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
-          style={{
-            backgroundColor: "var(--secondary)",
-            color: "var(--text-button)",
-          }}
-        >
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12.3212 10.6852L4 19L6 21M7 16L9 18M20 7.5C20 9.98528 17.9853 12 15.5 12C13.0147 12 11 9.98528 11 7.5C11 5.01472 13.0147 3 15.5 3C17.9853 3 20 5.01472 20 7.5Z"
-            ></path>
-          </svg>
-          {t("changePassword")}
-        </button>
-      </div>
-    </div>
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        imageUrl={avatarUrl}
+      />
+    </>
   );
 };
 
