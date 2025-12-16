@@ -12,11 +12,11 @@ export default function ValueCard({ value, index }) {
         </div>
       </div>
 
-      <h3 className="text-2xl lg:text-3xl font-semibold mb-4 smooth-text text-primary group-hover:text-tertiary transition-colors duration-500">
+      <h3 className="relative text-sm xs:text-base sm:text-lg lg:text-xl font-bold mb-1 xs:mb-1 sm:mb-2 text-text group-hover:text-tertiary duration-500">
         {value.title}
       </h3>
 
-      <p className="text-text text-base lg:text-lg leading-relaxed smooth-text">
+      <p className="relative text-xs xs:text-sm sm:text-base lg:text-base text-text-secondary leading-relaxed">
         {value.description}
       </p>
 

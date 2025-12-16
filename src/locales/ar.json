@@ -33,6 +33,27 @@
   "selectCountry": "اختر دولة",
   "selectCity": "اختر مدينة",
   "saveChanges": "حفظ التغييرات",
+  "personalDetails": "البيانات الشخصية",
+  "phone": "الهاتف",
+  "removePhoto": "إزالة",
+  "uploadFailed": "فشل تحميل الصورة",
+  "updateFailed": "فشل تحديث الملف الشخصي",
+  "deleteFailed": "فشل الحذف",
+  "invalidFileType": "يرجى اختيار صورة صالحة (JPEG, PNG, GIF, WEBP)",
+  "fileTooLarge": "حجم الملف يجب أن يكون أقل من 5 ميجابايت",
+  "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+  "activeTours": "الجولات النشطة",
+  "pendingEnrollments": "قيد الانتظار",
+  "myReviews": "تقييماتي",
+  "recentEnrollments": "التسجيلات الأخيرة",
+  "noEnrollmentsYet": "لم تسجل في أي جولات بعد.",
+  "noReviewsYet": "لم تكتب أي تقييمات بعد.",
+  "saving": "جاري الحفظ...",
+  "deactivateAccount": "إلغاء تفعيل الحساب",
+  "deactivateWarning": "هذا الإجراء سيلغي تفعيل حسابك. يمكنك إعادة تفعيله عن طريق تسجيل الدخول مرة أخرى.",
+  "typeDeactivate": "اكتب 'DEACTIVATE' للتأكيد",
+  "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+  "accountDeactivated": "تم إلغاء تفعيل الحساب بنجاح",
   "travelPreferences": "تفضيلات السفر",
   "preferredTravelStyle": "نمط السفر المفضل",
   "preferredLanguage": "اللغة المفضلة",
@@ -49,6 +70,18 @@
   "currentPassword": "كلمة المرور الحالية",
   "newPassword": "كلمة المرور الجديدة",
   "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+  "setPassword": "تعيين كلمة المرور",
+  "passwordSet": "تم تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور.",
+  "googleSetPasswordNote": "لقد سجلت الدخول بحساب Google. تعيين كلمة مرور يتيح لك أيضاً تسجيل الدخول بالبريد الإلكتروني وكلمة المرور.",
+  "googleAccountWithPassword": "حساب Google مع كلمة مرور مفعلة",
+  "passwordRequirements": "الحد الأدنى 12 حرفاً، حرفان كبيران، حرفان صغيران، رقمان، رمزان خاصان",
+  "passwordsMismatch": "كلمات المرور غير متطابقة",
+  "passwordMinLength": "12 حرفاً على الأقل",
+  "passwordLowercase": "حرفان صغيران على الأقل",
+  "passwordUppercase": "حرفان كبيران على الأقل",
+  "passwordNumbers": "رقمان على الأقل",
+  "passwordSpecialChars": "رمزان خاصان على الأقل",
+  "passwordChangeFailed": "فشل تغيير كلمة المرور",
   "cancel": "إلغاء",
   "adventure": "مغامرة",
   "relaxation": "استرخاء",
@@ -66,7 +99,48 @@
     "retry": "إعادة المحاولة",
     "date": "التاريخ",
     "amount": "المبلغ",
-    "status": "الحالة"
+    "status": "الحالة",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "confirm": "تأكيد",
+    "next": "التالي",
+    "prev": "السابق",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "country": "الدولة",
+    "city": "المدينة",
+    "noData": "لا توجد بيانات",
+    "statuses": {
+      "pending": "قيد الانتظار",
+      "active": "نشط",
+      "started": "بدأ",
+      "completed": "مكتمل",
+      "paid": "مدفوع",
+      "failed": "فشل",
+      "refunded": "تم الاسترداد"
+    }
+  },
+  "reviews": {
+    "title": "التقييمات",
+    "count": "تقييم",
+    "loading": "جاري تحميل التقييمات...",
+    "noReviews": "لا توجد تقييمات بعد.",
+    "writeReview": "اكتب تقييماً",
+    "placeholder": "اكتب تقييمك...",
+    "setRating": "تعيين التقييم",
+    "post": "نشر التقييم",
+    "posting": "جاري النشر...",
+    "posted": "تم نشر التقييم بنجاح!",
+    "postFailed": "فشل نشر التقييم",
+    "noPermission": "ليس لديك صلاحية لنشر تقييم",
+    "alreadyReviewed": "لقد قمت بتقييم هذه الجولة مسبقاً",
+    "emptyComment": "يرجى كتابة تعليق قبل النشر",
+    "enrollToReview": "تحتاج إلى اشتراك نشط لترك تقييم."
   },
   "theme": {
     "light": "التبديل إلى الوضع الفاتح",
@@ -83,7 +157,7 @@
     "totalUsers": "إجمالي المستخدمين",
     "totalGuides": "إجمالي المرشدين",
     "totalTours": "إجمالي الجولات",
-    "totalRevenue": "إجمالي الإيرادات (جنيه مصري)",
+    "totalRevenue": "إيرادات المنصة",
     "growthTrend": "اتجاه النمو",
     "userDistribution": "توزيع المستخدمين",
     "recentTours": "الجولات الحديثة",
@@ -100,12 +174,29 @@
     "edit": "تعديل",
     "delete": "حذف",
     "cancel": "إلغاء",
+    "createPlace": "إنشاء مكان",
+    "placesList": "قائمة الأماكن",
+    "create": "إنشاء",
     "tours": {
       "title": "إدارة الجولات",
+      "subtitle": "عرض وإدارة جميع الجولات على المنصة",
       "add": "إضافة جولة",
       "edit": "تعديل الجولة",
       "addNew": "إضافة جولة جديدة",
       "name": "اسم الجولة",
+      "tour": "الجولة",
+      "guide": "المرشد",
+      "location": "الموقع",
+      "stats": "الإحصائيات",
+      "items": "عناصر",
+      "total": "الإجمالي",
+      "allTours": "جميع الجولات",
+      "published": "منشورة",
+      "drafts": "مسودات",
+      "draft": "مسودة",
+      "statusHeader": "الحالة",
+      "confirmDelete": "هل تريد فعلاً حذف",
+      "deleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
       "city": "المدينة",
       "price": "السعر",
       "duration": "المدة (ساعات)",
@@ -121,8 +212,7 @@
       "update": "تحديث الجولة",
       "loadError": "فشل تحميل الجولات",
       "saveError": "فشل حفظ الجولة",
-      "deleteError": "فشل حذف الجولة",
-      "confirmDelete": "هل تريد فعلاً حذف هذه الجولة؟"
+      "deleteError": "فشل حذف الجولة"
     },
     "currency": "جنيه مصري",
     "users": {
@@ -177,7 +267,7 @@
     "showAll": "عرض الكل",
     "liveMode": "الوضع المباشر",
     "liveNone": "لا توجد عناصر قريبة",
-    "myOverview": "نظرة عام عليّ",
+    "myOverview": "نظرة عامة عليّ",
     "totalTours": "إجمالي الجولات",
     "activeTours": "الجولات النشطة",
     "totalBookings": "إجمالي الحجوزات",
@@ -192,55 +282,121 @@
     "recentEnrollments": "المشتركين الأخيرين",
     "refreshData": "تحديث البيانات",
     "loadingDashboard": "جاري تحميل لوحة التحكم...",
+    "noTours": "لا توجد جولات بعد",
+    "noEnrollments": "لا توجد مشتركين بعد",
+    "noItems": "لا توجد عناصر متاحة",
+    "preview": "معاينة الجولة",
+    "refreshing": "جاري التحديث...",
+    "refreshNearby": "تحديث القريبة",
+    "loadingItems": "جاري تحميل العناصر...",
+    "findingNearby": "جاري البحث عن العناصر القريبة...",
+    "script": "النص",
+    "currency": "جنيه مصري",
+    "translation": {
+      "selectLanguage": "اختر لغتك...",
+      "translateTo": "ترجم إلى",
+      "translating": "جاري الترجمة...",
+      "translated": "مترجم",
+      "originalLanguage": "الأصلي",
+      "showOriginal": "عرض الأصل",
+      "translationFailed": "فشلت الترجمة",
+      "autoDetect": "اكتشاف تلقائي"
+    },
+    "ai": {
+      "voiceToText": "صوت إلى نص",
+      "textToSpeech": "معاينة الصوت",
+      "stopRecording": "إيقاف",
+      "stopSpeaking": "إيقاف",
+      "listening": "جاري الاستماع... تحدث الآن",
+      "noTextToSpeak": "لا يوجد نص للنطق",
+      "sttNotSupported": "التعرف على الكلام غير مدعوم في هذا المتصفح",
+      "sttError": "فشل التعرف على الكلام",
+      "ttsTooltip": "قراءة النص بصوت عالٍ",
+      "sttTooltip": "تحويل الصوت إلى نص",
+      "listenToScript": "استمع إلى النص",
+      "listen": "استمع",
+      "preview": "معاينة",
+      "generateAudio": "إنشاء صوت",
+      "generating": "جاري الإنشاء...",
+      "generateAudioTooltip": "إنشاء ملف صوتي من النص",
+      "audioGenerated": "تم إنشاء الصوت بنجاح!",
+      "audioGenerationFailed": "فشل في إنشاء الصوت. حاول مرة أخرى.",
+      "recordVoice": "تسجيل صوت",
+      "recordingStarted": "بدأ التسجيل. تحدث الآن...",
+      "recordingComplete": "اكتمل التسجيل! الصوت والنسخ جاهزان.",
+      "recordingError": "خطأ في حفظ التسجيل",
+      "microphoneError": "لا يمكن الوصول إلى الميكروفون",
+      "liveTranscription": "النسخ المباشر",
+      "selectAudio": "اختيار صوت",
+      "existingAudio": "الصوت الحالي",
+      "audioPreview": "معاينة الصوت",
+      "previewDescription": "معاينة ملف الصوت",
+      "translatedAudio": "الصوت المترجم",
+      "tts": "نص لصوت",
+      "playing": "جاري التشغيل...",
+      "ready": "جاهز"
+    },
+    "sidebar": {
+      "title": "لوحة المرشد",
+      "dashboard": "لوحة التحكم",
+      "myTours": "جولاتي",
+      "analytics": "التحليلات",
+      "logout": "تسجيل الخروج",
+      "confirmLogout": "تأكيد تسجيل الخروج",
+      "confirmLogoutMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
+    },
+    "analytics": {
+      "title": "التحليلات",
+      "subtitle": "تتبع أداء جولاتك ونموها",
+      "overview": "نظرة عامة",
+      "bookingAnalysis": "تحليل الحجوزات",
+      "revenueAnalysis": "تحليل الإيرادات",
+      "tourPerformance": "أداء الجولة",
+      "ratingTrend": "اتجاه التقييم",
+      "dailyViews": "المشاهدات اليومية والمشتركين",
+      "monthlyComparison": "مقارنة شهرية",
+      "trafficSource": "توزيع مصادر الحركة",
+      "totalViews": "إجمالي المشاهدات",
+      "conversionRate": "معدل التحويل",
+      "averageBookingValue": "متوسط قيمة الحجز",
+      "topPerformingTour": "أفضل جولة أداء",
+      "noData": "لا توجد بيانات متاحة",
+      "noDataTitle": "لا توجد بيانات تحليلية بعد",
+      "noDataMessage": "ابدأ في نشر الجولات والحصول على التسجيلات لرؤية التحليلات هنا.",
+      "columns": {
+        "tourName": "اسم الجولة",
+        "views": "المشاهدات",
+        "enrollments": "المشتركين",
+        "conversion": "التحويل",
+        "revenue": "الإيرادات"
+      }
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "description": "إدارة ملفك الشخصي وإعدادات حسابك",
+      "personalInfo": "المعلومات الشخصية",
+      "contactInfo": "معلومات الاتصال",
+      "emailReadOnly": "لا يمكن تغيير البريد الإلكتروني",
+      "accountInfo": "معلومات الحساب",
+      "joinDate": "عضو منذ",
+      "accountStatus": "الحالة",
+      "verificationStatus": "التحقق من البريد الإلكتروني",
+      "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+      "profileUpdateFailed": "فشل في تحديث الملف الشخصي",
+      "loadingProfile": "جاري تحميل الملف الشخصي..."
+    },
     "tours": {
-      "title": "جولاتي",
+      "title": "إدارة الجولات",
+      "add": "إضافة جولة",
       "addItem": "إضافة عنصر",
       "addTour": "إنشاء جولة",
-      "edit": "تعديل الجولة",
-      "addNew": "إضافة جولة جديدة",
-      "name": "اسم الجولة",
-      "manageAndTrack": "إدارة جولاتك وتتبع الأداء",
-      "addPlace": "إضافة مكان",
-      "states": {
-        "published": "منشور",
-        "empty": "فارغ",
-        "notPublished": "غير منشور"
-      },
-      "errors": {
-        "noPublishedItems": "لا توجد عناصر منشورة",
-        "loadFailed": "فشل تحميل الجولة"
-      },
-      "titles": {
-        "edit": "تعديل",
-        "delete": "حذف",
-        "confirmDeleteMessage": "هل تريد فعلاً حذف الجولة \"{{name}}\"؟ هذا الإجراء لا يمكن التراجع عنه.",
-        "messages": {
-          "added": "تم إضافة الجولة بنجاح!",
-          "updated": "تم تحديث الجولة بنجاح!",
-          "deleted": "تم حذف الجولة بنجاح!",
-          "galleryUpdated": "تم تحديث صور المعرض بنجاح!"
-        },
-        "validation": {
-          "nameLength": "يجب أن يكون اسم الجولة بين 3 و 100 حرفًا",
-          "descriptionLength": "يجب أن تكون الوصف بين 10 و 2000 حرفًا",
-          "priceMin": "يجب أن تكون أقل قيمة للسعر هي 0.99",
-          "selectPlace": "يرجى اختيار مكان/موقع"
-        },
-        "errors": {
-          "noPublishedItems": "لا توجد عناصر منشورة",
-          "galleryUpdateFailed": "فشل تحديث صور المعرض.",
-          "deleteFailed": "فشل حذف الجولة"
-        },
-        "updating": "جارٍ التحديث...",
-        "unpublish": "إلغاء نشر الجولة",
-        "publish": "نشر الجولة",
-        "manageWaypoints": "إدارة مسارات الجولة",
-        "updateGalleryImages": "تحديث صور المعرض"
-      },
-      "waypointsTitle": "المسارات — {{name}}",
       "edit": "تعديل",
       "editTour": "تعديل الجولة",
-      "delete": "حذف",
+      "addNew": "إضافة جولة جديدة",
+      "name": "اسم الجولة",
+      "manageAndTrack": "إدارة وتتبع جميع جولاتك",
+      "addPlace": "إضافة مكان",
+      "searchPlaceholder": "البحث في الجولات...",
       "city": "المدينة",
       "place": "المكان/الموقع",
       "noPlacesAvailable": "لا تتوفر أماكن",
@@ -257,7 +413,6 @@
       "highlights": "الميزات",
       "itinerary": "البرنامج الزمني",
       "availability": "التوفر",
-      "searchPlaceholder": "البحث عن جولات حسب الاسم أو المكان...",
       "notFound": "لم يتم العثور على جولات تطابق البحث",
       "empty": "لا توجد جولات بعد",
       "create": "إنشاء جولة",
@@ -267,56 +422,176 @@
       "deleteError": "فشل حذف الجولة",
       "confirmDelete": "هل تريد فعلاً حذف هذه الجولة؟",
       "status": "الحالة",
-      "places": {
-        "validation": {
-          "missingCountryCity": "يرجى توفير كل من الدولة والمدينة"
-        },
-        "added": "تم إضافة المكان بنجاح!",
-        "addFailed": "فشل إضافة المكان. تحقق من وحدة التحكم للمزيد من التفاصيل."
-      },
       "active": "نشطة",
       "inactive": "غير نشطة",
       "bookings": "الحجوزات",
       "views": "المشاهدات",
-      "revenue": "الإيرادات"
-    },
-    "analytics": {
-      "title": "التحليلات",
-      "overview": "نظرة عامة",
-      "bookingAnalysis": "تحليل الحجوزات",
-      "revenueAnalysis": "تحليل الإيرادات",
-      "tourPerformance": "أداء الجولة",
-      "ratingTrend": "اتجاه التقييم",
-      "subtitle": "تتبع أداء وج نمو جولاتك",
-      "dailyViews": "المشاهدات اليومية والمشتركين",
-      "monthlyComparison": "مقارنة شهرية",
-      "trafficSource": "توزيع مصادر الحركة",
-      "columns": {
-        "tourName": "اسم الجولة",
-        "views": "المشاهدات",
-        "enrollments": "المشتركين",
-        "conversion": "التحويل",
-        "revenue": "الإيرادات"
+      "revenue": "الإيرادات",
+      "waypointsTitle": "المسارات — {{name}}",
+      "delete": "حذف",
+      "states": {
+        "published": "منشور",
+        "notPublished": "غير منشور",
+        "empty": "فارغ"
       },
-      "totalViews": "إجمالي المشاهدات",
-      "conversionRate": "معدل التحويل",
-      "averageBookingValue": "متوسط قيمة الحجز",
-      "topPerformingTour": "أفضل جولة أداء",
-      "noData": "لا توجد بيانات متاحة"
+      "titles": {
+        "noItems": "لا توجد عناصر بعد",
+        "noPublishedItems": "لا توجد عناصر منشورة",
+        "updating": "جاري التحديث...",
+        "unpublish": "إلغاء نشر الجولة",
+        "publish": "نشر الجولة",
+        "manageWaypoints": "إدارة النقاط الطريق",
+        "updateGalleryImages": "تحديث صور المعرض"
+      },
+      "messages": {
+        "added": "تم إضافة الجولة بنجاح!",
+        "updated": "تم تحديث الجولة بنجاح!",
+        "deleted": "تم حذف الجولة بنجاح!",
+        "galleryUpdated": "تم تحديث صور المعرض بنجاح!"
+      },
+      "errors": {
+        "deleteFailed": "فشل في حذف الجولة",
+        "loadFailed": "فشل تحميل الجولة",
+        "galleryUpdateFailed": "فشل في تحديث صور المعرض.",
+        "noPublishedItems": "لا توجد عناصر منشورة"
+      },
+      "validation": {
+        "nameLength": "يجب أن يكون اسم الجولة بين 3 و 100 حرف",
+        "descriptionLength": "يجب أن يكون الوصف بين 10 و 2000 حرف",
+        "priceMin": "يجب أن يكون السعر على الأقل 0.99",
+        "selectPlace": "يرجى اختيار مكان/موقع"
+      }
     },
-    "settings": {
-      "title": "الإعدادات",
-      "description": "إدارة ملفك الشخصي وإعدادات حسابك",
-      "personalInfo": "المعلومات الشخصية",
-      "contactInfo": "معلومات الاتصال",
-      "emailReadOnly": "لا يمكن تغيير البريد الإلكتروني",
-      "accountInfo": "معلومات الحساب",
-      "joinDate": "عضو منذ",
-      "accountStatus": "الحالة",
-      "verificationStatus": "التحقق من البريد الإلكتروني"
+    "places": {
+      "name": "اسم المكان",
+      "country": "الدولة",
+      "city": "المدينة",
+      "category": {
+        "historical": "تاريخي",
+        "cultural": "ثقافي",
+        "religious": "ديني",
+        "modern": "حديث",
+        "natural": "طبيعي"
+      },
+      "added": "تم إضافة المكان بنجاح!",
+      "addFailed": "فشل في إضافة المكان. تحقق من وحدة التحكم للتفاصيل.",
+      "validation": {
+        "missingCountryCity": "يرجى تقديم الدولة والمدينة"
+      }
+    },
+    "tourItems": {
+      "title": "إضافة عنصر جولة",
+      "edit": "تعديل عنصر الجولة",
+      "itemTitle": "عنوان عنصر الجولة",
+      "titlePlaceholder": "أدخل عنوان العنصر",
+      "script": "النص",
+      "scriptPlaceholder": "أدخل النص/المحتوى (5000 حرف كحد أقصى)",
+      "contentType": "نوع المحتوى",
+      "location": "الموقع (الإحداثيات)",
+      "longitude": "خط الطول",
+      "latitude": "خط العرض",
+      "detectLocation": "تحديد موقعي",
+      "currentLocation": "الموقع الحالي",
+      "cancel": "إلغاء",
+      "create": "إنشاء عنصر الجولة",
+      "update": "تحديث عنصر الجولة",
+      "creating": "جاري الإنشاء...",
+      "updating": "جاري التحديث...",
+      "created": "تم إنشاء عنصر الجولة بنجاح!",
+      "updated": "تم تحديث عنصر الجولة بنجاح!",
+      "deleted": "تم حذف النقطة",
+      "deleteFailed": "فشل في حذف النقطة",
+      "loadFailed": "فشل تحميل النقاط",
+      "confirmDelete": "هل أنت متأكد أنك تريد حذف هذه النقطة؟",
+      "validation": {
+        "titleMin": "يجب أن يكون العنوان 3 أحرف على الأقل",
+        "scriptRequired": "النص لا يمكن أن يكون فارغاً",
+        "scriptMax": "يجب أن يكون النص 5000 حرف كحد أقصى",
+        "locationRequired": "إحداثيات الموقع مطلوبة"
+      },
+      "errors": {
+        "geolocationNotSupported": "تحديد الموقع الجغرافي غير مدعوم في متصفحك",
+        "locationDetectionFailed": "تعذر تحديد الموقع",
+        "createFailed": "حدث خطأ أثناء إنشاء عنصر الجولة"
+      },
+      "messages": {
+        "locationDetected": "تم تحديد الموقع"
+      },
+      "audio": "الصوت",
+      "audioPlaceholder": "ملف صوتي (اختياري)",
+      "generateAudio": "توليد صوت من النص",
+      "generateScript": "توليد نص من الصوت",
+      "recording": "جاري التسجيل...",
+      "stopRecording": "إيقاف التسجيل",
+      "startRecording": "بدء التسجيل",
+      "transcribing": "جاري النسخ...",
+      "generating": "جاري التوليد...",
+      "audioGenerated": "تم توليد الصوت بنجاح",
+      "scriptGenerated": "تم توليد النص من التسجيل",
+      "noScriptToConvert": "يرجى إدخال نص أولاً",
+      "noAudioToConvert": "يرجى تسجيل أو رفع صوت أولاً",
+      "speechNotSupported": "التعرف على الكلام غير مدعوم في هذا المتصفح",
+      "ttsNotSupported": "تحويل النص إلى كلام غير مدعوم في هذا المتصفح",
+      "recordAudio": "تسجيل صوت",
+      "uploadAudio": "رفع صوت",
+      "previewAudio": "معاينة الصوت",
+      "removeAudio": "إزالة الصوت"
     },
     "tourName": "اسم الجولة",
-    "guestName": "اسم الضيف"
+    "guestName": "اسم الضيف",
+    "becomeGuide": "أصبح دليلاً",
+    "becomeGuideDescription": "شارك خبرتك وشغفك بمصر مع المسافرين من جميع أنحاء العالم. انضم إلى مجتمعنا من أدلاء السياحة المحترفين.",
+    "joinOurCommunity": "انضم إلى مجتمعنا من الأدلاء الخبراء وشارك معرفتك",
+    "experience": "سنوات الخبرة",
+    "experiencePlaceholder": "مثال: 5 سنوات كدليل محترف",
+    "languages": "اللغات",
+    "specialties": "التخصصات",
+    "bio": "السيرة الذاتية المهنية",
+    "bioPlaceholder": "أخبرنا عن خلفيتك وخبرتك...",
+    "certificates": "الشهادات والإثباتات",
+    "uploadCertificate": "تحميل شهادة",
+    "certificateUploaded": "تم تحميل الشهادة بنجاح",
+    "certificateDeleted": "تم حذف الشهادة",
+    "uploadError": "فشل تحميل الشهادة",
+    "deleteError": "فشل حذف الشهادة",
+    "confirmDelete": "هل أنت متأكد من حذف هذه الشهادة؟",
+    "applicationSubmitted": "تم تقديم الطلب بنجاح! تحقق من بريدك الإلكتروني للتحديثات.",
+    "submitError": "فشل في تقديم الطلب",
+    "submit": "تقديم الطلب",
+    "applicationStatus": "الحالة",
+    "experienceRequired": "الخبرة مطلوبة",
+    "selectLanguages": "اختر لغة واحدة على الأقل",
+    "applications": "طلبات الأدلاء",
+    "pending": "قيد الانتظار",
+    "approveApplication": "الموافقة",
+    "rejectApplication": "الرفض",
+    "scheduleInterview": "جدولة المقابلة",
+    "noApplications": "لم يتم العثور على طلبات",
+    "viewDetails": "عرض التفاصيل",
+    "selectDate": "اختر التاريخ",
+    "selectTime": "اختر الوقت",
+    "timezone": "المنطقة الزمنية",
+    "approvalNotes": "ملاحظات الموافقة",
+    "rejectionReason": "سبب الرفض",
+    "interview": "المقابلة",
+    "scheduled": "تم جدولة المقابلة",
+    "interviewDetails": "تفاصيل المقابلة",
+    "profileTitle": "ملف المرشد",
+    "profileDescription": "إدارة معلومات المرشد الخاصة بك والمؤهلات",
+    "profileUpdated": "تم تحديث الملف بنجاح",
+    "yearsExperience": "سنوات الخبرة",
+    "manageApplications": "مراجعة وإدارة طلبات الأدلاء",
+    "total": "إجمالي الطلبات",
+    "approved": "الأدلاء المعتمدين",
+    "successRate": "معدل النجاح",
+    "applicationApproved": "تم الموافقة على الطلب بنجاح",
+    "applicationRejected": "تم رفض الطلب"
+  },
+  "user": {
+    "role": "مرشد سياحي",
+    "roleUser": "مستخدم",
+    "roleGuide": "مرشد سياحي",
+    "roleAdmin": "مسؤول"
   },
   "navbar": {
     "user": "مستخدم",
@@ -518,6 +793,23 @@
       }
     }
   },
+  "video": {
+    "title": "اختبر مصر",
+    "description": "شاهد رحلتنا عبر عجائب مصر الخالدة واكتشف ما يجعل جولاتنا لا تُنسى.",
+    "duration": "نظرة عامة 1:48"
+  },
+  "cities": {
+    "cairo": "القاهرة",
+    "alexandria": "الإسكندرية",
+    "giza": "الجيزة",
+    "luxor": "الأقصر",
+    "aswan": "أسوان",
+    "hurghada": "الغردقة",
+    "sharmElSheikh": "شرم الشيخ",
+    "mansoura": "المنصورة",
+    "dahab": "دهب",
+    "fayoum": "الفيوم"
+  },
   "about": {
     "hero": {
       "title": "من نحن",
@@ -530,143 +822,295 @@
       ],
       "exploreTours": "استكشف الجولات",
       "ourStory": "قصتنا"
+    },
+    "story": {
+      "label": "قصتنا",
+      "title": "الحفاظ على ماضي مصر،",
+      "titleHighlight": "صناعة رحلات لا تُنسى",
+      "paragraph1": "منذ عام 2025، كرسنا أنفسنا لعرض تاريخ مصر الخالد من خلال تجارب سفر غامرة ومسؤولة.",
+      "paragraph2": "علماء المصريات المعتمدون لدينا، والمرشدون المحليون المتحمسون، والتزامنا بالاستدامة يضمنون أن تكون كل رحلة أصيلة ولا تُنسى.",
+      "features": [
+        "مرشدون محليون خبراء",
+        "تجارب أصيلة",
+        "سياحة مستدامة",
+        "جولات جماعية صغيرة"
+      ]
+    },
+    "values": {
+      "label": "ما يميزنا",
+      "title": "قيمنا",
+      "titleHighlight": "الأساسية",
+      "subtitle": "ستة مبادئ توجه كل رحلة نقوم بإنشائها",
+      "items": [
+        {
+          "title": "شغف بالتراث",
+          "description": "كل رحلة مصممة باحترام عميق لإرث مصر الممتد 5000 عام، نحيي العجائب القديمة من خلال رواية القصص الخبيرة."
+        },
+        {
+          "title": "روابط أصيلة",
+          "description": "اختبر مصر بعيداً عن الكتب الإرشادية—لقاءات حميمة مع الحرفيين المحليين، والجواهر الأثرية الخفية، والتقاليد القديمة."
+        },
+        {
+          "title": "رعاية ثقافية",
+          "description": "نتعاون مع المجتمعات المحلية لضمان أن السياحة تحافظ على المواقع التراثية وتمكن العائلات المصرية للأجيال القادمة."
+        },
+        {
+          "title": "التميز مضمون",
+          "description": "من الإقامة الفاخرة إلى علماء المصريات الخبراء، كل تفصيل يلبي معايير الجودة والسلامة التي لا هوادة فيها."
+        },
+        {
+          "title": "رحلتك، بطريقتك",
+          "description": "برامج مرنة مصممة حسب اهتماماتك—سواء كانت المعابد القديمة، أو مغامرات الصحراء، أو الاكتشافات الطهوية."
+        },
+        {
+          "title": "الثقة والشفافية",
+          "description": "أسعار واضحة بدون رسوم خفية، وتأمين سفر شامل، ودعم على مدار الساعة طوال رحلتك المصرية."
+        }
+      ]
+    },
+    "stats": {
+      "items": [
+        {
+          "value": "500+",
+          "label": "مسافر سعيد"
+        },
+        {
+          "value": "2+",
+          "label": "سنوات من الخبرة"
+        },
+        {
+          "value": "25+",
+          "label": "وجهة"
+        },
+        {
+          "value": "4.8",
+          "label": "متوسط التقييم"
+        }
+      ]
+    },
+    "circularGallery": {
+      "title": "أبرز لحظات المسافرين",
+      "subtitle1": "استكشف مصر من خلال",
+      "subtitle2": "الصور التي التقطها مسافرونا",
+      "description": "رحلة بصرية تجمع أفضل اللقطات التي التقطها زوارنا"
+    },
+    "beforeAfter": {
+      "subtitle": "قارن والفرق",
+      "title": {
+        "normal": "دليل الجولات الإلكتروني",
+        "highlight": "الفرق"
+      },
+      "description": "شاهد ما يتغير عندما تسافر معنا",
+      "without": "بدوننا",
+      "with": "مع دليل الجولات الإلكتروني",
+      "comparisons": [
+        {
+          "before": {
+            "title": "إرهاق من التخطيط",
+            "text": "قضاء ساعات في البحث عن المعالم السياحية والنقل وأفضل أوقات الزيارة"
+          },
+          "after": {
+            "title": "خطط جاهزة",
+            "text": "أدلة تفصيلية يومية مع مسارات مثالية وتوقيتات لكل وجهة"
+          }
+        },
+        {
+          "before": {
+            "title": "نقص المعلومات الأساسية",
+            "text": "الوصول إلى المواقع دون سياق أو خلفية تاريخية"
+          },
+          "after": {
+            "title": "تعليق صوتي غني",
+            "text": "سرد احترافي في كل محطة يكشف قصصًا وأسرارًا رائعة"
+          }
+        },
+        {
+          "before": {
+            "title": "الضياع بسهولة",
+            "text": "المعاناة مع الخرائط المربكة وحواجز اللغة في أماكن غير مألوفة"
+          },
+          "after": {
+            "title": "ملاحة GPS مدمجة",
+            "text": "اتجاهات خطوة بخطوة تعمل دون اتصال، ترشدك بسلاسة بين المواقع"
+          }
+        },
+        {
+          "before": {
+            "title": "مرشدون سياحيون مكلفون",
+            "text": "دفع أكثر من 100 دولار يوميًا لجولات جماعية بجداول ثابتة"
+          },
+          "after": {
+            "title": "حرية بأسعار معقولة",
+            "text": "شراء لمرة واحدة يمنحك مرشدًا شخصيًا في جيبك، استكشف بوتيرتك الخاصة"
+          }
+        }
+      ]
     }
   },
-  "beforeAfter": {
-    "subtitle": "قارن والفرق",
-    "title": {
-      "normal": "دليل الجولات الإلكتروني",
-      "highlight": "الفرق"
-    },
-    "description": "شاهد ما يتغير عندما تسافر معنا",
-    "without": "بدوننا",
-    "with": "مع دليل الجولات الإلكتروني",
-    "comparisons": [
-      {
-        "before": {
-          "title": "إرهاق من التخطيط",
-          "text": "قضاء ساعات في البحث عن المعالم السياحية والنقل وأفضل أوقات الزيارة"
-        },
-        "after": {
-          "title": "خطط جاهزة",
-          "text": "أدلة تفصيلية يومية مع مسارات مثالية وتوقيتات لكل وجهة"
-        }
-      },
-      {
-        "before": {
-          "title": "نقص المعلومات الأساسية",
-          "text": "الوصول إلى المواقع دون سياق أو خلفية تاريخية"
-        },
-        "after": {
-          "title": "تعليق صوتي غني",
-          "text": "سرد احترافي في كل محطة يكشف قصصًا وأسرارًا رائعة"
-        }
-      },
-      {
-        "before": {
-          "title": "الضياع بسهولة",
-          "text": "المعاناة مع الخرائط المربكة وحواجز اللغة في أماكن غير مألوفة"
-        },
-        "after": {
-          "title": "ملاحة GPS مدمجة",
-          "text": "اتجاهات خطوة بخطوة تعمل دون اتصال، ترشدك بسلاسة بين المواقع"
-        }
-      },
-      {
-        "before": {
-          "title": "مرشدون سياحيون مكلفون",
-          "text": "دفع أكثر من 100 دولار يوميًا لجولات جماعية بجداول ثابتة"
-        },
-        "after": {
-          "title": "حرية بأسعار معقولة",
-          "text": "شراء لمرة واحدة يمنحك مرشدًا شخصيًا في جيبك، استكشف بوتيرتك الخاصة"
-        }
+  "auth": {
+    "register": {
+      "title": "إنشاء حساب",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "age": "العمر",
+      "phone": "رقم الهاتف",
+      "select": "اختر",
+      "city": "المدينة",
+      "country": "الدولة",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "loading": "جارٍ التحميل...",
+      "registerBtn": "تسجيل",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "loginLink": "تسجيل الدخول",
+      "next": "التالي",
+      "back": "رجوع",
+
+      "errors": {
+        "firstName": "الاسم الأول مطلوب",
+        "lastName": "اسم العائلة مطلوب",
+        "email": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "الرجاء إدخال بريد إلكتروني صالح",
+        "ageMin": "يجب ألا يقل العمر عن 13",
+        "ageMax": "عمر غير صالح",
+        "ageRequired": "العمر مطلوب",
+        "phone": "رقم الهاتف مطلوب",
+        "phoneInvalid": "الرجاء إدخال رقم هاتف صالح",
+        "password": "كلمة المرور مطلوبة",
+        "passwordUppercase": "يجب أن تحتوي كلمة المرور على حرفين كبيرين على الأقل",
+        "passwordLowercase": "يجب أن تحتوي كلمة المرور على حرفين صغيرين على الأقل",
+        "passwordNumber": "يجب أن تحتوي كلمة المرور على رقمين على الأقل",
+        "passwordSpecial": "يجب أن تحتوي كلمة المرور على رمزين خاصين على الأقل",
+        "passwordNoRepeats": "لا يُسمح بأكثر من حرفين متكررين متتاليين",
+        "passwordLength": "يجب أن تكون كلمة المرور 12 حرفًا على الأقل",
+        "confirmPassword": "تأكيد كلمة المرور مطلوب",
+        "confirmPasswordMatch": "كلمتا المرور غير متطابقتين",
+        "city": "المدينة مطلوبة",
+        "country": "الدولة مطلوبة"
       }
+    },
+    "login": {
+      "welcome": "مرحبًا بعودتك",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "forgot": "هل نسيت كلمة المرور؟",
+      "signIn": "تسجيل الدخول",
+      "or": "أو المتابعة عبر",
+      "google": "حساب جوجل",
+      "noAccount": "جديد على Mystic Egypt؟ أنشئ حسابًا",
+
+      "errors": {
+        "emailRequired": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "البريد الإلكتروني غير صالح",
+        "passwordRequired": "كلمة المرور مطلوبة",
+        "passwordMin": "يجب أن تكون كلمة المرور 12 أحرف على الأقل"
+      }
+    },
+    "subtitle": "رحلة عبر الألفية",
+
+    "leftCards": {
+      "ancientWonders": {
+        "title": "عجائب قديمة",
+        "text": "استكشف الأهرامات والمعابد والمقابر الرائعة التي صمدت لآلاف السنين."
+      },
+      "expertGuides": {
+        "title": "مرشدون خبراء",
+        "text": "تعلّم من علماء المصريات الذين يُحيون التاريخ القديم بقصص جذابة."
+      },
+      "nileCruises": {
+        "title": "رحلات نيلية",
+        "text": "أبحر في نهر النيل الأسطوري برفاهية أثناء زيارة المواقع التاريخية على طول الطريق."
+      }
+    },
+    "stats": [
+      { "num": "٥ آلاف+", "label": "مسافر" },
+      { "num": "١٥٠+", "label": "باقة" },
+      { "num": "٢٥+", "label": "سنوات خبرة" }
     ]
   },
-  "guide": {
-    "dashboard": {
-      "title": "لوحة التحكم",
-      "subtitle": "نظرة عامة على جولاتك وأدائك",
-      "totalTours": "إجمالي الجولات",
-      "publishedTours": "الجولات المنشورة",
-      "totalBookings": "إجمالي الحجوزات",
-      "averageRating": "متوسط التقييم"
-    },
-    "analytics": {
-      "title": "التحليلات",
-      "subtitle": "تتبع أداء جولاتك ونموها",
-      "totalViews": "إجمالي المشاهدات",
-      "conversionRate": "معدل التحويل",
-      "averageBookingValue": "متوسط قيمة الحجز",
-      "topPerformingTour": "أفضل جولة أداء",
-      "dailyViews": "المشاهدات والتسجيلات اليومية",
-      "monthlyComparison": "المقارنة الشهرية",
-      "tourPerformance": "أداء الجولات",
-      "trafficSource": "توزيع مصادر الزيارات",
-      "noDataTitle": "لا توجد بيانات تحليلية بعد",
-      "noDataMessage": "ابدأ في نشر الجولات والحصول على التسجيلات لرؤية التحليلات هنا."
-    },
-    "sidebar": {
-      "title": "لوحة الدليل",
-      "dashboard": "لوحة التحكم",
-      "myTours": "جولاتي",
-      "analytics": "التحليلات",
-      "logout": "تسجيل الخروج",
-      "confirmLogout": "تأكيد تسجيل الخروج",
-      "confirmLogoutMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
-    },
-    "tours": {
-      "title": "إدارة الجولات",
-      "manageAndTrack": "إدارة وتتبع جميع جولاتك",
-      "addPlace": "إضافة مكان",
-      "searchPlaceholder": "البحث في الجولات...",
-      "name": "الاسم",
-      "city": "المدينة",
-      "price": "السعر",
+  "tourGuide": {
+    "homeSection": {
+      "title": "تعرف على خبرائنا",
+      "subtitle": "بتوجيه من التاريخ، سيجعل مرشدونا السياحيون المعتمدون رحلتك عبر مصر لا تُنسى.",
       "rating": "التقييم",
-      "actions": "الإجراءات",
-      "edit": "تعديل",
-      "delete": "حذف",
-      "currency": "جنيه مصري",
-      "states": {
-        "published": "منشور",
-        "notPublished": "غير منشور",
-        "empty": "فارغ"
-      },
-      "titles": {
-        "noItems": "لا توجد عناصر بعد",
-        "noPublishedItems": "لا توجد عناصر منشورة",
-        "updating": "جاري التحديث...",
-        "unpublish": "إلغاء نشر الجولة",
-        "publish": "نشر الجولة",
-        "manageWaypoints": "إدارة النقاط الطريق"
-      },
-      "messages": {
-        "added": "تم إضافة الجولة بنجاح!",
-        "updated": "تم تحديث الجولة بنجاح!",
-        "deleted": "تم حذف الجولة بنجاح!",
-        "galleryUpdated": "تم تحديث صور المعرض بنجاح!"
-      },
-      "errors": {
-        "deleteFailed": "فشل في حذف الجولة",
-        "galleryUpdateFailed": "فشل في تحديث صور المعرض.",
-        "noPublishedItems": "لا توجد عناصر منشورة"
-      },
-      "validation": {
-        "nameLength": "يجب أن يكون اسم الجولة بين 3 و 100 حرف",
-        "descriptionLength": "يجب أن يكون الوصف بين 10 و 2000 حرف",
-        "priceMin": "يجب أن يكون السعر على الأقل 0.99",
-        "selectPlace": "يرجى اختيار مكان/موقع"
-      }
-    },
-    "places": {
-      "added": "تم إضافة المكان بنجاح!",
-      "addFailed": "فشل في إضافة المكان. تحقق من وحدة التحكم للتفاصيل.",
-      "validation": {
-        "missingCountryCity": "يرجى تقديم الدولة والمدينة"
-      }
-    },
-    "currency": "جنيه مصري"
+      "tours": "الجولات",
+      "noRating": "مرشد جديد",
+      "viewProfile": "عرض الملف الشخصي",
+      "loading": "جاري تحميل المرشدين...",
+      "noGuides": "لا يوجد مرشدون متاحون",
+      "error": "فشل في تحميل المرشدين"
+    }
+  },
+  "contact": {
+    "subtitle": "اتصل بنا",
+    "title": "تواصل معنا",
+    "desc": "نحن سعداء لسماعك! تواصل معنا عبر أي من الطرق التالية.",
+    "addressTitle": "العنوان",
+    "address": "١٢٣ شارع الرئيسي، القاهرة، مصر",
+    "phoneTitle": "الهاتف",
+    "phone": "+٢٠ ١٢٣ ٤٥٦ ٧٨٩٠",
+    "emailTitle": "البريد الإلكتروني",
+    "email": "info@example.com",
+    "contactForm": {
+      "formTitle": "تواصل معنا",
+      "labelName": "اسمك",
+      "labelEmail": "البريد الإلكتروني",
+      "labelMsg": "الرسالة",
+      "phName": "أدخل اسمك",
+      "phEmail": "أدخل بريدك الإلكتروني",
+      "phMsg": "اكتب رسالتك...",
+      "btnSend": "إرسال الرسالة",
+      "successTitle": "تم إرسال الرسالة!",
+      "successMsg": "شكرًا لتواصلك معنا. سنعاود الرد عليك قريبًا.",
+      "btnAnother": "إرسال رسالة أخرى",
+      "failureTitle": "فشل في إرسال الرسالة",
+      "failureMsg": "حدث خطأ ما. الرجاء المحاولة مرة أخرى لاحقًا.",
+      "btnTryAgain": "حاول مرة أخرى",
+      "errReq": "هذا الحقل مطلوب",
+      "errMin": "الاسم قصير جدًا",
+      "errEmail": "صيغة البريد الإلكتروني غير صحيحة"
+    }
+  },
+  "guideApplicationStatus": {
+    "reapply": "أعد التقديم كمرشد سياحي",
+    "reapplyDescription": "حدّث معلوماتك وأرسل طلبًا جديدًا.",
+    "goToDashboard": "انتقل إلى لوحة التحكم",
+    "application": {
+      "pendingTitle": "الطلب قيد المراجعة",
+      "pendingMessage": "طلبك قيد المراجعة حاليًا من قبل فريقنا. سنخطرك بمجرد اتخاذ القرار.",
+      "interviewTitle": "تم جدولة المقابلة",
+      "interviewMessage": "تم جدولة مقابلتك. يرجى التحقق من بريدك الإلكتروني للحصول على التفاصيل.",
+      "approvedTitle": "تمت الموافقة على الطلب!",
+      "approvedMessage": "تهانينا! تمت الموافقة على طلبك. يمكنك الآن الوصول إلى لوحة تحكم المرشد.",
+      "rejectedTitle": "لم تتم الموافقة على الطلب",
+      "rejectedMessage": "للأسف، لم تتم الموافقة على طلبك في هذا الوقت.",
+      "reason": "السبب",
+      "canReapply": "يمكنك تقديم طلب جديد بمعلومات محدثة.",
+      "interviewDate": "تاريخ المقابلة",
+      "interviewTime": "الوقت",
+      "submittedOn": "تم التقديم في"
+    }
+  },
+  "guideProfile": {
+    "designation": "مرشد سياحي محترف",
+    "newGuide": "جديد",
+    "langs": "لغات",
+    "tours": "جولات",
+    "overview": "نظرة عامة",
+    "reviews": "التقييمات",
+    "biography": "السيرة الذاتية",
+    "aboutMe": "عني",
+    "languages": "اللغات",
+    "specialties": "التخصصات",
+    "experience": "الخبرة",
+    "memberSince": "عضو منذ",
+    "totalTours": "إجمالي الجولات",
+    "toursCreated": "جولة تم إنشاؤها",
+    "myTours": "جولاتي",
+    "noTours": "لا توجد جولات متاحة بعد.",
+    "verifiedReviews": "تقييمات موثقة",
+    "on": "على",
+    "noReviews": "لا توجد تقييمات بعد."
   }
 }

@@ -94,7 +94,6 @@ export default function PopularDestinationSection() {
 
   return (
     <SectionWrapperFull>
-      <div className="mt-12">
         <TitlesHome icon={GiEgypt} title={t("popularDestination.title")} paragraph={t("popularDestination.description")}/>
 
         <div className="hidden lg:grid lg:grid-cols-3 gap-6 xl:gap-8 max-w-7xl mx-auto">
@@ -168,7 +167,7 @@ export default function PopularDestinationSection() {
           </motion.div>
         </div>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.2 }} className="text-center mt-8 sm:mt-12 lg:mt-16 px-4">
-          <motion.button className="btn-split w-full sm:w-auto">
+          <motion.button className="btn-split w-full sm:w-auto" onClick={handleViewAllDestinations}>
             <span className="btn-split-main">{t("popularDestination.viewAll")}</span>
             <span className="btn-split-icon">
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +176,6 @@ export default function PopularDestinationSection() {
             </span>
           </motion.button>
         </motion.div>
-      </div>
     </SectionWrapperFull>
   );
-}
+};

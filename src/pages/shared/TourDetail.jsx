@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTours } from "../../store/hooks";
 import TourDetailHero from "../../components/tourDetail/TourDetailHero";
@@ -17,6 +17,7 @@ const TourDetail = () => {
 
   const [enrolling, setEnrolling] = useState(false);
   const [enrollError, setEnrollError] = useState(null);
+  const enrollingRef = useRef(false);
 
   useEffect(() => {
     if (id) {
@@ -34,12 +35,59 @@ const TourDetail = () => {
     if (!tour?._id) return;
     try {
       setEnrollError(null);
+      // prevent re-entrancy before state updates/render
+      if (enrollingRef.current) return;
+      enrollingRef.current = true;
       setEnrolling(true);
+
+      // Check for existing enrollments first to avoid creating duplicates
+      try {
+        const userEnrollRes = await enrollmentApi.getUserEnrollments();
+        const all = userEnrollRes?.data?.data?.all || [];
+        const existing = all.find(
+          (e) => e.tour && (e.tour._id === tour._id || e.tour === tour._id)
+        );
+        if (existing) {
+          // If already started, redirect to the tour play page
+          if (existing.status === "started") {
+            navigate(`/tour/play/${tour._id}`);
+            return;
+          }
+          // If there's a recent pending enrollment, reuse it and initialize payment
+          if (existing.status === "pending") {
+            try {
+              const initRes = await paymentApi.initializePayment(existing._id);
+              const checkoutUrl =
+                initRes?.data?.checkoutUrl || initRes?.data?.data?.checkoutUrl;
+              if (checkoutUrl) {
+                navigate(
+                  `/payment-redirect?checkoutUrl=${encodeURIComponent(
+                    checkoutUrl
+                  )}`
+                );
+                return;
+              }
+            } catch (err) {
+              console.error("Failed to reuse pending payment:", err);
+              // fallthrough to attempt creating a new enrollment below
+            }
+          }
+        }
+      } catch (err) {
+        // ignore failures from pre-check and attempt to enroll normally
+        console.warn("Could not check existing enrollments:", err?.message || err);
+      }
 
       // 1) Create enrollment
       const enrollRes = await enrollmentApi.enrollTour(tour._id);
+      // The backend may return an existing pending enrollment under `data.enrollment`
+      const existingEnrollment =
+        enrollRes?.data?.data?.enrollment || enrollRes?.data?.enrollment;
       const enrollmentId =
-        enrollRes?.data?.data?.enrollmentId || enrollRes?.data?.enrollmentId;
+        existingEnrollment?._id ||
+        enrollRes?.data?.data?.enrollmentId ||
+        enrollRes?.data?.enrollmentId ||
+        (enrollRes?.data?.data && enrollRes?.data?.data?.enrollment?._id);
       if (!enrollmentId) throw new Error("Could not create enrollment");
 
       // 2) Initialize payment (get checkout URL)
@@ -60,9 +108,12 @@ const TourDetail = () => {
       setEnrollError(msg);
       // If user already enrolled and paid, redirect to My Tours
       if (status === 400 && /already enrolled/i.test(msg)) {
-        setTimeout(() => navigate("/my-tours"), 900);
+        // If backend reports already enrolled, send the user to the active tour if possible
+        // Prefer redirecting to the play page for the current tour
+        setTimeout(() => navigate(`/tour/play/${tour._id}`), 900);
       }
     } finally {
+      enrollingRef.current = false;
       setEnrolling(false);
     }
   };

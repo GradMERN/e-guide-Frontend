@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import {
   FaUser,

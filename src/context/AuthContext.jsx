@@ -26,7 +26,20 @@ export const AuthProvider = ({ children }) => {
       setError(null);
     };
     window.addEventListener("auth:logout", onLogout);
-    return () => window.removeEventListener("auth:logout", onLogout);
+    // Listen for login events fired by redux login helper so context stays in sync
+    const onLogin = (e) => {
+      try {
+        const payload = e?.detail || null;
+        if (payload) setUser(payload);
+      } catch (err) {
+        console.error("AuthContext login listener error:", err);
+      }
+    };
+    window.addEventListener("auth:login", onLogin);
+    return () => {
+      window.removeEventListener("auth:logout", onLogout);
+      window.removeEventListener("auth:login", onLogin);
+    };
   }, []);
 
   const initializeAuth = () => {
@@ -162,6 +175,7 @@ export const AuthProvider = ({ children }) => {
     updateUser,
     clearError,
     loading,
+    isLoading: loading, // Alias for compatibility
     error,
     isDarkMode,
     toggleTheme,

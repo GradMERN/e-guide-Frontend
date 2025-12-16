@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import CircularGallery from "../ui/CircularGallery.jsx";
 import Particles from "../ui/Particles.jsx";
 import "../../styles/CircularGallery.css";
@@ -6,8 +7,10 @@ import { motion } from "motion/react";
 
 
 export default function CircularGallerySection() {
+  const { t } = useTranslation();
+
   return (
-    <section className="relative py-6 lg:py-12 overflow-hidden">
+    <section className="relative py-10 sm:py-12 md:py-18 lg:py-18 overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
         <Particles
           particleColors={[ "var(--gradient-via)", "var(--gradient-to)"]}
@@ -22,17 +25,17 @@ export default function CircularGallerySection() {
         />
       </div>
 
-      <motion.div className="max-w-7xl mx-auto px-6 lg:px-12 text-center mb-8 relative z-10" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-80px" }}>
-        <motion.span className="inline-block text-xl tracking-[0.3em] text-text uppercase font-medium mb-6 smooth-text" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} viewport={{ once: true }}>
-          Traveler Highlights
+      <motion.div className="text-center mb-10 sm:mb-14 lg:mb-16 relative z-10 px-4 sm:px-0" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-80px" }}>
+        <motion.span className="inline-block text-sm xs:text-base sm:text-lg tracking-[0.25em] sm:tracking-[0.3em] text-text uppercase font-medium mb-3 sm:mb-4" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} viewport={{ once: true }}>
+          {t("about.circularGallery.title")}
         </motion.span>
 
-        <motion.h2 className="text-4xl sm:text-5xl lg:text-6xl font-light mb-6 smooth-tex text-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
-          Explore Egypt Through<span className="font-semibold text-gradient-title bg-clip-text text-transparent"> Our Travelers' Stories</span>
+        <motion.h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-6xl font-light mb-3 sm:mb-4 text-text leading-tight" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
+          {t("about.circularGallery.subtitle1")}<span className="font-semibold text-gradient-title bg-clip-text text-transparent"> {t("about.circularGallery.subtitle2")}</span>
         </motion.h2>
 
-        <motion.p className="text-text text-base sm:text-lg max-w-3xl mx-auto smooth-text leading-relaxed" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6 }} viewport={{ once: true }}>
-          A visual journey of the most memorable moments from our tours
+        <motion.p className="text-text text-sm xs:text-base sm:text-lg max-w-xl sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6 }} viewport={{ once: true }}>
+          {t("about.circularGallery.description")}
         </motion.p>
       </motion.div>
 

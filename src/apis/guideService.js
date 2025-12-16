@@ -188,6 +188,30 @@ export const guideService = {
       throw error;
     }
   },
+
+  // ==================== PUBLIC GUIDE ENDPOINTS ====================
+
+  // Get featured guides for homepage (public, no auth required)
+  async getFeaturedGuides(limit = 6) {
+    const response = await api.get("/public/guides/featured", {
+      params: { limit },
+    });
+    return response.data;
+  },
+
+  // Get guide public profile by ID (public, no auth required)
+  async getGuideProfile(guideId) {
+    const response = await api.get(`/public/guides/${guideId}`);
+    return response.data;
+  },
+
+  // Get all public guides (for listing)
+  async getAllGuides(limit = 20) {
+    const response = await api.get("/public/guides/featured", {
+      params: { limit },
+    });
+    return response.data;
+  },
 };
 
 export default guideService;

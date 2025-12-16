@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import { adminService } from "../../apis/adminService";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 import StatsOverview from "../../components/analytics/StatsOverview";
 import ChartComponent from "../../components/analytics/ChartComponent";
 import {
@@ -27,7 +28,7 @@ const AdminDashboard = () => {
       setLoading(true);
       const response = await adminService.getDashboardStats();
 
-      if (response.success && response.data) {
+      if (response?.success && response?.data) {
         // Process the data
         const data = response.data;
 
@@ -55,10 +56,12 @@ const AdminDashboard = () => {
           ],
           recentActivity: transformRecentUsers(data.recentUsers || []),
         });
+      } else {
+        throw new Error("Invalid response format from server");
       }
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
-      setError("Failed to load dashboard data");
+      setError(err.message || "Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -83,8 +86,10 @@ const AdminDashboard = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className={`text-center ${textColor}`}>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D5B36A] mx-auto mb-4"></div>
-          <p>{t("common.loading") || "Loading..."}</p>
+          <GoldenSpinner
+            size={56}
+            label={t("common.loading") || "Loading..."}
+          />
         </div>
       </div>
     );
@@ -157,6 +162,7 @@ const AdminDashboard = () => {
           title={t("admin.growthTrend")}
           data={dashboardData.userGrowth}
           dataKey="users"
+          xAxisKey="month"
           colors={["#3B82F6", "#D5B36A"]}
         />
         <ChartComponent
@@ -164,6 +170,7 @@ const AdminDashboard = () => {
           title={t("admin.monthlyRevenue")}
           data={dashboardData.revenueData}
           dataKey="revenue"
+          xAxisKey="month"
           colors={["#10B981", "#D5B36A"]}
         />
       </div>
@@ -175,6 +182,7 @@ const AdminDashboard = () => {
           title="Platform Growth"
           data={dashboardData.userGrowth}
           dataKey="guides"
+          xAxisKey="month"
           colors={["#8B5CF6", "#D5B36A"]}
         />
         <ChartComponent

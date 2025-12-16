@@ -5,6 +5,7 @@ import TitlesHome from "../common/TitlesHome";
 import { GrGallery } from "react-icons/gr";
 import { TbSquareRoundedChevronRight as ChevronRight } from "react-icons/tb";
 import { TbSquareRoundedChevronLeft as ChevronLeft } from "react-icons/tb";
+import SectionWrapperFull from "../common/SectionWrapper";
 
 import photo1 from "../../assets/images/views/photo-1.avif";
 import photo2 from "../../assets/images/views/photo-2.avif";
@@ -94,7 +95,7 @@ const handleNext = () => {
 
 
   return (
-    <div className="pb-10 sm:pb-10 md:pb-28 ">
+    <SectionWrapperFull px="px-0" py="py-0">
       <TitlesHome icon={GrGallery} title={t("gallery.title")} paragraph= {t("gallery.paragraph")}/>
 
       <div className="overflow-hidden">
@@ -141,6 +142,6 @@ const handleNext = () => {
 
         </div>
       </div>
-    </div>
+    </SectionWrapperFull>
   );
 }

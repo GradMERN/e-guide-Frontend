@@ -12,43 +12,60 @@ import {
   FaArrowDown,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchStats = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await guideService.getDashboardStats();
+      // Service returns response.data which contains { success, data: {...stats} }
+      if (response?.success && response?.data) {
+        setStats(response.data);
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (error) {
+      console.error("Failed to fetch dashboard stats", error);
+      setError(error.message || "Failed to load dashboard stats");
+      toast.error("Failed to load dashboard stats");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await guideService.getDashboardStats();
-        setStats(response.data);
-      } catch (error) {
-        console.error("Failed to fetch dashboard stats", error);
-        toast.error("Failed to load dashboard stats");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStats();
   }, []);
 
   if (loading) {
     return (
       <div className="p-6 flex justify-center items-center">
-        <div className="text-[var(--text-secondary)]">
-          {t("common.loading") || "Loading..."}
-        </div>
+        <GoldenSpinner size={56} label={t("common.loading") || "Loading..."} />
       </div>
     );
   }
 
-  if (!stats) {
+  if (error || !stats) {
     return (
-      <div className="p-6">
-        <div className="text-[var(--text)]">
-          {t("guide.dashboard") || "Dashboard"}
+      <div className="p-6 flex justify-center items-center h-screen">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">
+            {error || "Failed to load dashboard"}
+          </p>
+          <button
+            onClick={fetchStats}
+            className="px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90"
+          >
+            {t("common.retry") || "Retry"}
+          </button>
         </div>
       </div>
     );

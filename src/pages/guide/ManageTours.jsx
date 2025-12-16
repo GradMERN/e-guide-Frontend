@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth as useTheme } from "../../context/AuthContext";
+import { useAuth as useTheme } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import {

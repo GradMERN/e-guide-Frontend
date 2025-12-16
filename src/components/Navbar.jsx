@@ -18,8 +18,8 @@ import {
   FaInfoCircle,
   FaAddressCard,
 } from "react-icons/fa";
-import ThemeToggle from "../components/ThemeToggle";
-import Switch from "./common/SwitchLanguages";
+import ThemeToggle from "./common/ThemeToggle";
+import Switch from "./common/LanguageSwitch";
 import { useTranslation } from "react-i18next";
 import { useAuth as useReduxAuth } from "../store/hooks";
 import { useDispatch, useSelector } from "react-redux";
@@ -125,16 +125,11 @@ export default function Navbar() {
 
   // Update navbar height
   useEffect(() => {
-    const updateHeight = () => {
-      if (navbarRef.current) {
-        const height = navbarRef.current.offsetHeight;
-        dispatch(setNavbarHeight(height));
-      }
-    };
-
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
+    if (navbarRef.current) {
+      const height = navbarRef.current.offsetHeight;
+      document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      dispatch(setNavbarHeight(height));
+    }
   }, [dispatch]);
 
   const handleLogout = (redirect = "/login") => {
@@ -200,6 +195,24 @@ export default function Navbar() {
     return t("navbar.user");
   };
 
+  // Render user avatar - shows image if available, otherwise shows initials
+  const renderUserAvatar = (size = "w-10 h-10", textSize = "text-sm") => {
+    if (user?.avatar?.url) {
+      return (
+        <img
+          src={user.avatar.url}
+          alt={getDisplayName()}
+          className={`${size} rounded-full object-cover`}
+        />
+      );
+    }
+    return (
+      <span className={`text-background ${textSize} font-bold`}>
+        {getUserInitials()}
+      </span>
+    );
+  };
+
   const isGuide = user?.role && user.role.toLowerCase() === "guide";
 
   return (
@@ -243,9 +256,17 @@ export default function Navbar() {
             <div className="p-3 border-b border-border bg-linear-to-r from-gradient-from/5 via-gradient-via/5 to-gradient-to/5">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
-                    {getUserInitials()}
-                  </div>
+                  {user?.avatar?.url ? (
+                    <img
+                      src={user.avatar.url}
+                      alt={getDisplayName()}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
+                      {getUserInitials()}
+                    </div>
+                  )}
                   {isGuide && (
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface flex items-center justify-center">
                       <FaChalkboardTeacher className="text-background text-[8px]" />
@@ -388,14 +409,8 @@ export default function Navbar() {
         dir="ltr"
         ref={navbarRef}
         className={`
-          fixed top-0 left-0 right-0 z-[100] text-left!
-          ${
-            isMobile
-              ? "translate-y-0"
-              : showNavbar
-              ? "translate-y-0"
-              : "-translate-y-full"
-          }
+          fixed top-0 left-0 right-0 z-100 text-left
+          ${isMobile ? "translate-y-0" : showNavbar ? "translate-y-0" : "-translate-y-full"}
           transition-transform duration-500 ease-out
         `}
       >
@@ -474,10 +489,18 @@ export default function Navbar() {
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                       className="flex items-center gap-2 group"
                     >
-                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background hover:scale-105 transition-transform shadow-md relative">
-                        <span className="text-background text-sm font-bold">
-                          {getUserInitials()}
-                        </span>
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background hover:scale-105 transition-transform shadow-md relative overflow-hidden">
+                        {user?.avatar?.url ? (
+                          <img
+                            src={user.avatar.url}
+                            alt={getDisplayName()}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-background text-sm font-bold">
+                            {getUserInitials()}
+                          </span>
+                        )}
                         {isGuide && (
                           <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface flex items-center justify-center">
                             <FaChalkboardTeacher className="text-background text-[8px]" />
@@ -499,9 +522,17 @@ export default function Navbar() {
                         <div className="p-4 border-b border-border bg-linear-to-r from-gradient-from/5 via-gradient-via/5 to-gradient-to/5">
                           <div className="flex items-center gap-3">
                             <div className="relative">
-                              <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
-                                {getUserInitials()}
-                              </div>
+                              {user?.avatar?.url ? (
+                                <img
+                                  src={user.avatar.url}
+                                  alt={getDisplayName()}
+                                  className="w-10 h-10 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-linear-to-br from-gradient-from via-gradient-via to-gradient-to flex items-center justify-center text-sm font-bold text-background">
+                                  {getUserInitials()}
+                                </div>
+                              )}
                               {isGuide && (
                                 <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface flex items-center justify-center">
                                   <FaChalkboardTeacher className="text-background text-[8px]" />

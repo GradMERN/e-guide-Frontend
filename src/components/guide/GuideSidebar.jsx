@@ -11,6 +11,7 @@ import {
   FaBars,
   FaTimes,
   FaEye,
+  FaUserTie,
 } from "react-icons/fa";
 
 const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
@@ -34,6 +35,11 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
       name: t("guide.sidebar.analytics"),
       path: "/guide/analytics",
       icon: FaChartLine,
+    },
+    {
+      name: t("guide.profileTitle", "Guide Profile"),
+      path: "/guide/profile",
+      icon: FaUserTie,
     },
   ];
 

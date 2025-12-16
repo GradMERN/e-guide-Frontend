@@ -33,6 +33,27 @@
   "selectCountry": "Select a country",
   "selectCity": "Select a city",
   "saveChanges": "Save Changes",
+  "personalDetails": "Personal Details",
+  "phone": "Phone",
+  "removePhoto": "Remove",
+  "uploadFailed": "Failed to upload photo",
+  "updateFailed": "Failed to update profile",
+  "deleteFailed": "Failed to delete",
+  "invalidFileType": "Please select a valid image file (JPEG, PNG, GIF, WEBP)",
+  "fileTooLarge": "File size must be less than 5MB",
+  "profileUpdated": "Profile updated successfully!",
+  "activeTours": "Active Tours",
+  "pendingEnrollments": "Pending",
+  "myReviews": "My Reviews",
+  "recentEnrollments": "Recent Enrollments",
+  "noEnrollmentsYet": "You haven't enrolled in any tours yet.",
+  "noReviewsYet": "You haven't written any reviews yet.",
+  "saving": "Saving...",
+  "deactivateAccount": "Deactivate Account",
+  "deactivateWarning": "This action will deactivate your account. You can reactivate it by logging in again.",
+  "typeDeactivate": "Type 'DEACTIVATE' to confirm",
+  "passwordChanged": "Password changed successfully",
+  "accountDeactivated": "Account deactivated successfully",
   "travelPreferences": "Travel Preferences",
   "preferredTravelStyle": "Preferred Travel Style",
   "preferredLanguage": "Preferred Language",
@@ -49,6 +70,18 @@
   "currentPassword": "Current Password",
   "newPassword": "New Password",
   "confirmNewPassword": "Confirm New Password",
+  "setPassword": "Set Password",
+  "passwordSet": "Password set successfully! You can now login with email and password.",
+  "googleSetPasswordNote": "You signed in with Google. Setting a password allows you to also login with email and password.",
+  "googleAccountWithPassword": "Google account with password enabled",
+  "passwordRequirements": "Min 12 chars, 2 uppercase, 2 lowercase, 2 numbers, 2 special chars",
+  "passwordsMismatch": "Passwords do not match",
+  "passwordMinLength": "At least 12 characters",
+  "passwordLowercase": "At least 2 lowercase letters",
+  "passwordUppercase": "At least 2 uppercase letters",
+  "passwordNumbers": "At least 2 numbers",
+  "passwordSpecialChars": "At least 2 special characters",
+  "passwordChangeFailed": "Failed to change password",
   "cancel": "Cancel",
   "adventure": "Adventure",
   "relaxation": "Relaxation",
@@ -67,6 +100,21 @@
     "date": "Date",
     "amount": "Amount",
     "status": "Status",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "confirm": "Confirm",
+    "next": "Next",
+    "prev": "Prev",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "country": "Country",
+    "city": "City",
+    "noData": "No data found",
     "statuses": {
       "pending": "Pending",
       "active": "Active",
@@ -76,6 +124,23 @@
       "failed": "Failed",
       "refunded": "Refunded"
     }
+  },
+  "reviews": {
+    "title": "Reviews",
+    "count": "review",
+    "loading": "Loading reviews...",
+    "noReviews": "No reviews yet.",
+    "writeReview": "Write a review",
+    "placeholder": "Write your review...",
+    "setRating": "Set rating",
+    "post": "Post Review",
+    "posting": "Posting...",
+    "posted": "Review posted successfully!",
+    "postFailed": "Failed to post review",
+    "noPermission": "You don't have permission to post a review",
+    "alreadyReviewed": "You have already posted a review for this tour",
+    "emptyComment": "Please write a comment before posting",
+    "enrollToReview": "You need an active enrollment to leave a review."
   },
   "theme": {
     "light": "Switch to Light Mode",
@@ -92,7 +157,7 @@
     "totalUsers": "Total Users",
     "totalGuides": "Total Guides",
     "totalTours": "Total Tours",
-    "totalRevenue": "Total Revenue (EGP)",
+    "totalRevenue": "Platform Revenue",
     "growthTrend": "Growth Trend",
     "userDistribution": "User Distribution",
     "recentTours": "Recent Tours",
@@ -109,13 +174,30 @@
     "edit": "Edit",
     "delete": "Delete",
     "cancel": "Cancel",
+    "createPlace": "Create Place",
+    "placesList": "Places List",
+    "create": "Create",
     "tours": {
-      "title": "Manage Tours",
+      "title": "Tours Management",
+      "subtitle": "View and manage all tours on the platform",
       "add": "Add Tour",
       "edit": "Edit Tour",
       "addNew": "Add New Tour",
       "name": "Tour Name",
       "manageAndTrack": "Manage and track all your tours",
+      "tour": "Tour",
+      "guide": "Guide",
+      "location": "Location",
+      "stats": "Stats",
+      "items": "items",
+      "total": "Total",
+      "allTours": "All Tours",
+      "published": "Published",
+      "drafts": "Drafts",
+      "draft": "Draft",
+      "statusHeader": "Status",
+      "confirmDelete": "Are you sure you want to delete",
+      "deleteWarning": "This action cannot be undone.",
       "addPlace": "Add Place",
       "status": {
         "published": "Published",
@@ -234,9 +316,33 @@
     "totalEnrollments": "Total Enrollments",
     "totalEarnings": "Total Earnings (EGP)",
     "totalRating": "Average Rating",
+    "currency": "EGP",
+    "noTours": "No tours created yet. Create your first tour!",
+    "noEnrollments": "No enrollments yet",
+    "noItems": "No items",
     "bookingsTrend": "Bookings Trend",
     "enrollmentsTrend": "Enrollments Trend",
     "earningsTrend": "Earnings Trend",
+    "profileTitle": "Guide Profile",
+    "profileDescription": "Manage your guide-specific information and qualifications",
+    "profileUpdated": "Profile updated successfully",
+    "yearsExperience": "Years of Experience",
+    "manageApplications": "Review and manage guide applications",
+    "total": "Total Applications",
+    "approved": "Approved Guides",
+    "successRate": "Success Rate",
+    "applicationApproved": "Application approved successfully",
+    "applicationRejected": "Application rejected",
+    "sidebar": {
+      "title": "Guide Panel",
+      "dashboard": "Dashboard",
+      "myTours": "My Tours",
+      "analytics": "Analytics",
+      "settings": "Settings",
+      "logout": "Logout",
+      "confirmLogout": "Confirm Logout",
+      "confirmLogoutMessage": "Are you sure you want to logout?"
+    },
     "tourPerformance": "Tour Performance",
     "recentBookings": "Recent Bookings",
     "recentEnrollments": "Recent Enrollments",
@@ -244,6 +350,7 @@
     "loadingDashboard": "Loading dashboard...",
     "tours": {
       "title": "My Tours",
+      "add": "Add Tour",
       "addItem": "Add Item",
       "addTour": "Create Tour",
       "edit": "Edit",
@@ -258,7 +365,8 @@
         "notPublished": "Not Published"
       },
       "errors": {
-        "noPublishedItems": "There are no published items"
+        "noPublishedItems": "There are no published items",
+        "loadFailed": "Failed to load tour"
       },
       "titles": {
         "noItems": "No items yet",
@@ -303,6 +411,16 @@
       "revenue": "Revenue"
     },
     "places": {
+      "name": "Place Name",
+      "country": "Country",
+      "city": "City",
+      "category": {
+        "historical": "Historical",
+        "cultural": "Cultural",
+        "religious": "Religious",
+        "modern": "Modern",
+        "natural": "Natural"
+      },
       "validation": {
         "missingCountryCity": "Please provide both country and city"
       },
@@ -342,10 +460,150 @@
       "accountInfo": "Account Information",
       "joinDate": "Member since",
       "accountStatus": "Status",
-      "verificationStatus": "Email Verification"
+      "verificationStatus": "Email Verification",
+      "profileUpdated": "Profile updated successfully!",
+      "profileUpdateFailed": "Failed to update profile",
+      "loadingProfile": "Loading profile..."
     },
     "tourName": "Tour Name",
-    "guestName": "Guest Name"
+    "guestName": "Guest Name",
+    "preview": "Tour Preview",
+    "refreshing": "Refreshing...",
+    "refreshNearby": "Refresh Nearby",
+    "loadingItems": "Loading items...",
+    "findingNearby": "Finding nearby items...",
+    "script": "Script",
+    "translation": {
+      "selectLanguage": "Select your language...",
+      "translateTo": "Translate to",
+      "translating": "Translating...",
+      "translated": "Translated",
+      "originalLanguage": "Original",
+      "showOriginal": "Show Original",
+      "translationFailed": "Translation failed",
+      "autoDetect": "Auto-detect"
+    },
+    "ai": {
+      "voiceToText": "Voice to Text",
+      "textToSpeech": "Preview Audio",
+      "stopRecording": "Stop",
+      "stopSpeaking": "Stop",
+      "listening": "Listening... Speak now",
+      "noTextToSpeak": "No text to speak",
+      "sttNotSupported": "Speech recognition is not supported in this browser",
+      "sttError": "Speech recognition failed",
+      "ttsTooltip": "Read script aloud",
+      "sttTooltip": "Convert voice to text",
+      "listenToScript": "Listen to script",
+      "listen": "Listen",
+      "preview": "Preview",
+      "generateAudio": "Generate Audio",
+      "generating": "Generating...",
+      "generateAudioTooltip": "Generate audio file from script",
+      "audioGenerated": "Audio generated successfully!",
+      "audioGenerationFailed": "Failed to generate audio. Please try again.",
+      "recordVoice": "Record Voice",
+      "recordingStarted": "Recording started. Speak now...",
+      "recordingComplete": "Recording complete! Audio and transcription ready.",
+      "recordingError": "Error saving recording",
+      "microphoneError": "Could not access microphone",
+      "liveTranscription": "Live Transcription",
+      "selectAudio": "Select Audio",
+      "existingAudio": "Existing audio",
+      "audioPreview": "Audio Preview",
+      "previewDescription": "Preview of audio file",
+      "translatedAudio": "Translated Audio",
+      "tts": "TTS",
+      "playing": "Playing...",
+      "ready": "Ready"
+    },
+    "tourItems": {
+      "title": "Tour Items",
+      "add": "Add Item",
+      "edit": "Edit Item",
+      "delete": "Delete Item",
+      "name": "Item Name",
+      "description": "Description",
+      "script": "Script",
+      "audio": "Audio",
+      "images": "Images",
+      "location": "Location",
+      "order": "Order",
+      "published": "Published",
+      "notPublished": "Not Published",
+      "confirmDelete": "Are you sure you want to delete this item?",
+      "deleted": "Item deleted successfully",
+      "deleteFailed": "Failed to delete item"
+    },
+    "becomeGuide": "Become a Guide",
+    "becomeGuideDescription": "Share your expertise and passion for Egypt with travelers from around the world. Join our community of professional tour guides.",
+    "joinOurCommunity": "Join our community of expert guides and share your knowledge",
+    "experience": "Years of Experience",
+    "experiencePlaceholder": "e.g., 5 years as professional guide",
+    "languages": "Languages",
+    "specialties": "Specialties",
+    "bio": "Professional Bio",
+    "bioPlaceholder": "Tell us about your background and expertise...",
+    "certificates": "Certificates & Proofs",
+    "uploadCertificate": "Upload Certificate",
+    "certificateUploaded": "Certificate uploaded successfully",
+    "certificateDeleted": "Certificate deleted",
+    "uploadError": "Failed to upload certificate",
+    "deleteError": "Failed to delete certificate",
+    "confirmDelete": "Are you sure you want to delete this certificate?",
+    "applicationSubmitted": "Application submitted successfully! Check your email for updates.",
+    "submitError": "Failed to submit application",
+    "submit": "Submit Application",
+    "resubmit": "Resubmit Application",
+    "applicationStatus": "Status",
+    "experienceRequired": "Experience is required",
+    "selectLanguages": "Select at least one language",
+    "applications": "Guide Applications",
+    "pending": "Pending",
+    "approveApplication": "Approve",
+    "rejectApplication": "Reject",
+    "scheduleInterview": "Schedule Interview",
+    "noApplications": "No applications found",
+    "viewDetails": "View Details",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "timezone": "Timezone",
+    "approvalNotes": "Approval Notes",
+    "rejectionReason": "Rejection Reason",
+    "interview": "Interview",
+    "scheduled": "Interview Scheduled",
+    "interviewDetails": "Interview Details",
+    "reapply": "Reapply as a Tour Guide",
+    "reapplyDescription": "Update your information and submit a new application.",
+    "goToDashboard": "Go to Dashboard",
+    "application": {
+      "progress": "Application Progress",
+      "steps": {
+        "submitted": "Submitted",
+        "review": "Review",
+        "interview": "Interview",
+        "decision": "Decision"
+      },
+      "pendingTitle": "Application Under Review",
+      "pendingMessage": "Your application is currently being reviewed by our team. We will notify you once a decision has been made.",
+      "interviewTitle": "Interview Scheduled",
+      "interviewMessage": "Your interview has been scheduled. Please check your email for details.",
+      "approvedTitle": "Application Approved!",
+      "approvedMessage": "Congratulations! Your application has been approved. You can now access your guide dashboard.",
+      "rejectedTitle": "Application Not Approved",
+      "rejectedMessage": "Unfortunately, your application was not approved at this time.",
+      "reason": "Reason",
+      "canReapply": "You can submit a new application with updated information.",
+      "interviewDate": "Interview Date",
+      "interviewTime": "Time",
+      "submittedOn": "Submitted on"
+    }
+  },
+  "user": {
+    "role": "Tour Guide",
+    "roleUser": "User",
+    "roleGuide": "Tour Guide",
+    "roleAdmin": "Administrator"
   },
   "navbar": {
     "user": "User",
@@ -377,11 +635,7 @@
     "subtitle": "Where history comes alive and adventures begin",
     "exploreBtn": "Explore Egypt",
     "watchBtn": "Watch Video",
-    "labels": [
-      "50+ Destinations",
-      "Flexible Booking",
-      "Expert Guides"
-    ]
+    "labels": ["50+ Destinations", "Flexible Booking", "Expert Guides"]
   },
   "popularDestination": {
     "title": "Popular Destination",
@@ -469,7 +723,6 @@
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Everything you need to know about your journey to the land of PEACE",
-
     "categories": {
       "0": {
         "title": "About E-Tour Guide",
@@ -556,6 +809,23 @@
       }
     }
   },
+  "video": {
+    "title": "Experience Egypt",
+    "description": "Watch our journey through the timeless wonders of Egypt and discover what makes our tours unforgettable.",
+    "duration": "1:48 Overview"
+  },
+  "cities": {
+    "cairo": "Cairo",
+    "alexandria": "Alexandria",
+    "giza": "Giza",
+    "luxor": "Luxor",
+    "aswan": "Aswan",
+    "hurghada": "Hurghada",
+    "sharmElSheikh": "Sharm El-Sheikh",
+    "mansoura": "Mansoura",
+    "dahab": "Dahab",
+    "fayoum": "Fayoum"
+  },
   "about": {
     "hero": {
       "title": "About Us",
@@ -568,143 +838,275 @@
       ],
       "exploreTours": "Explore Tours",
       "ourStory": "Our Story"
+    },
+    "story": {
+      "label": "Our Story",
+      "title": "Preserving Egypt's Past,",
+      "titleHighlight": "Crafting Unforgettable Journeys",
+      "paragraph1": "Since 2025, we've dedicated ourselves to showcasing Egypt's timeless history through immersive and responsible travel experiences.",
+      "paragraph2": "Our certified Egyptologists, passionate local guides, and commitment to sustainability ensure every journey feels authentic and memorable.",
+      "features": [
+        "Expert Local Guides",
+        "Authentic Experiences",
+        "Sustainable Tourism",
+        "Small Group Tours"
+      ]
+    },
+    "values": {
+      "label": "What Sets Us Apart",
+      "title": "Our Core",
+      "titleHighlight": "Values",
+      "subtitle": "Six principles that guide every expedition we create",
+      "items": [
+        {
+          "title": "Passion for Heritage",
+          "description": "Every journey is crafted with deep reverence for Egypt's 5,000-year legacy, bringing ancient wonders to life through expert storytelling."
+        },
+        {
+          "title": "Authentic Connections",
+          "description": "Experience Egypt beyond the guidebooks—intimate encounters with local artisans, hidden archaeological gems, and centuries-old traditions."
+        },
+        {
+          "title": "Cultural Stewardship",
+          "description": "We partner with local communities to ensure tourism preserves heritage sites and empowers Egyptian families for generations."
+        },
+        {
+          "title": "Excellence Guaranteed",
+          "description": "From luxury accommodations to expert Egyptologists, every detail meets our uncompromising standards of quality and safety."
+        },
+        {
+          "title": "Your Journey, Your Way",
+          "description": "Flexible itineraries designed around your interests—whether ancient temples, desert adventures, or culinary discoveries."
+        },
+        {
+          "title": "Trust & Transparency",
+          "description": "Clear pricing with no hidden fees, comprehensive travel insurance, and 24/7 support throughout your Egyptian odyssey."
+        }
+      ]
+    },
+    "stats": {
+      "items": [
+        {
+          "value": "500+",
+          "label": "Happy Travelers"
+        },
+        {
+          "value": "2+",
+          "label": "Years Experience"
+        },
+        {
+          "value": "25+",
+          "label": "Destinations"
+        },
+        {
+          "value": "4.8",
+          "label": "Average Rating"
+        }
+      ]
+    },
+    "circularGallery": {
+      "title": "Traveler Highlights",
+      "subtitle1": "Explore Egypt Through",
+      "subtitle2": "Our Travelers' Stories",
+      "description": "A visual journey of the most memorable moments from our tours"
+    },
+    "beforeAfter": {
+      "subtitle": "Compare & Contrast",
+      "title": {
+        "normal": "The E-Tour Guide",
+        "highlight": "Difference"
+      },
+      "description": "See what changes when you travel with us",
+      "without": "Without Us",
+      "with": "With E-Tour Guide",
+      "comparisons": [
+        {
+          "before": {
+            "title": "Overwhelmed by planning",
+            "text": "Spending hours researching attractions, transportation, and best times to visit"
+          },
+          "after": {
+            "title": "Pre-planned itineraries",
+            "text": "Detailed day-by-day guides with optimal routes and timing for each destination"
+          }
+        },
+        {
+          "before": {
+            "title": "Missing key information",
+            "text": "Arriving at sites without context or historical background"
+          },
+          "after": {
+            "title": "Rich audio commentary",
+            "text": "Professional narration at every stop revealing fascinating stories and secrets"
+          }
+        },
+        {
+          "before": {
+            "title": "Getting lost easily",
+            "text": "Struggling with confusing maps and language barriers in unfamiliar places"
+          },
+          "after": {
+            "title": "GPS navigation built-in",
+            "text": "Turn-by-turn directions that work offline, guiding you seamlessly between locations"
+          }
+        },
+        {
+          "before": {
+            "title": "Expensive tour guides",
+            "text": "Paying $100+ per day for group tours with fixed schedules"
+          },
+          "after": {
+            "title": "Affordable freedom",
+            "text": "One-time purchase gives you a personal guide in your pocket, explore at your pace"
+          }
+        }
+      ]
     }
   },
-  "beforeAfter": {
-    "subtitle": "Compare & Contrast",
-    "title": {
-      "normal": "The E-Tour Guide",
-      "highlight": "Difference"
-    },
-    "description": "See what changes when you travel with us",
-    "without": "Without Us",
-    "with": "With E-Tour Guide",
-    "comparisons": [
-      {
-        "before": {
-          "title": "Overwhelmed by planning",
-          "text": "Spending hours researching attractions, transportation, and best times to visit"
-        },
-        "after": {
-          "title": "Pre-planned itineraries",
-          "text": "Detailed day-by-day guides with optimal routes and timing for each destination"
-        }
-      },
-      {
-        "before": {
-          "title": "Missing key information",
-          "text": "Arriving at sites without context or historical background"
-        },
-        "after": {
-          "title": "Rich audio commentary",
-          "text": "Professional narration at every stop revealing fascinating stories and secrets"
-        }
-      },
-      {
-        "before": {
-          "title": "Getting lost easily",
-          "text": "Struggling with confusing maps and language barriers in unfamiliar places"
-        },
-        "after": {
-          "title": "GPS navigation built-in",
-          "text": "Turn-by-turn directions that work offline, guiding you seamlessly between locations"
-        }
-      },
-      {
-        "before": {
-          "title": "Expensive tour guides",
-          "text": "Paying $100+ per day for group tours with fixed schedules"
-        },
-        "after": {
-          "title": "Affordable freedom",
-          "text": "One-time purchase gives you a personal guide in your pocket, explore at your pace"
-        }
+  "auth": {
+    "register": {
+      "title": "Create Your Account",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "age": "Age",
+      "phone": "Phone Number",
+      "select": "Select",
+      "city": "City",
+      "country": "Country",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "loading": "Loading...",
+      "registerBtn": "Register",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Login",
+      "next": "Next",
+      "back": "Back",
+
+      "errors": {
+        "firstName": "First name is required",
+        "lastName": "Last name is required",
+        "email": "Email is required",
+        "emailInvalid": "Please enter a valid email",
+        "ageMin": "Must be at least 13",
+        "ageMax": "Invalid age",
+        "ageRequired": "Age is required",
+        "phone": "phone is required",
+        "phoneInvalid": "Please enter a valid phone number",
+        "password": "Password is required",
+        "passwordUppercase": "Password must contain at least 2 uppercase letters",
+        "passwordLowercase": "Password must contain at least 2 lowercase letters",
+        "passwordNumber": "Password must contain at least 2 numbers",
+        "passwordSpecial": "Password must contain at least 2 special characters",
+        "passwordNoRepeats": "No more than 2 identical characters allowed",
+        "passwordLength": "Password must be at least 12 characters",
+        "confirmPassword": "Confirm Password is required",
+        "confirmPasswordMatch": "Passwords don't match",
+        "city": "City is required",
+        "country": "Country is required"
       }
+    },
+    "login": {
+      "welcome": "Welcome Back",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your Password",
+      "forgot": "Forgot Password?",
+      "signIn": "Sign In",
+      "or": "Or continue with",
+      "google": "Google Account",
+      "noAccount": "New to Mystic Egypt? Create Account",
+
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email",
+        "passwordRequired": "Password is required",
+        "passwordMin": "Password must be at least 6 characters"
+      }
+    },
+    "subtitle": "Journey Through Millennia",
+
+    "leftCards": {
+      "ancientWonders": {
+        "title": "Ancient Wonders",
+        "text": "Explore pyramids, temples, and tombs that have stood for thousands of years."
+      },
+      "expertGuides": {
+        "title": "Expert Guides",
+        "text": "Learn from Egyptologists who bring history alive with engaging stories."
+      },
+      "nileCruises": {
+        "title": "Nile Cruises",
+        "text": "Sail the legendary Nile in luxury while visiting historic sites along the way."
+      }
+    },
+    "stats": [
+      { "num": "5k+", "label": "Travelers" },
+      { "num": "150+", "label": "Packages" },
+      { "num": "25+", "label": "Years Exp" }
     ]
   },
-  "guide": {
-    "dashboard": {
-      "title": "Dashboard",
-      "subtitle": "Overview of your tours and performance",
-      "totalTours": "Total Tours",
-      "publishedTours": "Published Tours",
-      "totalBookings": "Total Bookings",
-      "averageRating": "Average Rating"
-    },
-    "analytics": {
-      "title": "Analytics",
-      "subtitle": "Track your tours performance and growth",
-      "totalViews": "Total Views",
-      "conversionRate": "Conversion Rate",
-      "averageBookingValue": "Average Booking Value",
-      "topPerformingTour": "Top Performing Tour",
-      "dailyViews": "Daily Views & Enrollments",
-      "monthlyComparison": "Monthly Comparison",
-      "tourPerformance": "Tour Performance",
-      "trafficSource": "Traffic Source Distribution",
-      "noDataTitle": "No Analytics Data Yet",
-      "noDataMessage": "Start publishing tours and getting enrollments to see analytics here."
-    },
-    "sidebar": {
-      "title": "Guide Panel",
-      "dashboard": "Dashboard",
-      "myTours": "My Tours",
-      "analytics": "Analytics",
-      "logout": "Logout",
-      "confirmLogout": "Confirm Logout",
-      "confirmLogoutMessage": "Are you sure you want to logout?"
-    },
-    "tours": {
-      "title": "Manage Tours",
-      "manageAndTrack": "Manage and track all your tours",
-      "addPlace": "Add Place",
-      "searchPlaceholder": "Search tours...",
-      "name": "Name",
-      "city": "City",
-      "price": "Price",
-      "rating": "Rating",
-      "actions": "Actions",
-      "edit": "Edit",
-      "delete": "Delete",
-      "currency": "EGP",
-      "states": {
-        "published": "Published",
-        "notPublished": "Not Published",
-        "empty": "Empty"
-      },
-      "titles": {
-        "noItems": "No items yet",
-        "noPublishedItems": "No published items",
-        "updating": "Updating...",
-        "unpublish": "Unpublish tour",
-        "publish": "Publish tour",
-        "manageWaypoints": "Manage Waypoints"
-      },
-      "messages": {
-        "added": "Tour added successfully!",
-        "updated": "Tour updated successfully!",
-        "deleted": "Tour deleted successfully!",
-        "galleryUpdated": "Gallery images updated successfully!"
-      },
-      "errors": {
-        "deleteFailed": "Failed to delete tour",
-        "galleryUpdateFailed": "Failed to update gallery images.",
-        "noPublishedItems": "There is no published items"
-      },
-      "validation": {
-        "nameLength": "Tour name must be between 3 and 100 characters",
-        "descriptionLength": "Description must be between 10 and 2000 characters",
-        "priceMin": "Price must be at least 0.99",
-        "selectPlace": "Please select a place/location"
-      }
-    },
-    "places": {
-      "added": "Place added successfully!",
-      "addFailed": "Failed to add place. Check console for details.",
-      "validation": {
-        "missingCountryCity": "Please provide both country and city"
-      }
-    },
-    "currency": "EGP"
+  "tourGuide": {
+    "homeSection": {
+      "title": "Meet Our Experts",
+      "subtitle": "Guided by history, our certified tour guides will make your journey through Egypt unforgettable.",
+      "expertGuide": "Expert Tour Guide",
+      "defaultQuote": "Discover the wonders of Egypt with me.",
+      "viewProfile": "View Profile",
+      "tours": "Tours",
+      "reviews": "reviews"
+    }
+  },
+  "contact": {
+    "subtitle": "Contact Us",
+    "title": "Get in Touch",
+    "desc": "We’d love to hear from you! Reach out to us via any of the methods below.",
+    "addressTitle": "Address",
+    "address": "123 Main Street, Cairo, Egypt",
+    "phoneTitle": "Phone",
+    "phone": "+20 123 456 7890",
+    "emailTitle": "Email",
+    "email": "info@example.com",
+
+    "contactForm": {
+      "formTitle": "Get in Touch",
+      "labelName": "Your Name",
+      "labelEmail": "Email Address",
+      "labelMsg": "Message",
+      "phName": "Enter your name",
+      "phEmail": "Enter your email",
+      "phMsg": "Write your message...",
+      "btnSend": "Send Message",
+      "successTitle": "Message Sent!",
+      "successMsg": "Thank you for reaching out. We will get back to you shortly.",
+      "btnAnother": "Send Another Message",
+
+      "failureTitle": "Failed to send message",
+      "failureMsg": "Something went wrong. Please try again later.",
+      "btnTryAgain": "Try Again",
+      "errReq": "This field is required",
+      "errMin": "The name is too short",
+      "errEmail": "Invalid email format"
+    }
+  },
+  "guideProfile": {
+    "designation": "Professional Tour Guide",
+    "newGuide": "New",
+    "langs": "Langs",
+    "tours": "Tours",
+    "overview": "Overview",
+    "reviews": "Reviews",
+    "biography": "Biography",
+    "aboutMe": "About Me",
+    "languages": "Languages",
+    "specialties": "Specialties",
+    "experience": "Experience",
+    "memberSince": "Member Since",
+    "totalTours": "Total Tours",
+    "toursCreated": "tours created",
+    "myTours": "My Tours",
+    "noTours": "No tours available yet.",
+    "verifiedReviews": "Verified Reviews",
+    "on": "on",
+    "noReviews": "No reviews yet."
   }
 }
