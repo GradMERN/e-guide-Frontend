@@ -19,11 +19,9 @@ const StepIndicator = ({ steps, currentStep, totalSteps }) => {
               <div className="flex flex-col items-center relative z-10">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
                     isCompleted
-                      ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white shadow-lg"
-                      : isCurrent
-                      ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white ring-4 ring-(--primary)/20 shadow-lg"
-                      : "bg-(--surface) border-2 border-(--border) text-(--text-secondary)"}`}>
-                  {isCompleted ? <FaCheck /> : <Icon />}
+                      ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white shadow-lg" : isCurrent
+                      ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white ring-4 ring-(--primary)/20 shadow-lg" : "bg-(--surface) border-2 border-(--border) text-(--text-secondary)"}`}>
+                  {isCompleted ? <FaCheck className="text-loop" /> : <Icon className={isCurrent ? "icon-step-focus" : "icon-step-inactive"} />}
                 </div>
                 <span className={`mt-2 text-xs font-medium text-center hidden sm:block ${isCurrent ? "text-(--text)" : "text-(--text-secondary)"}`}>
                   {step.title}
