@@ -1,6 +1,6 @@
 import { FaArrowLeft, FaArrowRight, FaSpinner } from "react-icons/fa";
 
-const NavigationButtons = ({currentStep,totalSteps,handleBack,handleNext,loading,isReapply,t,bgClass,labelClass,}) => {
+const NavigationButtons = ({currentStep,totalSteps,handleBack,handleNext,loading,isReapply,t,bgClass,labelClass,handleSubmit}) => {
   return (
     <div className="flex justify-between items-center mt-8 pt-6 border-t border-(--border)">
 
@@ -13,7 +13,7 @@ const NavigationButtons = ({currentStep,totalSteps,handleBack,handleNext,loading
           {t("guide.next", "Next")}<FaArrowRight />
         </button>
       ) : (
-        <button type="submit" disabled={loading} style={{background: "linear-gradient(90deg, var(--gradient-from), var(--gradient-to))"}} className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition text-(--button-text,white) shadow-lg ${ loading ? "opacity-50 cursor-not-allowed" : "hover:brightness-105"}`}>
+        <button type="button" onClick={handleSubmit} disabled={loading} style={{background: "linear-gradient(90deg, var(--gradient-from), var(--gradient-to))"}} className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition text-(--button-text,white) shadow-lg ${ loading ? "opacity-50 cursor-not-allowed" : "hover:brightness-105"}`}>
           {loading && <FaSpinner className="animate-spin" />}
           {isReapply ? t("guide.resubmit", "Resubmit Application") : t("guide.submit", "Submit Application")}
         </button>

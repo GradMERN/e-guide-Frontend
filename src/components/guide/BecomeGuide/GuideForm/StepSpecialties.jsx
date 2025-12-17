@@ -13,7 +13,7 @@ const StepSpecialties = ({ formData, toggleSpecialty, specialtyOptions, t, label
             const isSelected = formData.specialties.includes(specialty);
             return (
               <label key={specialty} className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${ isSelected ? "border-(--primary) bg-(--primary)/10" : "border-(--border) hover:border-(--primary)/50"}`}>
-                <input type="checkbox" checked={isSelected} onChange={() => toggleSpecialty(specialty)} className="mr-3 w-5 h-5 rounded border-(--border) text-(--primary)"/>
+                <input type="checkbox" checked={isSelected} onChange={() => toggleSpecialty(specialty)} className="mr-3 w-5 h-5 rounded border-(--border) text-(--primary)" style={{ accentColor: "var(--primary)", borderColor: "var(--border)",}}/>
                 <span className={`${labelClass} font-medium`}>{t(`guide.specialties.${key}`, specialty)}</span>
               </label>
             );

@@ -24,12 +24,7 @@ const BecomeGuideForm = ({ isReapply = false, previousApplication = null }) => {
 
   const [certificateFiles, setCertificateFiles] = useState([]);
   const [documentFiles, setDocumentFiles] = useState([]);
-  const [formData, setFormData] = useState({
-    experience: "",
-    languages: [],
-    specialties: [],
-    bio: "",
-  });
+  const [formData, setFormData] = useState({ experience: "", languages: [], specialties: [], bio: "",});
 
   const bgClass = "bg-[var(--surface)] border-[var(--border)]";
   const inputClass = `bg-[var(--background)] border-[var(--border)] text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)]`;
@@ -43,7 +38,7 @@ const BecomeGuideForm = ({ isReapply = false, previousApplication = null }) => {
     { number: 1, title: t("guide.step1", "Experience"), icon: FaUser },
     { number: 2, title: t("guide.step2", "Languages"), icon: FaLanguage },
     { number: 3, title: t("guide.step3", "Specialties"), icon: FaStar },
-    {number: 4, title: t("guide.step4", "Documents"),icon: FaClipboardList},
+    { number: 4, title: t("guide.step4", "Documents"),icon: FaClipboardList},
   ];
 
   useEffect(() => {
@@ -135,32 +130,37 @@ const BecomeGuideForm = ({ isReapply = false, previousApplication = null }) => {
     }
   };
 
-  const validateStep = (step) => {
-    switch (step) {
-      case 1:
-        if (!formData.experience.trim()) {
-          toast.warning(t("guide.experienceRequired", "Experience is required"));
-          return false;
-        }
-        if (!formData.bio.trim()) {
-          toast.warning(t("guide.bioRequired", "Bio is required"));
-          return false;
-        }
-        return true;
-      case 2:
-        if (formData.languages.length === 0) {
-          toast.warning(t("guide.selectLanguages", "Select at least one language"));
-          return false;
-        }
-        return true;
-      case 3:
-        return true;
-      case 4:
-        return true;
-      default:
-        return true;
-    }
-  };
+const validateStep = (step) => {
+  switch (step) {
+    case 1:
+      if (!formData.experience.trim()) {
+        toast.warning(t("guide.experienceRequired", "Experience is required"));
+        return false;
+      }
+      if (!formData.bio.trim()) {
+        toast.warning(t("guide.bioRequired", "Bio is required"));
+        return false;
+      }
+      return true;
+    case 2:
+      if (!formData.languages.length) {
+        toast.warning(t("guide.selectLanguages", "Select at least one language"));
+        return false;
+      }
+      return true;
+    case 3:
+      if (!formData.specialties.length) {
+        toast.warning(t("guide.selectSpecialties", "Select at least one specialty"));
+        return false;
+      }
+      return true;
+    case 4:
+      // Step 4 مؤقتًا optional، لا يوجد Toast أو شرط
+      return true;
+    default:
+      return true;
+  }
+};
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
@@ -174,54 +174,44 @@ const BecomeGuideForm = ({ isReapply = false, previousApplication = null }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    if (currentStep !== totalSteps) {
+      return;
+    }
+
     if (!validateStep(currentStep)) return;
+
     try {
       setLoading(true);
-      const files = { certificates: certificateFiles, documents: documentFiles};
+      const files = { certificates: certificateFiles, documents: documentFiles };
       await guideApplicationService.submitApplication(formData, files);
       toast.success(t("guide.applicationSubmitted","Application submitted successfully! Check your email for updates."));
       setCertificateFiles([]);
       setDocumentFiles([]);
       setTimeout(() => {window.location.reload();}, 2000);
     } catch (error) {
-      toast.error( error.response?.data?.message || t("guide.submitError", "Failed to submit application"));
+      toast.error(
+        error.response?.data?.message || t("guide.submitError", "Failed to submit application")
+      );
     } finally {
       setLoading(false);
     }
   };
 
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className={`${bgClass} rounded-xl p-6 md:p-8 shadow-lg`}>
         {!isReapply && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8 text-center"
-          >
-            <motion.h1 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-              className="text-4xl md:text-5xl font-extrabold mb-3 bg-gradient-to-r from-[var(--gradient-from)] via-[var(--primary)] to-[var(--gradient-to)] bg-clip-text text-transparent"
-            >
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-8 text-center">
+            <motion.h1  initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2, type: "spring", stiffness: 100 }} className="text-4xl md:text-5xl font-extrabold mb-3 bg-linear-to-r from-(--gradient-from) via-(--primary) to-(--gradient-to) bg-clip-text text-transparent">
               {t("guide.applicationForm", "Guide Application")}
             </motion.h1>
             
-            <motion.div
-              initial={{ opacity: 0, scaleX: 0 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="h-1 w-24 bg-gradient-to-r from-[var(--gradient-from)] to-[var(--gradient-to)] rounded-full mb-4 mx-auto"
-            />
+            <motion.div initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }} transition={{ delay: 0.4, duration: 0.6 }} className="h-1 w-24 bg-linear-to-r from-(--gradient-from) to-(--gradient-to) rounded-full mb-4 mx-auto"/>
             
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className={`${labelClass} text-base md:text-lg max-w-2xl mx-auto leading-relaxed`}
-            >
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className={`${labelClass} text-base md:text-lg max-w-2xl mx-auto leading-relaxed`}>
               {t("guide.formIntro", "Complete the form below to start your journey as a professional tour guide")}
             </motion.p>
           </motion.div>
@@ -235,7 +225,7 @@ const BecomeGuideForm = ({ isReapply = false, previousApplication = null }) => {
 
         <StepIndicator steps={steps} currentStep={currentStep} totalSteps={totalSteps}/>
 
-        <form onSubmit={handleSubmit}>
+        <form onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>          
           {currentStep === 1 && (
             <StepExperience formData={formData} handleInputChange={handleInputChange} t={t} inputClass={inputClass} labelClass={labelClass}/>
           )}
@@ -257,7 +247,7 @@ const BecomeGuideForm = ({ isReapply = false, previousApplication = null }) => {
             />
           )}
 
-          <NavigationButtons currentStep={currentStep} totalSteps={totalSteps} handleBack={handleBack} handleNext={handleNext} loading={loading} isReapply={isReapply} t={t} bgClass={bgClass}  labelClass={labelClass}/>
+          <NavigationButtons currentStep={currentStep} totalSteps={totalSteps} handleBack={handleBack} handleNext={handleNext} loading={loading} isReapply={isReapply} t={t} bgClass={bgClass}  labelClass={labelClass}  handleSubmit={handleSubmit}/>
         </form>
       </div>
     </div>
