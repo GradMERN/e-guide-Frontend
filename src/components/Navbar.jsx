@@ -127,7 +127,10 @@ export default function Navbar() {
   useEffect(() => {
     if (navbarRef.current) {
       const height = navbarRef.current.offsetHeight;
-      document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      document.documentElement.style.setProperty(
+        "--navbar-height",
+        `${height}px`
+      );
       dispatch(setNavbarHeight(height));
     }
   }, [dispatch]);
@@ -246,7 +249,7 @@ export default function Navbar() {
                 <FaEye className="text-background text-lg" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-primary">Mystic Egypt</h2>
+                <h2 className="text-lg font-bold text-primary">Guidora</h2>
               </div>
             </div>
           </div>
@@ -410,7 +413,13 @@ export default function Navbar() {
         ref={navbarRef}
         className={`
           fixed top-0 left-0 right-0 z-100 text-left
-          ${isMobile ? "translate-y-0" : showNavbar ? "translate-y-0" : "-translate-y-full"}
+          ${
+            isMobile
+              ? "translate-y-0"
+              : showNavbar
+              ? "translate-y-0"
+              : "-translate-y-full"
+          }
           transition-transform duration-500 ease-out
         `}
       >
@@ -455,7 +464,7 @@ export default function Navbar() {
                   <FaEye className="text-background text-xl" />
                 </div>
                 <h1 className="text-xl font-bold text-primary dark:text-primary tracking-wide">
-                  Mystic Egypt Tours
+                  Guidora
                 </h1>
               </div>
 
