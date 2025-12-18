@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
-import {FaClock,FaCalendarAlt,FaTimesCircle,FaCheckCircle,FaFileAlt,FaClipboardCheck,} from "react-icons/fa";
+import {FaClock, FaCalendarAlt, FaTimesCircle, FaFileAlt, FaClipboardCheck, FaCheck,} from "react-icons/fa";
+import React from "react";
 
 const applicationSteps = [
   { id: 1, key: "submitted", icon: FaFileAlt },
@@ -27,57 +28,107 @@ const ProgressTracker = ({ application, t }) => {
   const { currentStep, completedSteps } = getStepStatus(application.status);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="bg-(--surface) rounded-xl p-6 md:p-8 mb-6 border border-(--border) shadow-lg">
-      <h2 className="text-xl font-bold text-(--text) mb-8 text-center">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="bg-(--surface) rounded-xl p-4 sm:p-6 md:p-8 mb-4 sm:mb-6 border border-(--border) shadow-lg">
+      <h2 className="text-lg sm:text-xl font-bold text-(--text) mb-6 sm:mb-8 text-center px-2">
         {t("guide.application.progress", "Application Progress")}
       </h2>
 
-      <div className="relative">
-        <div className="absolute top-6 left-0 right-0 h-1 bg-(--border) hidden md:block" />
+      <div className="mb-6 sm:mb-8">
+        <div className="hidden sm:flex items-center justify-between relative">
+          <div className="absolute top-6 left-2 right-2 h-1 bg-(--border)">
+            <div className="h-full bg-linear-to-r from-(--gradient-from) to-(--gradient-to) transition-all duration-500" style={{width: `${((currentStep - 1) / (applicationSteps.length - 1)) * 100}%`,}}/>
+          </div>
 
-        <motion.div initial={{ width: 0 }} animate={{ width: `${(completedSteps.length / applicationSteps.length) * 100}%`,}} transition={{ duration: 1, delay: 0.3 }} className="absolute top-6 left-0 h-1 bg-linear-to-r from-(--gradient-from) to-(--gradient-to) hidden md:block"/>
-
-        <div className="flex flex-col md:flex-row items-center justify-between relative z-10 gap-6 md:gap-0">
           {applicationSteps.map((step, index) => {
             const StepIcon = step.icon;
-            const isCompleted = completedSteps.includes(step.id);
+            const isCompleted = completedSteps.includes(step.id) && step.id !== currentStep;
             const isCurrent = currentStep === step.id;
-            const isRejected =
-              application.status === "rejected" && step.id === 4;
+            const isRejected = application.status === "rejected" && step.id === 4;
 
             return (
-              <motion.div key={step.id} initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: index * 0.1 }} className="flex flex-col items-center">
-                <motion.div whileHover={{ scale: 1.1 }} className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all ${ isCurrent ? "ring-4 ring-(--primary)/20" : ""}`}
-                  style={{
-                    background: isRejected
-                      ? "var(--danger, #ef4444)" : isCompleted
-                      ? "linear-gradient(135deg, var(--gradient-from), var(--gradient-to))" : isCurrent
-                      ? "linear-gradient(135deg, var(--gradient-from), var(--gradient-to))" : "var(--surface)",
-                    color: isRejected || isCompleted || isCurrent ? "white" : "var(--text-secondary)",
-                    boxShadow: isCurrent ? "0 4px 12px rgba(0,0,0,0.15)" : "0 2px 8px rgba(0,0,0,0.08)",
-                    border: !isRejected && !isCompleted && !isCurrent ? "2px solid var(--border)" : undefined,
-                  }}>
-                  {isRejected ? (
-                    <FaTimesCircle className="text-xl md:text-2xl" />
-                  ) : isCompleted ? (
-                    <FaCheckCircle className="text-xl md:text-2xl" />
-                  ) : (
-                    <StepIcon className="text-xl md:text-2xl" />
-                  )}
+              <React.Fragment key={step.id}>
+                <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: index * 0.1 }} className="flex flex-col items-center relative z-10">
+                  <motion.div whileHover={{ scale: 1.1 }} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${ isRejected ? "bg-(--danger) text-white shadow-lg" : isCompleted ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white shadow-lg" : isCurrent ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white ring-4 ring-(--primary)/20 shadow-lg" : "bg-(--surface) border-2 border-(--border) text-(--text-secondary)"}`}>
+                    {isRejected ? (
+                      <FaTimesCircle className="text-loop" />
+                    ) : isCompleted ? (
+                      <FaCheck className="text-loop" />
+                    ) : (
+                      <StepIcon className={isCurrent ? "icon-step-focus" : "icon-step-inactive"} />
+                    )}
+                  </motion.div>
+
+                  <span className={`mt-2 text-xs font-medium text-center ${ isCurrent ? "text-(--text)" : "text-(--text-secondary)"}`}>
+                    {t(`guide.application.steps.${step.key}`, step.key)}
+                  </span>
                 </motion.div>
 
-                <span
-                  className={`mt-3 text-sm md:text-base font-semibold text-center ${
-                    isCurrent
-                      ? "text-(--primary)" : isCompleted
-                      ? "text-(--text)" : "text-(--text-secondary)"}`}>
-                  {t(`guide.application.steps.${step.key}`, step.key)}
-                </span>
+                {index < applicationSteps.length - 1 && (<div className="flex-1 h-1 mx-2 relative top-6 z-0"></div>)}
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col sm:hidden space-y-4">
+          {applicationSteps.map((step, index) => {
+            const StepIcon = step.icon;
+            const isCompleted = completedSteps.includes(step.id) && step.id !== currentStep;
+            const isCurrent = currentStep === step.id;
+            const isRejected = application.status === "rejected" && step.id === 4;
+
+            return (
+              <React.Fragment key={step.id}>
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: index * 0.1 }} className="flex items-center gap-4">
+                  <motion.div whileTap={{ scale: 0.95 }} className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${ isRejected ? "bg-(--danger) text-white shadow-lg" : isCompleted ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white shadow-lg" : isCurrent ? "bg-linear-to-r from-(--gradient-from) to-(--gradient-to) text-white ring-4 ring-(--primary)/20 shadow-lg" : "bg-(--surface) border-2 border-(--border) text-(--text-secondary)"}`}>
+                    {isRejected ? (
+                      <FaTimesCircle className="text-loop" />
+                    ) : isCompleted ? (
+                      <FaCheck className="text-loop" />
+                    ) : (
+                      <StepIcon className={isCurrent ? "icon-step-focus" : "icon-step-inactive"} />
+                    )}
+                  </motion.div>
+
+                  <div className="flex-1">
+                    <p className={`font-semibold text-sm ${ isCurrent ? "text-(--text)" : "text-(--text-secondary)"}`}>
+                      {t(`guide.application.steps.${step.key}`, step.key)}
+                    </p>
+                    {isCurrent && (
+                      <p className="text-xs text-(--text-secondary) mt-1">
+                        {t("guide.application.currentStep", "Current step")}
+                      </p>
+                    )}
+                    {isCompleted && !isRejected && (
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                        {t("guide.application.completed", "Completed")}
+                      </p>
+                    )}
+                    {isRejected && (
+                      <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                        {t("guide.application.rejected", "Rejected")}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="shrink-0">
+                    {isCompleted && !isRejected && (
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    )}
+                    {isCurrent && !isRejected && (
+                      <div className="w-2 h-2 rounded-full bg-(--primary) animate-pulse"></div>
+                    )}
+                    {isRejected && (
+                      <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                    )}
+                  </div>
+                </motion.div>
 
                 {index < applicationSteps.length - 1 && (
-                  <div className="w-1 h-12 my-3 md:hidden rounded" style={{ background: completedSteps.includes(step.id + 1) ? "linear-gradient(180deg, var(--gradient-from), var(--gradient-to))" : "var(--border)",}}/>
+                  <div className="flex items-center gap-4 pl-5">
+                    <div className={`w-0.5 h-6 transition-all duration-300 ${completedSteps.includes(step.id + 1) ? "bg-linear-to-b from-(--gradient-from) to-(--gradient-to)" : "bg-(--border)"}`}></div>
+                  </div>
                 )}
-              </motion.div>
+              </React.Fragment>
             );
           })}
         </div>
