@@ -254,14 +254,18 @@ const AdminGuideApplications = () => {
                       isRtl ? "flex-row-reverse" : ""
                     }`}
                   >
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D5B36A] to-[#8B6F47] flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-linear-to-br from-[#D5B36A] to-[#8B6F47] flex items-center justify-center">
                       <FaUser className="text-white" />
                     </div>
                     <div className={isRtl ? "text-right" : ""}>
                       <h3 className={`font-bold ${textColor}`}>
-                        {app.user.firstName} {app.user.lastName}
+                        {app.user
+                          ? `${app.user.firstName} ${app.user.lastName}`
+                          : t("guide.unknownUser", "Unknown User")}
                       </h3>
-                      <p className={textSecondary}>{app.user.email}</p>
+                      <p className={textSecondary}>
+                        {app.user?.email || t("guide.noEmail", "No email")}
+                      </p>
                       <div className="flex gap-2 mt-2">
                         <span
                           className={`px-3 py-1 rounded-full text-sm ${
