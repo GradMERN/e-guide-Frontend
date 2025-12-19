@@ -1,4 +1,3 @@
-// NotFoundText.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -27,11 +26,11 @@ export default function NotFoundText({ onHoverChange }) {
         <div className="h-0.5 sm:h-1 w-16 sm:w-20 md:w-32 lg:w-48 bg-linear-to-r from-transparent via-(--primary) to-transparent mt-2 sm:mt-3 md:mt-4 mx-auto lg:mx-0" />
       </div>
 
-      <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-(--text) mb-2 sm:mb-3 md:mb-4 drop-shadow-lg z-10">
+      <h2 className="text-base sm:text-lg md:text-3xl lg:text-2xl xl:text-3xl font-bold text-(--text) mb-2 sm:mb-3 md:mb-4 drop-shadow-lg z-10">
         {t("notFound.title", "Lost in the Desert?")}
       </h2>
 
-      <p className="text-xs sm:text-sm md:text-base lg:text-lg text-(--text-secondary) mb-4 sm:mb-6 md:mb-8 leading-relaxed drop-shadow-md max-w-xl z-10">
+      <p className="text-xs sm:text-sm md:text-xl lg:text-lg text-(--text-secondary) mb-4 sm:mb-6 md:mb-8 leading-relaxed drop-shadow-md max-w-xl z-10">
         {t("notFound.description", "The page you're searching for has vanished like ancient treasures beneath the shifting sands of time.")}
         <br className="hidden sm:block" />
         <span className="text-(--primary) font-semibold">
@@ -40,10 +39,10 @@ export default function NotFoundText({ onHoverChange }) {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto z-10">
-        <button onClick={() => navigate(-1)} className="btn-notfound-primary w-full sm:w-auto px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 text-sm sm:text-base">
+        <button onClick={() => navigate(-1)} className="btn-primary-hero  w-full sm:w-auto px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 text-sm sm:text-base md:text-xl">
           {t("notFound.goBack", "Go Back")}
         </button>
-        <button onClick={() => navigate("/")} className="btn-notfound-secondary w-full sm:w-auto px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 text-sm sm:text-base">
+        <button onClick={() => navigate("/")} className="btn-primary-hero  w-full sm:w-auto px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 text-sm sm:text-base md:text-xl">
           {t("notFound.goHome", "Go Home")}
         </button>
       </div>
