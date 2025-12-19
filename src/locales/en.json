@@ -1188,5 +1188,12 @@
       "copyright": "© 2025 Mystic Egypt Tours. All rights reserved.",
       "links": ["Privacy Policy", "Terms of Service", "Cookie Policy"]
     }
+  },
+  "notFound": {
+    "title": "Lost in the Desert?",
+    "description": "The page you're searching for has vanished like ancient treasures beneath the shifting sands of time.",
+    "guide": "Let's guide you back to civilization.",
+    "goBack": "Go Back",
+    "goHome": "Go Home"
   }
 }
