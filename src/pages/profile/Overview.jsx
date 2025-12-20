@@ -4,6 +4,7 @@ import { useAuth } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { userService } from "../../apis/userService";
 import { useSelector } from "react-redux";
+import { getImageUrl } from "../../utils/imageUtils";
 import {
   FaCheckCircle,
   FaPlayCircle,
@@ -18,120 +19,209 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 
+const ImageModal = ({ isOpen, onClose, imageUrl }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-4xl max-h-[90vh] w-full flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+        >
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+        <img
+          src={imageUrl}
+          alt="Profile Fullscreen"
+          className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+        />
+      </div>
+    </div>
+  );
+};
+
 const UserProfileCard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const avatarUrl = getImageUrl(user?.avatar);
 
   return (
-    <div
-      className="p-6 rounded-lg shadow-md flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6"
-      style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}
-    >
-      {/* Profile Info */}
-      <div className="flex flex-col sm:flex-row items-center sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto text-center sm:text-left">
-        <div className="relative mx-auto md:mx-0">
-          {user?.avatar?.url ? (
-            <img
-              src={user.avatar.url}
-              alt="Profile"
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2"
-              style={{ borderColor: "var(--primary)" }}
-            />
-          ) : (
+    <>
+      <div
+        className="p-6 rounded-lg shadow-md flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6"
+        style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}
+      >
+        {/* Profile Info */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto text-center sm:text-left">
+          <div className="relative mx-auto md:mx-0">
             <div
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2"
+              className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-black font-bold text-3xl border-2 overflow-hidden ${
+                avatarUrl
+                  ? "cursor-pointer hover:opacity-90 transition-opacity"
+                  : ""
+              }`}
               style={{
                 borderColor: "var(--primary)",
-                background: "linear-gradient(to right, #C7A15C, #E2C784)",
+                background: avatarUrl
+                  ? "transparent"
+                  : "linear-gradient(to right, #C7A15C, #E2C784)",
               }}
+              onClick={() => avatarUrl && setIsModalOpen(true)}
             >
-              {user?.firstName?.charAt(0) || "U"}
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150?text=Error";
+                  }}
+                />
+              ) : (
+                user?.firstName?.charAt(0) || "U"
+              )}
             </div>
-          )}
-        </div>
-        <div className="w-full mx-2 sm:w-auto">
-          <h3 className="text-xl font-bold">
-            {user?.firstName && user?.lastName
-              ? `${user.firstName} ${user.lastName}`
-              : user?.name || "User"}
-          </h3>
-          <p className="text-sm capitalize" style={{ color: "var(--primary)" }}>
-            {user?.role || "User"}
-          </p>
-          <div
-            className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-2 text-sm"
-            style={{ color: "var(--text-muted)" }}
-          >
-            {user?.email && (
-              <div className="flex items-center gap-1">
-                <FaEnvelope size={12} />
-                <span>{user.email}</span>
+            {/* Camera Icon Overlay (Optional: only if you want to indicate edit/view) */}
+            <div className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 pointer-events-none">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                style={{ color: "var(--text)" }}
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                ></path>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+
+          <div className="w-full mx-2 sm:w-auto">
+            <h3 className="text-xl font-bold">
+              {user?.firstName && user?.lastName
+                ? `${user.firstName} ${user.lastName}`
+                : user?.name || "User"}
+            </h3>
+            <p
+              className="text-sm capitalize"
+              style={{ color: "var(--primary)" }}
+            >
+              {user?.role || "User"}
+            </p>
+            <div
+              className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-2 text-sm"
+              style={{ color: "var(--text-muted)" }}
+            >
+              {user?.email && (
+                <div className="flex items-center gap-1">
+                  <FaEnvelope size={12} />
+                  <span>{user.email}</span>
+                </div>
+              )}
+              {user?.phone && (
+                <div className="flex items-center gap-1">
+                  <FaPhone size={12} />
+                  <span>{user.phone}</span>
+                </div>
+              )}
+            </div>
+            {(user?.city || user?.country) && (
+              <div
+                className="flex items-center justify-center sm:justify-start text-sm mt-1"
+                style={{ color: "var(--text-muted)" }}
+              >
+                <FaMapMarkerAlt className="mr-1" size={12} />
+                <span>
+                  {user?.city && user?.country
+                    ? `${user.city}, ${user.country}`
+                    : user?.city || user?.country}
+                </span>
               </div>
             )}
-            {user?.phone && (
-              <div className="flex items-center gap-1">
-                <FaPhone size={12} />
-                <span>{user.phone}</span>
+            {user?.createdAt && (
+              <div
+                className="flex items-center justify-center sm:justify-start text-sm mt-1"
+                style={{ color: "var(--text-muted)" }}
+              >
+                <FaCalendarAlt className="mr-1" size={12} />
+                <span>
+                  {t("profile.memberSince") || "Member since"}{" "}
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </span>
               </div>
             )}
           </div>
-          {(user?.city || user?.country) && (
-            <div
-              className="flex items-center justify-center sm:justify-start text-sm mt-1"
-              style={{ color: "var(--text-muted)" }}
-            >
-              <FaMapMarkerAlt className="mr-1" size={12} />
-              <span>
-                {user?.city && user?.country
-                  ? `${user.city}, ${user.country}`
-                  : user?.city || user?.country}
-              </span>
-            </div>
-          )}
-          {user?.createdAt && (
-            <div
-              className="flex items-center justify-center sm:justify-start text-sm mt-1"
-              style={{ color: "var(--text-muted)" }}
-            >
-              <FaCalendarAlt className="mr-1" size={12} />
-              <span>
-                {t("profile.memberSince") || "Member since"}{" "}
-                {new Date(user.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col items-center w-full lg:w-auto gap-3">
+          <button
+            type="button"
+            onClick={() => navigate("/profile/info")}
+            className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
+            style={{
+              background: "var(--button-bg)",
+              color: "var(--text-button)",
+            }}
+          >
+            <FaEdit className="mr-2" />
+            {t("editProfile")}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/profile/security")}
+            className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
+            style={{
+              backgroundColor: "var(--secondary)",
+              color: "var(--text-button)",
+            }}
+          >
+            <FaKey className="mr-2" />
+            {t("changePassword")}
+          </button>
         </div>
       </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-col items-center w-full lg:w-auto gap-3">
-        <button
-          type="button"
-          onClick={() => navigate("/profile/info")}
-          className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
-          style={{
-            background: "var(--button-bg)",
-            color: "var(--text-button)",
-          }}
-        >
-          <FaEdit className="mr-2" />
-          {t("editProfile")}
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("/profile/security")}
-          className="w-full flex items-center justify-center py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
-          style={{
-            backgroundColor: "var(--secondary)",
-            color: "var(--text-button)",
-          }}
-        >
-          <FaKey className="mr-2" />
-          {t("changePassword")}
-        </button>
-      </div>
-    </div>
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        imageUrl={avatarUrl}
+      />
+    </>
   );
 };
 

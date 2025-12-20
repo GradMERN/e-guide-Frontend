@@ -24,9 +24,8 @@ const FAQSection = () => {
   });
 
   return (
-    <SectionWrapperFull>
-      <TitlesHome icon={BsQuestionSquare} title={t('faq.title')} paragraph={t('faq.subtitle')}
-      />
+    <SectionWrapperFull py="py-10 sm:py-12 md:py-18 lg:py-18" px="px-4 sm:px-6 md:px-12 lg:px-12">
+      <TitlesHome icon={BsQuestionSquare} title={t('faq.title')} paragraph={t('faq.subtitle')}/>
       <FAQGlobal categories={parsedCategories} />
     </SectionWrapperFull>
   );

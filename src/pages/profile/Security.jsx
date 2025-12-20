@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../store/hooks";
 import { userService } from "../../apis/userService";
@@ -10,33 +10,122 @@ import {
   FaLock,
   FaSignOutAlt,
   FaGoogle,
+  FaEnvelope,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import GoldenSpinner from "../../components/common/GoldenSpinner";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../store/slices/authSlice";
+
+const EmailUpdate = () => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState(user?.email || "");
+  const [loading, setLoading] = useState(false);
+
+  const handleEmailUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await userService.updateProfile({ email });
+      const updatedUser = response.data || response;
+
+      // Update Redux store
+      const token = localStorage.getItem("token");
+      dispatch(loginSuccess({ user: updatedUser, token }));
+
+      toast.success(
+        t("emailUpdatedSuccessfully") || "Email updated successfully"
+      );
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          t("emailUpdateFailed") ||
+          "Failed to update email"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inputStyle = {
+    borderColor: "var(--border)",
+    backgroundColor: "var(--surface)",
+    color: "var(--text)",
+  };
+
+  return (
+    <div
+      className="p-6 rounded-lg shadow-md"
+      style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}
+    >
+      <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <FaEnvelope style={{ color: "var(--primary)" }} />
+        {t("updateEmail")}
+      </h3>
+      <form onSubmit={handleEmailUpdate}>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-sm font-medium mb-2">
+            {t("newEmailAddress")}
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+            style={inputStyle}
+            placeholder="you@example.com"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading || email === user?.email}
+          className="w-full py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out disabled:opacity-50 flex items-center justify-center gap-2"
+          style={{
+            background: "var(--button-bg)",
+            color: "var(--text-button)",
+          }}
+        >
+          {loading ? (
+            <>
+              <GoldenSpinner size={16} />
+              {t("saving") || "Saving..."}
+            </>
+          ) : (
+            t("updateEmail")
+          )}
+        </button>
+      </form>
+    </div>
+  );
+};
 
 const PasswordChange = () => {
   const { t } = useTranslation();
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const isGoogleUser = user?.provider === "google";
+
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-
-  // Check if user logged in via Google
-  const isGoogleUser = user?.loginMethod === "google";
-  // Google users can set a password if they don't have one yet
-  // hasPassword is explicitly returned from the backend
-  const canSetPassword = isGoogleUser && user?.hasPassword === false;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,75 +138,39 @@ const PasswordChange = () => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const validatePassword = (password) => {
-    const errors = [];
-    if (password.length < 12)
-      errors.push(t("passwordMinLength") || "At least 12 characters");
-    if (!/(.*[a-z]){2,}/.test(password))
-      errors.push(t("passwordLowercase") || "At least 2 lowercase letters");
-    if (!/(.*[A-Z]){2,}/.test(password))
-      errors.push(t("passwordUppercase") || "At least 2 uppercase letters");
-    if (!/(.*[0-9]){2,}/.test(password))
-      errors.push(t("passwordNumbers") || "At least 2 numbers");
-    if (!/(.*[!@#$%^&*(),.?":{}|<>]){2,}/.test(password))
-      errors.push(t("passwordSpecialChars") || "At least 2 special characters");
-    return errors;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
 
-    // Validate passwords match
     if (formData.newPassword !== formData.confirmPassword) {
       setError(t("passwordsMismatch") || "Passwords do not match");
       return;
     }
 
-    // Validate password strength
-    const passwordErrors = validatePassword(formData.newPassword);
-    if (passwordErrors.length > 0) {
-      setError(passwordErrors.join(", "));
-      return;
-    }
-
-    setSaving(true);
-
     try {
-      let response;
+      setLoading(true);
 
-      if (canSetPassword) {
-        // Google user setting password for the first time
-        response = await userService.setPassword({
+      // Use setPassword for Google users without password, changePassword otherwise
+      if (isGoogleUser && !user?.hasPassword) {
+        await userService.setPassword({
           newPassword: formData.newPassword,
         });
-
-        // Update user state to reflect they now have a password
-        if (response?.success && setUser) {
-          setUser({ ...user, hasPassword: true });
-        }
       } else {
-        // Regular password change
-        response = await userService.changePassword({
+        await userService.changePassword({
           currentPassword: formData.currentPassword,
           newPassword: formData.newPassword,
-          confirmPassword: formData.confirmPassword,
         });
       }
 
-      if (response?.success) {
-        setSuccess(true);
-        setFormData({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-        setTimeout(() => {
-          setIsExpanded(false);
-          setSuccess(false);
-        }, 2000);
-      }
+      setSuccess(true);
+      toast.success(t("passwordChanged") || "Password changed successfully!");
+      setIsExpanded(false);
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -125,182 +178,15 @@ const PasswordChange = () => {
           "Failed to change password"
       );
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
   const inputStyle = {
+    borderColor: "var(--border)",
     backgroundColor: "var(--surface)",
     color: "var(--text)",
-    borderColor: "var(--border)",
   };
-
-  // Google user who already has a password - show that they need to use change password
-  if (isGoogleUser && user?.hasPassword) {
-    // They already set a password, show normal change password form
-    // Fall through to the normal form below
-  } else if (isGoogleUser && !canSetPassword && !user?.hasPassword) {
-    // Edge case: We don't know if they have a password - show the set password option
-  }
-
-  // Google user who CAN set a password (doesn't have one yet)
-  if (canSetPassword) {
-    return (
-      <div
-        className="p-6 rounded-lg shadow-md"
-        style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}
-      >
-        <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <FaLock style={{ color: "var(--primary)" }} />
-          {t("setPassword") || "Set Password"}
-        </h3>
-
-        {/* Info about Google account */}
-        <div
-          className="flex items-center gap-3 p-4 rounded-lg mb-4"
-          style={{ backgroundColor: "var(--background)" }}
-        >
-          <FaGoogle className="text-blue-500" />
-          <p style={{ color: "var(--text-muted)" }}>
-            {t("googleSetPasswordNote") ||
-              "You signed in with Google. Setting a password allows you to also login with email and password."}
-          </p>
-        </div>
-
-        {!isExpanded ? (
-          <button
-            type="button"
-            onClick={() => setIsExpanded(true)}
-            className="flex items-center gap-2 py-2 px-4 rounded-md border transition-colors duration-200"
-            style={{ borderColor: "var(--primary)", color: "var(--primary)" }}
-          >
-            <FaLock />
-            {t("setPassword") || "Set Password"}
-          </button>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="newPassword"
-                className="block text-sm font-medium mb-2"
-              >
-                {t("newPassword")}
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasswords.new ? "text" : "password"}
-                  id="newPassword"
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  required
-                  className="border w-full px-4 py-2 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  style={inputStyle}
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility("new")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-              <p
-                className="text-xs mt-1"
-                style={{ color: "var(--text-muted)" }}
-              >
-                {t("passwordRequirements") ||
-                  "Min 12 chars, 2 uppercase, 2 lowercase, 2 numbers, 2 special chars"}
-              </p>
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium mb-2"
-              >
-                {t("confirmNewPassword")}
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasswords.confirm ? "text" : "password"}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  className="border w-full px-4 py-2 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  style={inputStyle}
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility("confirm")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div className="flex items-center gap-2 text-red-500 text-sm">
-                <FaExclamationCircle /> {error}
-              </div>
-            )}
-            {success && (
-              <div className="flex items-center gap-2 text-green-500 text-sm">
-                <FaCheck />{" "}
-                {t("passwordSet") ||
-                  "Password set successfully! You can now login with email and password."}
-              </div>
-            )}
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="flex-1 py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out disabled:opacity-50 flex items-center justify-center gap-2"
-                style={{
-                  background: "var(--button-bg)",
-                  color: "var(--text-button)",
-                }}
-              >
-                {saving ? (
-                  <>
-                    <GoldenSpinner size={16} />
-                    {t("saving") || "Saving..."}
-                  </>
-                ) : (
-                  t("setPassword") || "Set Password"
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsExpanded(false);
-                  setFormData({
-                    currentPassword: "",
-                    newPassword: "",
-                    confirmPassword: "",
-                  });
-                  setError("");
-                }}
-                className="flex-1 py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
-                style={{
-                  backgroundColor: "var(--secondary)",
-                  color: "var(--text-button)",
-                }}
-              >
-                {t("cancel")}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-    );
-  }
 
   return (
     <div
@@ -326,57 +212,76 @@ const PasswordChange = () => {
         </div>
       )}
 
+      {/* Google user without password - show set password option */}
+      {isGoogleUser && !user?.hasPassword && (
+        <div
+          className="flex items-center gap-3 p-3 rounded-lg mb-4"
+          style={{ backgroundColor: "var(--background)" }}
+        >
+          <FaGoogle className="text-blue-500" />
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            {t("googleSetPasswordNote") ||
+              "You signed in with Google. Setting a password allows you to also login with email and password."}
+          </p>
+        </div>
+      )}
+
       {!isExpanded ? (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div style={{ color: "var(--text-muted)" }}>
             <p className="text-sm">
-              {t("passwordAdvice") || "Use a strong, unique password"}
+              {t("passwordAdvice") || "Choose a strong, unique password."}
             </p>
             <p className="text-xs mt-1">
-              {t("passwordLastChanged") ||
-                "Change your password regularly for security"}
+              {t("passwordRequirements") ||
+                "Min 12 chars, 2 uppercase, 2 lowercase, 2 numbers, 2 special chars"}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setIsExpanded(true)}
-            className="flex items-center gap-2 py-2 px-4 rounded-md border transition-colors duration-200"
+            className="flex items-center gap-2 py-2 px-4 rounded-md border transition-colors duration-200 hover:bg-[var(--primary)]/10"
             style={{ borderColor: "var(--primary)", color: "var(--primary)" }}
           >
             <FaLock />
-            {t("changePassword")}
+            {isGoogleUser && !user?.hasPassword
+              ? t("setPassword")
+              : t("changePassword")}
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="currentPassword"
-              className="block text-sm font-medium mb-2"
-            >
-              {t("currentPassword")}
-            </label>
-            <div className="relative">
-              <input
-                type={showPasswords.current ? "text" : "password"}
-                id="currentPassword"
-                name="currentPassword"
-                value={formData.currentPassword}
-                onChange={handleChange}
-                required
-                className="border w-full px-4 py-2 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                style={inputStyle}
-              />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility("current")}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+          {/* Only show current password field if user has a password */}
+          {(!isGoogleUser || user?.hasPassword) && (
+            <div>
+              <label
+                htmlFor="currentPassword"
+                className="block text-sm font-medium mb-2"
               >
-                {showPasswords.current ? <FaEyeSlash /> : <FaEye />}
-              </button>
+                {t("currentPassword")}
+              </label>
+              <div className="relative">
+                <input
+                  type={showPasswords.current ? "text" : "password"}
+                  id="currentPassword"
+                  name="currentPassword"
+                  value={formData.currentPassword}
+                  onChange={handleChange}
+                  required
+                  className="border w-full px-4 py-2 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                  style={inputStyle}
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility("current")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {showPasswords.current ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           <div>
             <label
@@ -407,7 +312,7 @@ const PasswordChange = () => {
             </div>
             <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
               {t("passwordRequirements") ||
-                "Min 12 chars, 2 uppercase, 2 lowercase, 2 numbers"}
+                "Min 12 chars, 2 uppercase, 2 lowercase, 2 numbers, 2 special chars"}
             </p>
           </div>
 
@@ -455,18 +360,20 @@ const PasswordChange = () => {
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               type="submit"
-              disabled={saving}
+              disabled={loading}
               className="flex-1 py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out disabled:opacity-50 flex items-center justify-center gap-2"
               style={{
                 background: "var(--button-bg)",
                 color: "var(--text-button)",
               }}
             >
-              {saving ? (
+              {loading ? (
                 <>
                   <GoldenSpinner size={16} />
                   {t("saving") || "Saving..."}
                 </>
+              ) : isGoogleUser && !user?.hasPassword ? (
+                t("setPassword")
               ) : (
                 t("changePassword")
               )}
@@ -481,6 +388,7 @@ const PasswordChange = () => {
                   confirmPassword: "",
                 });
                 setError("");
+                setSuccess(false);
               }}
               className="flex-1 py-2 px-4 rounded-md focus:outline-none focus:ring-2 transition duration-150 ease-in-out"
               style={{
@@ -512,6 +420,9 @@ const DeactivateAccount = () => {
     try {
       const response = await userService.deactivateAccount();
       if (response?.success) {
+        toast.success(
+          t("accountDeactivated") || "Account deactivated successfully"
+        );
         logout();
         navigate("/");
       }
@@ -542,7 +453,7 @@ const DeactivateAccount = () => {
 
       <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
         {t("deactivateWarning") ||
-          "Deactivating your account will disable your profile and remove you from the platform. You can reactivate by clicking the link sent to your email."}
+          "This action will deactivate your account. You can reactivate it by logging in again."}
       </p>
 
       {!showConfirm ? (
@@ -590,7 +501,7 @@ const DeactivateAccount = () => {
             <button
               type="button"
               onClick={() => setShowConfirm(false)}
-              className="py-2 px-4 rounded-md border transition-colors"
+              className="py-2 px-4 rounded-md border transition-colors hover:bg-[var(--surface)]"
               style={{ borderColor: "var(--border)", color: "var(--text)" }}
             >
               {t("cancel")}
@@ -614,6 +525,7 @@ export default function Security() {
         {t("securitySettings")}
       </h2>
       <div className="space-y-8">
+        <EmailUpdate />
         <PasswordChange />
         <DeactivateAccount />
       </div>

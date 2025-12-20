@@ -1,5 +1,3 @@
-"use client";
-
 import { DirectionAwareHover } from "../ui/direction-aware-hover";
 import photo30 from "../../assets/images/views/photo-30.webp";
 
@@ -15,4 +13,4 @@ export function DirectionAwareHoverImage({ className }) {
       </DirectionAwareHover>
     </div>
   );
-}
+};

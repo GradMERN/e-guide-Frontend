@@ -1128,5 +1128,92 @@
     "verifiedReviews": "Verified Reviews",
     "on": "on",
     "noReviews": "No reviews yet."
+  },
+  "tourHero": {
+    "badge": "Premium Tour Experiences",
+    "titleLine1": "Discover Egypt's",
+    "titleLine2": "Timeless Wonders",
+    "description": "Journey through 5,000 years of history with expert guides. From ancient pyramids to Nile cruises, experience the magic of Egypt like never before.",
+    "stats": {
+      "sites": {
+        "icon": "🏛️",
+        "label": "Explore",
+        "value": "50+ Sites"
+      },
+      "rating": {
+        "icon": "⭐",
+        "label": "Rated",
+        "value": "4.8/5.0"
+      },
+      "travelers": {
+        "icon": "👥",
+        "label": "Travelers",
+        "value": "50K+"
+      }
+    },
+    "cards": {
+      "pyramids": {
+        "title": "Ancient Pyramids",
+        "subtitle": "Giza & Saqqara",
+        "alt": "Ancient Pyramids of Giza"
+      },
+      "nile": {
+        "title": "Nile Cruise",
+        "subtitle": "River Tours",
+        "alt": "Luxury Nile Cruise"
+      },
+      "islamic": {
+        "title": "Heritage",
+        "subtitle": "Islamic Cairo",
+        "alt": "Islamic Cairo Heritage"
+      }
+    }
+  },
+  "footer": {
+    "company": {
+      "name": "Guidora",
+      "description": "Your gateway to the wonders of Ancient Egypt. Experience history, culture, and adventure like never before."
+    },
+    "quickLinks": {
+      "title": "Quick Links",
+      "links": [
+        "About Us",
+        "Our Tours",
+        "Destinations",
+        "Travel Blog",
+        "FAQs",
+        "Contact Us"
+      ]
+    },
+    "becomeGuide": "Become a Guide",
+    "popularTours": {
+      "title": "Popular Tours",
+      "items": [
+        "Pyramids of Giza",
+        "Nile River Cruise",
+        "Valley of the Kings",
+        "Abu Simbel Temples",
+        "Egyptian Museum",
+        "Red Sea Diving"
+      ]
+    },
+    "contact": {
+      "title": "Contact Info",
+      "address": "123 Tahrir Square, Cairo, Egypt",
+      "phone": "+20 2 1234 5678",
+      "email": "info@mysticegypttours.com",
+      "hours": "24/7 Support Available"
+    },
+    "bottom": {
+      "copyright": "© 2025 Mystic Egypt Tours. All rights reserved.",
+      "links": ["Privacy Policy", "Terms of Service", "Cookie Policy"]
+    }
+  },
+  "notFound": {
+    "title": "Lost in the Desert?",
+    "description": "The page you're searching for has vanished like ancient treasures beneath the shifting sands of time.",
+    "guide": "Let's guide you back to civilization.",
+    "goBack": "Go Back",
+    "goHome": "Go Home"
   }
 }

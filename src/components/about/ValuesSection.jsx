@@ -7,6 +7,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoIosGlobe } from "react-icons/io";
 import { FaRegClock } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
+import SectionWrapperFull from "../common/SectionWrapper";
 
 export default function ValuesSection() {
   const { t } = useTranslation();
@@ -20,18 +21,18 @@ export default function ValuesSection() {
 
 
   return (
-    <section className="py-6 lg:py-12 relative">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+    <SectionWrapperFull className="relative" py="py-0" px="px-4 sm:px-6 md:px-12 lg:px-12 ">
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-12">
-          <motion.span className="inline-block text-sm tracking-[0.3em] text-primary uppercase font-medium mb-6 smooth-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+          <motion.span className="inline-block text-sm xs:text-base sm:text-lg tracking-[0.25em] sm:tracking-[0.3em] text-text uppercase font-medium mb-3 sm:mb-4" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
             {t("about.values.label")}
           </motion.span>
 
-          <motion.h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light mb-6 smooth-text" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
-            {t("about.values.title")}<span className="font-semibold text-gradient-title"> {t("about.values.titleHighlight")}</span>
+          <motion.h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-6xl font-light mb-3 sm:mb-4 text-text leading-tight" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
+            {t("about.values.title")}<span className="font-semibold bg-linear-to-r text-gradient-title bg-clip-text text-transparent"> {t("about.values.titleHighlight")}</span>
           </motion.h2>
 
-          <motion.p className="text-text text-xl lg:text-2xl max-w-3xl mx-auto smooth-text leading-relaxed" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} viewport={{ once: true }}>
+          <motion.p className="text-text text-sm xs:text-base sm:text-lg max-w-xl sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} viewport={{ once: true }}>
             {t("about.values.subtitle")}
           </motion.p>
         </div>
@@ -42,6 +43,6 @@ export default function ValuesSection() {
           ))}
         </div>
       </div>
-    </section>
+    </SectionWrapperFull>
   );
 }

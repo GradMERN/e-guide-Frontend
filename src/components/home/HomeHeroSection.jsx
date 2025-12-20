@@ -39,14 +39,14 @@ export default function ImagesSliderDemo() {
   };
 
 return (
-    <ImagesSlider images={images} className="h-screen md:h-[75vh] lg:h-[90vh] xl:h-screen w-full">
-      <div className="z-50 flex flex-col justify-center items-center px-4 py-8 sm:py-12">
-        <motion.div initial={{ opacity: 0, y: -80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-6 md:mb-10">
-          <motion.h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-3 md:mb-4 leading-normal sm:leading-[1.15] md:leading-normal bg-tertiary bg-clip-text text-transparent [text-shadow:0_0_60px_rgba(199,161,92,0.5)]">
+    <ImagesSlider images={images} className="h-[calc(100vh-6rem)] md:h-[calc(100vh-5rem)] lg:h-[calc(100vh-5rem)] xl:h-[calc(100vh-6rem)] w-full">
+      <div className="z-50 flex flex-col justify-start items-center h-full w-full px-4 py-8 sm:py-12">
+
+        <motion.div initial={{ opacity: 0, y: -80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mt-16 w-full max-w-5xl">
+          <motion.h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-8 leading-normal bg-tertiary bg-clip-text text-transparent [text-shadow:0_0_60px_rgba(199,161,92,0.5)]">
             {t("homepage.title")}
           </motion.h1>
-
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide">
+          <motion.p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide mx-auto max-w-3xl mb-6">
             {t("homepage.subtitle")}
           </motion.p>
         </motion.div>
@@ -59,19 +59,20 @@ return (
                 <span className="text-white text-sm">{t(`homepage.labels.${index}`)}</span>
               </div>
             );
-        })}
+          })}
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex flex-row sm:flex-row gap-3 md:gap-4">
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex justify-center gap-4 mt-12">
           <button onClick={handleExplore} className="btn-primary-hero">{t("homepage.exploreBtn")}</button>
           <button onClick={handleWatch} className="btn-watch-hero">{t("homepage.watchBtn")}</button>
         </motion.div>
 
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20">
-        <motion.div animate={{ y: [0, 10, 0] }} transition={{duration: 1.5, repeat: Infinity, repeatType: "loop", ease: "easeInOut"}}className="relative flex justify-center items-center">
-          <IoChevronDown size={32} className="text-white md:w-10 md:h-10 lg:w-12 lg:h-12 "/>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20">
+          <motion.div animate={{ y: [0, 10, 0] }} transition={{duration: 1.5, repeat: Infinity, repeatType: "loop", ease: "easeInOut"}}className="relative flex justify-center items-center">
+            <IoChevronDown size={32} className="text-white w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12"/>
+          </motion.div>
         </motion.div>
-    </motion.div>
+
       </div>
     </ImagesSlider>
   );

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { MdOutlineReviews } from "react-icons/md";
 import TitlesHome from "../common/TitlesHome";
 import { InfiniteMovingCards } from "../ui/InfiniteMovingCards";
+import SectionWrapperFull from "../common/SectionWrapper";
 
 export default function ReviewsSection() {
   const { t } = useTranslation();
@@ -106,14 +107,9 @@ export default function ReviewsSection() {
   ];
 
   return (
-    <div className="pb-10 sm:pb-10 md:pb-28">
-      <TitlesHome icon={MdOutlineReviews} title={t("reviewsSection.title")} paragraph={t("reviewsSection.description")}/>
-
-      <InfiniteMovingCards
-        items={reviews}
-        speed="fast"
-        pauseOnHover={true}
-      />
-    </div>
+    <SectionWrapperFull py="py-0" px="px-0" className="relative overflow-hidden">
+        <TitlesHome icon={MdOutlineReviews} title={t("reviewsSection.title")} paragraph={t("reviewsSection.description")}/>
+        <InfiniteMovingCards items={reviews} speed="fast" pauseOnHover={true}/>
+    </SectionWrapperFull>
   );
-}
+};
