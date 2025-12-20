@@ -6,9 +6,7 @@ const StepDocuments = ({existingCertificates,certificateFiles,documentFiles,hand
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }} className="space-y-4 sm:space-y-6">
       <div>
         <label className={`block text-sm sm:text-base font-semibold mb-3 sm:mb-4 px-1 ${labelClass}`}>
-          <FaCertificate className="inline mr-2 text-base sm:text-lg" />
-          {t("guide.certificates", "Certificates")}
-          <span className="text-xs sm:text-sm font-normal text-(--text-secondary) ml-2">({t("guide.optional", "optional")}) </span>
+          {t("guide.certificates", "Certificates")}  <span className="text-xs sm:text-sm font-normal text-(--text-secondary) ml-2">({t("guide.optional", "optional")}) </span>
         </label>
 
         {existingCertificates.length > 0 && (
@@ -57,9 +55,7 @@ const StepDocuments = ({existingCertificates,certificateFiles,documentFiles,hand
 
       <div>
         <label className={`block text-sm sm:text-base font-semibold mb-3 sm:mb-4 px-1 ${labelClass}`}>
-          <FaFile className="inline mr-2 text-base sm:text-lg" />
-          {t("guide.documents", "Supporting Documents")}
-          <span className="text-xs sm:text-sm font-normal text-(--text-secondary) ml-2">({t("guide.optional", "optional")})</span>
+          {t("guide.documents", "Supporting Documents")}  <span className="text-xs sm:text-sm font-normal text-(--text-secondary) ml-2">({t("guide.optional", "optional")})</span>
         </label>
 
         {documentFiles.length > 0 && (

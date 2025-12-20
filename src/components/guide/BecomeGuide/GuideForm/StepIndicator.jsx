@@ -1,7 +1,10 @@
 import { FaCheck } from "react-icons/fa";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const StepIndicator = ({ steps, currentStep, totalSteps }) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="mb-6 sm:mb-8 pb-4 sm:pb-6">
       <div className="hidden sm:flex items-center justify-between relative">
@@ -59,14 +62,10 @@ const StepIndicator = ({ steps, currentStep, totalSteps }) => {
                     {step.title}
                   </p>
                   {isCurrent && (
-                    <p className="text-xs text-(--text-secondary) mt-1">
-                      Current step
-                    </p>
+                    <p className="text-xs text-(--text-secondary) mt-1">{t("guide.currentStep", "Current step")}</p>
                   )}
                   {isCompleted && (
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                      Completed
-                    </p>
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">{t("guide.completed", "Completed")}</p>
                   )}
                 </div>
 
