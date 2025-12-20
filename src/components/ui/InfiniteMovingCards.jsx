@@ -71,7 +71,7 @@ export const InfiniteMovingCards = ({
             <p className="text-text text-xs md:text-sm leading-relaxed line-clamp-3 mb-4">{item.review} </p>
 
             <div className="flex items-center gap-3 pt-3 border-t border-border">
-              <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-base shrink-0">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-secondary flex items-center justify-center text-black font-bold text-base shrink-0">
                 {getDisplayName(item.name)}
               </div>
 
