@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../store/hooks";
 import { userService } from "../../apis/userService";
 import {
-  FaSpinner,
   FaCheck,
   FaExclamationCircle,
   FaEye,
@@ -13,6 +12,7 @@ import {
   FaGoogle,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const PasswordChange = () => {
   const { t } = useTranslation();
@@ -269,7 +269,7 @@ const PasswordChange = () => {
               >
                 {saving ? (
                   <>
-                    <FaSpinner className="animate-spin" />
+                    <GoldenSpinner size={16} />
                     {t("saving") || "Saving..."}
                   </>
                 ) : (
@@ -464,7 +464,7 @@ const PasswordChange = () => {
             >
               {saving ? (
                 <>
-                  <FaSpinner className="animate-spin" />
+                  <GoldenSpinner size={16} />
                   {t("saving") || "Saving..."}
                 </>
               ) : (
@@ -580,7 +580,7 @@ const DeactivateAccount = () => {
             >
               {deactivating ? (
                 <>
-                  <FaSpinner className="animate-spin" />
+                  <GoldenSpinner size={16} />
                   {t("deactivating") || "Deactivating..."}
                 </>
               ) : (

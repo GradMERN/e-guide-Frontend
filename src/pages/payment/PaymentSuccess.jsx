@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import paymentApi from "../../apis/payment.api";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -63,25 +65,7 @@ const PaymentSuccess = () => {
       >
         {loading ? (
           <div className="text-center">
-            <svg
-              className="animate-spin h-12 w-12 mx-auto text-primary"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-                fill="none"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              />
-            </svg>
+            <GoldenSpinner size={48} />
             <p className="mt-4 text-text">Confirming payment...</p>
           </div>
         ) : error ? (

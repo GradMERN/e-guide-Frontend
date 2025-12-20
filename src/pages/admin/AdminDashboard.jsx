@@ -251,7 +251,7 @@ const AdminDashboard = () => {
             {dashboardData.totalTours.toLocaleString()}
           </p>
           <p className={`text-xs text-green-500 mt-2`}>
-            {t("guide.tours.published") || "Available tours"}
+            {t("admin.availableTours") || "Available tours"}
           </p>
         </div>
         <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
@@ -262,7 +262,7 @@ const AdminDashboard = () => {
             {dashboardData.totalEnrollments.toLocaleString()}
           </p>
           <p className={`text-xs text-blue-500 mt-2`}>
-            {t("common.statuses.active") || "Current enrollments"}
+            {t("admin.currentEnrollments") || "Current enrollments"}
           </p>
         </div>
         <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>

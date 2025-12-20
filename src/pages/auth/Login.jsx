@@ -221,24 +221,14 @@ export default function LoginPage() {
 
                   // Route based on user role
                   const role = res.data.data?.role?.toLowerCase();
-                  console.log(
-                    "User role:",
-                    res.data.data?.role,
-                    "Lowercased:",
-                    role
-                  );
                   if (role === "admin") {
-                    console.log("Routing to /admin/dashboard");
                     navigate("/admin/dashboard");
                   } else if (role === "guide") {
-                    console.log("Routing to /guide/dashboard");
                     navigate("/guide/dashboard");
                   } else {
-                    console.log("Routing to /");
                     navigate("/");
                   }
                 } catch (err) {
-                  console.error("Login error:", err);
                   toast.error(err.response?.data?.message || "Login failed");
                 } finally {
                   setSubmitting(false);

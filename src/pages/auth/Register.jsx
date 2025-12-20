@@ -12,8 +12,42 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 const locationData = {
-  Egypt: ["Cairo", "Alexandria", "Giza", "Luxor", "Aswan", "Sharm El Sheikh", "Hurghada", "Port Said", "Suez", "Tanta", "Mansoura", "Zagazig", "Ismailia", "Faiyum", "Damanhur", "Beni Suef", "Minya", "Sohag", "Assiut", "Arish", "Al-Mahalla al-Kubra", "Kafr El Sheikh", "El-Minya", "Damietta", "Qena"],
-  USA: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio"],
+  Egypt: [
+    "Cairo",
+    "Alexandria",
+    "Giza",
+    "Luxor",
+    "Aswan",
+    "Sharm El Sheikh",
+    "Hurghada",
+    "Port Said",
+    "Suez",
+    "Tanta",
+    "Mansoura",
+    "Zagazig",
+    "Ismailia",
+    "Faiyum",
+    "Damanhur",
+    "Beni Suef",
+    "Minya",
+    "Sohag",
+    "Assiut",
+    "Arish",
+    "Al-Mahalla al-Kubra",
+    "Kafr El Sheikh",
+    "El-Minya",
+    "Damietta",
+    "Qena",
+  ],
+  USA: [
+    "New York",
+    "Los Angeles",
+    "Chicago",
+    "Houston",
+    "Phoenix",
+    "Philadelphia",
+    "San Antonio",
+  ],
   Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
   UK: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"],
   Germany: ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
@@ -26,12 +60,24 @@ const locationData = {
   India: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Ahmedabad", "Chennai"],
   Brazil: ["Sao Paulo", "Rio de Janeiro", "Brasilia", "Salvador", "Fortaleza"],
   Mexico: ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana"],
-  "South Africa": ["Cape Town", "Johannesburg", "Durban", "Pretoria", "Port Elizabeth"],
-  Russia: ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg", "Kazan"],
+  "South Africa": [
+    "Cape Town",
+    "Johannesburg",
+    "Durban",
+    "Pretoria",
+    "Port Elizabeth",
+  ],
+  Russia: [
+    "Moscow",
+    "Saint Petersburg",
+    "Novosibirsk",
+    "Yekaterinburg",
+    "Kazan",
+  ],
   Turkey: ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"],
   Netherlands: ["Amsterdam", "Rotterdam", "The Hague", "Utrecht", "Eindhoven"],
   Sweden: ["Stockholm", "Gothenburg", "Malmo", "Uppsala"],
-  Norway: ["Oslo", "Bergen", "Trondheim", "Stavanger"]
+  Norway: ["Oslo", "Bergen", "Trondheim", "Stavanger"],
 };
 
 const countryOptions = Object.keys(locationData);
@@ -50,10 +96,23 @@ const InputField = ({
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <Icon className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
-        <input {...field} {...props} type={type} placeholder={placeholder}
-          onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
-          className={`w-full rounded-xl  input-register-border bg-background py-3 ps-12 pe-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50 ${extraClass}`} />
+        <Icon
+          className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+            focusedInput === placeholder ? "text-primary" : "text-text-muted"
+          }`}
+        />
+        <input
+          {...field}
+          {...props}
+          type={type}
+          placeholder={placeholder}
+          onFocus={() => setFocusedInput(placeholder)}
+          onBlur={(e) => {
+            field.onBlur(e);
+            setFocusedInput(null);
+          }}
+          className={`w-full rounded-xl  input-register-border bg-background py-3 ps-12 pe-4 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50 ${extraClass}`}
+        />
       </div>
       {meta.touched && meta.error && (
         <p className="text-red-500 text-xs mt-1 ms-2">{meta.error}</p>
@@ -75,11 +134,28 @@ const PasswordField = ({
   return (
     <div className="flex flex-col w-full">
       <div className="relative flex items-center">
-        <FaLock className={`absolute start-4 top-1/2 -translate-y-1/2 ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
-        <input {...field} {...props} type={show ? "text" : "password"} placeholder={placeholder}
-          onFocus={() => setFocusedInput(placeholder)} onBlur={(e) => { field.onBlur(e); setFocusedInput(null); }}
-          className="w-full rounded-xl input-register-border bg-background py-3 ps-12 pe-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50" />
-        <button type="button" onClick={() => setShow(!show)} className="absolute end-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary">
+        <FaLock
+          className={`absolute start-4 top-1/2 -translate-y-1/2 ${
+            focusedInput === placeholder ? "text-primary" : "text-text-muted"
+          }`}
+        />
+        <input
+          {...field}
+          {...props}
+          type={show ? "text" : "password"}
+          placeholder={placeholder}
+          onFocus={() => setFocusedInput(placeholder)}
+          onBlur={(e) => {
+            field.onBlur(e);
+            setFocusedInput(null);
+          }}
+          className="w-full rounded-xl input-register-border bg-background py-3 ps-12 pe-12 text-text placeholder-text-muted outline-none transition-all duration-300 focus:border-primary focus:ring-1 focus:ring-primary/50"
+        />
+        <button
+          type="button"
+          onClick={() => setShow(!show)}
+          className="absolute end-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary"
+        >
           {show ? <FaEyeSlash /> : <FaEye />}
         </button>
       </div>
@@ -105,10 +181,19 @@ const DropdownField = ({
   const { t } = useTranslation();
   return (
     <div className="flex flex-col w-full">
-      <div className="relative flex items-center" onClick={() => setOpen(!open)}>
-        <Icon className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors ${focusedInput === placeholder ? "text-primary" : "text-text-muted"}`} />
+      <div
+        className="relative flex items-center"
+        onClick={() => setOpen(!open)}
+      >
+        <Icon
+          className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors ${
+            focusedInput === placeholder ? "text-primary" : "text-text-muted"
+          }`}
+        />
 
-        <div className={`w-full rounded-xl  input-register-border bg-background py-3 ps-12 pe-10 text-text cursor-pointer flex items-center transition-all duration-300`}>
+        <div
+          className={`w-full rounded-xl  input-register-border bg-background py-3 ps-12 pe-10 text-text cursor-pointer flex items-center transition-all duration-300`}
+        >
           <span className={`truncate ${!field.value && "text-text-muted"}`}>
             {field.value || `${t("auth.register.select")} ${placeholder}`}
           </span>
@@ -126,7 +211,8 @@ const DropdownField = ({
                   if (onOptionSelect) onOptionSelect(opt);
                   setOpen(false);
                 }}
-                className="px-4 py-2 cursor-pointer text-text hover:bg-primary hover:text-white transition">
+                className="px-4 py-2 cursor-pointer text-text hover:bg-primary hover:text-white transition"
+              >
                 {opt}
               </div>
             ))}
@@ -177,7 +263,9 @@ export default function Register() {
     Yup.object({
       firstname: Yup.string().required(t("auth.register.errors.firstName")),
       lastname: Yup.string().required(t("auth.register.errors.lastName")),
-      email: Yup.string().email(t("auth.register.errors.emailInvalid")).required(t("auth.register.errors.lastName")),
+      email: Yup.string()
+        .email(t("auth.register.errors.emailInvalid"))
+        .required(t("auth.register.errors.lastName")),
       age: Yup.number()
         .min(13, t("auth.register.errors.ageMin"))
         .max(100, t("auth.register.errors.ageMax"))
@@ -187,8 +275,14 @@ export default function Register() {
     Yup.object({
       password: Yup.string()
         .min(12, t("auth.register.errors.passwordLength"))
-        .matches(/(?=(.*[A-Z]){2})/, t("auth.register.errors.passwordUppercase"))
-        .matches(/(?=(.*[a-z]){2})/, t("auth.register.errors.passwordLowercase"))
+        .matches(
+          /(?=(.*[A-Z]){2})/,
+          t("auth.register.errors.passwordUppercase")
+        )
+        .matches(
+          /(?=(.*[a-z]){2})/,
+          t("auth.register.errors.passwordLowercase")
+        )
         .matches(/(?=(.*\d){2})/, t("auth.register.errors.passwordNumber"))
         .matches(
           /(?=(.*[!@#$%^&*()\-__+.]){2})/,
@@ -201,7 +295,10 @@ export default function Register() {
         )
         .required(t("auth.register.errors.password")),
       confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password"), null], t("auth.register.errors.confirmPasswordMatch"))
+        .oneOf(
+          [Yup.ref("password"), null],
+          t("auth.register.errors.confirmPasswordMatch")
+        )
         .required(t("auth.register.errors.confirmPassword")),
     }),
 
@@ -245,13 +342,10 @@ export default function Register() {
         password: values.password,
       };
 
-      console.log("SENDING:", body);
-
       const res = await register(body);
       toast.success(res.data.message);
       navigate("/login");
     } catch (err) {
-      console.error("Registration error:", err);
       const msg =
         err.response?.data?.errors?.[0]?.message ||
         err.response?.data?.message ||
@@ -264,13 +358,20 @@ export default function Register() {
 
   return (
     <section className="relative min-h-screen flex justify-center items-center bg-background overflow-hidden px-4 sm:px-6 lg:px-8 py-25">
-
       <div className="absolute inset-0">
-        <img src="src/assets/images/loginBg.webp" className="h-full w-full object-cover opacity-30" alt="bg-register" />
+        <img
+          src="src/assets/images/loginBg.webp"
+          className="h-full w-full object-cover opacity-30"
+          alt="bg-register"
+        />
         <div className="absolute inset-0 auth-register-overlay" />
       </div>
 
-      <div className={`relative w-full max-w-md sm:max-w-lg lg:max-w-xl px-6 sm:px-8 md:px-10 lg:px-12 py-8 sm:py-10 md:py-12 rounded-2xl border border-border bg-register-form backdrop-blur-xl shadow-[0_0_50px_-10px_rgba(247,201,95,0.2)] overflow-hidden transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
+      <div
+        className={`relative w-full max-w-md sm:max-w-lg lg:max-w-xl px-6 sm:px-8 md:px-10 lg:px-12 py-8 sm:py-10 md:py-12 rounded-2xl border border-border bg-register-form backdrop-blur-xl shadow-[0_0_50px_-10px_rgba(247,201,95,0.2)] overflow-hidden transition-all duration-1000 ease-out ${
+          animate ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"
+        }`}
+      >
         <div className="absolute top-0 h-1 w-full bg-linear-to-r from-transparent via-primary to-transparent opacity-50" />
 
         <div className="flex flex-col items-center mb-8 sm:mb-10">
@@ -284,9 +385,21 @@ export default function Register() {
 
         <div className="relative flex items-center justify-between mb-8">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-text-muted/30 -z-10 rounded"></div>
-          <div className="absolute top-1/2 left-0 h-0.5 bg-primary-z-10 rounded transition-all duration-500" style={{ width: step === 1 ? "30%" : step === 2 ? "60%" : "100%" }}></div>
+          <div
+            className="absolute top-1/2 left-0 h-0.5 bg-primary-z-10 rounded transition-all duration-500"
+            style={{ width: step === 1 ? "30%" : step === 2 ? "60%" : "100%" }}
+          ></div>
           {[1, 2, 3].map((s) => (
-            <div key={s} className={`w-4 h-4 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${step >= s ? "bg-primary text-button-text scale-110 shadow-lg" : "bg-surface border border-text-muted text-text-muted"}`}>{s}</div>
+            <div
+              key={s}
+              className={`w-4 h-4 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${
+                step >= s
+                  ? "bg-primary text-button-text scale-110 shadow-lg"
+                  : "bg-surface border border-text-muted text-text-muted"
+              }`}
+            >
+              {s}
+            </div>
           ))}
         </div>
 
@@ -303,8 +416,17 @@ export default function Register() {
             }
           }}
         >
-          {({ isSubmitting, isValid, errors, values, setFieldValue, setFieldTouched }) => {
-            const availableCities = values.country ? locationData[values.country] || [] : [];
+          {({
+            isSubmitting,
+            isValid,
+            errors,
+            values,
+            setFieldValue,
+            setFieldTouched,
+          }) => {
+            const availableCities = values.country
+              ? locationData[values.country] || []
+              : [];
             return (
               <Form className="flex flex-col gap-4 sm:gap-5 md:gap-6">
                 {step === 1 && (
@@ -343,7 +465,10 @@ export default function Register() {
                         setFocusedInput={setFocusedInput}
                       />
                     </div>
-                    <button type="submit" className="w-full py-3 mt-2 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">
+                    <button
+                      type="submit"
+                      className="w-full py-3 mt-2 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer"
+                    >
                       {t("auth.register.next")}
                     </button>
                   </>
@@ -370,8 +495,19 @@ export default function Register() {
                       />
                     </div>
                     <div className="flex gap-4 mt-4">
-                      <button type="button" onClick={() => setStep(1)} className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer">{t("auth.register.back")}</button>
-                      <button type="submit" className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.next")}</button>
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="w-1/2 py-3 rounded-xl transition-transform duration-300 ease-out transform hover:-translate-y-1 btn-secondary-hero cursor-pointer"
+                      >
+                        {t("auth.register.back")}
+                      </button>
+                      <button
+                        type="submit"
+                        className="w-1/2 py-3 btn-primary-hero rounded-xl font-semibold transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer"
+                      >
+                        {t("auth.register.next")}
+                      </button>
                     </div>
                   </>
                 )}
@@ -389,11 +525,16 @@ export default function Register() {
                           placeholder={t("auth.register.country")}
                           focusedInput={focusedInput}
                           setFocusedInput={setFocusedInput}
-                          onOptionSelect={() => setTimeout(() => { setFieldValue("city", ""); setFieldTouched("city", false) }, 0)} />
+                          onOptionSelect={() =>
+                            setTimeout(() => {
+                              setFieldValue("city", "");
+                              setFieldTouched("city", false);
+                            }, 0)
+                          }
+                        />
                       </div>
                       <div ref={cityRef}>
                         <DropdownField
-
                           name="city"
                           icon={MdLocationCity}
                           options={availableCities}
@@ -414,29 +555,43 @@ export default function Register() {
                     />
 
                     <div className="flex gap-4 mt-4">
-                      <button type="button" onClick={() => setStep(2)} className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer">{t("auth.register.back")}</button>
+                      <button
+                        type="button"
+                        onClick={() => setStep(2)}
+                        className="w-1/2 py-3 btn-secondary-hero rounded-xl  transition-transform duration-300 ease-out transform hover:-translate-y-1 cursor-pointer"
+                      >
+                        {t("auth.register.back")}
+                      </button>
                       <button
                         type="submit"
                         disabled={isSubmitting || !isValid}
                         className={`w-1/2 py-3 rounded-xl font-semibold transition-all duration-300 ease-out transform 
-                        ${isSubmitting || !isValid
+                        ${
+                          isSubmitting || !isValid
                             ? "bg-linear-to-r from-[#c9a45f] to-[#aa853c] cursor-not-allowed opacity-80"
                             : "bg-linear-to-r from-[#c9a45f] to-[#aa853c] text-black hover:-translate-y-1 cursor-pointer"
-                          }`}
+                        }`}
                       >
-                        {isSubmitting ? <GiEgyptianProfile className="h-5 w-5 animate-spin text-black mx-auto" /> : t("auth.register.registerBtn")}
+                        {isSubmitting ? (
+                          <GiEgyptianProfile className="h-5 w-5 animate-spin text-black mx-auto" />
+                        ) : (
+                          t("auth.register.registerBtn")
+                        )}
                       </button>
                     </div>
                   </>
                 )}
               </Form>
-            )
+            );
           }}
         </Formik>
 
         <p className="text-text-muted text-sm mt-4 text-center">
           {t("auth.register.haveAccount")}{" "}
-          <Link to="/login" className="text-primary font-semibold hover:underline">
+          <Link
+            to="/login"
+            className="text-primary font-semibold hover:underline"
+          >
             {t("auth.register.loginLink")}
           </Link>
         </p>

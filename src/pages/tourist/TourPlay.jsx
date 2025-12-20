@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
-  FaSpinner,
   FaThLarge,
   FaList,
   FaBars,
@@ -22,6 +21,7 @@ import useAudioPlayer from "../../hooks/useAudioPlayer";
 import { useAuth } from "../../store/hooks";
 import { useSelector } from "react-redux";
 import { translateText } from "../../services/aiService";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 export default function TourPlay() {
   const { tourId } = useParams();
@@ -44,11 +44,6 @@ export default function TourPlay() {
     });
     return () => observer.disconnect();
   }, []);
-
-  console.log("TourPlay component mounted");
-  console.log("Tour ID from params:", tourId);
-  console.log("User from auth:", user);
-  console.log("Is authenticated:", !!user);
 
   const [tour, setTour] = useState(null);
   const [items, setItems] = useState([]);
@@ -141,21 +136,12 @@ export default function TourPlay() {
           setSelectedItem(null);
           setInitialLoading(true);
         }
-        console.log("Fetching tour with ID:", tourId);
         const tRes = await tourService.getTourById(tourId);
-        console.log("Tour API response:", tRes);
-        console.log("Tour API response type:", typeof tRes);
-        console.log("Tour API response keys:", Object.keys(tRes || {}));
         const t = tRes?.data || tRes;
-        console.log("Parsed tour data:", t);
-        console.log("Parsed tour data type:", typeof t);
-        console.log("Parsed tour data keys:", Object.keys(t || {}));
         if (!mounted) return;
         setTour(t);
 
-        console.log("Fetching tour items for ID:", tourId);
         const its = await tourItemService.getTourItems(tourId);
-        console.log("Tour items response:", its);
         if (!mounted) return;
         const list = its || [];
         // Hide unpublished items for non-owner/non-admin clients; server
@@ -183,9 +169,7 @@ export default function TourPlay() {
         }
         // fetch user enrollments
         try {
-          console.log("Fetching user enrollments...");
           const enr = await enrollmentApi.getUserEnrollments();
-          console.log("Enrollment API response:", enr);
           const data =
             enr?.data?.data?.all ||
             enr?.data?.all ||
@@ -193,18 +177,15 @@ export default function TourPlay() {
             enr?.data ||
             enr ||
             [];
-          console.log("Parsed enrollment data:", data);
           if (mounted) setEnrollments(Array.isArray(data) ? data : []);
         } catch (e) {
-          console.error("Enrollment fetch error:", e);
-          console.error("Error details:", e.response?.data || e.message);
           // Set empty array on error
           if (mounted) setEnrollments([]);
         } finally {
           if (mounted) setEnrollmentLoading(false);
         }
       } catch (err) {
-        console.error("Failed to load tour play", err);
+        // Tour load failed - handled by loading state
       } finally {
         if (mounted) setInitialLoading(false);
       }
@@ -369,9 +350,6 @@ export default function TourPlay() {
     // Allow if user is the guide of the tour
     const isGuide = user && tour && user._id === tour.guide._id;
     if (isGuide) return true;
-    console.log("Current enrollment:", currentEnrollment);
-    console.log("User:", user);
-    console.log("Tour:", tour);
     // Allow if enrolled, started, and not expired
     if (!currentEnrollment) return false;
     const isExpired =
@@ -387,8 +365,6 @@ export default function TourPlay() {
     selectedItem?.audioFile ||
     selectedItem?.media?.audio ||
     "";
-  console.log("Selected item:", selectedItem);
-  console.log("Audio src:", audioSrc);
   const audio = useAudioPlayer(audioSrc);
 
   const currentItems = tab === "all" ? items : nearbyItems;
@@ -416,7 +392,7 @@ export default function TourPlay() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <FaSpinner className="w-12 h-12 animate-spin text-primary mx-auto" />
+          <GoldenSpinner size={48} />
           <p className="mt-4 text-text-secondary">Loading tour...</p>
         </div>
       </div>
@@ -597,7 +573,7 @@ export default function TourPlay() {
                     </select>
                     {isTranslating && (
                       <div className="flex items-center gap-2 mt-2 text-sm text-primary">
-                        <FaSpinner className="w-3 h-3 animate-spin" />
+                        <GoldenSpinner size={14} />
                         <span>Translating...</span>
                       </div>
                     )}
@@ -671,12 +647,12 @@ export default function TourPlay() {
             <div className="flex-1 overflow-y-auto p-2">
               {initialLoading ? (
                 <div className="p-6 text-center">
-                  <FaSpinner className="w-8 h-8 animate-spin text-primary mx-auto" />
+                  <GoldenSpinner size={32} />
                   <p className="mt-2 text-text-secondary">Loading items...</p>
                 </div>
               ) : nearbyLoading && displayedItems.length === 0 ? (
                 <div className="p-6 text-center">
-                  <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
+                  <GoldenSpinner size={32} />
                   <p className="mt-2 text-text-secondary">
                     Finding nearby items...
                   </p>
@@ -695,7 +671,6 @@ export default function TourPlay() {
                       (selectedItem._id || selectedItem.id) ===
                         (it._id || it.id);
                     const img = it.mainImage?.url || it.image || it.cover || "";
-                    console.log("Item:", it.name || it.title, "Image:", img);
                     if (displayMode === "card") {
                       return (
                         <button
@@ -850,7 +825,7 @@ export default function TourPlay() {
               </select>
               {isTranslating && (
                 <div className="flex items-center gap-2 mt-2 text-sm text-primary">
-                  <FaSpinner className="w-3 h-3 animate-spin" />
+                  <GoldenSpinner size={14} />
                   <span>Translating...</span>
                 </div>
               )}
@@ -883,7 +858,7 @@ export default function TourPlay() {
             <div className="flex-1 overflow-y-auto p-2">
               {nearbyLoading && displayedItems.length === 0 ? (
                 <div className="p-6 text-center">
-                  <FaSpinner className="w-8 h-8 animate-spin text-yellow-500 mx-auto" />
+                  <GoldenSpinner size={32} />
                   <p className="mt-2 text-text-secondary">
                     Finding nearby items...
                   </p>

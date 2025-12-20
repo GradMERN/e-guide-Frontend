@@ -1,9 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// Helper to load saved tours from localStorage
+const loadSavedFromStorage = () => {
+  try {
+    const saved = localStorage.getItem("savedTours");
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
+// Helper to persist saved tours to localStorage
+const persistToStorage = (tours) => {
+  try {
+    localStorage.setItem("savedTours", JSON.stringify(tours));
+  } catch {
+    // Ignore localStorage errors
+  }
+};
+
 const savedSlice = createSlice({
   name: "saved",
   initialState: {
-    savedTours: [],
+    savedTours: loadSavedFromStorage(),
     loading: false,
     error: null,
   },
@@ -17,6 +36,7 @@ const savedSlice = createSlice({
       });
       if (!exists) {
         state.savedTours.push(action.payload);
+        persistToStorage(state.savedTours);
       }
     },
     removeFromSaved: (state, action) => {
@@ -25,12 +45,15 @@ const savedSlice = createSlice({
         const existingTourId = tour._id || tour.id;
         return existingTourId !== tourId;
       });
+      persistToStorage(state.savedTours);
     },
     clearSaved: (state) => {
       state.savedTours = [];
+      persistToStorage([]);
     },
     setSavedTours: (state, action) => {
       state.savedTours = action.payload;
+      persistToStorage(action.payload);
     },
     setLoading: (state, action) => {
       state.loading = action.payload;

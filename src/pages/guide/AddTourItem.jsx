@@ -15,6 +15,7 @@ import {
 import { FaList, FaSpinner } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { tourItemService } from "../../apis/tourItemService";
+import axiosClient from "../../apis/axiosClient";
 import {
   createSpeechRecognizer,
   speakText,
@@ -297,20 +298,12 @@ export default function AddTourItem() {
       };
       formDataToSend.append("location", JSON.stringify(locationData));
 
-      const response = await fetch("http://localhost:3000/api/tourItems", {
-        method: "POST",
-        body: formDataToSend,
+      const response = await axiosClient.post("/tourItems", formDataToSend, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
         },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create tour item");
-      }
-
-      const result = await response.json();
       setSuccess(
         t("guide.tourItems.created") || "Tour item created successfully!"
       );
@@ -345,7 +338,7 @@ export default function AddTourItem() {
     <section className="relative min-h-screen flex justify-center items-center bg-black overflow-hidden px-4 sm:px-6 lg:px-8 py-12">
       <div className="absolute inset-0">
         <img
-          src="src/assets/images/loginBg.webp"
+          src="/content/loginBg.webp"
           className="h-full w-full object-cover opacity-20"
           alt="bg-add-item"
         />

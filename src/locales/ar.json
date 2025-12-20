@@ -94,6 +94,9 @@
   "language": "اللغة",
   "common": {
     "loading": "جاري التحميل...",
+    "loadingTour": "جاري تحميل تفاصيل الجولة...",
+    "loadingTours": "جاري تحميل الجولات...",
+    "loadingYourTours": "جاري تحميل جولاتك...",
     "back": "رجوع",
     "cancel": "إلغاء",
     "retry": "إعادة المحاولة",
@@ -118,6 +121,14 @@
     "download": "تحميل",
     "downloadError": "فشل في تحميل الملف",
     "view": "عرض",
+    "translating": "جاري الترجمة...",
+    "errors": {
+      "loadFailed": "فشل في تحميل البيانات",
+      "saveFailed": "فشل في حفظ التغييرات",
+      "deleteFailed": "فشل في الحذف",
+      "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+      "unexpectedError": "حدث خطأ غير متوقع"
+    },
     "statuses": {
       "pending": "قيد الانتظار",
       "active": "نشط",
@@ -161,6 +172,9 @@
     "totalGuides": "إجمالي المرشدين",
     "totalTours": "إجمالي الجولات",
     "totalRevenue": "إيرادات المنصة",
+    "availableTours": "الجولات المتاحة",
+    "currentEnrollments": "الحجوزات الحالية",
+    "registeredUsers": "المستخدمون المسجلون",
     "growthTrend": "اتجاه النمو",
     "userDistribution": "توزيع المستخدمين",
     "recentTours": "الجولات الحديثة",
@@ -616,6 +630,7 @@
     },
     "dropdown": {
       "guideDashboard": "لوحة المرشد",
+      "adminDashboard": "لوحة الإدارة",
       "myTours": "جولاتي",
       "profile": "الملف الشخصي",
       "saved": "المحفوظات"

@@ -8,7 +8,7 @@ import {
   FaUpload,
   FaSave,
 } from "react-icons/fa";
-import axios from "axios";
+import axiosClient from "../../apis/axiosClient";
 
 const GuideSettings = () => {
   const { user, isDarkMode } = useAuth();
@@ -30,15 +30,7 @@ const GuideSettings = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:3000/api/users/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axiosClient.get("/users/profile");
         const profile = response.data.data;
         setProfileData({
           firstName: profile.firstName || "",
@@ -99,7 +91,6 @@ const GuideSettings = () => {
       setLoading(true);
       setMessage(null);
 
-      const token = localStorage.getItem("token");
       const formData = new FormData();
 
       // Add text fields
@@ -114,18 +105,16 @@ const GuideSettings = () => {
         formData.append("avatar", profileData.avatar);
       }
 
-      const response = await axios.put(
-        "http://localhost:3000/api/users/profile",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axiosClient.put("/users/profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      setMessage({ type: "success", text: "Profile updated successfully!" });
+      setMessage({
+        type: "success",
+        text: t("profile.updateSuccess") || "Profile updated successfully!",
+      });
 
       // Update localStorage
       const updatedUser = { ...user, ...response.data.data };
@@ -133,10 +122,12 @@ const GuideSettings = () => {
 
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
-      console.error("Profile update error:", error);
       setMessage({
         type: "error",
-        text: error.response?.data?.message || "Failed to update profile",
+        text:
+          error.response?.data?.message ||
+          t("profile.updateError") ||
+          "Failed to update profile",
       });
     } finally {
       setLoading(false);

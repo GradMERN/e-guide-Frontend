@@ -94,6 +94,9 @@
   "language": "Language",
   "common": {
     "loading": "Loading...",
+    "loadingTour": "Loading tour details...",
+    "loadingTours": "Loading tours...",
+    "loadingYourTours": "Loading your tours...",
     "back": "Back",
     "cancel": "Cancel",
     "retry": "Retry",
@@ -118,6 +121,14 @@
     "download": "Download",
     "downloadError": "Failed to download file",
     "view": "View",
+    "translating": "Translating...",
+    "errors": {
+      "loadFailed": "Failed to load data",
+      "saveFailed": "Failed to save changes",
+      "deleteFailed": "Failed to delete",
+      "networkError": "Network error. Please check your connection.",
+      "unexpectedError": "An unexpected error occurred"
+    },
     "statuses": {
       "pending": "Pending",
       "active": "Active",
@@ -161,6 +172,9 @@
     "totalGuides": "Total Guides",
     "totalTours": "Total Tours",
     "totalRevenue": "Platform Revenue",
+    "availableTours": "Available tours",
+    "currentEnrollments": "Current enrollments",
+    "registeredUsers": "Registered users",
     "growthTrend": "Growth Trend",
     "userDistribution": "User Distribution",
     "recentTours": "Recent Tours",
@@ -630,6 +644,7 @@
     },
     "dropdown": {
       "guideDashboard": "Guide Dashboard",
+      "adminDashboard": "Admin Dashboard",
       "myTours": "My Tours",
       "profile": "Profile",
       "saved": "Saved"

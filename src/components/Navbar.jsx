@@ -79,9 +79,18 @@ export default function Navbar() {
     icon: FaChalkboardTeacher,
   };
 
+  const adminDashboardItem = {
+    name: t("navbar.dropdown.adminDashboard"),
+    path: "/admin/dashboard",
+    icon: FaChalkboardTeacher,
+  };
+
   const getDropdownItems = () => {
     const items = [...baseDropdownItems];
-    if (user?.role && user.role.toLowerCase() === "guide") {
+    const userRole = user?.role?.toLowerCase();
+    if (userRole === "admin") {
+      items.unshift(adminDashboardItem);
+    } else if (userRole === "guide") {
       items.unshift(guideDashboardItem);
     }
     return items;
