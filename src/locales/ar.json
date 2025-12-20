@@ -347,6 +347,7 @@
       "currentStep": "الخطوة الحالية",
       "completed": "مكتمل",
       "rejected": "مرفوض",
+      "canReapply": "يمكنك تقديم طلب جديد بمعلومات محدثة.",
       "steps": {
         "submitted": "تم التقديم",
         "review": "المراجعة",

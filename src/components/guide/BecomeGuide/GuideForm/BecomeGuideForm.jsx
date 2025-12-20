@@ -8,7 +8,7 @@ import { FaUser, FaLanguage, FaStar, FaClipboardList } from "react-icons/fa";
 
 import StepIndicator from "./StepIndicator";
 import StepExperience from "./StepExperience";
-import StepLanguages from "./StepLanguage";
+import StepLanguages from "./StepLanguages";
 import StepSpecialties from "./StepSpecialties";
 import StepDocuments from "./StepDocuments";
 import NavigationButtons from "./NavigationButtons";

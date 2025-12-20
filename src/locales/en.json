@@ -388,6 +388,7 @@
       "currentStep": "Current step",
       "completed": "Completed",
       "rejected": "Rejected",
+      "canReapply": "You can submit a new application with updated information.",
       "steps": {
         "submitted": "Submitted",
         "review": "Review",
