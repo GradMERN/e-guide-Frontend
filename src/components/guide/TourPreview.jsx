@@ -281,26 +281,12 @@ const TourPreview = ({ tourId, onClose }) => {
             (a, b) =>
               (a._rawDistance ?? Infinity) - (b._rawDistance ?? Infinity)
           );
-        if (isLiveTab) setNearbyItems(found);
-        try {
-          const prevMap = new Map(
-            (itemsRef.current || []).map((it) => [
-              it._id || it.id,
-              it._rawDistance,
-            ])
-          );
-          const needUpdate = allWithDistances.some((it) => {
-            const key = it?._id || it?.id;
-            return it && prevMap.get(key) !== it._rawDistance;
-          });
-          if (needUpdate) setItems(allWithDistances);
-        } catch (e) {
-          setItems(allWithDistances);
-        }
+        // Only update nearbyItems, not the main items list
+        setNearbyItems(found);
         if (showLoading) setNearbyLoading(false);
       },
       () => {
-        if (isLiveTab) setNearbyItems([]);
+        setNearbyItems([]);
         if (showLoading) setNearbyLoading(false);
       },
       { enableHighAccuracy: true, maximumAge: 5000 }
@@ -739,7 +725,7 @@ const TourPreview = ({ tourId, onClose }) => {
                             <div className="font-semibold truncate">
                               {it.title || it.name}
                             </div>
-                            {it.distance ? (
+                            {tab === "live" && it.distance ? (
                               <div className="text-sm opacity-70 mt-1">
                                 {formatDistance(it.distance)}
                               </div>
@@ -794,7 +780,7 @@ const TourPreview = ({ tourId, onClose }) => {
                           <p className="font-medium truncate">
                             {it.title || it.name}
                           </p>
-                          {it.distance ? (
+                          {tab === "live" && it.distance ? (
                             <div className="text-sm opacity-70 mt-1">
                               {formatDistance(it.distance)}
                             </div>

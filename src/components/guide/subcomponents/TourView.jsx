@@ -30,9 +30,33 @@ const TourView = ({
 }) => {
   const [isSpeakingTranslation, setIsSpeakingTranslation] = useState(false);
   const [ttsProgress, setTtsProgress] = useState(0);
+  const progressIntervalRef = React.useRef(null);
 
   // Determine if we should use TTS (when translation is active)
-  const useTTS = translatedScript && selectedLanguage;
+  const useTTS = translatedScript && selectedLanguage && selectedLanguage !== "en";
+
+  // Stop TTS and reset state when language/translation changes
+  useEffect(() => {
+    return () => {
+      // Cleanup on unmount or when dependencies change
+      window.speechSynthesis?.cancel();
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+    };
+  }, [selectedLanguage, translatedScript]);
+
+  // Reset TTS state when selected item changes
+  useEffect(() => {
+    window.speechSynthesis?.cancel();
+    setIsSpeakingTranslation(false);
+    setTtsProgress(0);
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  }, [selectedItem?._id]);
 
   if (!selectedItem) return null;
 
@@ -69,26 +93,39 @@ const TourView = ({
         window.speechSynthesis?.cancel();
         setIsSpeakingTranslation(false);
         setTtsProgress(0);
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+          progressIntervalRef.current = null;
+        }
       } else {
         const textToSpeak = translatedScript || selectedItem.script;
         if (!textToSpeak) return;
 
+        // Clear any existing interval
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+        }
+
         setIsSpeakingTranslation(true);
         // Simulate progress for TTS
         const words = textToSpeak.split(" ").length;
-        const estimatedDuration = words * 0.4; // ~0.4 seconds per word
+        const estimatedDuration = Math.max(words * 0.4, 2); // ~0.4 seconds per word, min 2 seconds
         let elapsed = 0;
-        const interval = setInterval(() => {
+        progressIntervalRef.current = setInterval(() => {
           elapsed += 0.1;
           const progress = Math.min(100, (elapsed / estimatedDuration) * 100);
           setTtsProgress(progress);
           if (progress >= 100) {
-            clearInterval(interval);
+            clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
           }
         }, 100);
 
         speakText(textToSpeak, selectedLanguage, () => {
-          clearInterval(interval);
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
+          }
           setIsSpeakingTranslation(false);
           setTtsProgress(0);
         });

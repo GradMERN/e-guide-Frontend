@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth as useReduxAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
@@ -18,7 +18,6 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
   const { user, logout } = useReduxAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [confirmLogout, setConfirmLogout] = useState(false);
 
   const menuItems = [
     {
@@ -44,17 +43,8 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
   ];
 
   const handleLogout = () => {
-    setConfirmLogout(true);
-  };
-
-  const confirmLogoutAction = () => {
-    setConfirmLogout(false);
     logout();
     navigate("/");
-  };
-
-  const cancelLogout = () => {
-    setConfirmLogout(false);
   };
 
   const bgColor = "bg-[var(--surface)]";
@@ -139,34 +129,6 @@ const GuideSidebar = ({ sidebarOpen, setSidebarOpen, isDarkMode, isRtl }) => {
           )}
         </button>
       </div>
-
-      {/* CONFIRMATION MODAL */}
-      {confirmLogout && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-xl font-bold text-[var(--text)] mb-4">
-              {t("guide.sidebar.confirmLogout")}
-            </h3>
-            <p className="text-[var(--text-secondary)] mb-6">
-              {t("guide.sidebar.confirmLogoutMessage")}
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={cancelLogout}
-                className="px-4 py-2 bg-[var(--secondary)] text-[var(--text)] rounded-lg hover:bg-[var(--secondary-hover)] transition-colors"
-              >
-                {t("common.cancel")}
-              </button>
-              <button
-                onClick={confirmLogoutAction}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
-                {t("guide.sidebar.logout")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </aside>
   );
 };

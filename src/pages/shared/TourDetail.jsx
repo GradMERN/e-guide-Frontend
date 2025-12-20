@@ -9,6 +9,7 @@ import TourInclusions from "../../components/tourDetail/TourInclusions";
 import TourReviews from "../../components/tourDetail/TourReviews";
 import enrollmentApi from "../../apis/enrollment.api";
 import paymentApi from "../../apis/payment.api";
+import reviewService from "../../apis/reviewService";
 import { FaArrowLeft } from "react-icons/fa";
 import GoldenSpinner from "../../components/common/GoldenSpinner";
 
@@ -20,6 +21,7 @@ const TourDetail = () => {
 
   const [enrolling, setEnrolling] = useState(false);
   const [enrollError, setEnrollError] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const enrollingRef = useRef(false);
 
   useEffect(() => {
@@ -27,6 +29,22 @@ const TourDetail = () => {
       fetchTourById(id);
     }
   }, [fetchTourById, id]);
+
+  // Fetch reviews for the tour
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!id) return;
+      try {
+        const response = await reviewService.getTourReviews(id);
+        const reviewsData = response?.data || response || [];
+        setReviews(Array.isArray(reviewsData) ? reviewsData : []);
+      } catch (err) {
+        console.error("Failed to fetch reviews:", err);
+        setReviews([]);
+      }
+    };
+    fetchReviews();
+  }, [id]);
 
   const handleBack = () => {
     navigate(-1); // Go back one page in history
@@ -196,6 +214,7 @@ const TourDetail = () => {
               {/* Reviews Section */}
               <div>
                 <TourReviews
+                  reviews={reviews}
                   ratingsAverage={tour.rating}
                   ratingsCount={tour.ratingsCount}
                 />

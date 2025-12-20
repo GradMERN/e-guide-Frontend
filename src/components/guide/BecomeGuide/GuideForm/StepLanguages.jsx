@@ -14,7 +14,7 @@ const StepLanguages = ({ formData, toggleLanguage, languageOptions, t, labelClas
             return (
               <label key={lang} className={`flex items-center p-3 sm:p-4 rounded-lg border-2 cursor-pointer transition-all ${ isSelected ? "border-(--primary) bg-(--primary)/10" : "border-(--border) hover:border-(--primary)/50"}`}>
                 <input type="checkbox" checked={isSelected} onChange={() => toggleLanguage(lang)} className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 rounded border-(--border) text-(--primary) shrink-0" style={{ accentColor: "var(--primary)", borderColor: "var(--border)",}}/>
-                <span className={`${labelClass} font-medium text-sm sm:text-base`}>t(`languages.${key}`, lang)}</span>
+                <span className={`${labelClass} font-medium text-sm sm:text-base`}>{t(`languages.${key}`, lang)}</span>
               </label>
             );
           })}

@@ -27,10 +27,8 @@ const GuideDashboardLayout = () => {
   }, [user, navigate]);
 
   const handleLogout = () => {
-    if (window.confirm(t("admin.confirmLogout"))) {
-      logout();
-      navigate("/");
-    }
+    logout();
+    navigate("/");
   };
 
   useEffect(() => {

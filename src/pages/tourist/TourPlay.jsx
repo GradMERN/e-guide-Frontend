@@ -20,7 +20,7 @@ import Review from "../../components/guide/subcomponents/Review";
 import useAudioPlayer from "../../hooks/useAudioPlayer";
 import { useAuth } from "../../store/hooks";
 import { useSelector } from "react-redux";
-import { translateText } from "../../services/aiService";
+import { translateText, stopSpeech } from "../../services/aiService";
 import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 export default function TourPlay() {
@@ -91,6 +91,9 @@ export default function TourPlay() {
   // Handle language change and translation
   const handleLanguageChange = useCallback(
     async (langCode) => {
+      // Stop any ongoing TTS before changing language
+      stopSpeech();
+
       setSelectedLanguage(langCode);
 
       // If selecting English (original), clear translation
@@ -119,6 +122,9 @@ export default function TourPlay() {
 
   // Reset translation when selected item changes
   useEffect(() => {
+    // Stop any ongoing TTS when item changes
+    stopSpeech();
+
     if (selectedLanguage !== "en" && selectedItem?.script) {
       handleLanguageChange(selectedLanguage);
     } else {
@@ -167,23 +173,24 @@ export default function TourPlay() {
         } catch (e) {
           // ignore
         }
-        // fetch user enrollments
-        try {
-          const enr = await enrollmentApi.getUserEnrollments();
-          const data =
-            enr?.data?.data?.all ||
-            enr?.data?.all ||
-            enr?.data?.data ||
-            enr?.data ||
-            enr ||
-            [];
-          if (mounted) setEnrollments(Array.isArray(data) ? data : []);
-        } catch (e) {
-          // Set empty array on error
-          if (mounted) setEnrollments([]);
-        } finally {
-          if (mounted) setEnrollmentLoading(false);
+        // fetch user enrollments (only if user is logged in)
+        if (user) {
+          try {
+            const enr = await enrollmentApi.getUserEnrollments();
+            const data =
+              enr?.data?.data?.all ||
+              enr?.data?.all ||
+              enr?.data?.data ||
+              enr?.data ||
+              enr ||
+              [];
+            if (mounted) setEnrollments(Array.isArray(data) ? data : []);
+          } catch (e) {
+            // Set empty array on error
+            if (mounted) setEnrollments([]);
+          }
         }
+        if (mounted) setEnrollmentLoading(false);
       } catch (err) {
         // Tour load failed - handled by loading state
       } finally {
@@ -191,7 +198,9 @@ export default function TourPlay() {
       }
     })();
     return () => (mounted = false);
-  }, [tourId]);
+    // Re-run when user changes to fetch enrollments after login
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tourId, user?._id]);
 
   // ensure items are cleared immediately when switching tours to avoid showing
   // stale/unpublished items from previous tour while new data loads
@@ -258,53 +267,13 @@ export default function TourPlay() {
           // use the raw distance for filtering/sorting so adjustment only affects display
           .filter((it) => it._rawDistance <= 25)
           .sort((a, b) => a._rawDistance - b._rawDistance);
-        if (isLiveTab) setNearbyItems(found);
-        // Also update all items with distances
-        const allWithDistances = (itemsSource || []).map((it) => {
-          const lat =
-            it.location?.coordinates?.[1] ||
-            it.location?.lat ||
-            it.location?.latitude;
-          const lng =
-            it.location?.coordinates?.[0] ||
-            it.location?.lng ||
-            it.location?.longitude;
-          if (!lat || !lng) return it; // keep as is if no location
-          const rawDist = distanceMeters(latitude, longitude, lat, lng);
-          const displayDist = rawDist > 4 ? Math.max(0, rawDist - 3) : rawDist;
-          return { ...it, distance: displayDist, _rawDistance: rawDist };
-        });
-        // Sort items with known distances first (nearest -> farthest), keep items without location at the end
-        allWithDistances.sort((a, b) => {
-          const aD =
-            a && a._rawDistance !== undefined ? a._rawDistance : Infinity;
-          const bD =
-            b && b._rawDistance !== undefined ? b._rawDistance : Infinity;
-          return aD - bD;
-        });
-        // Only update items if distances actually changed to avoid re-render loops
-        try {
-          const prevMap = new Map(
-            (itemsRef.current || []).map((it) => [
-              it._id || it.id,
-              it._rawDistance,
-            ])
-          );
-          const needUpdate = allWithDistances.some(
-            (it) => prevMap.get(it._id || it.id) !== it._rawDistance
-          );
-          if (needUpdate) {
-            setItems(allWithDistances);
-            // If nothing was selected yet, pick the first item AFTER sorting
-            if (!selectedItemRef.current) {
-              setSelectedItem(allWithDistances[0] || null);
-            }
-          }
-        } catch (e) {
-          setItems(allWithDistances);
-          if (!selectedItemRef.current) {
-            setSelectedItem(allWithDistances[0] || null);
-          }
+        // Update nearby items (sorted by distance)
+        setNearbyItems(found);
+        
+        // For "All Items" tab, we don't sort by distance - keep original order
+        // If nothing was selected yet, pick the first item from original order
+        if (!selectedItemRef.current && itemsSource && itemsSource.length > 0) {
+          setSelectedItem(itemsSource[0] || null);
         }
         if (showLoading) setNearbyLoading(false);
       },
@@ -334,28 +303,50 @@ export default function TourPlay() {
 
   const currentEnrollment = useMemo(() => {
     if (!enrollments || !tour) return null;
-    return (
-      enrollments.find((e) => {
-        const tId =
-          e.tour?._id ||
-          e.tour?.id ||
-          (e.tour && typeof e.tour === "string" ? e.tour : null);
-        const tourIdLocal = tour._id || tour.id || tourId;
-        return tId && tourIdLocal && String(tId) === String(tourIdLocal);
-      }) || null
-    );
+    const tourIdLocal = tour._id || tour.id || tourId;
+    
+    // Filter all enrollments for this tour
+    const tourEnrollments = enrollments.filter((e) => {
+      const tId =
+        e.tour?._id ||
+        e.tour?.id ||
+        (e.tour && typeof e.tour === "string" ? e.tour : null);
+      return tId && tourIdLocal && String(tId) === String(tourIdLocal);
+    });
+    
+    if (tourEnrollments.length === 0) return null;
+    
+    // Sort by expiresAt descending (most recent first), then find first non-expired
+    const now = new Date();
+    const sorted = tourEnrollments.sort((a, b) => {
+      const aExp = a.expiresAt ? new Date(a.expiresAt) : new Date(0);
+      const bExp = b.expiresAt ? new Date(b.expiresAt) : new Date(0);
+      return bExp - aExp; // Most recent expiration first
+    });
+    
+    // Prefer a non-expired enrollment
+    const nonExpired = sorted.find((e) => !e.expiresAt || new Date(e.expiresAt) >= now);
+    
+    // If all expired, return the most recently expired one
+    return nonExpired || sorted[0] || null;
   }, [enrollments, tour, tourId]);
 
   const canView = useMemo(() => {
+    // Allow if user is admin
+    if (user?.role === "admin") return true;
+    
     // Allow if user is the guide of the tour
-    const isGuide = user && tour && user._id === tour.guide._id;
-    if (isGuide) return true;
-    // Allow if enrolled, started, and not expired
+    const guideId = tour?.guide?._id || tour?.guide;
+    const userId = user?._id || user?.id;
+    if (userId && guideId && String(userId) === String(guideId)) return true;
+    
+    // Allow if enrolled, started/active, and not expired
     if (!currentEnrollment) return false;
     const isExpired =
       currentEnrollment.expiresAt &&
       new Date(currentEnrollment.expiresAt) < new Date();
-    return currentEnrollment.status === "started" && !isExpired;
+    const validStatus = ["started", "active"].includes(currentEnrollment.status);
+    return validStatus && !isExpired;
   }, [currentEnrollment, user, tour]);
 
   // audio hook
@@ -697,7 +688,7 @@ export default function TourPlay() {
                             <div className="font-semibold truncate">
                               {it.title || it.name}
                             </div>
-                            {it.distance ? (
+                            {tab === "live" && it.distance ? (
                               <div className="text-sm text-text-secondary mt-1">
                                 {formatDistance(it.distance)}
                               </div>
@@ -740,7 +731,7 @@ export default function TourPlay() {
                           <p className="font-medium truncate">
                             {it.title || it.name}
                           </p>
-                          {it.distance ? (
+                          {tab === "live" && it.distance ? (
                             <div className="text-sm text-text-secondary mt-1">
                               {formatDistance(it.distance)}
                             </div>
@@ -905,7 +896,7 @@ export default function TourPlay() {
                           <div className="font-semibold truncate">
                             {it.title || it.name}
                           </div>
-                          {it.distance ? (
+                          {tab === "live" && it.distance ? (
                             <div className="text-sm text-text-secondary mt-1">
                               {formatDistance(it.distance)}
                             </div>

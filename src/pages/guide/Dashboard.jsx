@@ -611,7 +611,7 @@ const GuideDashboard = () => {
                                   "—"}
                               </div>
                             </div>
-                            {it.distance != null && (
+                            {previewTab === "live" && it.distance != null && (
                               <div className="text-xs text-gray-500 ml-2">
                                 {Math.round(it.distance)} m
                               </div>
