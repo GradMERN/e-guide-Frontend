@@ -269,7 +269,7 @@ export default function TourPlay() {
           .sort((a, b) => a._rawDistance - b._rawDistance);
         // Update nearby items (sorted by distance)
         setNearbyItems(found);
-        
+
         // For "All Items" tab, we don't sort by distance - keep original order
         // If nothing was selected yet, pick the first item from original order
         if (!selectedItemRef.current && itemsSource && itemsSource.length > 0) {
@@ -304,7 +304,7 @@ export default function TourPlay() {
   const currentEnrollment = useMemo(() => {
     if (!enrollments || !tour) return null;
     const tourIdLocal = tour._id || tour.id || tourId;
-    
+
     // Filter all enrollments for this tour
     const tourEnrollments = enrollments.filter((e) => {
       const tId =
@@ -313,9 +313,9 @@ export default function TourPlay() {
         (e.tour && typeof e.tour === "string" ? e.tour : null);
       return tId && tourIdLocal && String(tId) === String(tourIdLocal);
     });
-    
+
     if (tourEnrollments.length === 0) return null;
-    
+
     // Sort by expiresAt descending (most recent first), then find first non-expired
     const now = new Date();
     const sorted = tourEnrollments.sort((a, b) => {
@@ -323,10 +323,12 @@ export default function TourPlay() {
       const bExp = b.expiresAt ? new Date(b.expiresAt) : new Date(0);
       return bExp - aExp; // Most recent expiration first
     });
-    
+
     // Prefer a non-expired enrollment
-    const nonExpired = sorted.find((e) => !e.expiresAt || new Date(e.expiresAt) >= now);
-    
+    const nonExpired = sorted.find(
+      (e) => !e.expiresAt || new Date(e.expiresAt) >= now
+    );
+
     // If all expired, return the most recently expired one
     return nonExpired || sorted[0] || null;
   }, [enrollments, tour, tourId]);
@@ -334,18 +336,20 @@ export default function TourPlay() {
   const canView = useMemo(() => {
     // Allow if user is admin
     if (user?.role === "admin") return true;
-    
+
     // Allow if user is the guide of the tour
     const guideId = tour?.guide?._id || tour?.guide;
     const userId = user?._id || user?.id;
     if (userId && guideId && String(userId) === String(guideId)) return true;
-    
+
     // Allow if enrolled, started/active, and not expired
     if (!currentEnrollment) return false;
     const isExpired =
       currentEnrollment.expiresAt &&
       new Date(currentEnrollment.expiresAt) < new Date();
-    const validStatus = ["started", "active"].includes(currentEnrollment.status);
+    const validStatus = ["started", "active"].includes(
+      currentEnrollment.status
+    );
     return validStatus && !isExpired;
   }, [currentEnrollment, user, tour]);
 

@@ -281,60 +281,104 @@ export const speakText = (text, lang = "en", onEnd = null) => {
       const voices = window.speechSynthesis.getVoices();
       const targetLang = langMap[lang] || lang;
       const langPrefix = targetLang.split("-")[0];
-      
+
       // Filter voices for the target language
       const langVoices = voices.filter((v) => v.lang.startsWith(langPrefix));
-      
+
       if (langVoices.length > 0) {
         // For Arabic specifically, prefer male voices
         // Common Arabic male voice names: "Maged", "Tarik", "Omar", "Ahmed"
         // Common Arabic female voice names: "Laila", "Maryam", "Zahra", "Fatima", "Amira"
-        const arabicMaleIndicators = ['maged', 'tarik', 'omar', 'ahmed', 'majed', 'khalid', 'ali', 'hadi'];
-        const arabicFemaleIndicators = ['laila', 'maryam', 'zahra', 'fatima', 'amira', 'nora', 'lina', 'sara', 'zeina'];
-        
+        const arabicMaleIndicators = [
+          "maged",
+          "tarik",
+          "omar",
+          "ahmed",
+          "majed",
+          "khalid",
+          "ali",
+          "hadi",
+        ];
+        const arabicFemaleIndicators = [
+          "laila",
+          "maryam",
+          "zahra",
+          "fatima",
+          "amira",
+          "nora",
+          "lina",
+          "sara",
+          "zeina",
+        ];
+
         // General male/female indicators
-        const maleIndicators = ['male', 'david', 'mark', 'james', 'google us english', 'google uk english male', ...arabicMaleIndicators];
-        const femaleIndicators = ['female', 'zira', 'susan', 'samantha', 'hazel', 'helena', 'sabina', ...arabicFemaleIndicators];
-        
+        const maleIndicators = [
+          "male",
+          "david",
+          "mark",
+          "james",
+          "google us english",
+          "google uk english male",
+          ...arabicMaleIndicators,
+        ];
+        const femaleIndicators = [
+          "female",
+          "zira",
+          "susan",
+          "samantha",
+          "hazel",
+          "helena",
+          "sabina",
+          ...arabicFemaleIndicators,
+        ];
+
         let selectedVoice = null;
-        
+
         // For Arabic, be more aggressive in finding male voice
-        if (langPrefix === 'ar') {
+        if (langPrefix === "ar") {
           // First try to find explicit Arabic male voice
           selectedVoice = langVoices.find((v) => {
             const nameLower = v.name.toLowerCase();
-            return arabicMaleIndicators.some(ind => nameLower.includes(ind));
+            return arabicMaleIndicators.some((ind) => nameLower.includes(ind));
           });
-          
+
           // If not found, try to avoid female voices
           if (!selectedVoice) {
             selectedVoice = langVoices.find((v) => {
               const nameLower = v.name.toLowerCase();
-              return !arabicFemaleIndicators.some(ind => nameLower.includes(ind)) &&
-                     !nameLower.includes('female');
+              return (
+                !arabicFemaleIndicators.some((ind) =>
+                  nameLower.includes(ind)
+                ) && !nameLower.includes("female")
+              );
             });
           }
-          
+
           // Log available Arabic voices for debugging
-          console.log('Available Arabic voices:', langVoices.map(v => v.name));
-          console.log('Selected Arabic voice:', selectedVoice?.name);
+          console.log(
+            "Available Arabic voices:",
+            langVoices.map((v) => v.name)
+          );
+          console.log("Selected Arabic voice:", selectedVoice?.name);
         } else {
           // For other languages, use general logic
           selectedVoice = langVoices.find((v) => {
             const nameLower = v.name.toLowerCase();
-            return maleIndicators.some(ind => nameLower.includes(ind)) &&
-                   !femaleIndicators.some(ind => nameLower.includes(ind));
+            return (
+              maleIndicators.some((ind) => nameLower.includes(ind)) &&
+              !femaleIndicators.some((ind) => nameLower.includes(ind))
+            );
           });
-          
+
           // If no explicit male voice found, try to avoid female voices
           if (!selectedVoice) {
             selectedVoice = langVoices.find((v) => {
               const nameLower = v.name.toLowerCase();
-              return !femaleIndicators.some(ind => nameLower.includes(ind));
+              return !femaleIndicators.some((ind) => nameLower.includes(ind));
             });
           }
         }
-        
+
         // Use selected voice if found, otherwise first available voice for the language
         utterance.voice = selectedVoice || langVoices[0];
       } else {

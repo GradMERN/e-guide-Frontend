@@ -33,7 +33,8 @@ const TourView = ({
   const progressIntervalRef = React.useRef(null);
 
   // Determine if we should use TTS (when translation is active)
-  const useTTS = translatedScript && selectedLanguage && selectedLanguage !== "en";
+  const useTTS =
+    translatedScript && selectedLanguage && selectedLanguage !== "en";
 
   // Stop TTS and reset state when language/translation changes
   useEffect(() => {
