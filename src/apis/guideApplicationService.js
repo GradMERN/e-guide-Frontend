@@ -46,6 +46,32 @@ export const guideApplicationService = {
   deleteCertificate: (certificateId) =>
     axiosClient.delete(`${API_BASE_URL}/certificates/${certificateId}`),
 
+  // Download certificate (handles authentication)
+  downloadCertificate: async (certificateId, fileName) => {
+    try {
+      const response = await axiosClient.get(
+        `${API_BASE_URL}/certificates/${certificateId}/download`,
+        { responseType: "blob" }
+      );
+
+      // Create blob URL and trigger download
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName || "certificate";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      return { success: true };
+    } catch (error) {
+      console.error("Download failed:", error);
+      throw error;
+    }
+  },
+
   // Admin: Get all applications
   getAllApplications: (status, page = 1, limit = 10) =>
     axiosClient.get(`${API_BASE_URL}`, {

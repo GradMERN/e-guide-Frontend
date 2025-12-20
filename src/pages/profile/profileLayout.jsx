@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import { FaHome, FaMoon, FaSun, FaGlobe } from "react-icons/fa";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const ProfileLayout = () => {
   const { user, isDarkMode, toggleTheme } = useAuth();
@@ -24,7 +25,7 @@ const ProfileLayout = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)]"></div>
+        <GoldenSpinner size={48} label={t("common.loading") || "Loading..."} />
       </div>
     );
   }

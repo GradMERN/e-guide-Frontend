@@ -11,6 +11,8 @@ import {
   FaClock,
   FaFileAlt,
   FaSpinner,
+  FaDownload,
+  FaEye,
 } from "react-icons/fa";
 
 const AdminGuideApplications = () => {
@@ -243,54 +245,63 @@ const AdminGuideApplications = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {applications.map((app) => (
-              <div
-                key={app._id}
-                className={`${cardBg} rounded-lg p-6 border ${borderColor} hover:shadow-lg transition`}
-              >
-                <div className="flex items-start justify-between">
-                  <div
-                    className={`flex items-center gap-4 flex-1 ${
-                      isRtl ? "flex-row-reverse" : ""
-                    }`}
-                  >
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D5B36A] to-[#8B6F47] flex items-center justify-center">
-                      <FaUser className="text-white" />
-                    </div>
-                    <div className={isRtl ? "text-right" : ""}>
-                      <h3 className={`font-bold ${textColor}`}>
-                        {app.user.firstName} {app.user.lastName}
-                      </h3>
-                      <p className={textSecondary}>{app.user.email}</p>
-                      <div className="flex gap-2 mt-2">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm ${
-                            statusColors[app.status]
-                          }`}
-                        >
-                          {t(`guide.${app.status}`, app.status)}
-                        </span>
+            {applications.map((app) => {
+              // Skip applications with deleted users
+              if (!app.user) return null;
+
+              return (
+                <div
+                  key={app._id}
+                  className={`${cardBg} rounded-lg p-6 border ${borderColor} hover:shadow-lg transition`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div
+                      className={`flex items-center gap-4 flex-1 ${
+                        isRtl ? "flex-row-reverse" : ""
+                      }`}
+                    >
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D5B36A] to-[#8B6F47] flex items-center justify-center">
+                        <FaUser className="text-white" />
+                      </div>
+                      <div className={isRtl ? "text-right" : ""}>
+                        <h3 className={`font-bold ${textColor}`}>
+                          {app.user?.firstName ||
+                            t("common.unknown", "Unknown")}{" "}
+                          {app.user?.lastName || ""}
+                        </h3>
+                        <p className={textSecondary}>
+                          {app.user?.email || t("common.noEmail", "No email")}
+                        </p>
+                        <div className="flex gap-2 mt-2">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm ${
+                              statusColors[app.status]
+                            }`}
+                          >
+                            {t(`guide.${app.status}`, app.status)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <button
-                    onClick={() => {
-                      setSelectedApp(app);
-                      setShowModal(true);
-                      setActionData({ type: null, notes: "", reason: "" });
-                    }}
-                    className={`px-6 py-2 rounded-lg font-semibold transition ${
-                      isDarkMode
-                        ? "bg-[#D5B36A] text-[#050505] hover:bg-[#E8C77F]"
-                        : "bg-[#b06419] text-white hover:bg-[#9c7543]"
-                    }`}
-                  >
-                    {t("guide.viewDetails", "View Details")}
-                  </button>
+                    <button
+                      onClick={() => {
+                        setSelectedApp(app);
+                        setShowModal(true);
+                        setActionData({ type: null, notes: "", reason: "" });
+                      }}
+                      className={`px-6 py-2 rounded-lg font-semibold transition ${
+                        isDarkMode
+                          ? "bg-[#D5B36A] text-[#050505] hover:bg-[#E8C77F]"
+                          : "bg-[#b06419] text-white hover:bg-[#9c7543]"
+                      }`}
+                    >
+                      {t("guide.viewDetails", "View Details")}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -302,7 +313,9 @@ const AdminGuideApplications = () => {
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className={`text-2xl font-bold ${textColor}`}>
-                  {selectedApp.user.firstName} {selectedApp.user.lastName}
+                  {selectedApp.user?.firstName ||
+                    t("common.unknown", "Unknown")}{" "}
+                  {selectedApp.user?.lastName || ""}
                 </h2>
                 <button
                   onClick={() => {
@@ -344,20 +357,51 @@ const AdminGuideApplications = () => {
                     </h3>
                     <div className="space-y-2">
                       {selectedApp.certificates.map((cert) => (
-                        <a
+                        <div
                           key={cert._id}
-                          href={cert.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`block p-2 rounded border ${borderColor} ${
+                          className={`flex items-center justify-between p-2 rounded border ${borderColor} ${
                             isDarkMode
                               ? "hover:bg-[#1B1A17]"
                               : "hover:bg-[#f0e6c9]"
                           } transition`}
                         >
-                          <FaFileAlt className="inline mr-2" />
-                          {cert.name}
-                        </a>
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <FaFileAlt className="flex-shrink-0" />
+                            <span className="truncate">{cert.name}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <a
+                              href={cert.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:text-blue-400 p-1"
+                              title={t("common.view", "View")}
+                            >
+                              <FaEye />
+                            </a>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await guideApplicationService.downloadCertificate(
+                                    cert._id,
+                                    cert.name
+                                  );
+                                } catch (error) {
+                                  toast.error(
+                                    t(
+                                      "common.downloadError",
+                                      "Failed to download file"
+                                    )
+                                  );
+                                }
+                              }}
+                              className="text-[#D5B36A] hover:text-[#E8C77F] p-1"
+                              title={t("common.download", "Download")}
+                            >
+                              <FaDownload />
+                            </button>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>

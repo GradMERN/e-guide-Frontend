@@ -17,6 +17,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../../apis/axiosClient";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const AdminTours = () => {
   const { t } = useTranslation();
@@ -160,12 +161,10 @@ const AdminTours = () => {
   if (loading && tours.length === 0) {
     return (
       <div className={`flex items-center justify-center h-64 ${bgColor}`}>
-        <div className="text-center">
-          <FaSpinner className="animate-spin h-12 w-12 text-[#D5B36A] mx-auto mb-4" />
-          <p className={textColor}>
-            {t("admin.loadingTours") || "Loading tours..."}
-          </p>
-        </div>
+        <GoldenSpinner
+          size={48}
+          label={t("common.loading") || "Loading tours..."}
+        />
       </div>
     );
   }

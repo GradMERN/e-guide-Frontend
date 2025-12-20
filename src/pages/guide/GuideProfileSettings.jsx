@@ -3,6 +3,7 @@ import { useAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { guideApplicationService } from "../../apis/guideApplicationService";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 import {
   FaGlobe,
   FaStar,
@@ -11,6 +12,8 @@ import {
   FaSpinner,
   FaPlus,
   FaTrash,
+  FaDownload,
+  FaEye,
 } from "react-icons/fa";
 
 const GuideProfileSettings = () => {
@@ -177,7 +180,10 @@ const GuideProfileSettings = () => {
         } p-6`}
       >
         <div className="flex justify-center items-center py-12">
-          <FaSpinner className="animate-spin text-[#D5B36A] text-3xl" />
+          <GoldenSpinner
+            size={48}
+            label={t("common.loading") || "Loading..."}
+          />
         </div>
       </div>
     );
@@ -346,10 +352,33 @@ const GuideProfileSettings = () => {
                         href={cert.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#D5B36A] hover:underline text-sm"
+                        className="text-blue-500 hover:text-blue-400 p-2"
+                        title={t("common.view", "View")}
                       >
-                        {t("common.view", "View")}
+                        <FaEye />
                       </a>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await guideApplicationService.downloadCertificate(
+                              cert._id,
+                              cert.name
+                            );
+                          } catch (error) {
+                            toast.error(
+                              t(
+                                "common.downloadError",
+                                "Failed to download file"
+                              )
+                            );
+                          }
+                        }}
+                        className="text-[#D5B36A] hover:text-[#E8C77F] p-2"
+                        title={t("common.download", "Download")}
+                      >
+                        <FaDownload />
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleDeleteCertificate(cert._id)}

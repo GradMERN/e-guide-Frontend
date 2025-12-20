@@ -7,15 +7,15 @@ const AnalyticsCard = ({
   icon: Icon,
   trend,
   unit = "",
-  bgColor = "from-blue-500 to-blue-600",
+  bgColor = "from-primary to-secondary",
   onClick = null,
 }) => {
   const { isDarkMode } = useAuth();
 
-  const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
-  const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
-  const textColor = isDarkMode ? "text-white" : "text-gray-900";
-  const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
+  const cardBg = isDarkMode ? "bg-surface" : "bg-white";
+  const borderColor = isDarkMode ? "border-border" : "border-gray-200";
+  const textColor = isDarkMode ? "text-text" : "text-gray-900";
+  const secondaryText = isDarkMode ? "text-text-secondary" : "text-gray-600";
 
   return (
     <div
@@ -34,7 +34,7 @@ const AnalyticsCard = ({
           {trend !== undefined && (
             <p
               className={`text-xs mt-2 ${
-                trend >= 0 ? "text-green-400" : "text-red-400"
+                trend >= 0 ? "text-green-500" : "text-red-500"
               }`}
             >
               {trend >= 0 ? "+" : ""}
@@ -44,7 +44,7 @@ const AnalyticsCard = ({
         </div>
         {Icon && (
           <div
-            className={`bg-gradient-to-br ${bgColor} p-4 rounded-lg text-white text-2xl flex-shrink-0`}
+            className={`bg-gradient-to-br ${bgColor} p-4 rounded-lg text-white text-2xl shrink-0`}
           >
             <Icon />
           </div>

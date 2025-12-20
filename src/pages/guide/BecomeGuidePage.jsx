@@ -4,6 +4,7 @@ import { useAuth } from "../../store/hooks";
 import BecomeGuideForm from "../../components/guide/BecomeGuideForm";
 import { useTranslation } from "react-i18next";
 import { guideApplicationService } from "../../apis/guideApplicationService";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 import {
   FaClock,
   FaCalendarAlt,
@@ -91,7 +92,7 @@ const BecomeGuidePage = () => {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)]"></div>
+        <GoldenSpinner size={48} label={t("common.loading") || "Loading..."} />
       </div>
     );
   }

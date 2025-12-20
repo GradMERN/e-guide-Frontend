@@ -115,6 +115,9 @@
     "country": "Country",
     "city": "City",
     "noData": "No data found",
+    "download": "Download",
+    "downloadError": "Failed to download file",
+    "view": "View",
     "statuses": {
       "pending": "Pending",
       "active": "Active",
@@ -449,7 +452,9 @@
       "conversionRate": "Conversion Rate",
       "averageBookingValue": "Average Booking Value",
       "topPerformingTour": "Top Performing Tour",
-      "noData": "No data available"
+      "noData": "No data available",
+      "noDataTitle": "No Analytics Data Yet",
+      "noDataMessage": "Start publishing tours and getting enrollments to see analytics here."
     },
     "settings": {
       "title": "Settings",

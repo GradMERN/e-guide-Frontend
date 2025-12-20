@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useTours } from "../../store/hooks";
 import TourDetailHero from "../../components/tourDetail/TourDetailHero";
 import TourOverview from "../../components/tourDetail/TourOverview";
@@ -9,10 +10,12 @@ import TourReviews from "../../components/tourDetail/TourReviews";
 import enrollmentApi from "../../apis/enrollment.api";
 import paymentApi from "../../apis/payment.api";
 import { FaArrowLeft } from "react-icons/fa";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const TourDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { currentTour: tour, loading, error, fetchTourById } = useTours();
 
   const [enrolling, setEnrolling] = useState(false);
@@ -75,7 +78,10 @@ const TourDetail = () => {
         }
       } catch (err) {
         // ignore failures from pre-check and attempt to enroll normally
-        console.warn("Could not check existing enrollments:", err?.message || err);
+        console.warn(
+          "Could not check existing enrollments:",
+          err?.message || err
+        );
       }
 
       // 1) Create enrollment
@@ -121,12 +127,10 @@ const TourDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="relative">
-          <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-primary"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse">
-            ✨
-          </div>
-        </div>
+        <GoldenSpinner
+          size={64}
+          label={t("common.loading") || "Loading tour details..."}
+        />
       </div>
     );
   }

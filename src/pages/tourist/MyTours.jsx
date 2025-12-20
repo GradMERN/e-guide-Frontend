@@ -10,12 +10,15 @@ import {
   FaArrowRight,
   FaCreditCard,
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import enrollmentApi from "../../apis/enrollment.api";
 import paymentApi from "../../apis/payment.api";
 import { toast } from "react-toastify";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const MyTours = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -194,9 +197,11 @@ const MyTours = () => {
     return (
       <div className="min-h-screen bg-background pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-text-secondary">Loading your tours...</p>
+          <div className="flex items-center justify-center py-20">
+            <GoldenSpinner
+              size={56}
+              label={t("common.loading") || "Loading your tours..."}
+            />
           </div>
         </div>
       </div>

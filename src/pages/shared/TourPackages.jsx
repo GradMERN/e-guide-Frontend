@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useTours } from "../../store/hooks"; // Use custom hook
 import TourHero from "../../components/tours/TourHero";
 import TourFilters from "../../components/tours/TourFilters";
 import TourGrid from "../../components/tours/TourGrid";
+import GoldenSpinner from "../../components/common/GoldenSpinner";
 
 const TourPackages = () => {
+  const { t } = useTranslation();
   const { tours, loading, error, fetchTours } = useTours();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -95,12 +98,10 @@ const TourPackages = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="relative">
-          <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-primary"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse">
-            ✨
-          </div>
-        </div>
+        <GoldenSpinner
+          size={64}
+          label={t("common.loading") || "Loading tours..."}
+        />
       </div>
     );
   }

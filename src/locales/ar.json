@@ -115,6 +115,9 @@
     "country": "الدولة",
     "city": "المدينة",
     "noData": "لا توجد بيانات",
+    "download": "تحميل",
+    "downloadError": "فشل في تحميل الملف",
+    "view": "عرض",
     "statuses": {
       "pending": "قيد الانتظار",
       "active": "نشط",

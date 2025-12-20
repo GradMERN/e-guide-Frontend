@@ -449,7 +449,7 @@ const GuideDashboard = () => {
         </h3>
         {loadingTours ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D5B36A]"></div>
+            <GoldenSpinner size={32} />
           </div>
         ) : myTours.length === 0 ? (
           <p className={`${secondaryText} text-center py-8`}>

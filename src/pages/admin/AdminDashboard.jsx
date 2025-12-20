@@ -77,10 +77,10 @@ const AdminDashboard = () => {
     }));
   };
 
-  const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
-  const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
-  const textColor = isDarkMode ? "text-white" : "text-gray-900";
-  const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
+  const cardBg = isDarkMode ? "bg-surface" : "bg-white";
+  const borderColor = isDarkMode ? "border-border" : "border-gray-200";
+  const textColor = isDarkMode ? "text-text" : "text-gray-900";
+  const secondaryText = isDarkMode ? "text-text-secondary" : "text-gray-600";
 
   if (loading) {
     return (
@@ -111,6 +111,16 @@ const AdminDashboard = () => {
     );
   }
 
+  // Format revenue with proper display (show actual value, use K/M for large numbers)
+  const formatRevenue = (amount) => {
+    if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(1)}K`;
+    }
+    return amount.toLocaleString();
+  };
+
   const stats = [
     {
       title: t("admin.totalUsers"),
@@ -120,19 +130,19 @@ const AdminDashboard = () => {
     },
     {
       title: t("admin.totalGuides"),
-      value: dashboardData.totalGuides,
+      value: dashboardData.totalGuides.toLocaleString(),
       icon: FaUserTie,
       bgColor: "from-purple-500 to-purple-600",
     },
     {
       title: t("admin.totalTours"),
-      value: dashboardData.totalTours,
+      value: dashboardData.totalTours.toLocaleString(),
       icon: FaMapMarkedAlt,
       bgColor: "from-green-500 to-green-600",
     },
     {
       title: t("admin.totalRevenue"),
-      value: `${(dashboardData.totalRevenue / 1000).toLocaleString()}K`,
+      value: formatRevenue(dashboardData.totalRevenue),
       icon: FaMoneyBillWave,
       unit: t("admin.currency") || "EGP",
       bgColor: "from-emerald-500 to-emerald-600",
@@ -151,7 +161,9 @@ const AdminDashboard = () => {
 
       {/* Stats Overview */}
       <div>
-        <h3 className={`text-lg font-semibold ${textColor} mb-4`}>Overview</h3>
+        <h3 className={`text-lg font-semibold ${textColor} mb-4`}>
+          {t("overview") || "Overview"}
+        </h3>
         <StatsOverview stats={stats} />
       </div>
 
@@ -179,7 +191,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartComponent
           type="bar"
-          title="Platform Growth"
+          title={t("admin.growthTrend") || "Platform Growth"}
           data={dashboardData.userGrowth}
           dataKey="guides"
           xAxisKey="month"
@@ -197,7 +209,7 @@ const AdminDashboard = () => {
       {/* Recent Activity */}
       <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
         <h3 className={`text-lg font-semibold ${textColor} mb-4`}>
-          Recent Activity
+          {t("admin.recentUsers") || "Recent Activity"}
         </h3>
         <div className="space-y-3">
           {dashboardData.recentActivity &&
@@ -206,10 +218,10 @@ const AdminDashboard = () => {
               <div
                 key={activity.id}
                 className={`flex items-start gap-4 p-3 rounded-lg ${
-                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"
+                  isDarkMode ? "bg-background" : "bg-gray-50"
                 }`}
               >
-                <div className="w-2 h-2 rounded-full bg-[#D5B36A] mt-2 flex-shrink-0"></div>
+                <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0"></div>
                 <div className="flex-1">
                   <p className={`font-medium ${textColor}`}>{activity.user}</p>
                   <p className={`text-sm ${secondaryText}`}>
@@ -222,7 +234,9 @@ const AdminDashboard = () => {
               </div>
             ))
           ) : (
-            <p className={secondaryText}>No recent activity</p>
+            <p className={secondaryText}>
+              {t("admin.noUsers") || "No recent activity"}
+            </p>
           )}
         </div>
       </div>
@@ -231,30 +245,36 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
           <h4 className={`text-sm font-semibold ${secondaryText} mb-2`}>
-            Active Tours
+            {t("admin.totalTours") || "Active Tours"}
           </h4>
           <p className={`text-3xl font-bold ${textColor}`}>
-            {dashboardData.totalTours}
+            {dashboardData.totalTours.toLocaleString()}
           </p>
-          <p className={`text-xs text-green-400 mt-2`}>Available tours</p>
+          <p className={`text-xs text-green-500 mt-2`}>
+            {t("guide.tours.published") || "Available tours"}
+          </p>
         </div>
         <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
           <h4 className={`text-sm font-semibold ${secondaryText} mb-2`}>
-            Total Bookings
+            {t("guide.totalEnrollments") || "Total Bookings"}
           </h4>
           <p className={`text-3xl font-bold ${textColor}`}>
-            {dashboardData.totalEnrollments}
+            {dashboardData.totalEnrollments.toLocaleString()}
           </p>
-          <p className={`text-xs text-blue-400 mt-2`}>Current enrollments</p>
+          <p className={`text-xs text-blue-500 mt-2`}>
+            {t("common.statuses.active") || "Current enrollments"}
+          </p>
         </div>
         <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
           <h4 className={`text-sm font-semibold ${secondaryText} mb-2`}>
-            Platform Users
+            {t("admin.totalUsers") || "Platform Users"}
           </h4>
           <p className={`text-3xl font-bold ${textColor}`}>
-            {dashboardData.totalUsers}
+            {dashboardData.totalUsers.toLocaleString()}
           </p>
-          <p className={`text-xs text-purple-400 mt-2`}>Active users</p>
+          <p className={`text-xs text-purple-500 mt-2`}>
+            {t("common.statuses.active") || "Active users"}
+          </p>
         </div>
       </div>
     </div>
