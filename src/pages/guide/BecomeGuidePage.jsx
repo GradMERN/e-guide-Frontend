@@ -1,19 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/hooks";
+import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { guideApplicationService } from "../../apis/guideApplicationService";
-import GoldenSpinner from "../../components/common/GoldenSpinner";
-import {
-  FaClock,
-  FaCalendarAlt,
-  FaTimesCircle,
-  FaCheckCircle,
-  FaFileAlt,
-  FaUserCheck,
-  FaClipboardCheck,
-} from "react-icons/fa";
-import { motion } from "motion/react";
 
 import BecomeGuideForm from "../../components/guide/BecomeGuide/GuideForm/BecomeGuideForm";
 import LoadingScreen from "../../components/common/LoadingScreen";

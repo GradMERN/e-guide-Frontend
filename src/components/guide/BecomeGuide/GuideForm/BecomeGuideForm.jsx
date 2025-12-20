@@ -8,7 +8,7 @@ import { FaUser, FaLanguage, FaStar, FaClipboardList } from "react-icons/fa";
 
 import StepIndicator from "./StepIndicator";
 import StepExperience from "./StepExperience";
-import StepLanguages from "./StepLanguages";
+import StepLanguages from "./StepLanguage";
 import StepSpecialties from "./StepSpecialties";
 import StepDocuments from "./StepDocuments";
 import NavigationButtons from "./NavigationButtons";
@@ -35,8 +35,7 @@ const BecomeGuideForm = ({ isReapply = false, previousApplication = null }) => {
   const inputClass = `bg-[var(--background)] border-[var(--border)] text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)]`;
   const labelClass = "text-[var(--text)]";
 
-  const languageOptions = ["English","Arabic","French","Spanish","German","Italian","Chinese","Japanese",];
-
+  const languageOptions = ["English","العربية","Français","Español","Deutsch","Italiano","中文","日本語"];
   const specialtyOptions = ["Archaeology","History","Culture","Architecture","Art","Nature","Religion","Adventure",];
 
   const steps = [
