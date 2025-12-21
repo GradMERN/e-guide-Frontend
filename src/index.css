@@ -445,28 +445,20 @@
     color: #ffffff;
   }
 
-  .guide-img-active {
-    transform: scale(1);
-    filter: grayscale(0);
-  }
+.guide-image-style {
+  transition: filter 0.5s ease, transform 0.7s ease;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  image-rendering: -webkit-optimize-contrast;
+}
 
-  .guide-img-active:hover {
-    transform: scale(1.1);
-    filter: grayscale(100%);
-  }
-
-  .dark .guide-img-active {
-    filter: grayscale(100%);
-  }
-
-  .dark .guide-img-active:hover {
-    filter: grayscale(0);
-  }
-
-  .guide-img-inactive {
-    filter: grayscale(100%) blur(2px);
-    transform: scale(1.1);
-  }
+.group:hover .guide-image-style,.dark .guide-image-style {
+  filter: grayscale(100%);
+}
+ 
+.dark .group:hover .guide-image-style {
+  filter: grayscale(0);
+}
 
   .guide-content-card {
     background-color: var(--surface);
@@ -569,9 +561,37 @@
   .dark .guide-profile-line {
     border: 1px solid #c7a15c;
   }
-  .dark .guide-profile-subtitle {
-    color: var(--text-muted);
+.dark .guide-profile-subtitle {
+    color: #7a7d80;
   }
+  .guidebgcover{
+    opacity: 0;
+    background-color: #f7edce;
+  }
+  .dark .guidebgcover{
+    opacity: 100;
+    
+  }
+  .guideoverviewsections {
+  background-color: #f7edce;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: border-color 0.3s, background-color 0.3s;
+  border-radius: 1rem;
+  padding: 1rem; 
+}
+
+.guideoverviewsections:hover {
+  border-color: rgba(199, 161, 92, 0.3); 
+}
+
+.dark .guideoverviewsections {
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)); 
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark .guideoverviewsections:hover {
+  border-color: rgba(199, 161, 92, 0.3);
+}
 }
 
 @theme {

@@ -1026,7 +1026,7 @@
       "loginLink": "Login",
       "next": "Next",
       "back": "Back",
-
+      "registerLink":"Create Account",
       "errors": {
         "firstName": "First name is required",
         "lastName": "Last name is required",
@@ -1058,7 +1058,7 @@
       "signIn": "Sign In",
       "or": "Or continue with",
       "google": "Google Account",
-      "noAccount": "New to Mystic Egypt? Create Account",
+      "noAccount": "New to Guidora?",
 
       "errors": {
         "emailRequired": "Email is required",
@@ -1103,13 +1103,14 @@
   "contact": {
     "subtitle": "Contact Us",
     "title": "Get in Touch",
+    "Guidora":"GUIDORA",
     "desc": "We’d love to hear from you! Reach out to us via any of the methods below.",
     "addressTitle": "Address",
     "address": "123 Main Street, Cairo, Egypt",
     "phoneTitle": "Phone",
     "phone": "+20 123 456 7890",
     "emailTitle": "Email",
-    "email": "info@example.com",
+    "email": "guidora@example.com",
 
     "contactForm": {
       "formTitle": "Get in Touch",
@@ -1239,5 +1240,7 @@
     "guide": "Let's guide you back to civilization.",
     "goBack": "Go Back",
     "goHome": "Go Home"
-  }
+  },
+  "loading":"LOADING..."
+
 }

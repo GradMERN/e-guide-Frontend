@@ -180,7 +180,7 @@ export default function ContactForm() {
 
                             <h3 className="text-sm xs:text-base sm:text-3xl md:text-4xl text-center pb-6 sm:pb-10 flex items-center justify-center gap-2 sm:gap-4 text-text font-bold flex-nowrap overflow-hidden">
                                 <span className="h-px w-2 sm:w-10 bg-linear-to-r from-transparent to-primary block shrink-0"></span>
-                                <span className="whitespace-nowrap truncate pb-5">{t('contact.contactForm.formTitle')}</span>
+                                <span className="whitespace-nowrap truncate pb-5 text-primary font-extrabold ">{t('contact.Guidora')}</span>
                                 <span className="h-px w-2 sm:w-10 bg-linear-to-l from-transparent to-primary block shrink-0"></span>
                             </h3>
 

@@ -1032,6 +1032,7 @@
       "loginLink": "تسجيل الدخول",
       "next": "التالي",
       "back": "رجوع",
+      "registerLink":"انشئ حسابا",
 
       "errors": {
         "firstName": "الاسم الأول مطلوب",
@@ -1064,7 +1065,7 @@
       "signIn": "تسجيل الدخول",
       "or": "أو المتابعة عبر",
       "google": "حساب جوجل",
-      "noAccount": "جديد على Mystic Egypt؟ أنشئ حسابًا",
+      "noAccount": "جديد على Guidora",
 
       "errors": {
         "emailRequired": "البريد الإلكتروني مطلوب",
@@ -1111,13 +1112,14 @@
   "contact": {
     "subtitle": "اتصل بنا",
     "title": "تواصل معنا",
+    "Guidora":"GUIDORA",
     "desc": "نحن سعداء لسماعك! تواصل معنا عبر أي من الطرق التالية.",
     "addressTitle": "العنوان",
     "address": "١٢٣ شارع الرئيسي، القاهرة، مصر",
     "phoneTitle": "الهاتف",
     "phone": "+٢٠ ١٢٣ ٤٥٦ ٧٨٩٠",
     "emailTitle": "البريد الإلكتروني",
-    "email": "info@example.com",
+    "email": "guidora@example.com",
     "contactForm": {
       "formTitle": "تواصل معنا",
       "labelName": "اسمك",
@@ -1264,5 +1266,6 @@
     "guide": "دعنا نرشدك للعودة إلى الحضارة.",
     "goBack": "العودة",
     "goHome": "الصفحة الرئيسية"
-  }
+  },
+  "loading":"جاري التحميل..."
 }
