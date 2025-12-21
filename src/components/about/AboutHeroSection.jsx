@@ -46,7 +46,7 @@ export default function AboutHeroSection() {
           <motion.h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-8 leading-normal bg-tertiary bg-clip-text text-transparent [text-shadow:0_0_60px_rgba(199,161,92,0.5)]">
             {t("about.hero.title")}
           </motion.h1>
-          <motion.p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light tracking-wide mx-auto max-w-3xl mb-6 lg:text-2 px-2">
+          <motion.p className="text-base sm:text-lg md:text-xl lg:text-2xl text-primary font-bold tracking-wide mx-auto max-w-3xl mb-6 lg:text-2 px-2">
             {t("about.hero.subtitle")}
           </motion.p>
         </motion.div>
