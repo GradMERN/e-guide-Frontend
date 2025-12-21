@@ -95,17 +95,6 @@ const TourPackages = () => {
     });
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <GoldenSpinner
-          size={64}
-          label={t("common.loading") || "Loading tours..."}
-        />
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -128,7 +117,7 @@ const TourPackages = () => {
 
   return (
     <div className="relative text-text overflow-hidden bg-background mt-10">
-      <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20">
+      <div className="relative max-w-7xl mx-auto px-6 pt-22 pb-20">
         <TourHero />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
