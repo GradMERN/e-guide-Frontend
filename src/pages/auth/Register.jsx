@@ -10,6 +10,8 @@ import * as Yup from "yup";
 import { register } from "../../apis/Auth/register.api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import registerBg from "../../assets/images/register.jpg";
+
 
 const locationData = {
   Egypt: [
@@ -360,7 +362,7 @@ export default function Register() {
     <section className="relative min-h-screen flex justify-center items-center bg-background overflow-hidden px-4 sm:px-6 lg:px-8 py-25">
       <div className="absolute inset-0">
         <img
-          src="src/assets/images/loginBg.webp"
+          src={registerBg}
           className="h-full w-full object-cover opacity-30"
           alt="bg-register"
         />

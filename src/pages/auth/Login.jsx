@@ -19,6 +19,7 @@ import { useDispatch } from "react-redux";
 import { useAuth as useReduxAuth } from "../../store/hooks";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import loginBg from "../../assets/images/loginBg.webp";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -138,7 +139,7 @@ export default function LoginPage() {
         >
           <div className="absolute inset-0">
             <img
-              src="src/assets/images/loginBg.webp"
+              src={loginBg}
               className="h-full w-full object-cover opacity-30"
               alt="bg-login"
             />
