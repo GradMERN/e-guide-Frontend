@@ -83,16 +83,15 @@ export default function LoginPage() {
       >
         {/* LEFT SECTION */}
         <div
-          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${
-            animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-          }`}
+          className={`hidden lg:flex w-1/2 flex-col items-center justify-center space-y-20 py-40 pt-30 px-20 transition-all duration-1000 ease-out ${animate ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+            }`}
           dir={i18n.dir()}
         >
           <div className="flex items-center gap-5">
             <GiEgyptianProfile className="max-[1212px]:w-20 max-[1212px]:h-20 w-24 h-24 text-primary drop-shadow-[0_0_15px_rgba(247,201,95,0.5)]" />
             <div className="flex flex-col text-center">
               <h1 className="bg-linear-to-r from-primary via-secondary to-primary bg-clip-text text-transparent max-[1212px]:text-3xl text-5xl font-extrabold tracking-tighter">
-                MYSTIC EGYPT
+                GUIDORA EGYPT
               </h1>
               <p className="mt-2 pt-1 border-t border-primary/30 max-[1212px]:text-xs text-md uppercase tracking-widest text-text-muted">
                 {t("auth.subtitle")}
@@ -133,9 +132,8 @@ export default function LoginPage() {
 
         {/* RIGHT SECTION */}
         <div
-          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${
-            animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-          }`}
+          className={`w-full lg:w-1/2 flex items-center justify-center bg-[#130f0c] py-40 pt-50 px-3 lg:px-10 transition-all duration-1000 ease-out delay-100 ${animate ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
+            }`}
           dir={i18n.dir()}
         >
           <div className="absolute inset-0">
@@ -242,11 +240,10 @@ export default function LoginPage() {
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <MdEmail
-                            className={`absolute start-4  transition-colors duration-300 ${
-                              focusedInput === "email"
+                            className={`absolute start-4  transition-colors duration-300 ${focusedInput === "email"
                                 ? "text-primary"
                                 : "text-text-muted"
-                            }`}
+                              }`}
                           />
                           <input
                             {...field}
@@ -274,11 +271,10 @@ export default function LoginPage() {
                       <div className="flex flex-col">
                         <div className="relative flex items-center">
                           <FaLock
-                            className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-                              focusedInput === "password"
+                            className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedInput === "password"
                                 ? "text-primary"
                                 : "text-text-muted"
-                            }`}
+                              }`}
                           />
                           <input
                             {...field}
@@ -348,9 +344,8 @@ export default function LoginPage() {
 
                   <button
                     onClick={() =>
-                      (window.location.href = `${
-                        import.meta.env.VITE_API_URL ||
-                        "http://localhost:3000/api"
+                    (window.location.href = `${import.meta.env.VITE_API_URL ||
+                      "http://localhost:3000/api"
                       }/auth/google`)
                     }
                     type="button"
@@ -366,14 +361,15 @@ export default function LoginPage() {
               )}
             </Formik>
 
-            <Link
-              to="/register"
-              className="font-semibold text-text-muted transition-all hover:text-primary"
-            >
-              <p className="mt-6 text-center text-sm text-text-muted hover:text-primary cursor-pointer transition-all">
-                {t("auth.login.noAccount")}
-              </p>
-            </Link>
+            <p className="text-text-muted text-sm mt-4 text-center">
+              {t("auth.login.noAccount")}{" "}
+              <Link
+                to="/register"
+                className="text-primary font-semibold cursor-pointer transition-colors hover:text-primary/80">
+                {t("auth.register.registerLink")}
+              </Link>
+            </p>
+
           </div>
         </div>
       </section>

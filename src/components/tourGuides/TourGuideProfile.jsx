@@ -19,6 +19,7 @@ import { guideService } from "../../apis/guideService";
 import TourCard from "../tours/TourCard";
 import TourGuideNotFoundScreen from "./TourGuideNotFoundScreen";
 import LoadingScreen from "../common/LoadingScreen";
+import coverImage from "../../assets/images/guides/guidecover.png";
 
 const StatBadge = ({ icon, text, sub }) => (
   <div className="flex items-center gap-1.5 guide-profile-icon bg-glass-bg px-2.5 py-1.5 rounded-full border border-glass-border shrink-0 max-w-full">
@@ -33,9 +34,8 @@ const StatBadge = ({ icon, text, sub }) => (
 const TabButton = ({ active, onClick, label }) => (
   <button
     onClick={onClick}
-    className={`flex-1 min-w-[100px] pb-4 pt-2 text-sm font-bold transition-colors relative text-center whitespace-nowrap ${
-      active ? "guide-profile-tab" : "text-gray-500 hover:text-gray-300"
-    }`}
+    className={`flex-1 min-w-[100px] pb-4 pt-2 text-sm font-bold transition-colors relative text-center whitespace-nowrap ${active ? "guide-profile-tab" : "text-gray-500 hover:text-gray-300"
+      }`}
   >
     {label}
     {active && (
@@ -80,12 +80,12 @@ export default function TourGuideProfile() {
     }
   }, [id]);
 
-  if (loading) return <LoadingScreen />;
+  if (loading) return <LoadingScreen fullPage={true} />;
   if (error || !guide) return <TourGuideNotFoundScreen navigate={navigate} />;
 
   // Default cover image
-  const coverImage =
-    "https://images.unsplash.com/photo-1568603417739-95a3ee515c00?q=80&w=1600&auto=format&fit=crop";
+  // const coverImage =
+  //   "https://images.unsplash.com/photo-1568603417739-95a3ee515c00?q=80&w=1600&auto=format&fit=crop";
 
   // Get initials for avatar fallback
   const getInitials = () => {
@@ -97,33 +97,33 @@ export default function TourGuideProfile() {
   // Format member since date
   const memberSince = guide.createdAt
     ? new Date(guide.createdAt).toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      })
+      month: "long",
+      year: "numeric",
+    })
     : null;
 
   return (
     <div
-      dir="ltr"
       className="min-h-screen  guide-profile-bg  font-sans pb-24 selection:bg-[#C7A15C] selection:text-black overflow-x-hidden"
     >
-      <div className="relative h-[30vh] sm:h-[40vh] w-full guide-profile-bg">
+      <div className="relative w-full h-100 sm:h-90 md:h-90">
         <img
           src={coverImage}
           alt="Cover"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover guidebgcover"
         />
-        <div className="absolute inset-0" />
+        <div className="absolute inset-0 bg-black/84 guidebgcover" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 relative -mt-30 z-10">
-        <div className="flex flex-wrap md:flex-nowrap gap-4 items-end mb-8">
+
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 relative -mt-50 z-10">
+        <div  dir="ltr" className="flex flex-col sm:flex-row flex-wrap md:flex-nowrap gap-6 items-end mb-8">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="relative shrink-0 mx-auto md:mx-0"
           >
-            <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-full border-4 sm:border-[6px] border-neutral-950 overflow-hidden shadow-2xl bg-neutral-800">
+            <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-full border-3 sm:border-[3px] border-[#c7a15c] overflow-hidden bg-neutral-800">
               {guide.avatar?.url ? (
                 <img
                   src={guide.avatar.url}
@@ -151,7 +151,7 @@ export default function TourGuideProfile() {
               </span>
               <BadgeCheck size={14} className="guide-profile-icon" />
             </div>
-            <div className="flex flex-wrap justify-center md:justify-start gap-2 ">
+            <div className="flex flex-wrap justify-center md:justify-start gap-3 ">
               <StatBadge
                 icon={<Star size={10} className="guide-profile-icon" />}
                 text={guide.rating || t("guideProfile.newGuide", "New")}
@@ -190,9 +190,8 @@ export default function TourGuideProfile() {
             <TabButton
               active={activeTab === "reviews"}
               onClick={() => setActiveTab("reviews")}
-              label={`${t("guideProfile.reviews", "Reviews")} (${
-                guide.totalReviews || 0
-              })`}
+              label={`${t("guideProfile.reviews", "Reviews")} (${guide.totalReviews || 0
+                })`}
             />
           </div>
         </div>
@@ -204,115 +203,120 @@ export default function TourGuideProfile() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="space-y-12 "
+              className="space-y-19"
             >
               {guide.bio && (
-                <section>
-                  <h3 className="text-lg md:text-2xl font-bold guide-profile-title mb-3 flex items-center gap-2 ">
-                    <BookOpen size={18} className="guide-profile-icon" />{" "}
+                <section className="relative pt-5">
+                  <h3 className="text-xl md:text-3xl font-bold guide-profile-title mb-5 flex items-center gap-2 ">
+                    <BookOpen size={20} className="guide-profile-icon" />{" "}
                     {t("guideProfile.biography", "Biography")}
                   </h3>
-                  <p className="guide-profile-subtitle leading-relaxed font-light text-sm sm:text-lg wrap-break-word">
-                    {guide.bio}
-                  </p>
+                  <div className=" p-6 md:p-8 rounded-2xl border border-white/5 relative guideoverviewsections">
+                    <p className="guide-profile-subtitle leading-relaxed tracking-wide text-base  sm:text-lg wrap-break-word">
+                      {guide.bio}
+                    </p>
+                  </div>
                 </section>
               )}
 
+
+
+
               <section>
-                <h3 className="text-lg md:text-2xl font-bold guide-profile-title mb-4 flex items-center gap-2">
+                <h3 className="text-xl md:text-3xl font-bold guide-profile-title mb-5 flex items-center gap-2">
                   <Sparkles size={18} className="guide-profile-icon" />{" "}
                   {t("guideProfile.aboutMe", "About Me")}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {guide.languages?.length > 0 && (
-                    <div className="bg-linear-to-br from-white/5 to-white/[0.02] p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
+                    <div className="guideoverviewsections p-4 rounded-xl">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="bg-[#C7A15C]/10 p-2 rounded-lg guide-profile-icon mt-0.5">
                           <Languages
-                            size={16}
+                            size={18}
                             className="guide-profile-icon shrink-0"
                           />
                         </div>
-                        <h4 className="guide-profile-title font-bold text-sm truncate">
+                        <h4 className="guide-AboutCards font-bold text-sm truncate">
                           {t("guideProfile.languages", "Languages")}
                         </h4>
                       </div>
-                      <p className="guide-profile-subtitle text-xs leading-relaxed wrap-break-word">
+                      <p className="guide-profile-subtitle text-xs font-medium leading-relaxed wrap-break-word">
                         {guide.languages.join(", ")}
                       </p>
                     </div>
                   )}
 
                   {guide.specialties?.length > 0 && (
-                    <div className="bg-linear-to-br from-white/5 to-white/[0.02] p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
+                    <div className="guideoverviewsections p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="bg-[#C7A15C]/10 p-2 rounded-lg guide-profile-icon mt-0.5">
                           <Award
-                            size={16}
+                            size={18}
                             className="guide-profile-icon shrink-0"
                           />
                         </div>
-                        <h4 className="guide-profile-title font-bold text-sm truncate">
+                        <h4 className="guide-AboutCards font-bold text-sm truncate">
                           {t("guideProfile.specialties", "Specialties")}
                         </h4>
                       </div>
-                      <p className="guide-profile-subtitle text-xs leading-relaxed wrap-break-word">
+                      <p className="guide-profile-subtitle text-xs font-medium  leading-relaxed wrap-break-word">
                         {guide.specialties.join(", ")}
                       </p>
                     </div>
                   )}
 
                   {guide.experience && (
-                    <div className="bg-linear-to-br from-white/5 to-white/[0.02] p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
+                    <div className="guideoverviewsections p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="bg-[#C7A15C]/10 p-2 rounded-lg guide-profile-icon mt-0.5">
                           <Clock
-                            size={16}
+                            size={18}
                             className="guide-profile-icon shrink-0"
                           />
                         </div>
-                        <h4 className="guide-profile-title font-bold text-sm truncate">
+                        <h4 className="guide-AboutCards font-bold text-sm truncate">
                           {t("guideProfile.experience", "Experience")}
                         </h4>
                       </div>
-                      <p className="guide-profile-subtitle text-xs leading-relaxed wrap-break-word">
+                      <p className="guide-profile-subtitle text-xs font-medium leading-relaxed wrap-break-word">
                         {guide.experience}
                       </p>
                     </div>
                   )}
 
                   {memberSince && (
-                    <div className="bg-linear-to-br from-white/5 to-white/[0.02] p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
+                    <div className="guideoverviewsections p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="bg-[#C7A15C]/10 p-2 rounded-lg guide-profile-icon mt-0.5">
                           <Calendar
-                            size={16}
+                            size={18}
                             className="guide-profile-icon shrink-0"
                           />
                         </div>
-                        <h4 className="guide-profile-title font-bold text-sm truncate">
+                        <h4 className="guide-AboutCards font-bold text-sm truncate">
                           {t("guideProfile.memberSince", "Member Since")}
                         </h4>
                       </div>
-                      <p className="guide-profile-subtitle text-xs leading-relaxed wrap-break-word">
+                      <p className="guide-profile-subtitle text-xs font-medium leading-relaxed wrap-break-word">
                         {memberSince}
                       </p>
                     </div>
                   )}
 
-                  <div className="bg-linear-to-br from-white/5 to-white/[0.02] p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
+                  <div className="guideoverviewsections p-4 rounded-xl border border-white/5 hover:border-[#C7A15C]/30 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="bg-[#C7A15C]/10 p-2 rounded-lg guide-profile-icon mt-0.5">
                         <Users
-                          size={16}
+                          size={18}
                           className="guide-profile-icon shrink-0"
                         />
                       </div>
-                      <h4 className="guide-profile-title font-bold text-sm truncate">
+                      <h4 className="guide-AboutCards font-bold text-sm truncate">
                         {t("guideProfile.totalTours", "Total Tours")}
                       </h4>
                     </div>
-                    <p className="guide-profile-subtitle text-xs leading-relaxed wrap-break-word">
+                    <p className="guide-profile-subtitle text-xs font-medium leading-relaxed wrap-break-word">
                       {guide.toursCount}{" "}
                       {t("guideProfile.toursCreated", "tours created")}
                     </p>
@@ -358,7 +362,7 @@ export default function TourGuideProfile() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="space-y-6 max-w-3xl mx-auto"
+              className="space-y-6 overflow-hidden"
             >
               <div className="flex flex-col items-center justify-center gap-2  bg-glass-bg p-6 rounded-3xl border border-glass-border mb-8 text-center">
                 <div className="text-5xl font-bold text-[#C7A15C]">
@@ -412,7 +416,7 @@ export default function TourGuideProfile() {
                             {review.user}
                           </span>
                           {review.tourName && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs guide-AboutCards">
                               {t("guideProfile.on", "on")} {review.tourName}
                             </span>
                           )}

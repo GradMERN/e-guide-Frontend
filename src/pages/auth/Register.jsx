@@ -590,7 +590,7 @@ export default function Register() {
           {t("auth.register.haveAccount")}{" "}
           <Link
             to="/login"
-            className="text-primary font-semibold hover:underline"
+            className="text-primary font-semibold cupsor-pointer transition-colors hover:text-primary/80"
           >
             {t("auth.register.loginLink")}
           </Link>

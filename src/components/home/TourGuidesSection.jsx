@@ -6,6 +6,7 @@ import { TbUserCheck } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { guideService } from "../../apis/guideService.js";
 import { FaSpinner } from "react-icons/fa";
+import LoadingScreen from "../common/LoadingScreen.jsx";
 
 export default function TourGuidesSection() {
   const { t } = useTranslation();
@@ -64,7 +65,7 @@ export default function TourGuidesSection() {
       <div className="cards" dir="ltr">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <FaSpinner className="animate-spin text-4xl text-primary" />
+            <LoadingScreen/>
           </div>
         ) : error ? (
           <div className="text-center py-10 text-red-400">
