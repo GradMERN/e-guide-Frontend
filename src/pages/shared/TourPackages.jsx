@@ -116,8 +116,8 @@ const TourPackages = () => {
   }
 
   return (
-    <div className="relative text-text overflow-hidden bg-background mt-10">
-      <div className="relative max-w-7xl mx-auto px-6 pt-22 pb-20">
+    <div className="relative text-text overflow-hidden bg-background">
+      <div className="relative max-w-7xl mx-auto px-6 pt-12 pb-20">
         <TourHero />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
