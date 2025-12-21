@@ -120,21 +120,6 @@ const handleNext = () => {
                       <motion.div key={item.id} initial={{ x: direction > 0 ? "100%" : "-100%", scale: 0.7, opacity: 0 }} animate={{ x: xOffset, scale, opacity }} exit={{ x: direction > 0 ? "-100%" : "100%", scale: 0.7, opacity: 0 }} transition={{ type: "spring", stiffness: 200, damping: 30 }} style={{ zIndex }} className="absolute w-[180px] h-[260px] sm:w-[260px] sm:h-[360px] md:w-[350px] md:h-[500px] lg:w-[400px] lg:h-[600px] rounded-xl overflow-hidden cursor-pointer ">
                       <img src={item.src} alt={item.title} className="w-full h-full object-cover"loading="lazy"/>
                       <div className={`absolute inset-0 ${isCenter ? "bg-linear-to-t from-black/0 to-transparent" : "bg-black/50"}`}/>
-                      {isCenter && (
-                            <>
-                              <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-                                <AnimatePresence mode="sync">
-                                  <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-linear-to-t from-black/80 to-transparent">
-                                    <h3 className="text-white text-xl sm:text-2xl font-bold mb-2">
-                                      {item.title}
-                                    </h3>
-                                    <p className="text-white/90 text-sm sm:text-base">
-                                      {item.description}
-                                    </p>
-                                  </motion.div>
-                                </AnimatePresence>
-                            </>
-                      )}
                 </motion.div>
               );
             })}
