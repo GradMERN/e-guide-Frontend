@@ -44,7 +44,7 @@ export default function ImagesSliderDemo() {
         <motion.h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-8 leading-normal bg-tertiary bg-clip-text text-transparent [text-shadow:0_0_60px_rgba(199,161,92,0.5)]">
           {t("homepage.title")}
         </motion.h1>
-        <motion.p className={`text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-wide mx-auto max-w-3xl mb-6 ${isMobile ? 'text-primary dark:text-white/90' : 'text-white/90'}`}>
+        <motion.p className={`text-base sm:text-lg md:text-xl lg:text-2xl tracking-wide mx-auto max-w-3xl mb-6 text-primary font-bold`}>
           {t("homepage.subtitle")}
         </motion.p>
       </motion.div>
