@@ -61,7 +61,7 @@ const OverviewPage = () => {
   const CurrentSlideComponent = slides[currentSlide];
 
   return (
-    <div className="relative h-screen w-full bg-black overflow-hidden font-serif">
+    <div dir='ltr' className="relative h-screen w-full bg-black overflow-hidden font-serif">
       <AnimatePresence mode="wait">
         <motion.div key={currentSlide} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }} className="h-full w-full overflow-y-auto pb-22 md:pb-0">
           <CurrentSlideComponent />
