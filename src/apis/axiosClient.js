@@ -23,7 +23,6 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Clear auth and redirect to login (keep behavior consistent with services/api.js)
       try {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
