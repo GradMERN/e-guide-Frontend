@@ -46,6 +46,7 @@ import SavedTours from "./pages/shared/SavedTours";
 import PaymentRedirect from "./pages/payment/PaymentRedirect";
 import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import ContactUs from "./pages/shared/ContactUs";
+import ProjectOverview from "./pages/shared/ProjectOverview";
 
 const router = createBrowserRouter([
   {
@@ -121,14 +122,11 @@ const router = createBrowserRouter([
         element: <AdminGuideApplications />,
       },
       // { path: "/admin/settings", element: <AdminSettings /> }, // Commented out - page not ready
-      // Admin tour preview: reuse the same TourPreview used by guides
       { path: "/admin/tour/:tourId", element: <GuideTourPreview /> },
     ],
   },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+  {path: "*",element: <NotFound />,},
+  { path: "/project-overview", element: <ProjectOverview /> }
 ]);
 
 export default function App() {
