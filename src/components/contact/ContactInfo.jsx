@@ -40,9 +40,9 @@ export default function ContactInfo() {
 
             <motion.div className="w-full flex flex-col gap-3 sm:gap-5 items-center lg:items-stretch" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.8 }}>
 
-                <ContactCard icon={<MapPin className="w-4 h-4 sm:w-5 sm:h-5" />} title={t('contact.addressTitle')} detail={t('contact.address')} />
-                <ContactCard icon={<Phone className="w-4 h-4 sm:w-5 sm:h-5" />} title={t('contact.phoneTitle')} detail={t('contact.phone')} />
-                <ContactCard icon={<Scroll className="w-4 h-4 sm:w-5 sm:h-5" />} title={t('contact.emailTitle')} detail={t('contact.email')} />
+                <ContactCard icon={<MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-black" />} title={t('contact.addressTitle')} detail={t('contact.address')} />
+                <ContactCard icon={<Phone className="w-4 h-4 sm:w-5 sm:h-5 text-black" />} title={t('contact.phoneTitle')} detail={t('contact.phone')} />
+                <ContactCard icon={<Scroll className="w-4 h-4 sm:w-5 sm:h-5 text-black" />} title={t('contact.emailTitle')} detail={t('contact.email')} />
 
             </motion.div>
         </div>
