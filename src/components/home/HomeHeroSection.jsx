@@ -34,7 +34,7 @@ export default function ImagesSliderDemo() {
   const handleWatch = () => {
     const videoSection = document.getElementById("video-section");
     if (videoSection) {
-      videoSection.scrollIntoView({ behavior: "smooth" });
+      videoSection.scrollIntoView({  behavior: "smooth" });
     }
   };
 
@@ -86,7 +86,7 @@ export default function ImagesSliderDemo() {
   return (
     <>
       <section className="block md:hidden relative w-full h-[calc(100vh-4rem)]  flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
           <Particles
             particleColors={[
               "var(--gradient-from)",
@@ -103,7 +103,7 @@ export default function ImagesSliderDemo() {
             disableRotation={false}
           />
         </div>
-        <HeroContent isMobile={true} />
+        <HeroContent className="relative z-50 w-full h-full pointer-events-auto" isMobile={true} />
       </section>
 
       <div className="hidden md:block">

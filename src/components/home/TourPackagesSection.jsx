@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { MdOutlineTour } from "react-icons/md";
 import { useTours } from "../../store/hooks";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import TourCard from "../tours/TourCard"; 
 import TitlesHome from "../common/TitlesHome";
 import SectionWrapperFull from "../common/SectionWrapper";
@@ -77,7 +77,7 @@ export default function TourPackagesSection() {
             </div>
 
             <motion.div initial={{ opacity: 0, y: 20 }}  whileInView={{ opacity: 1, y: 0 }}  viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.3 }}  className="text-center mt-8 sm:mt-12 lg:mt-16 px-4">
-              <motion.button onClick={handleViewAllTours} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary-hero text-sm sm:text-base px-5 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-4 shadow-lg hover:shadow-xl transition-shadow duration-300 w-full sm:w-auto">
+              <motion.button onClick={handleViewAllTours} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary-hero">
                 <span className="flex items-center justify-center gap-2">
                   {t("tourPackages.viewAll")}
                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
