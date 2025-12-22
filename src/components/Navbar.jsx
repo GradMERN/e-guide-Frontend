@@ -54,11 +54,11 @@ export default function Navbar() {
   const links = [
     { name: t("navbar.links.home"), path: "/", icon: FaHome },
     { name: t("navbar.links.tours"), path: "/tours", icon: FaRoute },
-    {
-      name: t("navbar.links.destinations"),
-      path: "/destinations",
-      icon: FaGlobeAfrica,
-    },
+    // {
+    //   name: t("navbar.links.destinations"),
+    //   path: "/destinations",
+    //   icon: FaGlobeAfrica,
+    // },
     { name: t("navbar.links.about"), path: "/about", icon: FaInfoCircle },
     { name: t("navbar.links.contact"), path: "/contact", icon: FaAddressCard },
   ];
