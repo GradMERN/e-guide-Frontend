@@ -1,32 +1,12 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "dark";
-    }
-    return "dark";
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    root.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+  const { isDarkMode, toggleTheme } = useAuth();
 
   return (
     <StyledWrapper>
-      <input type="checkbox" className="input" checked={theme === "light"} onChange={toggleTheme} aria-label="Toggle Theme"/>
+      <input type="checkbox" className="input" checked={!isDarkMode} onChange={toggleTheme} aria-label="Toggle Theme"/>
 
       <svg className="icon icon-sun" fill="none" height={24} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} viewBox="0 0 24 24" width={24}>
         <circle cx={12} cy={12} r={5} />
@@ -45,7 +25,7 @@ export default function ThemeToggle() {
       </svg>
     </StyledWrapper>
   );
-};
+}
 
 const StyledWrapper = styled.label`
   position: relative;
@@ -101,8 +81,8 @@ const StyledWrapper = styled.label`
 
   .icon-sun {
     stroke: var(--primary);
-    display: block; /* keep block for animation */
-    opacity: 0;     /* start hidden */
+    display: block;
+    opacity: 0;
     transition: opacity 0.5s ease;
   }
 

@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import SideBar from "./SideBar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth as useAuthStore } from "../../store/hooks";
 import { useAuth as useAuthContext } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
-import { FaHome, FaMoon, FaSun, FaGlobe } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import GoldenSpinner from "../../components/common/GoldenSpinner";
 import { getImageUrl } from "../../utils/imageUtils";
+import ThemeToggle from "../../components/common/ThemeToggle";
+import Switch from "../../components/common/LanguageSwitch";
 
 const ProfileLayout = () => {
   const { user } = useAuthStore();
-  const { isDarkMode, toggleTheme } = useAuthContext();
-  const { t, i18n } = useTranslation();
+  const { isDarkMode } = useAuthContext();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [showLangMenu, setShowLangMenu] = useState(false);
-
-  const isRtl = i18n.language.startsWith("ar");
 
   // Don't render if not authorized
   if (!user) {
@@ -30,7 +29,6 @@ const ProfileLayout = () => {
   const headerBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
   const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
   const textColor = isDarkMode ? "text-white" : "text-gray-900";
-  const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
   const hoverBg = isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100";
 
   return (
@@ -65,52 +63,10 @@ const ProfileLayout = () => {
             </button>
 
             {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg ${hoverBg} ${secondaryText} transition-all`}
-              title={isDarkMode ? t("theme.light") : t("theme.dark")}
-            >
-              {isDarkMode ? <FaSun /> : <FaMoon />}
-            </button>
+            <ThemeToggle />
 
-            {/* Language Toggle */}
-            <div className="relative">
-              <button
-                onClick={() => setShowLangMenu(!showLangMenu)}
-                className={`p-2 rounded-lg ${hoverBg} ${secondaryText} transition-all flex items-center gap-2`}
-              >
-                <FaGlobe />
-                <span className="hidden sm:inline">
-                  {i18n.language.toUpperCase()}
-                </span>
-              </button>
-              {showLangMenu && (
-                <div
-                  className={`absolute ${
-                    isRtl ? "left-0" : "right-0"
-                  } mt-2 w-36 ${headerBg} rounded-lg shadow-xl border ${borderColor} py-1 z-50`}
-                >
-                  <button
-                    onClick={() => {
-                      i18n.changeLanguage("en");
-                      setShowLangMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 ${textColor} ${hoverBg} transition-all`}
-                  >
-                    English
-                  </button>
-                  <button
-                    onClick={() => {
-                      i18n.changeLanguage("ar");
-                      setShowLangMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 ${textColor} ${hoverBg} transition-all`}
-                  >
-                    العربية
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* Language Switch */}
+            <Switch />
 
             {/* User Info */}
             <div
