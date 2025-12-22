@@ -10,7 +10,7 @@ import * as Yup from "yup";
 import { register } from "../../apis/Auth/register.api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import registerBg from "../../assets/images/register.jpg";
+import registerBg from "../../assets/images/loginBg.webp";
 
 
 const locationData = {
