@@ -32,7 +32,7 @@ const ProfileLayout = () => {
   const hoverBg = isDarkMode ? "hover:bg-[#2c1b0f]" : "hover:bg-gray-100";
 
   return (
-    <div
+    <div dir="ltr"
       className="flex min-h-screen"
       style={{ backgroundColor: "var(--background)", color: "var(--text)" }}
     >
