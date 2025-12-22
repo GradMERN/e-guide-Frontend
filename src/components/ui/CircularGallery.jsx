@@ -1,41 +1,17 @@
-import {
-  Camera,
-  Mesh,
-  Plane,
-  Program,
-  Renderer,
-  Texture,
-  Transform,
-} from "ogl";
-import photo1 from "../../assets/images/views/photo-1.avif";
-import photo2 from "../../assets/images/views/photo-2.avif";
-import photo3 from "../../assets/images/views/photo-3.avif";
-import photo4 from "../../assets/images/views/photo-4.avif";
-import photo5 from "../../assets/images/views/photo-5.avif";
-import photo6 from "../../assets/images/views/photo-6.avif";
-import photo7 from "../../assets/images/views/photo-7.avif";
-import photo8 from "../../assets/images/views/photo-8.avif";
-import photo9 from "../../assets/images/views/photo-9.avif";
-import photo10 from "../../assets/images/views/photo-10.avif";
-import photo11 from "../../assets/images/views/photo-11.avif";
-import photo12 from "../../assets/images/views/photo-12.avif";
-import photo13 from "../../assets/images/views/photo-13.avif";
-import photo14 from "../../assets/images/views/photo-14.avif";
-import photo15 from "../../assets/images/views/photo-15.avif";
-import photo16 from "../../assets/images/views/photo-16.avif";
-import photo17 from "../../assets/images/views/photo-17.avif";
-import photo18 from "../../assets/images/views/photo-18.avif";
-import photo19 from "../../assets/images/views/photo-19.avif";
-import photo20 from "../../assets/images/views/photo-20.avif";
-import photo21 from "../../assets/images/views/photo-21.avif";
-import photo22 from "../../assets/images/views/photo-22.avif";
-import photo23 from "../../assets/images/views/photo-23.avif";
-import photo24 from "../../assets/images/views/photo-24.avif";
-import photo25 from "../../assets/images/views/photo-25.avif";
-import photo26 from "../../assets/images/views/photo-26.avif";
-import photo27 from "../../assets/images/views/photo-27.avif";
-import photo28 from "../../assets/images/views/photo-28.avif";
-import photo29 from "../../assets/images/views/photo-29.avif";
+import {Camera,Mesh,Plane,Program,Renderer,Texture,Transform,} from "ogl";
+import photo1 from "../../assets/images/tourists/Tourists1.png";
+import photo2 from "../../assets/images/tourists/Tourists2.png";
+import photo3 from "../../assets/images/tourists/Tourists3.png";
+import photo4 from "../../assets/images/tourists/Tourists4.png";
+import photo5 from "../../assets/images/tourists/Tourists5.png";
+import photo6 from "../../assets/images/tourists/Tourists6.png";
+import photo7 from "../../assets/images/tourists/Tourists7.png";
+import photo8 from "../../assets/images/tourists/Tourists8.png";
+import photo9 from "../../assets/images/tourists/Tourists9.png";
+import photo10 from "../../assets/images/tourists/Tourists10.png";
+import photo11 from "../../assets/images/tourists/Tourists11.png";
+import photo12 from "../../assets/images/tourists/Tourists12.png";
+import photo13 from "../../assets/images/tourists/Tourists13.png";
 
 import { useEffect, useRef } from "react";
 import "../../styles/CircularGallery.css";
@@ -305,22 +281,6 @@ class App {
       { image: photo11 },
       { image: photo12 },
       { image: photo13 },
-      { image: photo14 },
-      { image: photo15 },
-      { image: photo16 },
-      { image: photo17 },
-      { image: photo18 },
-      { image: photo19 },
-      { image: photo20 },
-      { image: photo21 },
-      { image: photo22 },
-      { image: photo23 },
-      { image: photo24 },
-      { image: photo25 },
-      { image: photo26 },
-      { image: photo27 },
-      { image: photo28 },
-      { image: photo29 },
     ];
     const galleryItems = items && items.length ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);

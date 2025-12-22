@@ -137,13 +137,6 @@ const TourDetailHero = ({ tour, onEnrollClick, onBack }) => {
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4">
               <button
-                onClick={onEnrollClick}
-                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-background font-semibold hover:opacity-90 transition-all duration-300 hover:scale-105 shadow-lg"
-              >
-                Enroll Now
-              </button>
-
-              <button
                 onClick={handleSaveTour}
                 className="p-3.5 rounded-xl bg-surface border border-border hover:bg-surface/80 transition-all duration-300 hover:scale-105 cursor-pointer group/save"
                 title={isSaved ? "Remove from saved" : "Save tour"}

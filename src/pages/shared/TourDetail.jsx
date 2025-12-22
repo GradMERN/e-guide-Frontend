@@ -142,17 +142,6 @@ const TourDetail = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <GoldenSpinner
-          size={64}
-          label={t("common.loading") || "Loading tour details..."}
-        />
-      </div>
-    );
-  }
-
   if (error || !tour) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -229,64 +218,10 @@ const TourDetail = () => {
 
                 {/* Tour Information Card */}
                 <div className="bg-surface rounded-2xl p-6 mb-8">
-                  <h3 className="text-xl font-bold text-text mb-6">
-                    Tour Details
-                  </h3>
-
                   <div className="space-y-6">
                     {/* Price */}
-                    <div className="pb-6 border-b border-border/40">
-                      <p className="text-sm text-text-muted mb-2">
-                        Price per person
-                      </p>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                          {tour.price}
-                        </span>
-                        <span className="text-lg text-text-secondary">
-                          {tour.currency}
-                        </span>
-                        <span className="text-sm text-text-muted ml-2">
-                          /person
-                        </span>
-                      </div>
-                    </div>
 
                     {/* Quick Info Grid */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-3 border-b border-border/20">
-                        <span className="text-text-secondary">Duration</span>
-                        <span className="font-medium text-text">
-                          {tour.duration || 8} hours
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between py-3 border-b border-border/20">
-                        <span className="text-text-secondary">Difficulty</span>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            tour.difficulty === "easy"
-                              ? "bg-green-500/10 text-green-600"
-                              : tour.difficulty === "moderate"
-                              ? "bg-yellow-500/10 text-yellow-600"
-                              : "bg-red-500/10 text-red-600"
-                          }`}
-                        >
-                          {tour.difficulty || "Moderate"}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between py-3 border-b border-border/20">
-                        <span className="text-text-secondary">Group Size</span>
-                        <span className="font-medium text-text">
-                          Max {tour.maxGroupSize || 12}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between py-3">
-                        <span className="text-text-secondary">Languages</span>
-                        <span className="font-medium text-text">
-                          {tour.languages?.length || 2}
-                        </span>
-                      </div>
-                    </div>
 
                     {/* Enroll Button */}
                     <div className="pt-6">
