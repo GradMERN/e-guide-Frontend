@@ -4,7 +4,7 @@ import ContactForm from './../../components/contact/ContactForm';
 const ContactUs = () => {
 
     return (
-        <div className="min-h-screen relative overflow-hidden transition-colors duration-500 pt-55 px-4 sm:px-6 bg-background text-text w-full max-w-[100vw]">
+        <div className="min-h-screen relative overflow-hidden transition-colors duration-500 pt-20 px-4 sm:px-6 bg-background text-text w-full max-w-[100vw]">
 
 
             <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] max-w-[500px] max-h-[500px] rounded-full blur-[80px] sm:blur-[120px] pointer-events-none opacity-20 bg-primary" />
