@@ -396,28 +396,6 @@ const AdminTours = () => {
                           <FaEye />
                         </button>
                         <button
-                          onClick={() => handleTogglePublish(tour)}
-                          disabled={actionLoading === tour._id}
-                          className={`p-2 rounded-lg transition-all ${
-                            tour.isPublished
-                              ? "text-yellow-500 hover:bg-yellow-500/10"
-                              : "text-green-500 hover:bg-green-500/10"
-                          }`}
-                          title={
-                            tour.isPublished
-                              ? t("admin.tours.unpublish") || "Unpublish"
-                              : t("admin.tours.publish") || "Publish"
-                          }
-                        >
-                          {actionLoading === tour._id ? (
-                            <FaSpinner className="animate-spin" />
-                          ) : tour.isPublished ? (
-                            <FaTimes />
-                          ) : (
-                            <FaCheck />
-                          )}
-                        </button>
-                        <button
                           onClick={() => handleDeleteTour(tour._id, tour.name)}
                           disabled={actionLoading === tour._id}
                           className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all"

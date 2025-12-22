@@ -85,12 +85,6 @@ const AdminLayout = () => {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              className={`relative ${secondaryText} hover:text-[#D5B36A] p-2 ${hoverBg} rounded-lg transition-all`}
-            >
-              <FaBell className="text-xl" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
             <div className="relative">
               <button
                 onClick={() => toggleTheme && toggleTheme()}
