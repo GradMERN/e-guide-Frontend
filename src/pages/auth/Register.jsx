@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import registerBg from "../../assets/images/loginBg.webp";
 
-
 const locationData = {
   Egypt: [
     "Cairo",
@@ -346,7 +345,7 @@ export default function Register() {
 
       const res = await register(body);
       toast.success(res.data.message);
-      navigate("/login");
+      window.location.href = "/login";
     } catch (err) {
       const msg =
         err.response?.data?.errors?.[0]?.message ||
