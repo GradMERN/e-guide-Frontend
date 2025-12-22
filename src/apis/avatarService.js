@@ -6,7 +6,7 @@ export const avatarService = {
     const formData = new FormData();
     formData.append("avatar", file);
 
-    return axiosClient.post("/api/user/avatar", formData, {
+    return axiosClient.post("/user/avatar", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -14,5 +14,5 @@ export const avatarService = {
   },
 
   // Delete user avatar
-  deleteAvatar: () => axiosClient.delete("/api/user/avatar"),
+  deleteAvatar: () => axiosClient.delete("/user/avatar"),
 };

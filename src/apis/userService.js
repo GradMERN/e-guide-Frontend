@@ -17,7 +17,7 @@ export const userService = {
   },
 
   async uploadProfilePicture(formData) {
-    const response = await api.post("/user/upload-avatar", formData, {
+    const response = await api.post("/user/avatar", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
