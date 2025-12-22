@@ -1136,9 +1136,6 @@ const ManageTours = () => {
         isOpen={confirmModal.open}
         title={t("admin.tours.confirmDelete") || "Confirm Delete"}
         message={
-          t("guide.tours.confirmDeleteMessage", {
-            name: confirmModal.item?.name || "",
-          }) ||
           `Are you sure you want to delete the tour "${confirmModal.item?.name}"? This action cannot be undone.`
         }
         confirmText={t("common.delete") || "Delete"}

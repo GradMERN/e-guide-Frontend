@@ -61,8 +61,7 @@ const TourItemsPage = () => {
         </button>
 
         <h2 className={`text-2xl font-bold ${textColor}`}>
-          {t("guide.tours.waypointsTitle", { name: tour?.name }) ||
-            `Waypoints — ${tour?.name || ""}`}
+          {`Waypoints — ${tour?.name || ""}`}
         </h2>
       </div>
 
