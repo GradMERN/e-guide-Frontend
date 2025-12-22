@@ -408,30 +408,6 @@ const TourView = ({
                     </span>
                   </div>
                 )}
-                {/* Listen to Script/Translation Button */}
-                <button
-                  onClick={handleSpeakTranslation}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                    isSpeakingTranslation
-                      ? "bg-green-500 text-white"
-                      : isDarkMode
-                      ? "bg-[#3c2820] text-[#D5B36A] hover:bg-[#4c3830] border border-[#D5B36A]/30"
-                      : "bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-300"
-                  }`}
-                  title={safeT("guide.ai.listenToScript", "Listen to script")}
-                >
-                  {isSpeakingTranslation ? (
-                    <>
-                      <FaStop className="w-3 h-3" />
-                      <span>{safeT("guide.ai.stopSpeaking", "Stop")}</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaVolumeUp className="w-3 h-3" />
-                      <span>{safeT("guide.ai.listen", "Listen")}</span>
-                    </>
-                  )}
-                </button>
               </div>
             </div>
             <p
