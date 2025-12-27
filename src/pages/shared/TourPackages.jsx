@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Added this
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTours } from "../../store/hooks"; 
-import { motion } from "framer-motion"; // THE MISSING IMPORT
-import { HiOutlineExclamationCircle } from "react-icons/hi2"; // Re-adding the pro icon
+import { motion } from "framer-motion";
+import { HiOutlineExclamationCircle } from "react-icons/hi2";
 import TourHero from "../../components/tours/TourHero";
 import TourFilters from "../../components/tours/TourFilters";
 import TourGrid from "../../components/tours/TourGrid";
@@ -11,7 +11,7 @@ import LoadingScreen from "../../components/common/LoadingScreen";
 
 const TourPackages = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate(); // Added this
+  const navigate = useNavigate();
   const { tours, loading, error, fetchTours } = useTours();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,7 +24,6 @@ const TourPackages = () => {
     fetchTours({ isPublished: true });
   }, [fetchTours]);
 
-  // Logic for filtering tours
   const filteredTours = Array.isArray(tours)
     ? tours
         .filter((tour) => {
