@@ -184,7 +184,7 @@ const DropdownField = ({
     <div className="flex flex-col w-full">
       <div
         className="relative flex items-center"
-        onClick={() => setOpen(!open)}
+        onClick={(e) => {e.stopPropagation(); setOpen(!open);}}
       >
         <Icon
           className={`absolute start-4 top-1/2 -translate-y-1/2 transition-colors ${
@@ -212,7 +212,7 @@ const DropdownField = ({
                   if (onOptionSelect) onOptionSelect(opt);
                   setOpen(false);
                 }}
-                className="px-4 py-2 cursor-pointer text-text hover:bg-primary hover:text-white transition"
+                className="px-4 py-2 cursor-pointer text-text hover:bg-primary/10 hover:text-primary transition-colors duration-200"
               >
                 {opt}
               </div>
@@ -254,11 +254,9 @@ export default function Register() {
   }, []);
 
   const formatPhoneNumber = (input) => {
-    let cleaned = input.replace(/\D/g, "");
-    if (cleaned.startsWith("20")) cleaned = cleaned.slice(1);
-    if (!cleaned.startsWith("0")) cleaned = "0" + cleaned;
-    return cleaned;
-  };
+  if (!input) return "";
+  return input.replace(/[^\d+]/g, "");
+};
 
   const validationSchema = [
     Yup.object({
@@ -307,10 +305,12 @@ export default function Register() {
       country: Yup.string().required(t("auth.register.errors.country")),
       city: Yup.string().required(t("auth.register.errors.city")),
       phone: Yup.string()
-        .test("is-egyptian", t("auth.register.errors.phoneInvalid"), (val) => {
+        .test("is-valid-phone", t("auth.register.errors.phoneInvalid"), (val) => {
           if (!val) return false;
-          const cleaned = formatPhoneNumber(val);
-          return /^01[0125][0-9]{8}$/.test(cleaned);
+          const cleaned = val.replace(/\s+/g, ""); 
+          const isEgyptLocal = /^01[0125]\d{8}$/.test(cleaned);
+          const isInternational = /^(\+)?\d{7,15}$/.test(cleaned);
+          return isEgyptLocal || isInternational;
         })
         .required(t("auth.register.errors.phone")),
     }),
@@ -330,7 +330,7 @@ export default function Register() {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const cleanPhone = String(values.phone).trim();
+      const cleanPhone = values.phone.trim().replace(/\s+/g, "");
 
       const body = {
         firstName: values.firstname,
@@ -344,8 +344,11 @@ export default function Register() {
       };
 
       const res = await register(body);
-      toast.success(res.data.message);
-      window.location.href = "/login";
+      
+      toast.success(res.data.message || t("auth.register.success"));
+
+      setTimeout(() => {navigate("/login");}, 1500); 
+
     } catch (err) {
       const msg =
         err.response?.data?.errors?.[0]?.message ||
@@ -386,17 +389,13 @@ export default function Register() {
 
         <div className="relative flex items-center justify-between mb-8">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-text-muted/30 -z-10 rounded"></div>
-          <div
-            className="absolute top-1/2 left-0 h-0.5 bg-primary-z-10 rounded transition-all duration-500"
-            style={{ width: step === 1 ? "30%" : step === 2 ? "60%" : "100%" }}
-          ></div>
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`w-4 h-4 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${
+              className={`w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px] transition-all duration-500 ${
                 step >= s
-                  ? "bg-primary text-button-text scale-110 shadow-lg"
-                  : "bg-surface border border-text-muted text-text-muted"
+                  ? "bg-primary border-primary text-black scale-110 shadow-[0_0_15px_rgba(247,201,95,0.4)]"
+                  : "bg-surface border-text-muted/30 text-primary"
               }`}
             >
               {s}
