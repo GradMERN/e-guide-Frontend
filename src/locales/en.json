@@ -122,6 +122,8 @@
     "downloadError": "Failed to download file",
     "view": "View",
     "translating": "Translating...",
+    "backToHome": "Back to Home",
+    "browseTours": "Browse Tours",
     "errors": {
       "loadFailed": "Failed to load data",
       "saveFailed": "Failed to save changes",
@@ -693,6 +695,7 @@
     "noTours": "No Tour Packages Available",
     "noToursMessage": "We're currently updating our tour packages. Check back soon for exciting new adventures, or reach out to us for custom tour options!",
     "contactForCustom": "Contact Us for Custom Tours",
+    "loadErrorDescription": "We couldn't retrieve the tours. Please check your internet connection.",
     "refresh": "Refresh",
     "viewAll": "View All Packages"
   },
@@ -1097,7 +1100,11 @@
       "defaultQuote": "Discover the wonders of Egypt with me.",
       "viewProfile": "View Profile",
       "tours": "Tours",
-      "reviews": "reviews"
+      "reviews": "reviews",
+      "errorTitle": "Oops! Something went wrong",
+      "loadError": "We couldn't load our expert guides right now. Please check your connection.",
+      "noGuidesTitle": "No Guides Available",
+      "noGuidesMessage": "Check back soon as we update our team of experts."
     }
   },
   "contact": {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -12,13 +11,9 @@ export default function LoadingScreen({ fullPage = false }) {
         ? "fixed inset-0 w-screen h-screen z-[9999] bg-background" 
         : "relative min-h-[400px] w-full bg-transparent"}
     `}>
-      {/* Added 'w-full' and 'items-center' here to ensure the 
-         content block itself is centered on the X-axis 
-      */}
       <div className="w-full flex flex-col items-center justify-center gap-8">
         
         <div className="relative w-24 h-24 flex items-center justify-center">
-          {/* Background Glow */}
           <motion.div 
             animate={{ 
               scale: [1, 1.2, 1],

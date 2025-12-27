@@ -15,12 +15,10 @@ const SEO = ({
   ogImage = "/og-image.jpg",
 }) => {
   useEffect(() => {
-    // Update title
     document.title = title.includes("Mystic Egypt")
       ? title
       : `${title} | Mystic Egypt Tours`;
 
-    // Update or create meta description
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
       metaDescription = document.createElement("meta");
@@ -38,7 +36,6 @@ const SEO = ({
     }
     metaKeywords.content = keywords;
 
-    // Update Open Graph tags
     const ogTags = [
       { property: "og:title", content: title },
       { property: "og:description", content: description },
@@ -56,9 +53,7 @@ const SEO = ({
       meta.content = content;
     });
 
-    // Cleanup function to reset title when component unmounts
     return () => {
-      // Optional: Reset to default title on unmount
     };
   }, [title, description, keywords, ogImage]);
 

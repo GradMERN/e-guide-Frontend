@@ -11,7 +11,7 @@ import enrollmentApi from "../../apis/enrollment.api";
 import paymentApi from "../../apis/payment.api";
 import reviewService from "../../apis/reviewService";
 import { FaArrowLeft } from "react-icons/fa";
-import GoldenSpinner from "../../components/common/GoldenSpinner";
+import LoadingScreen from "../../components/common/LoadingScreen";
 
 const TourDetail = () => {
   const { id } = useParams();
@@ -142,6 +142,10 @@ const TourDetail = () => {
     }
   };
 
+  if (loading) {
+    return <LoadingScreen fullPage={true} />;
+  }
+
   if (error || !tour) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -201,7 +205,7 @@ const TourDetail = () => {
               </div>
 
               {/* Reviews Section */}
-              <div>
+              <div className="">
                 <TourReviews
                   reviews={reviews}
                   ratingsAverage={tour.rating}

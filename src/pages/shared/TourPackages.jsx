@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Added this
 import { useTranslation } from "react-i18next";
-import { useTours } from "../../store/hooks"; // Use custom hook
+import { useTours } from "../../store/hooks"; 
+import { motion } from "framer-motion"; // THE MISSING IMPORT
+import { HiOutlineExclamationCircle } from "react-icons/hi2"; // Re-adding the pro icon
 import TourHero from "../../components/tours/TourHero";
 import TourFilters from "../../components/tours/TourFilters";
 import TourGrid from "../../components/tours/TourGrid";
-import GoldenSpinner from "../../components/common/GoldenSpinner";
+import LoadingScreen from "../../components/common/LoadingScreen";
 
 const TourPackages = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate(); // Added this
   const { tours, loading, error, fetchTours } = useTours();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,18 +21,15 @@ const TourPackages = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
-    // Fetch only published tours
     fetchTours({ isPublished: true });
   }, [fetchTours]);
 
-  // Filter tours locally (client-side filtering)
+  // Logic for filtering tours
   const filteredTours = Array.isArray(tours)
     ? tours
         .filter((tour) => {
-          // Skip if tour is not published
           if (!tour.isPublished) return false;
 
-          // Search filter
           const matchesSearch =
             searchTerm === "" ||
             (tour.name &&
@@ -38,7 +39,6 @@ const TourPackages = () => {
                 .toLowerCase()
                 .includes(searchTerm.toLowerCase()));
 
-          // Price filter
           const matchesPrice =
             priceRange === "all" ||
             (priceRange === "low" && tour.price < 1000) ||
@@ -47,12 +47,10 @@ const TourPackages = () => {
               tour.price <= 3000) ||
             (priceRange === "high" && tour.price > 3000);
 
-          // Location filter
           const matchesPlace =
             selectedPlace === "all" ||
             (tour.place && tour.place.city === selectedPlace);
 
-          // Category filter
           const matchesCategory =
             selectedCategory === "all" ||
             (tour.categories && tour.categories.includes(selectedCategory));
@@ -71,46 +69,45 @@ const TourPackages = () => {
         })
     : [];
 
-  // Get unique places for filter dropdown
-  const places = ["all"];
-  if (Array.isArray(tours)) {
-    tours.forEach((tour) => {
-      if (tour.place && tour.place.city && !places.includes(tour.place.city)) {
-        places.push(tour.place.city);
-      }
-    });
-  }
+  const places = ["all", ...new Set(tours?.map((t) => t.place?.city).filter(Boolean) || [])];
+  const categories = ["all", ...new Set(tours?.flatMap((t) => t.categories || []).filter(Boolean) || [])];
 
-  // Get unique categories for filter dropdown
-  const categories = ["all"];
-  if (Array.isArray(tours)) {
-    tours.forEach((tour) => {
-      if (tour.categories) {
-        tour.categories.forEach((category) => {
-          if (category && !categories.includes(category)) {
-            categories.push(category);
-          }
-        });
-      }
-    });
+  if (loading) {
+    return <LoadingScreen fullPage={true} />;
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="text-red-500 text-xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-text mb-3">
-            Error Loading Tours
-          </h2>
-          <p className="text-text-secondary mb-4">{error}</p>
-          <button
-            onClick={() => fetchTours({ isPublished: true })}
-            className="px-6 py-2 rounded-lg bg-primary text-white hover:bg-secondary transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <motion.div  initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full bg-surface border border-border rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-primary" />
+          
+          <div className="relative z-10">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
+              <HiOutlineExclamationCircle className="w-12 h-12 text-primary" />
+            </div>
+            
+            <h2 className="text-2xl sm:text-3xl font-bold text-text mb-3">
+              {t("tourPackages.loadError")}
+            </h2>
+            
+            <p className="text-text-secondary text-base mb-8 leading-relaxed">
+              {t("tourPackages.loadErrorDescription")}
+            </p>
+            
+            <div className="flex flex-col gap-3">
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => fetchTours({ isPublished: true })} className="w-full py-4 rounded-xl bg-primary text-black font-bold shadow-lg shadow-primary/20 hover:bg-secondary transition-all flex items-center justify-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {t("common.retry")}
+              </motion.button>
+              <button onClick={() => navigate("/")} className="text-sm font-medium text-text-secondary hover:text-primary transition-colors py-2">
+                {t("common.backToHome")}
+              </button>
+            </div>
+          </div>
+        </motion.div>
       </div>
     );
   }

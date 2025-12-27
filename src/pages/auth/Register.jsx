@@ -16,7 +16,7 @@ const locationData = {
   Egypt: ["Cairo", "Alexandria", "Giza", "Luxor", "Aswan", "Sharm El Sheikh", "Hurghada", "Port Said", "Suez", "Tanta", "Mansoura", "Zagazig", "Ismailia", "Faiyum", "Damanhur", "Beni Suef", "Minya", "Sohag", "Assiut", "Arish", "Al-Mahalla al-Kubra", "Kafr El Sheikh", "El-Minya", "Damietta", "Qena"],
   Usa: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio"], 
   Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
-  Uk: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"], // خليتها Uk
+  Uk: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"], 
   Germany: ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
   France: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
   Italy: ["Rome", "Milan", "Naples", "Turin", "Palermo", "Florence"],

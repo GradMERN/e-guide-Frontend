@@ -46,7 +46,7 @@ export default function TourPackagesSection() {
         {loading && <LoadingSkeleton count={6} type="card" />}
 
         {error && !loading && (
-          <ErrorState error={error} title={t("tourPackages.loadError")} onRetry={() => fetchTours({ isPublished: true })} retryText={t("common.retry")}/>
+          <ErrorState error={t("tourPackages.loadErrorDescription")} title={t("tourPackages.loadError")} onRetry={() => fetchTours({ isPublished: true })} retryText={t("common.retry")}/>
         )}
 
         {!loading && !error && tours.length === 0 && (
