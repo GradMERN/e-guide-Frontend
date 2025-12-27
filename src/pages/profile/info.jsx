@@ -8,10 +8,25 @@ import { toast } from "react-toastify";
 import { getImageUrl } from "../../utils/imageUtils";
 
 const countryCities = {
-  USA: ["New York", "Los Angeles", "Chicago", "Houston"],
-  Canada: ["Toronto", "Vancouver", "Montreal", "Calgary"],
-  Egypt: ["Cairo", "Alexandria", "Giza", "Luxor"],
-  UK: ["London", "Manchester", "Birmingham", "Liverpool"],
+  Egypt: ["Cairo", "Alexandria", "Giza", "Luxor", "Aswan", "Sharm El Sheikh", "Hurghada", "Port Said", "Suez", "Tanta", "Mansoura", "Zagazig", "Ismailia", "Faiyum", "Damanhur", "Beni Suef", "Minya", "Sohag", "Assiut", "Arish", "Al-Mahalla al-Kubra", "Kafr El Sheikh", "El-Minya", "Damietta", "Qena"],
+  Usa: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio"], 
+  Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
+  Uk: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"], 
+  Germany: ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
+  France: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
+  Italy: ["Rome", "Milan", "Naples", "Turin", "Palermo", "Florence"],
+  Spain: ["Madrid", "Barcelona", "Valencia", "Seville", "Zaragoza"],
+  Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
+  Japan: ["Tokyo", "Osaka", "Yokohama", "Nagoya", "Sapporo", "Kyoto"],
+  China: ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu"],
+  India: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Ahmedabad", "Chennai"],
+  Brazil: ["Sao Paulo", "Rio de Janeiro", "Brasilia", "Salvador", "Fortaleza"],
+  Mexico: ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana"],
+  Russia: ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg", "Kazan"],
+  Turkey: ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"],
+  Netherlands: ["Amsterdam", "Rotterdam", "The Hague", "Utrecht", "Eindhoven"],
+  Sweden: ["Stockholm", "Gothenburg", "Malmo", "Uppsala"],
+  Norway: ["Oslo", "Bergen", "Trondheim", "Stavanger"],
 };
 
 const ProfilePhoto = () => {
@@ -24,7 +39,6 @@ const ProfilePhoto = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type and size (e.g., max 5MB, images only)
     if (!file.type.startsWith("image/")) {
       toast.error(t("invalidFileType") || "Please upload an image file");
       return;
@@ -41,10 +55,6 @@ const ProfilePhoto = () => {
       setUploading(true);
       const response = await userService.uploadProfilePicture(formData);
 
-      // Update user in context and redux
-      // Assuming response.data contains the updated user object or the avatar url
-      // Adjust based on actual API response structure.
-      // If response is the user object:
       const updatedUser = response.data || response;
 
       updateUser(updatedUser);
@@ -88,14 +98,13 @@ const ProfilePhoto = () => {
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "https://via.placeholder.com/150?text=Error"; // Fallback
+                  e.target.src = "https://via.placeholder.com/150?text=Error";
                 }}
               />
             ) : (
               user?.firstName?.charAt(0) || "U"
             )}
           </div>
-          {/* Edit Icon Overlay */}
           <label
             htmlFor="photo-upload"
             className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-1 cursor-pointer hover:bg-gray-600 transition-colors"
@@ -176,7 +185,7 @@ const BasicDetails = ({ formData, handleChange }) => {
             name="firstName"
             value={formData.firstName || ""}
             onChange={handleChange}
-            className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
+            className="border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
               color: "var(--text)",
@@ -194,7 +203,7 @@ const BasicDetails = ({ formData, handleChange }) => {
             name="lastName"
             value={formData.lastName || ""}
             onChange={handleChange}
-            className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
+            className="border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
               color: "var(--text)",
@@ -212,7 +221,8 @@ const BasicDetails = ({ formData, handleChange }) => {
             name="age"
             value={formData.age || ""}
             onChange={handleChange}
-            className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
+            placeholder="Enter your age"
+            className="border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
               color: "var(--text)",
@@ -230,7 +240,7 @@ const BasicDetails = ({ formData, handleChange }) => {
             name="phone"
             value={formData.phone || ""}
             onChange={handleChange}
-            className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
+            className="border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
               color: "var(--text)",
@@ -249,7 +259,10 @@ const LocationInfo = ({ formData, handleChange }) => {
 
   useEffect(() => {
     if (formData.country) {
-      setAvailableCities(countryCities[formData.country] || []);
+      const formattedCountry = formData.country.charAt(0).toUpperCase() + formData.country.slice(1).toLowerCase();
+      setAvailableCities(countryCities[formattedCountry] || []);
+    } else {
+      setAvailableCities([]);
     }
   }, [formData.country]);
 
@@ -269,7 +282,7 @@ const LocationInfo = ({ formData, handleChange }) => {
             name="country"
             value={formData.country || ""}
             onChange={handleChange}
-            className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
+            className="border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2"
             style={{
               backgroundColor: "var(--surface)",
               color: "var(--text)",
@@ -308,7 +321,7 @@ const LocationInfo = ({ formData, handleChange }) => {
             name="city"
             value={formData.city || ""}
             onChange={handleChange}
-            className=" border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 disabled:opacity-50"
+            className="border-2 w-full px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 disabled:opacity-50"
             style={{
               backgroundColor: "var(--surface)",
               color: "var(--text)",
@@ -369,13 +382,14 @@ export default function Info() {
 
   useEffect(() => {
     if (user) {
+      console.log("Component:", user);
       setFormData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
-        age: user.age || "",
+        age: user.age !== undefined && user.age !== null ? user.age : "",
         phone: user.phone || "",
         country: user.country || "",
-        city: user.city || "",
+        city: user.city || ""
       });
     }
   }, [user]);
@@ -385,7 +399,7 @@ export default function Info() {
     setFormData((prev) => {
       const newData = { ...prev, [name]: value };
       if (name === "country") {
-        newData.city = ""; // Reset city when country changes
+        newData.city = "";
       }
       return newData;
     });
@@ -394,19 +408,22 @@ export default function Info() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const updatedUser = await userService.updateProfile(formData);
+      const dataToSubmit = {
+        ...formData,
+        age: formData.age !== "" ? Number(formData.age) : null,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+      };
+      
+      const response = await userService.updateProfile(dataToSubmit);
+      
+      const updatedUser = response.data || response;
 
-      // Update AuthContext
-      updateUser(updatedUser.data || updatedUser);
-
-      // Update Redux Store
-      // Assuming we have the token stored or we can get it
+      updateUser(updatedUser);
       const token = localStorage.getItem("token");
-      dispatch(loginSuccess({ user: updatedUser.data || updatedUser, token }));
+      dispatch(loginSuccess({ user: updatedUser, token }));
 
-      toast.success(
-        t("profileUpdatedSuccessfully") || "Profile updated successfully"
-      );
+      toast.success(t("profileUpdatedSuccessfully") || "Profile updated successfully");
     } catch (error) {
       console.error("Failed to update profile:", error);
       toast.error(error.response?.data?.message || "Failed to update profile");
@@ -417,7 +434,7 @@ export default function Info() {
 
   return (
     <div
-      className="p-4 sm:p-6 md:p-8  rounded-2xl min-h-screen"
+      className="p-4 sm:p-6 md:p-8 rounded-2xl min-h-screen"
       style={{ backgroundColor: "var(--background)", color: "var(--text)" }}
     >
       <h2 className="text-2xl sm:text-3xl font-bold mb-6">

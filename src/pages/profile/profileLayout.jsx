@@ -1,4 +1,3 @@
-import React from "react";
 import SideBar from "./SideBar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth as useAuthStore } from "../../store/hooks";
@@ -16,16 +15,14 @@ const ProfileLayout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Don't render if not authorized
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+      <div className="min-h-screen flex items-center justify-center bg-(--background)">
         <GoldenSpinner size={48} label={t("common.loading") || "Loading..."} />
       </div>
     );
   }
 
-  // Styles adapted from GuideDashboardLayout
   const headerBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
   const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
   const textColor = isDarkMode ? "text-white" : "text-gray-900";
