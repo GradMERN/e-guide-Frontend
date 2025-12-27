@@ -202,7 +202,7 @@ const DropdownField = ({
         </div>
 
         {open && (
-          <div className="absolute top-full left-0 w-full bg-surface input-register-border rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="absolute top-full left-0 w-full bg-surface input-register-border rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto z-50">
             {options.map((opt) => (
               <div
                 key={opt}
