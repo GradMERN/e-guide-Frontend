@@ -15,7 +15,6 @@ const persistToStorage = (tours) => {
   try {
     localStorage.setItem("savedTours", JSON.stringify(tours));
   } catch {
-    // Ignore localStorage errors
   }
 };
 
@@ -29,7 +28,6 @@ const savedSlice = createSlice({
   reducers: {
     addToSaved: (state, action) => {
       const tourId = action.payload._id || action.payload.id;
-      // Check if tour already exists
       const exists = state.savedTours.some((tour) => {
         const existingTourId = tour._id || tour.id;
         return existingTourId === tourId;

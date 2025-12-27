@@ -335,7 +335,7 @@ export default function Register() {
       const body = {
         firstName: values.firstname,
         lastName: values.lastname,
-        age: values.age,
+        age: Number(values.age),
         phone: cleanPhone,
         country: values.country,
         city: values.city,
