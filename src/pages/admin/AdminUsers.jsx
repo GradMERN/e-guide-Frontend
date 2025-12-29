@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaTrash, FaSearch } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import axiosClient from "../../apis/axiosClient";
-import GoldenSpinner from "../../components/common/GoldenSpinner";
+import LoadingScreen from "../../components/common/LoadingScreen"; 
 
 const AdminUsers = () => {
   const { t } = useTranslation();
@@ -15,7 +15,6 @@ const AdminUsers = () => {
   const [editingUserId, setEditingUserId] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
 
-  // Theme detection
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme") || "dark";
     setIsDarkMode(storedTheme === "dark");
@@ -90,16 +89,11 @@ const AdminUsers = () => {
   const rowHover = isDarkMode ? "hover:bg-[#2c1b0f]/50" : "hover:bg-gray-50";
 
   if (loading) {
-    return (
-      <div className={`flex items-center justify-center h-64 ${bgColor}`}>
-        <GoldenSpinner size={48} label={t("common.loading") || "Loading..."} />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <h1 className={`text-3xl font-bold ${textColor}`}>
         {t("admin.users.title")}
       </h1>
@@ -110,28 +104,13 @@ const AdminUsers = () => {
         </div>
       )}
 
-      {/* Search and Filter */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div
-          className={`${cardBg} border ${borderColor} rounded-lg px-4 py-2 flex items-center`}
-        >
+        <div className={`${cardBg} border ${borderColor} rounded-lg px-4 py-2 flex items-center`}>
           <FaSearch className={`${secondaryText} mr-3`} />
-          <input
-            type="text"
-            placeholder={t("admin.users.searchPlaceholder")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={`flex-1 bg-transparent ${textColor} outline-none placeholder-${
-              isDarkMode ? "gray-500" : "gray-400"
-            }`}
-          />
+          <input type="text" placeholder={t("admin.users.searchPlaceholder")} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className={`flex-1 bg-transparent ${textColor} outline-none placeholder-${ isDarkMode ? "gray-500" : "gray-400"}`}/>
         </div>
 
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className={`${cardBg} border ${borderColor} ${textColor} px-4 py-2 rounded-lg focus:outline-none focus:border-[#D5B36A]`}
-        >
+        <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className={`${cardBg} border ${borderColor} ${textColor} px-4 py-2 rounded-lg focus:outline-none focus:border-[#D5B36A]`}>
           <option value="all">{t("admin.users.allRoles")}</option>
           <option value="user">{t("admin.users.roleUser")}</option>
           <option value="guide">{t("admin.users.roleGuide")}</option>
@@ -139,51 +118,30 @@ const AdminUsers = () => {
         </select>
       </div>
 
-      {/* Users Table */}
-      <div
-        className={`${cardBg} border ${borderColor} rounded-lg overflow-hidden`}
-      >
+      <div className={`${cardBg} border ${borderColor} rounded-lg overflow-hidden`}>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr
-                className={`border-b ${borderColor} ${
-                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                }`}
-              >
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
+              <tr className={`border-b ${borderColor} ${ isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100" }`}>
+                <th className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}>
                   {t("admin.users.name")}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
+                <th className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}>
                   {t("admin.users.email")}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
+                <th className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}>
                   {t("admin.users.phone")}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
+                <th className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}>
                   {t("admin.users.location")}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
+                <th className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}>
                   {t("admin.users.role")}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
+                <th className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}>
                   {t("admin.users.joined")}
                 </th>
-                <th
-                  className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}
-                >
+                <th className={`px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]`}>
                   {t("admin.users.actions")}
                 </th>
               </tr>
@@ -191,13 +149,10 @@ const AdminUsers = () => {
             <tbody>
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <tr
-                    key={user._id}
-                    className={`border-b ${borderColor} ${rowHover} transition-all`}
-                  >
+                  <tr key={user._id} className={`border-b ${borderColor} ${rowHover} transition-all`}>
                     <td className={`px-6 py-3`}>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#C7A15C] to-[#E2C784] flex items-center justify-center text-black font-bold text-sm">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#C7A15C] to-[#E2C784] flex items-center justify-center text-black font-bold text-sm">
                           {user.firstName?.charAt(0)}
                         </div>
                         <div>
@@ -221,14 +176,7 @@ const AdminUsers = () => {
                     </td>
                     <td className={`px-6 py-3`}>
                       {editingUserId === user._id ? (
-                        <select
-                          value={selectedRole}
-                          onChange={(e) => {
-                            setSelectedRole(e.target.value);
-                            handleChangeRole(user._id, e.target.value);
-                          }}
-                          className={`${inputBg} ${textColor} px-2 py-1 rounded text-sm border ${borderColor}`}
-                        >
+                        <select value={selectedRole} onChange={(e) => { setSelectedRole(e.target.value); handleChangeRole(user._id, e.target.value); }} className={`${inputBg} ${textColor} px-2 py-1 rounded text-sm border ${borderColor}`}>
                           <option value="">
                             {t("admin.users.selectRole")}
                           </option>
@@ -251,11 +199,7 @@ const AdminUsers = () => {
                               ? "bg-green-500/20 text-green-500"
                               : "bg-blue-500/20 text-blue-500"
                           }`}
-                          onClick={() => {
-                            setEditingUserId(user._id);
-                            setSelectedRole(user.role);
-                          }}
-                        >
+                          onClick={() => { setEditingUserId(user._id); setSelectedRole(user.role);}}>
                           {user.role}
                         </span>
                       )}
@@ -265,11 +209,7 @@ const AdminUsers = () => {
                     </td>
                     <td className={`px-6 py-3`}>
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleDeleteUser(user._id)}
-                          className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
-                          title={t("admin.delete")}
-                        >
+                        <button onClick={() => handleDeleteUser(user._id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all" title={t("admin.delete")}>
                           <FaTrash />
                         </button>
                       </div>
@@ -278,13 +218,8 @@ const AdminUsers = () => {
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="7"
-                    className={`px-6 py-8 text-center ${secondaryText}`}
-                  >
-                    {searchTerm || roleFilter !== "all"
-                      ? t("admin.users.notFound")
-                      : t("admin.users.empty")}
+                  <td colSpan="7" className={`px-6 py-8 text-center ${secondaryText}`}>
+                    {searchTerm || roleFilter !== "all" ? t("admin.users.notFound") : t("admin.users.empty")}
                   </td>
                 </tr>
               )}
@@ -293,7 +228,6 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className={`${cardBg} border ${borderColor} rounded-lg p-4`}>
           <p className={`${secondaryText} text-sm mb-1`}>

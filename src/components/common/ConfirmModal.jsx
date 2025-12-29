@@ -1,4 +1,3 @@
-import React from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 
 const ConfirmModal = ({
@@ -9,7 +8,7 @@ const ConfirmModal = ({
   cancelText = "Cancel",
   onConfirm,
   onCancel,
-  type = "danger", // danger, warning, info
+  type = "danger",
   icon = null,
 }) => {
   if (!isOpen) return null;

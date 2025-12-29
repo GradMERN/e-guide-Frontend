@@ -1,58 +1,34 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth as useTheme } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
-import {
-  FaPlus,
-  FaEdit,
-  FaTrash,
-  FaSearch,
-  FaEye,
-  FaEyeSlash,
-  FaTimes,
-  FaImages,
-  FaList,
-  FaSpinner,
-} from "react-icons/fa";
+import {FaPlus, FaEdit, FaTrash, FaSearch, FaEye, FaEyeSlash,FaImages, FaList, FaSpinner, FaMapMarkerAlt, FaTimes,} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UpdateGalleryModal from "../../components/guide/UpdateTourGalleryModal";
 import AddPlaceForm from "../../components/guide/Place/AddPlaceForm";
 import ConfirmModal from "../../components/common/ConfirmModal";
+import LoadingScreen from "../../components/common/LoadingScreen";
 import { toast } from "react-toastify";
 import { guideService } from "../../apis/guideService";
 import { placeService } from "../../apis/placeService";
-// TourItemsManager is available as a full-page at /guide/tours/:id/items
 
 const ManageTours = () => {
   const { isDarkMode } = useTheme();
   const { t } = useTranslation();
-
-  const [visualizedTourIds, setVisualizedTourIds] = useState([]);
-  const [publishingTourIds, setPublishingTourIds] = useState([]);
+  const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [tours, setTours] = useState([]);
   const [places, setPlaces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [publishingTourIds, setPublishingTourIds] = useState([]);
   const [loadingTourSubmit, setLoadingTourSubmit] = useState(false);
-  const [confirmModal, setConfirmModal] = useState({
-    open: false,
-    item: null,
-    action: null,
-  });
-
   const [showTourModal, setShowTourModal] = useState(false);
   const [showPlaceModal, setShowPlaceModal] = useState(false);
-  const [editingTour, setEditingTour] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [editingTour, setEditingTour] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
-  const navigate = useNavigate();
-  // Gallery editing state for the Tour modal
-  const [galleryOldImages, setGalleryOldImages] = useState([]); // existing images from tour
-  const [galleryNewFiles, setGalleryNewFiles] = useState([]); // newly selected files
-  const [galleryNewPreviews, setGalleryNewPreviews] = useState([]);
-  const [deletedGalleryIds, setDeletedGalleryIds] = useState([]); // public_ids marked for deletion
-  const galleryPreviewsRef = React.useRef([]);
-  const [mainImagePreviewUrl, setMainImagePreviewUrl] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({ open: false, item: null, action: null });
 
   const [newTourForm, setNewTourForm] = useState({
     name: "",
@@ -63,58 +39,24 @@ const ManageTours = () => {
     tags: "",
     languages: "",
     mainImage: null,
-    existingMainImage: null,
   });
-
-  const [newPlaceForm, setNewPlaceForm] = useState({
-    country: "",
-    city: "",
-  });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
-  const borderColor = "border-[var(--border)]";
-  const textColor = "text-[var(--text)]";
-  const secondaryText = "text-[var(--text-secondary)]";
-  const inputBg = "bg-[var(--surface)]";
-
-  // FETCH TOURS
-  const fetchTours = async () => {
-    try {
-      const data = await guideService.getMyTours();
-      setTours(data.data);
-    } catch (err) {
-      console.error("Error fetching tours:", err);
-    }
-  };
-
-  // FETCH PLACES
-  const fetchPlaces = async () => {
-    try {
-      const placesData = await placeService.getAllPlaces();
-      setPlaces(placesData);
-    } catch (err) {
-      console.error("Error fetching places:", err);
-      setPlaces([]);
-    }
-  };
+  const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
+  const textColor = isDarkMode ? "text-white" : "text-gray-900";
+  const secondaryText = isDarkMode ? "text-gray-400" : "text-gray-600";
+  const inputBg = isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50";
 
   useEffect(() => {
-    fetchTours();
-    fetchPlaces();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      (galleryPreviewsRef.current || []).forEach((u) => {
-        try {
-          URL.revokeObjectURL(u);
-        } catch (e) {}
-      });
-      galleryPreviewsRef.current = [];
+    const loadInitialData = async () => {
+      setLoading(true);
+      await Promise.all([fetchTours(), fetchPlaces()]);
+      setLoading(false);
     };
+    loadInitialData();
   }, []);
 
-  // HANDLE LANGUAGE CHANGE
   useEffect(() => {
     const handleLanguageChange = () => {
       const currentLanguage = i18n.language;
@@ -127,304 +69,95 @@ const ManageTours = () => {
     return () => i18n.off("languageChanged", handleLanguageChange);
   }, []);
 
+  const fetchTours = async () => {
+    try {
+      const data = await guideService.getMyTours();
+      setTours(data.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchPlaces = async () => {
+    try {
+      const placesData = await placeService.getAllPlaces();
+      setPlaces(placesData);
+    } catch (err) { setPlaces([]); }
+  };
+
   const filteredTours = tours?.filter(
     (tour) =>
       tour.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       tour.place.city.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Tour states: published (tour.isPublished === true), not published (isPublished === false), empty (no tourItems)
-  const isTourPublished = (tour) => {
-    if (!tour) return false;
-    if (Object.prototype.hasOwnProperty.call(tour, "isPublished")) {
-      return !!tour.isPublished;
-    }
-    return false;
-  };
+  const isTourPublished = (tour) => tour?.isPublished || false;
 
   const getTourItemsCount = (tour) => {
-    // prefer backend provided counts, fall back to legacy fields
     if (typeof tour.itemsCount === "number") return tour.itemsCount;
-    if (Array.isArray(tour.tourItems)) return tour.tourItems.length;
-    if (Array.isArray(tour.items)) return tour.items.length;
-    if (Array.isArray(tour.waypoints)) return tour.waypoints.length;
-    return 0;
+    return tour.tourItems?.length || tour.items?.length || 0;
   };
 
   const getTourPublishedItemsCount = (tour) => {
-    if (typeof tour.publishedItemsCount === "number")
-      return tour.publishedItemsCount;
-    // heuristic: if items array has isPublished flags
-    const arr = tour.tourItems || tour.items || tour.waypoints || [];
-    if (Array.isArray(arr) && arr.length > 0) {
-      return arr.filter((it) => it && it.isPublished).length;
-    }
-    return 0;
+    if (typeof tour.publishedItemsCount === "number") return tour.publishedItemsCount;
+    const arr = tour.tourItems || tour.items || [];
+    return arr.filter((it) => it?.isPublished).length;
   };
 
-  const toggleVisualizedTour = (id) => {
-    setVisualizedTourIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
-  const resetTourForm = () => {
-    setEditingTour(null);
-    setNewTourForm({
-      name: "",
-      description: "",
-      price: "",
-      place: "",
-      categories: "",
-      tags: "",
-      languages: "",
-      mainImage: null,
-      existingMainImage: null,
-    });
-    setGalleryOldImages([]);
-    // revoke previews
-    (galleryPreviewsRef.current || []).forEach((u) => {
-      try {
-        URL.revokeObjectURL(u);
-      } catch (e) {}
-    });
-    galleryPreviewsRef.current = [];
-    setGalleryNewPreviews([]);
-    setGalleryNewFiles([]);
-    setDeletedGalleryIds([]);
-    if (mainImagePreviewUrl) {
-      URL.revokeObjectURL(mainImagePreviewUrl);
-      setMainImagePreviewUrl(null);
-    }
-  };
-
-  // HANDLE TOUR FORM CHANGE
   const handleTourChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "mainImage") {
-      const file = files[0] || null;
+      const file = files[0];
       setNewTourForm((prev) => ({ ...prev, mainImage: file }));
-      // Handle preview
-      if (mainImagePreviewUrl) {
-        URL.revokeObjectURL(mainImagePreviewUrl);
-      }
       if (file) {
-        const url = URL.createObjectURL(file);
-        setMainImagePreviewUrl(url);
-      } else {
-        setMainImagePreviewUrl(null);
+        const reader = new FileReader();
+        reader.onloadend = () => setImagePreview(reader.result);
+        reader.readAsDataURL(file);
       }
       return;
     }
     setNewTourForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Gallery handlers inside Tour modal
-  const handleAddGalleryFiles = (e) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-    const previews = files.map((f) => {
-      try {
-        const u = URL.createObjectURL(f);
-        galleryPreviewsRef.current.push(u);
-        return u;
-      } catch (err) {
-        return null;
-      }
-    });
-    setGalleryNewFiles((prev) => [...prev, ...files]);
-    setGalleryNewPreviews((prev) => [...prev, ...previews]);
-  };
-
-  const handleRemoveOldGalleryImage = (publicId) => {
-    // mark for deletion
-    setDeletedGalleryIds((prev) => [...prev, publicId]);
-  };
-
-  const handleUnremoveOldGalleryImage = (publicId) => {
-    setDeletedGalleryIds((prev) => prev.filter((id) => id !== publicId));
-  };
-
-  const handleRemoveNewGalleryFile = (index) => {
-    const toRemove = galleryNewPreviews?.[index];
-    if (toRemove) {
-      try {
-        URL.revokeObjectURL(toRemove);
-      } catch (e) {}
-      galleryPreviewsRef.current = (galleryPreviewsRef.current || []).filter(
-        (u) => u !== toRemove
-      );
-    }
-    setGalleryNewFiles((prev) => prev.filter((_, i) => i !== index));
-    setGalleryNewPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  // HANDLE PLACE FORM CHANGE
-  const handlePlaceChange = (e) => {
-    const { name, value } = e.target;
-    setNewPlaceForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // HANDLE TOUR SUBMIT
-
   const handleTourSubmit = async (e) => {
     e.preventDefault();
     setLoadingTourSubmit(true);
     try {
-      // Validate inputs before submitting
-      if (
-        !newTourForm.name ||
-        newTourForm.name.length < 3 ||
-        newTourForm.name.length > 100
-      ) {
-        toast.error(
-          t("guide.tours.validation.nameLength") ||
-            "Tour name must be between 3 and 100 characters"
-        );
+      if (!newTourForm.name || newTourForm.name.length < 3) {
+        toast.error("Tour name must be at least 3 characters");
         return;
       }
-
-      if (
-        !newTourForm.description ||
-        newTourForm.description.length < 10 ||
-        newTourForm.description.length > 2000
-      ) {
-        toast.error(
-          t("guide.tours.validation.descriptionLength") ||
-            "Description must be between 10 and 2000 characters"
-        );
-        return;
-      }
-
-      if (!newTourForm.price || parseFloat(newTourForm.price) < 0.99) {
-        toast.error(
-          t("guide.tours.validation.priceMin") || "Price must be at least 0.99"
-        );
-        return;
-      }
-
       if (!newTourForm.place) {
-        toast.error(
-          t("guide.tours.validation.selectPlace") ||
-            "Please select a place/location"
-        );
+        toast.error("Please select a place");
         return;
       }
 
-      // Call API to add tour
       const tourData = {
-        name: newTourForm.name,
-        description: newTourForm.description,
+        ...newTourForm,
         price: parseFloat(newTourForm.price),
-        place: newTourForm.place,
-        categories: newTourForm.categories
-          ? newTourForm.categories
-              .split(",")
-              .map((c) => c.trim())
-              .filter((c) => c)
-          : [],
-        tags: newTourForm.tags
-          ? newTourForm.tags
-              .split(",")
-              .map((t) => t.trim())
-              .filter((t) => t)
-          : [],
-        languages: newTourForm.languages
-          ? newTourForm.languages
-              .split(",")
-              .map((l) => l.trim())
-              .filter((l) => l)
-          : [],
-        mainImage: newTourForm.mainImage,
-        // include newly added gallery files and deleted ids when editing
-        galleryImages: galleryNewFiles,
-        deletedGallaryImages: deletedGalleryIds,
+        categories: newTourForm.categories ? newTourForm.categories.split(",").map(c => c.trim()) : [],
+        tags: newTourForm.tags ? newTourForm.tags.split(",").map(t => t.trim()) : [],
+        languages: newTourForm.languages ? newTourForm.languages.split(",").map(l => l.trim()) : [],
       };
 
-      console.log("Submitting tour data:", tourData);
       if (editingTour) {
         await guideService.updateTour(editingTour._id, tourData);
+        toast.success("Tour updated successfully!");
       } else {
         await guideService.createTour(tourData);
+        toast.success("Tour created successfully!");
       }
 
-      // Reset form and close modal
-      setNewTourForm({
-        name: "",
-        description: "",
-        price: "",
-        place: "",
-        categories: "",
-        tags: "",
-        languages: "",
-      });
-      // clear gallery edit state
-      setGalleryOldImages([]);
-      setGalleryNewFiles([]);
-      setDeletedGalleryIds([]);
       setShowTourModal(false);
-
-      // Refresh dashboard data
+      setNewTourForm({ name: "", description: "", price: "", place: "", categories: "", tags: "", languages: "", mainImage: null });
+      setImagePreview(null);
+      setEditingTour(null);
       fetchTours();
-      toast.success(
-        editingTour
-          ? t("guide.tours.messages.updated") || "Tour updated successfully!"
-          : t("guide.tours.messages.added") || "Tour added successfully!"
-      );
     } catch (err) {
-      console.error("Error creating tour:", err);
-      console.error("Full error response:", err.response?.data);
-
-      // Extract detailed error message
-      let errorMessage = "Failed to create tour. ";
-
-      if (
-        err.response?.data?.errors &&
-        Array.isArray(err.response.data.errors)
-      ) {
-        // Format validation errors
-        const fieldErrors = err.response.data.errors
-          .map((e) => `${e.field}: ${e.message}`)
-          .join("\n");
-        errorMessage += "\n" + fieldErrors;
-      } else if (err.response?.data?.message) {
-        errorMessage += err.response.data.message;
-      } else {
-        errorMessage += "Please check all required fields.";
-      }
-
-      toast.error(errorMessage);
+      toast.error(err.response?.data?.message || "Failed to save tour");
     } finally {
       setLoadingTourSubmit(false);
     }
   };
-  // HANDLE PLACE SUBMIT
-  const handlePlaceSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (!newPlaceForm.country || !newPlaceForm.city) {
-        toast.error(
-          t("guide.places.validation.missingCountryCity") ||
-            "Please provide both country and city"
-        );
-        return;
-      }
 
-      await placeService.createPlace(newPlaceForm);
-      toast.success(t("guide.places.added") || "Place added successfully!");
-      setShowPlaceModal(false);
-      setNewPlaceForm({ country: "", city: "" });
-      await fetchPlaces(); // REFRESH PLACE LIST
-    } catch (err) {
-      console.error("Error adding place:", err);
-      toast.error(
-        t("guide.places.addFailed") ||
-          "Failed to add place. Check console for details."
-      );
-    }
-  };
-
-  // HANDLE EDIT TOUR
   const handleEditTour = (tour) => {
     setEditingTour(tour);
     setNewTourForm({
@@ -436,53 +169,11 @@ const ManageTours = () => {
       tags: tour.tags.join(","),
       languages: tour.languages.join(","),
       mainImage: null,
-      existingMainImage: tour.mainImage || null,
     });
-    // Initialize gallery editing state when opening edit modal
-    setGalleryOldImages(tour.galleryImages || []);
-    setGalleryNewFiles([]);
-    setDeletedGalleryIds([]);
+    setImagePreview(tour.mainImage?.url || null);
     setShowTourModal(true);
   };
 
-  // HANDLE UPDATE GALLERY IMAGES
-  const handleOpenGalleryModal = (tour) => {
-    setEditingTour(tour);
-    setGalleryImages(tour.galleryImages || []);
-    setShowGalleryModal(true);
-  };
-
-  const handleOpenItems = (tour) => {
-    navigate(`/guide/tours/${tour._id}/items`);
-  };
-
-  const handleCloseItems = () => {
-    setShowItemsModal(false);
-    setItemsTour(null);
-  };
-
-  const handleSaveGalleryImages = async (newImages, deletedIds) => {
-    try {
-      await guideService.updateTourGalleryImages(
-        editingTour._id,
-        newImages,
-        deletedIds
-      );
-      setShowGalleryModal(false);
-      fetchTours();
-      toast.success(
-        t("guide.tours.messages.galleryUpdated") ||
-          "Gallery images updated successfully!"
-      );
-    } catch (err) {
-      toast.error(
-        t("guide.tours.errors.galleryUpdateFailed") ||
-          "Failed to update gallery images."
-      );
-    }
-  };
-
-  // HANDLE DELETE TOUR
   const handleDeleteTour = (tour) => {
     setConfirmModal({ open: true, item: tour, action: "delete" });
   };
@@ -492,597 +183,325 @@ const ManageTours = () => {
     setConfirmModal({ open: false, item: null, action: null });
     try {
       await guideService.deleteTour(tour._id);
-      await fetchTours();
-      toast.success(
-        t("guide.tours.messages.deleted") || "Tour deleted successfully!"
-      );
+      toast.success("Tour deleted successfully!");
+      fetchTours();
     } catch (err) {
-      console.error("Error deleting tour:", err);
-      toast.error(
-        t("guide.tours.errors.deleteFailed") || "Failed to delete tour"
-      );
+      toast.error("Failed to delete tour");
     }
   };
 
-  const cancelDeleteTour = () => {
-    setConfirmModal({ open: false, item: null, action: null });
+  const handleOpenGalleryModal = (tour) => {
+    setEditingTour(tour);
+    setGalleryImages(tour.galleryImages || []);
+    setShowGalleryModal(true);
   };
 
+  const handleSaveGalleryImages = async (newImages, deletedIds) => {
+    try {
+      await guideService.updateTourGalleryImages(editingTour._id, newImages, deletedIds);
+      setShowGalleryModal(false);
+      fetchTours();
+      toast.success("Gallery updated successfully!");
+    } catch (err) {
+      toast.error("Failed to update gallery");
+    }
+  };
+
+  if (loading) return <LoadingScreen />;
+
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1
-            className={`text-4xl font-bold ${
-              isDarkMode ? "text-[#D5B36A]" : "text-[#8B4513]"
-            } mb-2`}
-          >
+    <div className="space-y-4 sm:space-y-6 md:space-y-8 p-3 sm:p-4 md:p-6 animate-in fade-in duration-500">
+      
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className={`text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold ${textColor} tracking-tight`}>
             {t("guide.tours.title") || "Manage Tours"}
           </h1>
-          <p
-            className={
-              isDarkMode ? "text-gray-300 text-lg" : "text-gray-600 text-lg"
-            }
-          >
-            {t("guide.tours.manageAndTrack") ||
-              "Manage and track all your tours"}
+          <p className={`${secondaryText} text-xs sm:text-sm md:text-base`}>
+            {t("guide.tours.manageAndTrack") || "Manage and track all your tours"}
           </p>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={() => setShowPlaceModal(true)}
-            className={`flex items-center gap-3 px-6 py-3 ${
-              isDarkMode
-                ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
-                : "bg-white"
-            } border-2 border-[#D5B36A] text-[#D5B36A] rounded-lg shadow-lg hover:shadow-[#D5B36A]/30 hover:shadow-xl transition-all duration-300 font-semibold relative overflow-hidden group cursor-pointer`}
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
-              boxShadow:
-                "0 4px 15px rgba(213, 179, 106, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            <div className="absolute inset-0 bg-[#D5B36A]/0 group-hover:bg-[#D5B36A]/10 transition-colors duration-300"></div>
-            <FaPlus className="text-[#D5B36A] group-hover:text-[#F5E6A3] transition-colors duration-300 z-10" />
-            <span className="z-10">
-              {t("guide.tours.addPlace") || "Add Place"}
-            </span>
+        
+        <button onClick={() => setShowPlaceModal(true)} className="flex items-center justify-center gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 bg-[#D5B36A] hover:bg-[#E2C784] text-black rounded-lg sm:rounded-xl font-bold text-sm sm:text-base transition-all active:scale-95 shadow-lg whitespace-nowrap">
+          <FaPlus size={12} className="sm:w-3.5 sm:h-3.5" />
+          <span className="hidden xs:inline">{t("guide.tours.addPlace") || "Add Place"}</span>
+          <span className="xs:hidden">Add Place</span>
+        </button>
+      </div>
+
+      <div className={`${cardBg} p-2 sm:p-2.5 rounded-lg sm:rounded-xl border ${borderColor} shadow-sm`}>
+        <div className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3">
+          <FaSearch className="text-[#D5B36A] text-sm sm:text-base shrink-0" />
+          <input type="text" placeholder={t("guide.tours.searchPlaceholder") || "Search tours..."} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className={`w-full py-1.5 sm:py-2 bg-transparent border-none focus:ring-0 ${textColor} placeholder-gray-500 text-sm sm:text-base outline-none`}/>
+        </div>
+      </div>
+
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className={`text-sm sm:text-base md:text-lg font-bold ${textColor} flex items-center gap-2`}>
+            <span className="w-1 h-4 sm:h-5 md:h-6 bg-[#D5B36A] rounded-full"></span>
+            <span className="truncate">{t("guide.tours.allTours") || "Your Tours"}</span>
+          </h2>
+          <button onClick={() => {setEditingTour(null); setNewTourForm({ name: "", description: "", price: "", place: "", categories: "", tags: "", languages: "", mainImage: null }); setImagePreview(null); setShowTourModal(true);}}
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#D5B36A] hover:bg-[#E2C784] text-black rounded-lg font-bold text-xs sm:text-sm transition-all active:scale-95 whitespace-nowrap">
+            <FaPlus size={10} className="sm:w-3 sm:h-3" />
+            <span className="hidden xs:inline">{t("guide.tours.addNew") || "Add Tour"}</span>
+            <span className="xs:hidden">Add Tour</span>
           </button>
         </div>
-      </div>
+        
+        <div className={`hidden md:block ${cardBg} rounded-xl lg:rounded-2xl border ${borderColor} shadow-sm overflow-hidden`}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm lg:text-base">
+              <thead>
+                <tr className={`bg-gray-500/5 ${secondaryText} text-xs uppercase tracking-wider text-left`}>
+                  <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold whitespace-nowrap">{t("guide.tours.name")}</th>
+                  <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold whitespace-nowrap">{t("guide.tours.city")}</th>
+                  <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold whitespace-nowrap">{t("guide.tours.price")}</th>
+                  <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold whitespace-nowrap">{t("guide.tours.rating")}</th>
+                  <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold whitespace-nowrap text-center">{t("guide.tours.actions")}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-500/10">
+                {filteredTours.length > 0 ? (
+                  filteredTours.map((tour) => {
+                    const isPublished = isTourPublished(tour);
+                    const itemsCount = getTourItemsCount(tour);
+                    const publishedItemsCount = getTourPublishedItemsCount(tour);
+                    const isPublishing = publishingTourIds.includes(tour._id);
 
-      {/* Search Bar */}
-      <div
-        className={`${
-          isDarkMode
-            ? "bg-gradient-to-br from-[#1a0f08] to-[#2c1810]"
-            : "bg-white"
-        } rounded-xl border border-[#D5B36A]/30 p-4 shadow-lg`}
-      >
-        <div className="flex items-center gap-3">
-          <FaSearch className="text-[#D5B36A]" />
-          <input
-            type="text"
-            placeholder={t("guide.tours.searchPlaceholder")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={`flex-1 bg-transparent ${
-              isDarkMode ? "text-white" : "text-black"
-            } placeholder-[#D5B36A]/60 border-0 outline-none focus:ring-2 focus:ring-[#D5B36A]/50 rounded-lg px-3 py-2 transition-all`}
-          />
-        </div>
-      </div>
-
-      {/* Tours Table */}
-      <div
-        className={`${cardBg} rounded-xl border ${borderColor} overflow-x-auto`}
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px]">
-            <thead
-              className={`border-b ${borderColor} ${
-                isDarkMode ? "bg-opacity-50" : ""
-              }`}
-            >
-              <tr>
-                <th
-                  className={`text-left py-4 px-6 font-semibold ${secondaryText}`}
-                >
-                  {t("guide.tours.name")}
-                </th>
-                <th className="px-6 py-4 text-left text-[#D5B36A] font-bold text-sm uppercase tracking-wider border-r border-[#D5B36A]/20">
-                  {t("guide.tours.city")}
-                </th>
-                <th className="px-6 py-4 text-left text-[#D5B36A] font-bold text-sm uppercase tracking-wider border-r border-[#D5B36A]/20">
-                  {t("guide.tours.price")}
-                </th>
-                <th className="px-6 py-4 text-left text-[#D5B36A] font-bold text-sm uppercase tracking-wider border-r border-[#D5B36A]/20">
-                  {t("guide.tours.rating")}
-                </th>
-                <th className="px-6 py-4 text-center text-[#D5B36A] font-bold text-sm uppercase tracking-wider">
-                  {t("guide.tours.actions")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#D5B36A]/20">
-              {filteredTours.length > 0 ? (
-                filteredTours.map((tour, index) => (
-                  <tr
-                    key={tour._id}
-                    className="hover:bg-[#D5B36A]/5 transition-colors duration-200 group"
-                    style={{
-                      backgroundImage:
-                        index % 2 === 0
-                          ? `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`
-                          : "none",
-                    }}
-                  >
-                    <td className="px-6 py-4 text-[var(--text)] font-medium border-r border-[#D5B36A]/10">
-                      <div className="flex items-center gap-3">
-                        <span>{tour.name}</span>
-                        {(() => {
-                          const isPublished = isTourPublished(tour);
-                          const itemsCount = getTourItemsCount(tour);
-                          const publishedItemsCount =
-                            getTourPublishedItemsCount(tour);
-                          const statusLabel = isPublished
-                            ? t("guide.tours.states.published") || "Published"
-                            : itemsCount === 0
-                            ? t("guide.tours.states.empty") || "Empty"
-                            : t("guide.tours.states.notPublished") ||
-                              "Not Published";
-                          const statusClass = isPublished
-                            ? "bg-green-600 text-white"
-                            : itemsCount === 0
-                            ? "bg-red-600 text-white"
-                            : "bg-yellow-500 text-black";
-                          return (
-                            <span
-                              className={`text-xs font-semibold px-2 py-1 rounded-full ${statusClass}`}
-                            >
-                              {statusLabel}
-                            </span>
-                          );
-                        })()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-[var(--text-secondary)] border-r border-[#D5B36A]/10">
-                      {tour.place.city}
-                    </td>
-                    <td className="px-6 py-4 text-[var(--primary)] font-semibold border-r border-[#D5B36A]/10">
-                      {tour.price} {t("guide.tours.currency") || "EGP"}
-                    </td>
-                    <td className="px-6 py-4 border-r border-[#D5B36A]/10">
-                      <span className="text-[var(--secondary)]">
-                        ★ {tour.rating}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          onClick={() => handleEditTour(tour)}
-                          className={`p-3 rounded-lg ${
-                            isDarkMode
-                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
-                              : "bg-white"
-                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
-                          title={t("guide.tours.edit") || "Edit"}
-                        >
-                          <FaEdit className="text-sm" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTour(tour)}
-                          className={`p-3 rounded-lg ${
-                            isDarkMode
-                              ? "bg-gradient-to-b from-[#8B0000] to-[#5a0000]"
-                              : "bg-white"
-                          } border border-red-600/50 text-red-300 hover:bg-red-900/20 hover:border-red-500 transition-all duration-200 cursor-pointer`}
-                          title={t("guide.tours.delete") || "Delete"}
-                        >
-                          <FaTrash className="text-sm" />
-                        </button>
-                        {(() => {
-                          const isPublished = isTourPublished(tour);
-                          const itemsCount = getTourItemsCount(tour);
-                          const publishedItemsCount =
-                            getTourPublishedItemsCount(tour);
-                          const active = visualizedTourIds.includes(tour._id);
-                          // Enable button when there are items; only fully disabled when there are ZERO items
-                          const disabled = itemsCount === 0;
-                          const isPublishing = publishingTourIds.includes(
-                            tour._id
-                          );
-                          const iconColorClass = disabled
-                            ? isDarkMode
-                              ? "text-white"
-                              : "text-[#D5B36A]"
-                            : isPublished
-                            ? "text-green-600"
-                            : "text-red-600";
-                          return (
-                            <button
+                    return (
+                      <tr key={tour._id} className={`transition-colors hover:${isDarkMode ? "bg-white/5" : "bg-gray-50"}`}>
+                        <td className="py-3 lg:py-4 px-4 lg:px-6">
+                          <div className="flex flex-col gap-1">
+                            <span className={`font-bold ${textColor}`}>{tour.name}</span>
+                            <div className="flex items-center gap-2">
+                              {isPublished ? (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-500 font-bold border border-green-500/20">
+                                  {t("guide.tours.states.published")}
+                                </span>
+                              ) : (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500 font-bold border border-amber-500/20">
+                                  {itemsCount === 0 ? "EMPTY" : "DRAFT"}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className={`py-3 lg:py-4 px-4 lg:px-6 ${secondaryText}`}>
+                          <div className="flex items-center gap-1">
+                            <FaMapMarkerAlt size={12} className="text-[#D5B36A]" />
+                            {tour.place.city}
+                          </div>
+                        </td>
+                        <td className="py-3 lg:py-4 px-4 lg:px-6">
+                          <span className={`font-bold ${textColor}`}>
+                            {tour.price.toLocaleString()} 
+                            <span className="text-[10px] opacity-60 ml-1">EGP</span>
+                          </span>
+                        </td>
+                        <td className="py-3 lg:py-4 px-4 lg:px-6">
+                          <div className="flex items-center gap-1 text-amber-500 font-bold">
+                            ★ {tour.rating || "0.0"}
+                          </div>
+                        </td>
+                        <td className="py-3 lg:py-4 px-4 lg:px-6">
+                          <div className="flex items-center justify-center gap-1.5 lg:gap-2 flex-wrap">
+                            <button  onClick={() => handleEditTour(tour)} className={`p-1.5 lg:p-2 rounded-lg border ${borderColor} ${secondaryText} hover:text-[#D5B36A] hover:border-[#D5B36A] transition-all`} title="Edit">
+                              <FaEdit size={14} />
+                            </button>
+                            <button onClick={() => navigate(`/guide/tours/${tour._id}/items`)} className={`p-1.5 lg:p-2 rounded-lg border ${borderColor} ${secondaryText} hover:text-[#D5B36A] hover:border-[#D5B36A] transition-all`} title="Manage Items">
+                              <FaList size={14} />
+                            </button>
+                            <button  onClick={() => handleOpenGalleryModal(tour)} className={`p-1.5 lg:p-2 rounded-lg border ${borderColor} ${secondaryText} hover:text-[#D5B36A] hover:border-[#D5B36A] transition-all`} title="Gallery">
+                              <FaImages size={14} />
+                            </button>
+                            <button 
                               onClick={async () => {
-                                if (disabled) return;
-                                // If there are items but none published, show a helpful toast and do not toggle visualization
-                                if (
-                                  itemsCount > 0 &&
-                                  publishedItemsCount === 0
-                                ) {
-                                  toast.error(
-                                    t("guide.tours.errors.noPublishedItems") ||
-                                      "There is no published items"
-                                  );
+                                if (itemsCount === 0) return;
+                                if (itemsCount > 0 && publishedItemsCount === 0) {
+                                  toast.error("No published items");
                                   return;
                                 }
-                                // Toggle publish state on backend (like tour items)
                                 try {
-                                  setPublishingTourIds((prev) => [
-                                    ...prev,
-                                    tour._id,
-                                  ]);
-                                  const body = { isPublished: !isPublished };
-                                  await guideService.publishTour(
-                                    tour._id,
-                                    body
-                                  );
-                                  await fetchTours();
+                                  setPublishingTourIds(prev => [...prev, tour._id]);
+                                  await guideService.publishTour(tour._id, { isPublished: !isPublished });
+                                  fetchTours();
                                 } catch (err) {
-                                  const msg =
-                                    err?.response?.data?.message ||
-                                    err.message ||
-                                    "Failed to change publish state";
-                                  toast.error(msg);
+                                  toast.error("Failed to update");
                                 } finally {
-                                  setPublishingTourIds((prev) =>
-                                    prev.filter((id) => id !== tour._id)
-                                  );
+                                  setPublishingTourIds(prev => prev.filter(id => id !== tour._id));
                                 }
-                              }}
-                              disabled={disabled || isPublishing}
-                              className={`p-3 rounded-lg ${
-                                isDarkMode
-                                  ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
-                                  : "bg-white"
-                              } border border-[#D5B36A]/50 hover:bg-opacity-90 transition-all duration-200 ${
-                                disabled
-                                  ? "opacity-60 cursor-not-allowed"
-                                  : "cursor-pointer"
-                              } ${iconColorClass}`}
-                              title={
-                                disabled
-                                  ? t("guide.tours.titles.noItems") ||
-                                    "No items yet"
-                                  : itemsCount > 0 && publishedItemsCount === 0
-                                  ? t("guide.tours.titles.noPublishedItems") ||
-                                    "No published items"
-                                  : isPublishing
-                                  ? t("guide.tours.titles.updating") ||
-                                    "Updating..."
-                                  : isPublished
-                                  ? t("guide.tours.titles.unpublish") ||
-                                    "Unpublish tour"
-                                  : t("guide.tours.titles.publish") ||
-                                    "Publish tour"
-                              }
-                            >
-                              {isPublishing ? (
-                                <FaSpinner
-                                  className={`animate-spin text-sm ${
-                                    isDarkMode ? "text-white" : "text-[#8B4513]"
-                                  }`}
-                                />
-                              ) : isPublished ? (
-                                <FaEye className="text-sm" />
-                              ) : (
-                                <FaEyeSlash className="text-sm" />
-                              )}
+                              }} disabled={itemsCount === 0 || isPublishing} className={`p-1.5 lg:p-2 rounded-lg border ${borderColor} transition-all ${itemsCount === 0 ? "opacity-50 cursor-not-allowed" : "hover:border-[#D5B36A]"} ${isPublished ? "text-green-600" : "text-red-600"}`} title={itemsCount === 0 ? "No items" : isPublished ? "Unpublish" : "Publish"}>
+                              {isPublishing ? <FaSpinner className="animate-spin" size={14} /> : isPublished ? <FaEye size={14} /> : <FaEyeSlash size={14} />}
                             </button>
-                          );
-                        })()}
-                        <button
-                          onClick={() => handleOpenItems(tour)}
-                          className={`p-3 rounded-lg ${
-                            isDarkMode
-                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
-                              : "bg-white"
-                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
-                          title={
-                            t("guide.tours.titles.manageWaypoints") ||
-                            "Manage Waypoints"
-                          }
-                        >
-                          <FaList className="text-sm" />
-                        </button>
-                        <button
-                          onClick={() => handleOpenGalleryModal(tour)}
-                          className={`p-3 rounded-lg ${
-                            isDarkMode
-                              ? "bg-gradient-to-b from-[#2c1810] to-[#1a0f08]"
-                              : "bg-white"
-                          } border border-[#D5B36A]/50 text-[#D5B36A] hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-200 cursor-pointer`}
-                          title={
-                            t("guide.tours.titles.updateGalleryImages") ||
-                            "Update Gallery Images"
-                          }
-                        >
-                          <FaImages className="text-sm" />
-                        </button>
-                      </div>
+                            <button onClick={() => handleDeleteTour(tour)} className={`p-1.5 lg:p-2 rounded-lg border ${borderColor} text-red-400 hover:bg-red-500 hover:text-white transition-all`} title="Delete">
+                              <FaTrash size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="5" className={`py-12 text-center ${secondaryText} italic text-sm`}>
+                      {t("guide.tours.notFound") || "No tours found"}
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="7"
-                    className="py-8 text-center text-[#D5B36A]/70"
-                  >
-                    {t("guide.tours.notFound") || "No tours found"}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="md:hidden space-y-3">
+          {filteredTours.length > 0 ? (
+            filteredTours.map((tour) => {
+              const isPublished = isTourPublished(tour);
+              const itemsCount = getTourItemsCount(tour);
+              const publishedItemsCount = getTourPublishedItemsCount(tour);
+              const isPublishing = publishingTourIds.includes(tour._id);
+
+              return (
+                <div key={tour._id} className={`${cardBg} rounded-lg border ${borderColor} p-3 sm:p-4 shadow-sm`}>
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className={`font-bold ${textColor} text-sm sm:text-base truncate`}>{tour.name}</h3>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <FaMapMarkerAlt size={10} className="text-[#D5B36A] shrink-0" />
+                        <span className={`${secondaryText} text-xs truncate`}>{tour.place.city}</span>
+                      </div>
+                    </div>
+                    {isPublished ? (
+                      <span className="text-[9px] px-2 py-1 rounded bg-green-500/10 text-green-500 font-bold border border-green-500/20 whitespace-nowrap">
+                        {t("guide.tours.states.published")}
+                      </span>
+                    ) : (
+                      <span className="text-[9px] px-2 py-1 rounded bg-amber-500/10 text-amber-500 font-bold border border-amber-500/20 whitespace-nowrap">
+                        {itemsCount === 0 ? "EMPTY" : "DRAFT"}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-4 mb-3 text-xs sm:text-sm">
+                    <div>
+                      <span className={`${secondaryText}`}>Price: </span>
+                      <span className={`font-bold ${textColor}`}>
+                        {tour.price.toLocaleString()} <span className="text-[10px] opacity-60">EGP</span>
+                      </span>
+                    </div>
+                    <div>
+                      <span className={`${secondaryText}`}>Rating: </span>
+                      <span className="text-amber-500 font-bold">★ {tour.rating || "0.0"}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                    <button  onClick={() => handleEditTour(tour)} className={`p-2 sm:p-2.5 rounded-lg border ${borderColor} ${secondaryText} hover:text-[#D5B36A] hover:border-[#D5B36A] transition-all flex items-center justify-center`} title="Edit">
+                      <FaEdit size={14} />
+                    </button>
+                    <button  onClick={() => navigate(`/guide/tours/${tour._id}/items`)} className={`p-2 sm:p-2.5 rounded-lg border ${borderColor} ${secondaryText} hover:text-[#D5B36A] hover:border-[#D5B36A] transition-all flex items-center justify-center`} title="Items">
+                      <FaList size={14} />
+                    </button>
+                    <button  onClick={() => handleOpenGalleryModal(tour)} className={`p-2 sm:p-2.5 rounded-lg border ${borderColor} ${secondaryText} hover:text-[#D5B36A] hover:border-[#D5B36A] transition-all flex items-center justify-center`} title="Gallery">
+                      <FaImages size={14} />
+                    </button>
+                    <button 
+                      onClick={async () => {
+                        if (itemsCount === 0) return;
+                        if (itemsCount > 0 && publishedItemsCount === 0) {
+                          toast.error("No published items");
+                          return;
+                        }
+                        try {
+                          setPublishingTourIds(prev => [...prev, tour._id]);
+                          await guideService.publishTour(tour._id, { isPublished: !isPublished });
+                          fetchTours();
+                        } catch (err) {
+                          toast.error("Failed to update");
+                        } finally {
+                          setPublishingTourIds(prev => prev.filter(id => id !== tour._id));
+                        }
+                      }}
+                      disabled={itemsCount === 0 || isPublishing} className={`p-2 sm:p-2.5 rounded-lg border ${borderColor} transition-all flex items-center justify-center ${ itemsCount === 0 ? "opacity-50 cursor-not-allowed" : "hover:border-[#D5B36A]"} ${isPublished ? "text-green-600" : "text-red-600"}`} title={itemsCount === 0 ? "No items" : isPublished ? "Unpublish" : "Publish"}>
+                      {isPublishing ? <FaSpinner className="animate-spin" size={14} /> : isPublished ? <FaEye size={14} /> : <FaEyeSlash size={14} />}
+                    </button>
+                    <button  onClick={() => handleDeleteTour(tour)} className={`p-2 sm:p-2.5 rounded-lg border ${borderColor} text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center`} title="Delete">
+                      <FaTrash size={14} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className={`${cardBg} rounded-lg border ${borderColor} p-8 text-center`}>
+              <p className={`${secondaryText} italic text-sm`}>
+                {t("guide.tours.notFound") || "No tours found"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* TOUR MODAL */}
       {showTourModal && (
-        <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
-          onMouseDown={() => {
-            setShowTourModal(false);
-            resetTourForm();
-          }}
-        >
-          <div
-            onMouseDown={(e) => e.stopPropagation()}
-            className="bg-gradient-to-br from-[#1a0f08] to-[#2c1810] rounded-xl border-2 border-[#D5B36A]/50 p-6 max-w-md w-full shadow-2xl"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
-              boxShadow:
-                "0 0 30px rgba(213, 179, 106, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-[#D5B36A]">
-                {editingTour
-                  ? t("guide.tours.editTour") || "Edit Tour"
-                  : t("guide.tours.addNew") || "Add New Tour"}
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className={`${cardBg} rounded-xl sm:rounded-2xl border ${borderColor} p-4 sm:p-5 md:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl my-auto`}>
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h3 className={`text-base sm:text-lg md:text-xl font-bold ${textColor}`}>
+                {editingTour ? "Edit Tour" : "Create New Tour"}
               </h3>
-              <button
-                onClick={() => {
-                  setShowTourModal(false);
-                  resetTourForm();
-                }}
-                className="p-2 hover:bg-[#D5B36A]/20 rounded-lg transition-all duration-200 cursor-pointer"
-              >
-                <FaTimes className="text-[#D5B36A]" />
+              <button onClick={() => setShowTourModal(false)} className="p-2 hover:bg-gray-500/10 rounded-lg transition-colors flex-shrink-0">
+                <FaTimes className="text-[#D5B36A]" size={16} />
               </button>
             </div>
-            <form onSubmit={handleTourSubmit} className="space-y-4">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                  {t("guide.tours.name") || "Tour Name"}
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={newTourForm.name}
-                  onChange={handleTourChange}
-                  placeholder="Enter tour name"
-                  required
-                  maxLength={100}
-                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
-                />
-                <span className="text-xs text-[#D5B36A]/70">
-                  {newTourForm.name.length}/100 characters
-                </span>
-              </div>
-              {/* Description */}
-              <div>
-                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                  {t("guide.tours.description") || "Description"}
-                </label>
-                <textarea
-                  name="description"
-                  value={newTourForm.description}
-                  onChange={handleTourChange}
-                  placeholder="Enter tour description (min 10 characters)"
-                  required
-                  rows="3"
-                  maxLength={2000}
-                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
-                />
-                <span className="text-xs text-[#D5B36A]/70">
-                  {newTourForm.description.length}/2000 characters (min 10)
-                </span>
-              </div>
-              {/* Price & Place */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                    {t("guide.tours.price") || "Price (EGP)"}
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={newTourForm.price}
-                    onChange={handleTourChange}
-                    placeholder="0.99"
-                    step="0.01"
-                    min="0.99"
-                    required
-                    className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
-                  />
+            
+            <form onSubmit={handleTourSubmit} className="space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                <div className="md:col-span-2">
+                  <label className={`block text-xs sm:text-sm font-medium ${secondaryText} mb-1.5 sm:mb-2`}>Tour Name</label>
+                  <input type="text" name="name" value={newTourForm.name} onChange={handleTourChange} required className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}/>
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                    {t("guide.tours.place") || "Place/Location"}
-                  </label>
-                  <select
-                    name="place"
-                    value={newTourForm.place}
-                    onChange={handleTourChange}
-                    required
-                    className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
-                  >
-                    <option value="">Select a place</option>
-                    {places.map((place) => (
-                      <option key={place._id} value={place._id}>
-                        {place.name} ({place.city}, {place.country})
-                      </option>
-                    ))}
+                  <label className={`block text-xs sm:text-sm font-medium ${secondaryText} mb-1.5 sm:mb-2`}>Location</label>
+                  <select name="place" value={newTourForm.place} onChange={handleTourChange} required className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}>
+                    <option value="">Select Place</option>
+                    {places.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
                   </select>
                 </div>
-              </div>
-              {/* Categories */}
-              <div>
-                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                  Categories (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  name="categories"
-                  value={newTourForm.categories}
-                  onChange={handleTourChange}
-                  placeholder="e.g., Adventure, Cultural"
-                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
-                />
-              </div>
-              {/* Tags */}
-              <div>
-                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                  Tags (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  name="tags"
-                  value={newTourForm.tags}
-                  onChange={handleTourChange}
-                  placeholder="e.g., outdoor, guided"
-                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
-                />
-              </div>
-              {/* Languages */}
-              <div>
-                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                  Languages (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  name="languages"
-                  value={newTourForm.languages}
-                  onChange={handleTourChange}
-                  placeholder="e.g., English, Arabic"
-                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all"
-                />
-              </div>
-              {/* Main Image */}
-              <div>
-                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                  Image
-                </label>
-                <input
-                  type="file"
-                  name="mainImage"
-                  onChange={handleTourChange}
-                  accept="image/*"
-                  className="w-full px-3 py-2 rounded-lg border border-[#D5B36A]/50 bg-[#2c1810] text-white focus:outline-none focus:border-[#D5B36A] focus:ring-2 focus:ring-[#D5B36A]/30 transition-all file:bg-[#D5B36A] file:text-black file:border-none file:rounded file:px-3 file:py-1 file:mr-3 file:font-medium hover:file:bg-[#C7A15C]"
-                />
-              </div>
-
-              {/* Gallery Images (edit & create) */}
-              <div>
-                <label className="block text-sm font-medium text-[#D5B36A] mb-2">
-                  Gallery Images
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {/* existing images (not marked deleted) */}
-                  {galleryOldImages
-                    .filter((img) => !deletedGalleryIds.includes(img.public_id))
-                    .map((img) => (
-                      <div key={img.public_id} className="relative group">
-                        <img
-                          src={img.url}
-                          alt="gallery"
-                          className="w-full h-24 object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-80 group-hover:opacity-100"
-                          onClick={() =>
-                            handleRemoveOldGalleryImage(img.public_id)
-                          }
-                          title="Remove"
-                        >
-                          <FaTimes size={14} />
-                        </button>
-                      </div>
-                    ))}
-
-                  {/* newly selected files previews */}
-                  {galleryNewFiles.map((file, idx) => (
-                    <div key={idx} className="relative group">
-                      <img
-                        src={galleryNewPreviews?.[idx]}
-                        alt={file.name}
-                        className="w-full h-24 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-80 group-hover:opacity-100"
-                        onClick={() => handleRemoveNewGalleryFile(idx)}
-                        title="Remove"
-                      >
-                        <FaTimes size={14} />
-                      </button>
-                    </div>
-                  ))}
-
-                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#D5B36A]/50 rounded-lg cursor-pointer h-24 bg-[#2c1810] hover:bg-[#D5B36A]/5 transition-all">
-                    <FaPlus size={20} className="text-[#D5B36A] mb-2" />
-                    <span className="text-[#D5B36A] text-sm font-medium">
-                      Add Images
-                    </span>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleAddGalleryFiles}
-                    />
-                  </label>
+                
+                <div className="md:col-span-2">
+                  <label className={`block text-xs sm:text-sm font-medium ${secondaryText} mb-1.5 sm:mb-2`}>Description</label>
+                  <textarea name="description" value={newTourForm.description} onChange={handleTourChange} rows="3" required className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A] resize-none`}/>
                 </div>
-                <p className="text-xs text-[#D5B36A]/70 mt-2">
-                  You can remove existing images or add new ones. Changes will
-                  be saved on submit.
-                </p>
+
+                <div>
+                  <label className={`block text-xs sm:text-sm font-medium ${secondaryText} mb-1.5 sm:mb-2`}>Categories (comma separated)</label>
+                  <input type="text" name="categories" value={newTourForm.categories} onChange={handleTourChange} className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}/>
+                </div>
+
+                <div>
+                  <label className={`block text-xs sm:text-sm font-medium ${secondaryText} mb-1.5 sm:mb-2`}>Tags (comma separated)</label>
+                  <input type="text" name="tags" value={newTourForm.tags} onChange={handleTourChange} className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}/>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className={`block text-xs sm:text-sm font-medium ${secondaryText} mb-1.5 sm:mb-2`}>Main Image</label>
+                  <input type="file" name="mainImage" onChange={handleTourChange} accept="image/*" className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm rounded-lg border ${borderColor} ${inputBg} ${textColor} focus:outline-none focus:border-[#D5B36A]`}/>
+                  {imagePreview && (
+                    <img src={imagePreview} alt="Preview" className="mt-2 w-full h-32 sm:h-40 md:h-48 object-cover rounded-lg" />
+                  )}
+                </div>
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3 pt-4 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowTourModal(false);
-                    resetTourForm();
-                  }}
-                  className="flex-1 px-4 py-3 bg-gradient-to-b from-[#2c1810] to-[#1a0f08] border-2 border-[#D5B36A]/50 text-[#D5B36A] rounded-lg hover:bg-[#D5B36A]/10 hover:border-[#D5B36A] transition-all duration-300 font-semibold cursor-pointer"
-                >
-                  {t("admin.cancel") || "Cancel"}
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
+                <button type="button" onClick={() => setShowTourModal(false)} className={`flex-1 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg border ${borderColor} ${textColor} font-bold hover:bg-gray-500/10 transition-colors`}>
+                  Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={loadingTourSubmit}
-                  className="flex-1 px-4 py-3 bg-gradient-to-b from-[#D5B36A] to-[#C7A15C] border-2 border-[#D5B36A] text-black rounded-lg hover:from-[#F5E6A3] hover:to-[#D5B36A] transition-all duration-300 font-semibold shadow-lg hover:shadow-[#D5B36A]/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {loadingTourSubmit && <FaSpinner className="animate-spin" />}
-                  {editingTour
-                    ? t("admin.tours.update") || "Update"
-                    : t("admin.tours.create") || "Create"}
+                <button type="submit" disabled={loadingTourSubmit} className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-[#D5B36A] text-black font-bold hover:bg-[#E2C784] disabled:opacity-50 flex items-center justify-center gap-2 transition-colors">
+                  {loadingTourSubmit && <FaSpinner className="animate-spin" size={14} />}
+                  {editingTour ? "Update" : "Create"}
                 </button>
               </div>
             </form>
@@ -1090,30 +509,13 @@ const ManageTours = () => {
         </div>
       )}
 
-      {/* PLACE MODAL */}
       {showPlaceModal && (
-        <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
-          onMouseDown={() => setShowPlaceModal(false)}
-        >
-          <div
-            onMouseDown={(e) => e.stopPropagation()}
-            className={`${
-              isDarkMode
-                ? "bg-gradient-to-br from-[#1a0f08] to-[#2c1810]"
-                : "bg-white"
-            } rounded-xl border-2 border-[#D5B36A]/50 p-6 max-w-md w-full shadow-2xl`}
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D5B36A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
-              boxShadow:
-                "0 0 30px rgba(213, 179, 106, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-            }}
-          >
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className={`${cardBg} rounded-xl border ${borderColor} p-4 sm:p-6 md:p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl my-auto transition-all`}>
             <AddPlaceForm
               onClose={() => setShowPlaceModal(false)}
               onCreated={() => {
                 setShowPlaceModal(false);
-                setNewPlaceForm({ country: "", city: "" });
                 fetchPlaces();
               }}
               isDarkMode={isDarkMode}
@@ -1121,31 +523,12 @@ const ManageTours = () => {
           </div>
         </div>
       )}
-      {/* UPDATE GALLERY MODAL */}
+
       {showGalleryModal && (
-        <UpdateGalleryModal
-          images={galleryImages}
-          onClose={() => setShowGalleryModal(false)}
-          onSave={handleSaveGalleryImages}
-          isDarkMode={isDarkMode}
-        />
+        <UpdateGalleryModal images={galleryImages} onClose={() => setShowGalleryModal(false)} onSave={handleSaveGalleryImages} isDarkMode={isDarkMode}/>
       )}
 
-      {/* CONFIRMATION MODAL */}
-      <ConfirmModal
-        isOpen={confirmModal.open}
-        title={t("admin.tours.confirmDelete") || "Confirm Delete"}
-        message={
-          `Are you sure you want to delete the tour "${confirmModal.item?.name}"? This action cannot be undone.`
-        }
-        confirmText={t("common.delete") || "Delete"}
-        cancelText={t("common.cancel") || "Cancel"}
-        onConfirm={confirmDeleteTour}
-        onCancel={cancelDeleteTour}
-        type="danger"
-      />
-
-      {/* Tour items are managed on a dedicated page: /guide/tours/:id/items */}
+      <ConfirmModal isOpen={confirmModal.open} title="Confirm Delete" message={`Are you sure you want to delete "${confirmModal.item?.name}"?`} confirmText="Delete" cancelText="Cancel" onConfirm={confirmDeleteTour} onCancel={() => setConfirmModal({ open: false, item: null, action: null })} type="danger"/>
     </div>
   );
 };

@@ -8,7 +8,7 @@ export default function LoadingScreen({ fullPage = false }) {
     <div className={`
       flex flex-col items-center justify-center antialiased transition-colors duration-500
       ${fullPage 
-        ? "fixed inset-0 w-screen h-screen z-[9999] bg-background" 
+        ? "fixed inset-0 w-screen h-screen z-9999 bg-background" 
         : "relative min-h-[400px] w-full bg-transparent"}
     `}>
       <div className="w-full flex flex-col items-center justify-center gap-8">

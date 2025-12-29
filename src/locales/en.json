@@ -163,6 +163,9 @@
     "dark": "Switch to Dark Mode"
   },
   "admin": {
+    "sidebar": {
+      "title": "Admin Panel"
+    },
     "dashboard": "Dashboard",
     "toursMenu": "Tours",
     "usersMenu": "Users",
@@ -196,6 +199,38 @@
     "createPlace": "Create Place",
     "placesList": "Places List",
     "create": "Create",
+    "placesMenu": "Places",
+    "places": {
+      "title": "Places Management",
+      "description": "Manage tourist destinations and locations",
+      "search": "Search places...",
+      "all": "All",
+      "create": "Create Place",
+      "createPlace": "Create Place",
+      "editPlace": "Edit Place",
+      "list": "Places",
+      "placeName": "Place Name",
+      "placeNamePlaceholder": "e.g., Pyramids of Giza",
+      "country": "Country",
+      "countryPlaceholder": "e.g., Egypt",
+      "city": "City",
+      "cityPlaceholder": "e.g., Cairo",
+      "category": "Category",
+      "added": "Added",
+      "edit": "Edit",
+      "delete": "Delete",
+      "update": "Update",
+      "fillAllFields": "Please fill all fields",
+      "confirmDelete": "Are you sure you want to delete this place?",
+      "noResults": "No places found matching your filters",
+      "noPlaces": "No places added yet",
+      "fetchError": "Failed to load places",
+      "createSuccess": "Place created successfully",
+      "updateSuccess": "Place updated successfully",
+      "deleteSuccess": "Place deleted successfully",
+      "saveError": "Failed to save place",
+      "deleteError": "Failed to delete place"
+    },
     "tours": {
       "title": "Tours Management",
       "subtitle": "View and manage all tours on the platform",
@@ -422,6 +457,7 @@
       "editTour": "Edit Tour",
       "addNew": "Add New Tour",
       "name": "Tour Name",
+      "allTours": "All Tours",
       "manageAndTrack": "Manage and track all your tours",
       "addPlace": "Add Place",
       "states": {
@@ -669,8 +705,8 @@
       "support": "24/7 Support"
     },
     "dropdown": {
-      "guideDashboard": "Guide Dashboard",
-      "adminDashboard": "Admin Dashboard",
+      "guideDashboard": "Dashboard",
+      "adminDashboard": "Dashboard",
       "myTours": "My Tours",
       "profile": "Profile",
       "saved": "Saved"

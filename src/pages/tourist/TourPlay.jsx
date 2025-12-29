@@ -21,7 +21,7 @@ import useAudioPlayer from "../../hooks/useAudioPlayer";
 import { useAuth } from "../../store/hooks";
 import { useSelector } from "react-redux";
 import { translateText, stopSpeech } from "../../services/aiService";
-import GoldenSpinner from "../../components/common/GoldenSpinner";
+import LoadingScreen from "../../components/common/LoadingScreen";
 
 export default function TourPlay() {
   const { tourId } = useParams();
@@ -387,7 +387,7 @@ export default function TourPlay() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <GoldenSpinner size={48} />
+          <LoadingScreen />
           <p className="mt-4 text-text-secondary">Loading tour...</p>
         </div>
       </div>

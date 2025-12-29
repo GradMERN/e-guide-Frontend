@@ -3,6 +3,7 @@ import { useAuth } from "../../store/hooks";
 import { useTranslation } from "react-i18next";
 import ChartComponent from "../../components/analytics/ChartComponent";
 import AnalyticsCard from "../../components/analytics/AnalyticsCard";
+import LoadingScreen from "../../components/common/LoadingScreen"; 
 import { FaEye, FaExchangeAlt, FaCoins, FaMapMarkedAlt } from "react-icons/fa";
 import { guideService } from "../../apis/guideService";
 import { toast } from "react-toastify";
@@ -34,44 +35,27 @@ const Analytics = () => {
     fetchAnalytics();
   }, []);
 
-  if (loading || !analyticsData) {
-    return (
-      <div className="p-6 flex justify-center items-center">
-        <div className="text-[var(--text-secondary)]">Loading analytics...</div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
-  // Check if there's any data
   const hasData =
-    analyticsData.totalViews > 0 ||
-    analyticsData.monthlyComparison.some((m) => m.enrollments > 0);
+    analyticsData?.totalViews > 0 ||
+    analyticsData?.monthlyComparison?.some((m) => m.enrollments > 0);
 
   if (!hasData) {
     return (
-      <div className="p-6">
-        <div>
-          <h1 className={`text-3xl font-bold ${textColor}`}>
-            {t("guide.analytics.title")}
-          </h1>
-          <p className={`${secondaryText} mt-1`}>
-            {t("guide.analytics.subtitle") ||
-              "Track your tours performance and growth"}
-          </p>
-        </div>
-        <div className="mt-8 text-center">
-          <div className="text-6xl text-gray-300 mb-4">📊</div>
-          <h3 className={`text-xl font-semibold ${textColor} mb-2`}>
-            {t("guide.analytics.noDataTitle") || "No Analytics Data Yet"}
-          </h3>
-          <p className={`${secondaryText}`}>
-            {t("guide.analytics.noDataMessage") ||
-              "Start publishing tours and getting enrollments to see analytics here."}
-          </p>
-        </div>
+      <div className="p-4 md:p-6 min-h-[70vh] flex flex-col items-center justify-center text-center">
+        <div className="text-7xl mb-6 opacity-20">📊</div>
+        <h1 className={`text-3xl font-bold ${textColor}`}>
+          {t("guide.analytics.title")}
+        </h1>
+        <p className={`${secondaryText} mt-2 max-w-md`}>
+          {t("guide.analytics.noDataMessage") ||
+            "Start publishing tours and getting enrollments to see your performance metrics here."}
+        </p>
       </div>
     );
   }
+
   const stats = [
     {
       title: t("guide.analytics.totalViews"),
@@ -90,140 +74,110 @@ const Analytics = () => {
       title: t("guide.analytics.averageBookingValue"),
       value: analyticsData.averageBookingValue.toLocaleString(),
       icon: FaCoins,
-      unit: t("guide.currency"),
+      unit: t("guide.currency") || "EGP",
       bgColor: "from-purple-500 to-purple-600",
     },
     {
       title: t("guide.analytics.topPerformingTour"),
-      value: analyticsData.topTour,
+      value: analyticsData.topTour || "N/A",
       icon: FaMapMarkedAlt,
       bgColor: "from-amber-500 to-amber-600",
+      isLongText: true,
     },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className={`text-3xl font-bold ${textColor}`}>
+    <div className="space-y-6 md:space-y-8 p-2 sm:p-4 md:p-6 animate-in fade-in duration-500">
+      <div className="flex flex-col gap-1">
+        <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold ${textColor} tracking-tight`}>
           {t("guide.analytics.title")}
         </h1>
-        <p className={`${secondaryText} mt-1`}>
-          {t("guide.analytics.subtitle") ||
-            "Track your tours performance and growth"}
+        <p className={`${secondaryText} text-xs sm:text-sm md:text-base`}>
+          {t("guide.analytics.subtitle") || "Track your tours performance and growth"}
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div>
-        <h2 className={`text-xl font-bold ${textColor} mb-4`}>
+      <div className="space-y-3 md:space-y-4">
+        <h2 className={`text-base sm:text-lg font-bold ${textColor} flex items-center gap-2`}>
+          <span className="w-1 h-5 md:h-6 bg-[#D5B36A] rounded-full"></span>
           {t("guide.analytics.overview")}
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
           {stats.map((stat, index) => (
             <AnalyticsCard key={index} {...stat} />
           ))}
         </div>
       </div>
 
-      {/* Charts Row 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartComponent
-          type="line"
-          title={t("guide.analytics.dailyViews") || "Daily Views & Enrollments"}
-          data={analyticsData.dailyViews}
-          dataKey="views"
-          colors={["#3B82F6", "#D5B36A"]}
-        />
-        <ChartComponent
-          type="bar"
-          title={t("guide.analytics.monthlyComparison") || "Monthly Comparison"}
-          data={analyticsData.monthlyComparison}
-          dataKey="views"
-          colors={["#F59E0B", "#D5B36A"]}
-        />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+        <div className={`${cardBg} p-3 sm:p-4 md:p-6 rounded-xl md:rounded-2xl border ${borderColor}`}>
+          <ChartComponent type="line" title={t("guide.analytics.dailyViews") || "Daily Views & Enrollments"} data={analyticsData.dailyViews} dataKey="views" colors={["#3B82F6", "#D5B36A"]}/>
+        </div>
+        <div className={`${cardBg} p-3 sm:p-4 md:p-6 rounded-xl md:rounded-2xl border ${borderColor}`}>
+          <ChartComponent type="bar" title={t("guide.analytics.monthlyComparison") || "Monthly Comparison"} data={analyticsData.monthlyComparison} dataKey="views" colors={["#F59E0B", "#D5B36A"]} />
+        </div>
       </div>
 
-      {/* Charts Row 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartComponent
-          type="bar"
-          title={t("guide.analytics.tourPerformance")}
-          data={analyticsData.tourAnalytics}
-          dataKey="enrollments"
-          colors={["#8B5CF6", "#D5B36A"]}
-        />
-        <ChartComponent
-          type="pie"
-          title={
-            t("guide.analytics.trafficSource") || "Traffic Source Distribution"
-          }
-          data={analyticsData.sourceDistribution}
-          dataKey="value"
-          colors={["#D5B36A", "#C7A15C", "#E2C784", "#DAA520"]}
-        />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+        <div className={`${cardBg} p-3 sm:p-4 md:p-6 rounded-xl md:rounded-2xl border ${borderColor}`}>
+          <ChartComponent type="bar" title={t("guide.analytics.tourPerformance")} data={analyticsData.tourAnalytics} dataKey="enrollments" colors={["#8B5CF6", "#D5B36A"]}/>
+        </div>
+        <div className={`${cardBg} p-3 sm:p-4 md:p-6 rounded-xl md:rounded-2xl border ${borderColor}`}>
+          <ChartComponent type="pie" title={t("guide.analytics.trafficSource") || "Traffic Source Distribution"} data={analyticsData.sourceDistribution} dataKey="value" colors={["#D5B36A", "#C7A15C", "#E2C784", "#DAA520"]}/>
+        </div>
       </div>
 
-      {/* Detailed Table */}
-      <div className={`${cardBg} rounded-xl border ${borderColor} p-6`}>
-        <h3 className={`text-lg font-semibold ${textColor} mb-4`}>
-          {t("guide.analytics.tourPerformance")}
-        </h3>
+      <div className={`${cardBg} rounded-xl md:rounded-2xl border ${borderColor} shadow-sm overflow-hidden`}>
+        <div className="p-4 md:p-6 border-b border-gray-500/10">
+          <h3 className={`text-base sm:text-lg font-bold ${textColor}`}>
+            {t("guide.analytics.tourPerformance")}
+          </h3>
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full text-xs sm:text-sm md:text-base">
             <thead>
-              <tr className={`border-b ${borderColor}`}>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
+              <tr className={`bg-gray-500/5 ${secondaryText} text-[10px] sm:text-xs uppercase tracking-wider text-left`}>
+                <th className="py-3 px-3 sm:px-4 md:px-6 font-bold whitespace-nowrap">
                   {t("guide.analytics.columns.tourName") || "Tour Name"}
                 </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
+                <th className="py-3 px-3 sm:px-4 md:px-6 font-bold whitespace-nowrap">
                   {t("guide.analytics.columns.views") || "Views"}
                 </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
-                  {t("guide.analytics.columns.enrollments") || "Enrollments"}
+                <th className="py-3 px-3 sm:px-4 md:px-6 font-bold whitespace-nowrap">
+                  {t("guide.analytics.columns.enrollments") || "Bookings"}
                 </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
-                  {t("guide.analytics.columns.conversion") || "Conversion"}
+                <th className="py-3 px-3 sm:px-4 md:px-6 font-bold whitespace-nowrap">
+                  {t("guide.analytics.columns.conversion") || "Conv %"}
                 </th>
-                <th
-                  className={`text-left py-3 px-4 font-semibold ${secondaryText}`}
-                >
+                <th className="py-3 px-3 sm:px-4 md:px-6 font-bold whitespace-nowrap">
                   {t("guide.analytics.columns.revenue") || "Revenue"}
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-500/10">
               {analyticsData.tourAnalytics.map((tour, index) => {
-                const conversion = (
-                  (tour.enrollments / tour.views) *
-                  100
-                ).toFixed(1);
+                const conversion = tour.views > 0  ? ((tour.enrollments / tour.views) * 100).toFixed(1) : "0.0";
                 return (
-                  <tr
-                    key={index}
-                    className={`border-b ${borderColor} hover:${
-                      isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"
-                    }`}
-                  >
-                    <td className={`py-3 px-4 ${textColor}`}>{tour.name}</td>
-                    <td className={`py-3 px-4 ${textColor}`}>{tour.views}</td>
-                    <td className={`py-3 px-4 ${textColor}`}>
+                  <tr key={index} className={`transition-colors hover:${isDarkMode ? "bg-white/5" : "bg-gray-50"}`}>
+                    <td className={`py-3 px-3 sm:px-4 md:px-6 font-medium ${textColor} max-w-[120px] sm:max-w-[200px] truncate`}>
+                      {tour.name}
+                    </td>
+                    <td className={`py-3 px-3 sm:px-4 md:px-6 ${secondaryText}`}>
+                      {tour.views}
+                    </td>
+                    <td className={`py-3 px-3 sm:px-4 md:px-6 ${secondaryText}`}>
                       {tour.enrollments}
                     </td>
-                    <td className={`py-3 px-4 text-green-400`}>
-                      {conversion}%
+                    <td className="py-3 px-3 sm:px-4 md:px-6">
+                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] sm:text-xs font-bold border border-green-500/20 whitespace-nowrap">
+                        {conversion}%
+                      </span>
                     </td>
-                    <td className={`py-3 px-4 ${textColor} font-semibold`}>
-                      {tour.revenue.toLocaleString()}{" "}
-                      {t("guide.currency") || "EGP"}
+                    <td className={`py-3 px-3 sm:px-4 md:px-6 font-bold ${textColor} whitespace-nowrap`}>
+                      {tour.revenue.toLocaleString()}
+                      <span className="text-[9px] sm:text-[10px] opacity-60 ml-1">
+                        {t("guide.currency") || "EGP"}
+                      </span>
                     </td>
                   </tr>
                 );

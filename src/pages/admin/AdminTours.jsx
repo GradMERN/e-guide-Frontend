@@ -1,23 +1,9 @@
-import React, { useState, useEffect } from "react";
-import {
-  FaEye,
-  FaTrash,
-  FaSearch,
-  FaCheck,
-  FaTimes,
-  FaSpinner,
-  FaStar,
-  FaUsers,
-  FaMapMarkerAlt,
-  FaUser,
-  FaFilter,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
+import { useState, useEffect } from "react";
+import {FaEye,FaTrash,FaSearch,FaTimes,FaSpinner,FaStar,FaUsers,FaMapMarkerAlt,FaFilter,FaChevronLeft,FaChevronRight,} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../../apis/axiosClient";
-import GoldenSpinner from "../../components/common/GoldenSpinner";
+import LoadingScreen from "../../components/common/LoadingScreen";
 
 const AdminTours = () => {
   const { t } = useTranslation();
@@ -27,22 +13,19 @@ const AdminTours = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all"); // all, published, draft
+  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [actionLoading, setActionLoading] = useState(null);
   const toursPerPage = 10;
 
-  // Theme detection
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme") || "dark";
     setIsDarkMode(storedTheme === "dark");
-
     const handleThemeChange = () => {
       const theme = localStorage.getItem("theme") || "dark";
       setIsDarkMode(theme === "dark");
     };
-
     window.addEventListener("storage", handleThemeChange);
     return () => window.removeEventListener("storage", handleThemeChange);
   }, []);
@@ -55,102 +38,45 @@ const AdminTours = () => {
     try {
       setLoading(true);
       setError(null);
-
-      // Build query params
       let url = `/tours?limit=${toursPerPage}&page=${currentPage}`;
-
-      // For admin, we need to fetch all tours including unpublished
-      // The backend should return all tours for admin role
-      if (statusFilter === "published") {
-        url += "&isPublished=true";
-      } else if (statusFilter === "draft") {
-        url += "&isPublished=false";
-      }
+      if (statusFilter === "published") url += "&isPublished=true";
+      else if (statusFilter === "draft") url += "&isPublished=false";
 
       const response = await axiosClient.get(url);
       const toursData = response.data.data || [];
       setTours(toursData);
-
-      // Calculate total pages from response
-      const total =
-        response.data.count || response.data.total || toursData.length;
+      const total = response.data.count || response.data.total || toursData.length;
       setTotalPages(Math.ceil(total / toursPerPage) || 1);
     } catch (err) {
-      console.error("Error fetching tours:", err);
       setError(t("admin.tours.loadError") || "Failed to load tours");
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTogglePublish = async (tour) => {
-    try {
-      setActionLoading(tour._id);
-
-      if (tour.isPublished) {
-        // Unpublish - update tour with isPublished: false
-        await axiosClient.patch(`/tours/${tour._id}`, { isPublished: false });
-      } else {
-        // Publish tour
-        await axiosClient.put(`/tours/${tour._id}/publish`);
-      }
-
-      // Refresh tours
-      await fetchTours();
-    } catch (err) {
-      console.error("Error toggling publish status:", err);
-      setError(err.response?.data?.message || "Failed to update tour status");
-    } finally {
-      setActionLoading(null);
+      setTimeout(() => setLoading(false), 800);
     }
   };
 
   const handleDeleteTour = async (id, tourName) => {
-    if (
-      window.confirm(
-        `${
-          t("admin.tours.confirmDelete") || "Are you sure you want to delete"
-        } "${tourName}"? ${
-          t("admin.tours.deleteWarning") || "This action cannot be undone."
-        }`
-      )
-    ) {
+    if (window.confirm(`${t("admin.tours.confirmDelete") || "Delete"} "${tourName}"?`)) {
       try {
         setActionLoading(id);
         await axiosClient.delete(`/tours/${id}`);
         setTours(tours.filter((t) => t._id !== id));
       } catch (err) {
-        console.error("Error deleting tour:", err);
-        setError(
-          err.response?.data?.message ||
-            t("admin.tours.deleteError") ||
-            "Failed to delete tour"
-        );
+        setError(err.response?.data?.message || "Failed to delete tour");
       } finally {
         setActionLoading(null);
       }
     }
   };
 
-  const handleViewTour = (tourId) => {
-    navigate(`/admin/tour/${tourId}`);
-  };
-
-  // Filter tours by search term
   const filteredTours = tours.filter((tour) => {
     const searchLower = searchTerm.toLowerCase();
-    const matchesSearch =
+    return (
       tour.name?.toLowerCase().includes(searchLower) ||
       tour.place?.name?.toLowerCase().includes(searchLower) ||
-      tour.place?.city?.toLowerCase().includes(searchLower) ||
-      tour.guide?.firstName?.toLowerCase().includes(searchLower) ||
-      tour.guide?.lastName?.toLowerCase().includes(searchLower);
-
-    return matchesSearch;
+      tour.guide?.firstName?.toLowerCase().includes(searchLower)
+    );
   });
 
-  // Theme colors
-  const bgColor = isDarkMode ? "bg-[#0F0E0C]" : "bg-gray-50";
   const cardBg = isDarkMode ? "bg-[#1B1A17]" : "bg-white";
   const borderColor = isDarkMode ? "border-[#D5B36A]/20" : "border-gray-200";
   const textColor = isDarkMode ? "text-white" : "text-gray-900";
@@ -158,314 +84,169 @@ const AdminTours = () => {
   const inputBg = isDarkMode ? "bg-[#0F0E0C]" : "bg-gray-50";
   const rowHover = isDarkMode ? "hover:bg-[#2c1b0f]/50" : "hover:bg-gray-50";
 
-  if (loading && tours.length === 0) {
-    return (
-      <div className={`flex items-center justify-center h-64 ${bgColor}`}>
-        <GoldenSpinner
-          size={48}
-          label={t("common.loading") || "Loading tours..."}
-        />
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className={`text-3xl font-bold ${textColor}`}>
-            {t("admin.tours.title") || "Tours Management"}
+    <div className="space-y-6 pb-20 md:pb-10 animate-fadeIn px-4 sm:px-6" dir="ltr">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4">
+        <div className="text-left">
+          <h1 className={`text-2xl sm:text-3xl font-bold ${textColor}`}>
+            {t("admin.tours.title", "Tours Management")}
           </h1>
-          <p className={secondaryText}>
-            {t("admin.tours.subtitle") ||
-              "View and manage all tours on the platform"}
-          </p>
+          <p className={`${secondaryText} text-sm sm:text-base`}>{t("admin.tours.subtitle", "Review and manage all platform tours")}</p>
         </div>
-        <div className={`px-4 py-2 rounded-lg ${cardBg} border ${borderColor}`}>
-          <span className={secondaryText}>
-            {t("admin.tours.total") || "Total"}:{" "}
-          </span>
+        <div className={`w-full md:w-auto px-4 py-2 rounded-xl ${cardBg} border ${borderColor} shadow-sm text-center`}>
+          <span className={secondaryText}>{t("admin.tours.total", "Total Tours")}: </span>
           <span className="text-[#D5B36A] font-bold">{tours.length}</span>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg flex items-center justify-between">
-          <span>{error}</span>
-          <button
-            onClick={() => setError(null)}
-            className="hover:bg-red-500/20 p-1 rounded"
-          >
-            <FaTimes />
-          </button>
+        <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-xl flex items-center justify-between animate-shake">
+          <span className="text-sm font-medium">{error}</span>
+          <button onClick={() => setError(null)} className="p-1"><FaTimes /></button>
         </div>
       )}
 
-      {/* Filters */}
-      <div className={`${cardBg} border ${borderColor} rounded-lg p-4`}>
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* Search */}
+      <div className={`${cardBg} border ${borderColor} rounded-xl p-3 sm:p-4 shadow-sm`}>
+        <div className="flex flex-col md:flex-row gap-3">
           <div className="flex-1 relative">
-            <FaSearch
-              className={`absolute left-3 top-1/2 -translate-y-1/2 ${secondaryText}`}
-            />
+            <FaSearch className={`absolute left-3 top-1/2 -translate-y-1/2 ${secondaryText}`} />
             <input
               type="text"
-              placeholder={
-                t("admin.tours.searchPlaceholder") ||
-                "Search by name, location, or guide..."
-              }
+              placeholder={t("admin.tours.searchPlaceholder", "Search...")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
+              className={`w-full pl-10 pr-4 py-2 sm:py-2.5 ${inputBg} ${textColor} border ${borderColor} rounded-lg outline-none transition-all text-sm`}
             />
           </div>
-
-          {/* Status Filter */}
           <div className="flex items-center gap-2">
             <FaFilter className={secondaryText} />
             <select
               value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 ${inputBg} ${textColor} border ${borderColor} rounded-lg focus:outline-none focus:border-[#D5B36A]`}
+              onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className={`flex-1 md:flex-none px-3 py-2 sm:py-2.5 ${inputBg} ${textColor} border ${borderColor} rounded-lg outline-none text-sm`}
             >
-              <option value="all">
-                {t("admin.tours.allTours") || "All Tours"}
-              </option>
-              <option value="published">
-                {t("admin.tours.published") || "Published"}
-              </option>
-              <option value="draft">
-                {t("admin.tours.drafts") || "Drafts"}
-              </option>
+              <option value="all">All Status</option>
+              <option value="published">Published</option>
+              <option value="draft">Drafts</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Tours Table */}
-      <div
-        className={`${cardBg} border ${borderColor} rounded-lg overflow-hidden`}
-      >
+      <div className={`hidden md:block ${cardBg} border ${borderColor} rounded-2xl shadow-xl overflow-hidden`}>
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr
-                className={`border-b ${borderColor} ${
-                  isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-100"
-                }`}
-              >
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
-                  {t("admin.tours.tour") || "Tour"}
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
-                  {t("admin.tours.guide") || "Guide"}
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
-                  {t("admin.tours.location") || "Location"}
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
-                  {t("admin.tours.price") || "Price"}
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
-                  {t("admin.tours.stats") || "Stats"}
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
-                  {t("admin.tours.statusHeader") || "Status"}
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#D5B36A]">
-                  {t("admin.tours.actions") || "Actions"}
-                </th>
+              <tr className={`${isDarkMode ? "bg-[#2c1b0f]" : "bg-gray-50"} border-b ${borderColor}`}>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#D5B36A]">Tour Info</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#D5B36A]">Guide</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#D5B36A]">Pricing</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#D5B36A]">Stats</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#D5B36A]">Status</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#D5B36A] text-center">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {filteredTours.length > 0 ? (
-                filteredTours.map((tour) => (
-                  <tr
-                    key={tour._id}
-                    className={`border-b ${borderColor} ${rowHover} transition-all`}
-                  >
-                    {/* Tour Info */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        {tour.mainImage?.url ? (
-                          <img
-                            src={tour.mainImage.url}
-                            alt={tour.name}
-                            className="w-12 h-12 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-[#D5B36A]/20 flex items-center justify-center">
-                            <FaMapMarkerAlt className="text-[#D5B36A]" />
-                          </div>
-                        )}
-                        <div>
-                          <p className={`font-medium ${textColor}`}>
-                            {tour.name}
-                          </p>
-                          <p className={`text-xs ${secondaryText}`}>
-                            {tour.itemsCount || 0}{" "}
-                            {t("admin.tours.items") || "items"}
-                          </p>
-                        </div>
+            <tbody className="divide-y divide-[#D5B36A]/10">
+              {filteredTours.map((tour) => (
+                <tr key={tour._id} className={`${rowHover} transition-colors group`}>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <img src={tour.mainImage?.url || "/placeholder-tour.jpg"} className="w-10 h-10 rounded-lg object-cover" alt="" />
+                      <div>
+                        <p className={`font-bold ${textColor} text-sm`}>{tour.name}</p>
+                        <p className="text-[10px] text-amber-500 uppercase flex items-center gap-1"><FaMapMarkerAlt /> {tour.place?.name}</p>
                       </div>
-                    </td>
-
-                    {/* Guide */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {tour.guide?.avatar?.url ? (
-                          <img
-                            src={tour.guide.avatar.url}
-                            alt={tour.guide.firstName}
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-[#D5B36A]/20 flex items-center justify-center">
-                            <FaUser className="text-[#D5B36A] text-xs" />
-                          </div>
-                        )}
-                        <span className={secondaryText}>
-                          {tour.guide?.firstName} {tour.guide?.lastName}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Location */}
-                    <td className={`px-6 py-4 ${secondaryText}`}>
-                      <div className="flex items-center gap-1">
-                        <FaMapMarkerAlt className="text-[#D5B36A] text-xs" />
-                        <span>
-                          {tour.place?.name || tour.place?.city || "N/A"}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Price */}
-                    <td className="px-6 py-4 text-[#D5B36A] font-semibold">
-                      {tour.price} {tour.currency}
-                    </td>
-
-                    {/* Stats */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <span className="flex items-center gap-1 text-yellow-500">
-                          <FaStar className="text-xs" />
-                          <span className="text-sm">
-                            {tour.rating?.toFixed(1) || "N/A"}
-                          </span>
-                        </span>
-                        <span
-                          className={`flex items-center gap-1 ${secondaryText}`}
-                        >
-                          <FaUsers className="text-xs" />
-                          <span className="text-sm">
-                            {tour.enrollmentsCount || 0}
-                          </span>
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                          tour.isPublished
-                            ? "bg-green-500/20 text-green-500"
-                            : "bg-yellow-500/20 text-yellow-500"
-                        }`}
-                      >
-                        {tour.isPublished
-                          ? t("admin.tours.published") || "Published"
-                          : t("admin.tours.draft") || "Draft"}
-                      </span>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleViewTour(tour._id)}
-                          className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all"
-                          title={t("admin.view") || "View"}
-                        >
-                          <FaEye />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTour(tour._id, tour.name)}
-                          disabled={actionLoading === tour._id}
-                          className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
-                          title={t("admin.delete") || "Delete"}
-                        >
-                          {actionLoading === tour._id ? (
-                            <FaSpinner className="animate-spin" />
-                          ) : (
-                            <FaTrash />
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="7"
-                    className={`px-6 py-12 text-center ${secondaryText}`}
-                  >
-                    {searchTerm
-                      ? t("admin.tours.notFound") ||
-                        "No tours found matching your search"
-                      : t("admin.tours.empty") || "No tours available"}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-400">{tour.guide?.firstName}</td>
+                  <td className="px-6 py-4 text-sm font-bold text-[#D5B36A]">{tour.price} {tour.currency}</td>
+                  <td className="px-6 py-4 text-xs text-gray-400">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-yellow-500 flex items-center gap-1"><FaStar /> {tour.rating || 0}</span>
+                      <span className="flex items-center gap-1"><FaUsers /> {tour.enrollmentsCount || 0}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${tour.isPublished ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"}`}>
+                      {tour.isPublished ? "Live" : "Draft"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-center gap-2">
+                      <button onClick={() => navigate(`/admin/tour/${tour._id}`)} className="p-2 text-blue-400 hover:bg-blue-400/10 rounded-lg"><FaEye size={14} /></button>
+                      <button onClick={() => handleDeleteTour(tour._id, tour.name)} disabled={actionLoading === tour._id} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg">
+                        {actionLoading === tour._id ? <FaSpinner className="animate-spin" /> : <FaTrash size={14} />}
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
+      </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div
-            className={`flex items-center justify-between px-6 py-4 border-t ${borderColor}`}
-          >
-            <p className={secondaryText}>
-              {t("admin.tours.page") || "Page"} {currentPage}{" "}
-              {t("admin.tours.of") || "of"} {totalPages}
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1 || loading}
-                className={`p-2 rounded-lg ${
-                  currentPage === 1
-                    ? "opacity-50 cursor-not-allowed"
-                    : `${rowHover}`
-                } ${textColor}`}
-              >
-                <FaChevronLeft />
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {filteredTours.map((tour) => (
+          <div key={tour._id} className={`${cardBg} border ${borderColor} rounded-2xl p-4 shadow-lg space-y-4`}>
+            <div className="flex items-center gap-4">
+              <img src={tour.mainImage?.url || "/placeholder-tour.jpg"} className="w-16 h-16 rounded-xl object-cover ring-2 ring-[#D5B36A]/20" alt="" />
+              <div className="flex-1 min-w-0">
+                <p className={`font-bold ${textColor} truncate`}>{tour.name}</p>
+                <div className="flex items-center gap-1 text-[10px] text-amber-500 uppercase font-bold">
+                    <FaMapMarkerAlt /> {tour.place?.name}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${tour.isPublished ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"}`}>
+                      {tour.isPublished ? "Live" : "Draft"}
+                    </span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#D5B36A]/10">
+              <div className="text-center">
+                <p className="text-[9px] text-gray-500 uppercase">Price</p>
+                <p className="text-xs font-bold text-[#D5B36A]">{tour.price} {tour.currency}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-[9px] text-gray-500 uppercase">Rating</p>
+                <p className="text-xs font-bold text-yellow-500 flex items-center justify-center gap-1"><FaStar size={10}/> {tour.rating || 0}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-[9px] text-gray-500 uppercase">Enrolled</p>
+                <p className="text-xs font-bold text-gray-400 flex items-center justify-center gap-1"><FaUsers size={10}/> {tour.enrollmentsCount || 0}</p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button  onClick={() => navigate(`/admin/tour/${tour._id}`)}  className="flex-1 flex items-center justify-center gap-2 py-2 bg-blue-500/10 text-blue-400 rounded-xl text-sm font-bold">
+                <FaEye /> View
               </button>
-              <button
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages || loading}
-                className={`p-2 rounded-lg ${
-                  currentPage === totalPages
-                    ? "opacity-50 cursor-not-allowed"
-                    : `${rowHover}`
-                } ${textColor}`}
-              >
-                <FaChevronRight />
+              <button onClick={() => handleDeleteTour(tour._id, tour.name)} disabled={actionLoading === tour._id} className="flex-1 flex items-center justify-center gap-2 py-2 bg-red-500/10 text-red-500 rounded-xl text-sm font-bold">
+                {actionLoading === tour._id ? <FaSpinner className="animate-spin" /> : <><FaTrash /> Delete</>}
               </button>
             </div>
           </div>
-        )}
+        ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className={`flex items-center justify-between p-4 ${cardBg} border-t ${borderColor} rounded-xl md:rounded-none`}>
+          <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1} className={`p-2 rounded-lg border ${borderColor} ${textColor} disabled:opacity-30`}>
+            <FaChevronLeft />
+          </button>
+          <span className={`text-sm ${textColor} font-bold`}>
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className={`p-2 rounded-lg border ${borderColor} ${textColor} disabled:opacity-30`}>
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

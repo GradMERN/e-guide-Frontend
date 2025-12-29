@@ -11,7 +11,6 @@ export default function MainLayout() {
   const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
-
     const timer = setTimeout(() => setShowLoader(false), 1000);
     return () => clearTimeout(timer);
   }, []);

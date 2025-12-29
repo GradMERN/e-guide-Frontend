@@ -5,7 +5,6 @@ import AnalyticsCard from "./AnalyticsCard";
 const StatsOverview = ({ stats = [] }) => {
   const { isDarkMode } = useAuth();
 
-  // Dynamic grid based on number of stats
   const getGridCols = () => {
     const count = stats.length;
     if (count <= 2) return "grid-cols-1 md:grid-cols-2";

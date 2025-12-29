@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "../../store/hooks";
 import {
   LineChart,

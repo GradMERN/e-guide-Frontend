@@ -1,20 +1,14 @@
-import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth as useReduxAuth } from '../../store/hooks';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingScreen from "../common/LoadingScreen";
 
-/**
- * ProtectedRoute wraps routes that require authentication and optional role checks.
- * Props:
- * - allowedRoles: array of roles (lowercase) allowed to access, e.g. ['admin']
- */
 const ProtectedRoute = ({ allowedRoles = [], children }) => {
   const { isAuthenticated, isLoading, user } = useReduxAuth();
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <LoadingSpinner />
+      <div className="min-h-screen flex items-center justify-center bg-(--background)">
+        <LoadingScreen />
       </div>
     );
   }

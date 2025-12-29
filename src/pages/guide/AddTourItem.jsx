@@ -10,7 +10,6 @@ import {
   MdMic,
   MdStop,
   MdVolumeUp,
-  MdSwapHoriz,
 } from "react-icons/md";
 import { FaList, FaSpinner } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";

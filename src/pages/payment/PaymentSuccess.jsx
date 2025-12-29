@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import paymentApi from "../../apis/payment.api";
-import GoldenSpinner from "../../components/common/GoldenSpinner";
+import LoadingScreen from "../../components/common/LoadingScreen";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -65,7 +65,7 @@ const PaymentSuccess = () => {
       >
         {loading ? (
           <div className="text-center">
-            <GoldenSpinner size={48} />
+            <LoadingScreen/>
             <p className="mt-4 text-text">Confirming payment...</p>
           </div>
         ) : error ? (
